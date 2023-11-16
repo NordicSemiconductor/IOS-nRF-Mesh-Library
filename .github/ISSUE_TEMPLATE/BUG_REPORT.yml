@@ -25,7 +25,8 @@ body:
       label: Version
       description: What version of our product are you running?
       options:
-        - 4.0.1 (Latest)
+        - 4.1.0 (latest)
+        - 4.0.1
         - 4.0.0
         - 3.2.0
       default: 0
