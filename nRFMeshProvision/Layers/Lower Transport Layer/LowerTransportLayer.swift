@@ -254,7 +254,12 @@ internal class LowerTransportLayer {
                                        from: localElement, to: pdu.destination)
         } catch {
             logger?.w(.lowerTransport, error)
-            if !pdu.message!.isAcknowledged {
+            if pdu.message!.isAcknowledged && pdu.destination.address.isUnicast {
+                // Acknowledged messages sent to a Unicast Address will be retransmitted
+                // by the Access Layer. Nothing to be done here.
+                // See: https://github.com/NordicSemiconductor/IOS-nRF-Mesh-Library/issues/599
+            } else {
+                // 
                 networkManager.notifyAbout(error: error, duringSendingMessage: pdu.message!,
                                            from: localElement, to: pdu.destination)
             }
