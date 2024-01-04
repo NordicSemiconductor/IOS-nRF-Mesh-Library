@@ -158,7 +158,7 @@ internal class NetworkManager {
         // If retransmission was configured, start the timer that will retransmit.
         // There is no need to retransmit acknowledged messages, as they have their
         // own retransmission mechanism.
-        if !(message is AcknowledgedMeshMessage) {
+        if !message.isAcknowledged {
             var count = publish.retransmit.count
             if count > 0 {
                 let interval: TimeInterval = Double(publish.retransmit.interval) / 1000
