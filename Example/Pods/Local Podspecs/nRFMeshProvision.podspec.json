@@ -28,8 +28,12 @@
     "5.8",
     "5.9"
   ],
-  "source_files": "nRFMeshProvision/**/*",
-  "resources": "nRFMeshProvision/Resources/PrivacyInfo.xcprivacy",
+  "source_files": "nRFMeshProvision/**/*.swift",
+  "resource_bundles": {
+    "PrivacyInfo": [
+      "nRFMeshProvision/Resources/PrivacyInfo.xcprivacy"
+    ]
+  },
   "dependencies": {
     "CryptoSwift": [
       "= 1.8.1"
