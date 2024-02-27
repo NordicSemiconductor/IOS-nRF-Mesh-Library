@@ -29,7 +29,7 @@
 */
 
 import UIKit
-import nRFMeshProvision
+import NordicMesh
 
 protocol PublicationDelegate {
     /// This method is called when the publication has changed.

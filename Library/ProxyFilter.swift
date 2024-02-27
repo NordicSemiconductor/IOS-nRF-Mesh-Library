@@ -70,8 +70,8 @@ public enum ProxyFilerType {
 public protocol ProxyFilterDelegate: AnyObject {
     /// Method called when the Proxy Filter has been sent to proxy.
     ///
-    /// This method is followed by ``proxyFilterUpdateAcknowledged(type:listSize:)-7hg0l``
-    /// or ``proxyFilterLimitReached(type:maxSize:)-30217``, depending on the
+    /// This method is followed by ``proxyFilterUpdateAcknowledged(type:listSize:)-1z2el``
+    /// or ``proxyFilterLimitReached(type:maxSize:)-1e1hd``, depending on the
     /// acknowledged list size.
     ///
     /// - parameters:
@@ -83,7 +83,7 @@ public protocol ProxyFilterDelegate: AnyObject {
     /// and the reported list size is equal to the requested one.
     ///
     /// In case the reported list size is lower than expected
-    /// ``proxyFilterLimitReached(type:maxSize:)-30217`` is called
+    /// ``proxyFilterLimitReached(type:maxSize:)-1e1hd`` is called
     /// instead.
     ///
     /// - parameters:

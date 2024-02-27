@@ -30,7 +30,7 @@
 
 import UIKit
 import CoreBluetooth
-import nRFMeshProvision
+import NordicMesh
 
 class DeviceCell: UITableViewCell {
 

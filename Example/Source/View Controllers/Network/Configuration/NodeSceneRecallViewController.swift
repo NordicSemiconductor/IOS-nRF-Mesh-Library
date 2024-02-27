@@ -29,7 +29,7 @@
 */
 
 import UIKit
-import nRFMeshProvision
+import NordicMesh
 
 protocol SceneRecallDelegate {
     /// Recalls the given scene.

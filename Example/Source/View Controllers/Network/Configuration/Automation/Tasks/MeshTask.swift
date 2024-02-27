@@ -28,7 +28,7 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
-import nRFMeshProvision
+import NordicMesh
 
 enum MeshTask {
     case getCompositionData(page: UInt8)

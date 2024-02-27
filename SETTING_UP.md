@@ -7,7 +7,7 @@ Using CocoaPods:
 You can use [Swift Package Manager](https://swift.org/package-manager/) and specify dependency in `Package.swift` by adding this:
 
 ```swift
-.package(url: "https://github.com/NordicSemiconductor/IOS-nRF-Mesh-Library", .upToNextMinor(from: "4.0.1"))
+.package(url: "https://github.com/NordicSemiconductor/IOS-nRF-Mesh-Library", .upToNextMinor(from: "x.y")) // Replace x.y with your required version
 ```
 
 Also, have a look at [Swift Package Manager @ CryptoSwift](https://github.com/krzyzanowskim/CryptoSwift/blob/master/README.md#swift-package-manager).
@@ -30,9 +30,6 @@ Also, have a look at [Swift Package Manager @ CryptoSwift](https://github.com/kr
 
 - Open the newly created `.xcworkspace`
 
-- Import the library to any of your classes by using `import nRFMeshProvision` and begin working on your project
-
-
 #### Carthage
 
 - Create a new **Cartfile** in your project's root with the following contents
@@ -44,11 +41,12 @@ Also, have a look at [Swift Package Manager @ CryptoSwift](https://github.com/kr
 - Build with carthage
 
     ```
-    carthage update --platform iOS // also OSX platform is available for macOS builds
+    carthage update [--platform iOS] --use-xcframeworks // also OSX platform is available for macOS builds
     ```
 
-- Carthage will build the **nRFMeshProvision.framework** files in **Carthage/Build/**, 
-you may now copy all those files to your project and use the library, additionally, carthage also builds **\*.dsym** files 
-if you need to resymbolicate crash logs. you may want to keep those files bundled with your builds for future use.
+- Carthage will build the **NordicMesh.xcframework** and **CryptoSwift.xcframework** files in **Carthage/Build/**.
+  Copy frameworks for required platforms into your Xcode project like described [here](https://github.com/Carthage/Carthage?tab=readme-ov-file#quick-start).
 
-Next: [Getting started >](GETTING_STARTED.md)
+## Importing NordicMesh framework
+
+Import the library to any of your classes by using `import NordicMesh` and begin working on your project!

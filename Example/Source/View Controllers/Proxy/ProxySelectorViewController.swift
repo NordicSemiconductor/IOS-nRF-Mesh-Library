@@ -30,7 +30,7 @@
 
 import UIKit
 import CoreBluetooth
-import nRFMeshProvision
+import NordicMesh
 
 typealias DiscoveredProxy = (device: GattBearer, rssi: Int)
 

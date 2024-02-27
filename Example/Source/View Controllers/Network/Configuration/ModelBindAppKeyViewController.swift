@@ -29,7 +29,7 @@
 */
 
 import UIKit
-import nRFMeshProvision
+import NordicMesh
 
 protocol BindAppKeyDelegate {
     /// This method is called when a new Application Key has been bound to the Model.

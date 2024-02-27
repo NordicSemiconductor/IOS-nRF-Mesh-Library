@@ -29,7 +29,7 @@
 */
 
 import UIKit
-import nRFMeshProvision
+import NordicMesh
 
 protocol SceneDelegate {
     /// This method is called when a new Scene has been stored on the Node.

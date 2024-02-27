@@ -29,7 +29,7 @@
 */
 
 import UIKit
-import nRFMeshProvision
+import NordicMesh
 
 protocol SelectionDelegate {
     func networkKeySelected(_ networkKey: NetworkKey?)

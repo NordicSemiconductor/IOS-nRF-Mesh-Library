@@ -15,8 +15,7 @@ The library is compatible with the following [Bluetooth specifications](https://
 
 and [**Mesh Device Properties**](https://www.bluetooth.com/specifications/device-properties/).
 
-> **Note**
->
+> [!Note]
 > Implementing ADV Bearer on iOS is not possible due to API limitations. The library is using *GATT Proxy protocol*, 
   specified in the Bluetooth Mesh Protocol 1.1, and requires a Node with Proxy feature to relay messages to the mesh network.
 

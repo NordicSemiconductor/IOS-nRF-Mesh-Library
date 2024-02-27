@@ -29,7 +29,7 @@
 */
 
 import UIKit
-import nRFMeshProvision
+import NordicMesh
 
 protocol EditSceneDelegate {
     /// Notifies the delegate that the Scene was added to the mesh network.

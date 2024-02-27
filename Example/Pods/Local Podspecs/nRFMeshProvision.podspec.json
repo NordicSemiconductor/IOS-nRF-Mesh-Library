@@ -1,5 +1,6 @@
 {
   "name": "nRFMeshProvision",
+  "module_name": "NordicMesh",
   "version": "4.1.0",
   "summary": "A Bluetooth Mesh library",
   "description": "nRF Mesh is a Bluetooth mesh compliant library supporting features such as provisioning, configuration and control of Bluetooth mesh nodes.",
@@ -28,10 +29,13 @@
     "5.8",
     "5.9"
   ],
-  "source_files": "nRFMeshProvision/**/*.swift",
+  "source_files": [
+    "Library/**/*.swift",
+    "Library/Documentation.docc/*.md"
+  ],
   "resource_bundles": {
     "PrivacyInfo": [
-      "nRFMeshProvision/Resources/PrivacyInfo.xcprivacy"
+      "Library/Resources/PrivacyInfo.xcprivacy"
     ]
   },
   "dependencies": {

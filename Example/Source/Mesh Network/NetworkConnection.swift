@@ -30,7 +30,7 @@
 
 import Foundation
 import CoreBluetooth
-import nRFMeshProvision
+import NordicMesh
 
 /// The `NetworkConnection` object maintains connections to Bluetooth
 /// mesh proxies. It scans in the background and connects to nodes that

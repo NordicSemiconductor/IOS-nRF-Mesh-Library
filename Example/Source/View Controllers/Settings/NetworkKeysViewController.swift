@@ -29,7 +29,7 @@
 */
 
 import UIKit
-import nRFMeshProvision
+import NordicMesh
 
 class NetworkKeysViewController: UITableViewController, Editable {
     var automaticallyOpenKeyDialog: Bool = false

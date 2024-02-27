@@ -9,6 +9,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'nRFMeshProvision'
+  s.module_name      = 'NordicMesh'
   s.version          = '4.1.0'
   s.summary          = 'A Bluetooth Mesh library'
   s.description      = <<-DESC
@@ -23,9 +24,9 @@ Pod::Spec.new do |s|
   s.osx.deployment_target  = '10.15'  
   s.static_framework = true
   s.swift_versions   = ['5.5', '5.6', '5.7', '5.8', '5.9']
-  s.source_files = 'nRFMeshProvision/**/*.swift'
+  s.source_files = ['Library/**/*.swift', 'Library/Documentation.docc/*.md']
   s.resource_bundles = {
-     'PrivacyInfo' => ['nRFMeshProvision/Resources/PrivacyInfo.xcprivacy']
+     'PrivacyInfo' => ['Library/Resources/PrivacyInfo.xcprivacy']
   }
   s.dependency 'CryptoSwift', '= 1.8.1'
   s.frameworks = 'CoreBluetooth'

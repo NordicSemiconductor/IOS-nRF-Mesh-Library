@@ -29,7 +29,7 @@
 */
 
 import UIKit
-import nRFMeshProvision
+import NordicMesh
 
 protocol ModelGroupViewCellDelegate: AnyObject {
     /// Encrypts the message with the given Application Key and a Network Key

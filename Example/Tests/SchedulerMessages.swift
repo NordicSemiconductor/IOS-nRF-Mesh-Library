@@ -29,7 +29,7 @@
 */
 
 import XCTest
-@testable import nRFMeshProvision
+@testable import NordicMesh
 
 class SchedulerMessages: XCTestCase {
 

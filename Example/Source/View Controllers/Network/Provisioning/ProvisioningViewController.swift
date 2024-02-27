@@ -29,7 +29,7 @@
 */
 
 import UIKit
-import nRFMeshProvision
+import NordicMesh
 
 class ProvisioningViewController: UITableViewController {
     static let attentionTimer: UInt8 = 5

@@ -218,7 +218,7 @@ public struct NetworkParameters {
         
         /// Sets the timeout for receiving a response to an acknowledged access message.
         ///
-        /// The ``MeshNetworkDelegate/meshNetworkManager(_:failedToSendMessage:from:to:error:)-7iylf``
+        /// The ``MeshNetworkDelegate/meshNetworkManager(_:failedToSendMessage:from:to:error:)-9gepm``
         /// callback will be called when the response is not received before the timeout expires..
         ///
         /// - parameter timeout: The timeout after which the ``AccessError/timeout``
@@ -524,7 +524,7 @@ public struct NetworkParameters {
     /// as the acknowledged message timeout, then the Element may consider the
     /// message has not been delivered, without sending any additional messages.
     ///
-    /// The ``MeshNetworkDelegate/meshNetworkManager(_:failedToSendMessage:from:to:error:)-7iylf``
+    /// The ``MeshNetworkDelegate/meshNetworkManager(_:failedToSendMessage:from:to:error:)-9gepm``
     /// callback will be called on timeout.
     ///
     /// The acknowledged message timeout should be set to a minimum of 30 seconds,

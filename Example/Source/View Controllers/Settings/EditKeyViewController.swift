@@ -29,7 +29,7 @@
 */
 
 import UIKit
-import nRFMeshProvision
+import NordicMesh
 
 protocol EditKeyDelegate {
     /// Notifies the delegate that the Key was added to the mesh network.

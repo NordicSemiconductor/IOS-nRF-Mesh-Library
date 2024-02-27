@@ -29,7 +29,7 @@
 */
 
 import UIKit
-import nRFMeshProvision
+import NordicMesh
 
 protocol HeartbeatSubscriptionDelegate {
     /// This method is called when the Heartbeat subscription was set.

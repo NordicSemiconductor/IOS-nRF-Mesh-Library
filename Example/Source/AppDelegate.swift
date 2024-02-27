@@ -30,7 +30,7 @@
 
 import UIKit
 import os.log
-import nRFMeshProvision
+import NordicMesh
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
