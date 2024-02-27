@@ -124,6 +124,8 @@ class ModelViewController: ProgressViewController {
                            forCellReuseIdentifier: UInt16.genericPowerOnOffServerModelId.hex)
         tableView.register(UINib(nibName: "GenericPowerOnOffSetup", bundle: nil),
                            forCellReuseIdentifier: UInt16.genericPowerOnOffSetupServerModelId.hex)
+        tableView.register(UINib(nibName: "LightLC", bundle: nil),
+                           forCellReuseIdentifier: UInt16.lightLCServerModelId.hex)
         tableView.register(UINib(nibName: "VendorModel", bundle: nil),
                            forCellReuseIdentifier: "vendor")
     }
@@ -226,6 +228,9 @@ class ModelViewController: ProgressViewController {
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if sections[section] == .custom && model.modelIdentifier == UInt16.lightLCServerModelId {
+            return "Mode"
+        }
         return sections[section].title
     }
     
@@ -1040,6 +1045,7 @@ private extension Model {
             || modelIdentifier == .genericPowerOnOffSetupServerModelId
             || modelIdentifier == .genericLevelServerModelId
             || modelIdentifier == .genericDefaultTransitionTimeServerModelId
+            || modelIdentifier == .lightLCServerModelId
     }
     
 }

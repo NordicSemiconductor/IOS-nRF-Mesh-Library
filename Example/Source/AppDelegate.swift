@@ -180,6 +180,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                                        elementIndex: 0)),
             Model(sigModelId: .genericOnOffClientModelId, delegate: GenericOnOffClientDelegate()),
             Model(sigModelId: .genericLevelClientModelId, delegate: GenericLevelClientDelegate()),
+            Model(sigModelId: .lightLCClientModelId, delegate: LightLCClientDelegate()),
             // A simple vendor model:
             Model(vendorModelId: .simpleOnOffClientModelId,
                   companyId: .nordicSemiconductorCompanyId,
