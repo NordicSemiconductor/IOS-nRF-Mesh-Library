@@ -56,7 +56,7 @@ The following features are not (yet) supported:
 
 The library is available using CocoaPods, SPM and Carthage. For details, check out [Setting up the library](SETTING_UP.md).
 
-Product documentation is available here: [Documentation](https://nordicsemiconductor.github.io/IOS-nRF-Mesh-Library/documentation/nrfmeshprovision).
+Product documentation is available here: [Documentation](https://nordicsemiconductor.github.io/IOS-nRF-Mesh-Library/documentation/nordicmesh).
 
 ## nRF Mesh sample app
 

@@ -1,12 +1,3 @@
-#
-# Be sure to run `pod lib lint nRFMeshProvision.podspec' to ensure this is a
-# valid spec before submitting.
-#
-# Any lines starting with a # are optional, but their use is encouraged
-# To learn more about a Podspec see http://guides.coļcoapods.org/syntax/podspec.html
-#
-
-
 Pod::Spec.new do |s|
   s.name             = 'nRFMeshProvision'
   s.module_name      = 'NordicMesh'
