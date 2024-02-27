@@ -58,7 +58,7 @@ address.
   i.e. not bound to any key, or not subscribed to the address set as destination address of the 
   message.
 
-> See `Example/nRFMeshProvision/AppDelegate.swift` in "nRF Mesh" sample app for an example.
+> See `Example/Source/AppDelegate.swift` in "nRF Mesh" sample app for an example.
 
 ## What's next
 
