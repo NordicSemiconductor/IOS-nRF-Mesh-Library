@@ -29,7 +29,7 @@
 */
 
 import UIKit
-import nRFMeshProvision
+import NordicMesh
 
 protocol ProxyFilterTypeDelegate: AnyObject {
     func filterTypeDidChange(_ type: ProxyFilerType)

@@ -1,4 +1,4 @@
-# ``nRFMeshProvision``
+# ``NordicMesh``
 
 Provision, configure and control Bluetooth mesh devices with nRF Mesh library.
 

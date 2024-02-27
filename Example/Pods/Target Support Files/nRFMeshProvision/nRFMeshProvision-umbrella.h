@@ -11,6 +11,6 @@
 #endif
 
 
-FOUNDATION_EXPORT double nRFMeshProvisionVersionNumber;
-FOUNDATION_EXPORT const unsigned char nRFMeshProvisionVersionString[];
+FOUNDATION_EXPORT double NordicMeshVersionNumber;
+FOUNDATION_EXPORT const unsigned char NordicMeshVersionString[];
 

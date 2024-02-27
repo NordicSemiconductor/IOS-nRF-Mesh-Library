@@ -1,4 +1,4 @@
-#  ``nRFMeshProvision/BaseGattProxyBearer``
+#  ``NordicMesh/BaseGattProxyBearer``
 
 It is not required to use this implementation with nRF Mesh Provisioning library.
 

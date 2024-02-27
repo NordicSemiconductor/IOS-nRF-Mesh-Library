@@ -29,7 +29,7 @@
 */
 
 import UIKit
-import nRFMeshProvision
+import NordicMesh
 
 protocol GroupDelegate {
     func groupChanged(_ group: Group)

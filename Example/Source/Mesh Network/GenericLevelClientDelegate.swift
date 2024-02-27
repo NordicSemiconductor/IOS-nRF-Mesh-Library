@@ -29,7 +29,7 @@
 */
 
 import Foundation
-import nRFMeshProvision
+import NordicMesh
 
 class GenericLevelClientDelegate: ModelDelegate {
     let messageTypes: [UInt32 : MeshMessage.Type]

@@ -179,7 +179,7 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     /// Retrieves the current RSSI value for the peripheral while it is connected
     /// to the central manager.
     ///
-    /// The result will be returned using ``GattBearerDelegate/bearer(_:didReadRSSI:)-4fgoz`` callback.
+    /// The result will be returned using ``GattBearerDelegate/bearer(_:didReadRSSI:)-2cyvn`` callback.
     open func readRSSI() {
         guard basePeripheral.state == .connected else {
             return

@@ -83,7 +83,7 @@ public class Model: Codable {
     /// It may be that the Model is subscribed to some other Groups, which are
     /// not known to the local database, and those are not returned.
     ///
-    /// Use ``Model/isSubscribed(to:)-8ol17`` to check other Groups.
+    /// Use ``Model/isSubscribed(to:)-9k2uv`` to check other Groups.
     public var subscriptions: [Group] {
         // A model may be additionally subscribed to any special address
         // except from All Nodes.

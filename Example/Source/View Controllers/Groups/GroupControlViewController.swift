@@ -29,7 +29,7 @@
 */
 
 import UIKit
-import nRFMeshProvision
+import NordicMesh
 
 private class Section {
     let applicationKey: ApplicationKey

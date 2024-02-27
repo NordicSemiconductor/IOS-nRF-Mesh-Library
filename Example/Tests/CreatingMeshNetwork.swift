@@ -28,7 +28,7 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
-@testable import nRFMeshProvision
+@testable import NordicMesh
 import XCTest
 
 private struct TestStorage: Storage {

@@ -1,4 +1,4 @@
-# ``nRFMeshProvision/ProvisioningManager``
+# ``NordicMesh/ProvisioningManager``
 
 ## Topics
 

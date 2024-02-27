@@ -29,7 +29,7 @@
 */
 
 import UIKit
-import nRFMeshProvision
+import NordicMesh
 
 protocol EditProvisionerDelegate {
     /// Notifies the delegate that the Provisioner was added to the mesh network.

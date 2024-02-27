@@ -23,7 +23,7 @@ to ``ModelDelegate/model(_:didReceiveResponse:toAcknowledgedMessage:from:)`` of 
   configure the models on the Primary and Secondary Element of the *local node* using **Network** tab.
 
 The second method does not require setting up local models. 
-Use ``MeshNetworkManager/send(_:from:to:withTtl:using:)-48vjl`` or other variants of this method to send 
+Use ``MeshNetworkManager/send(_:from:to:withTtl:using:)-8i087`` or other variants of this method to send 
 a message to the desired destination.
 
 > Note: The second method can be shown using nRF Mesh app either by sending messages directly

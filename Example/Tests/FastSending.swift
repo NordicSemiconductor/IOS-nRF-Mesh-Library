@@ -30,7 +30,7 @@
 
 import XCTest
 import os.log
-@testable import nRFMeshProvision
+@testable import NordicMesh
 
 private struct TestStorage: Storage {
     

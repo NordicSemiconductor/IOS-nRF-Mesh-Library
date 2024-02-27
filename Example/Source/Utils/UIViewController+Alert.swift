@@ -29,7 +29,7 @@
 */
 
 import UIKit
-import nRFMeshProvision
+import NordicMesh
 
 extension Selector {
     

@@ -29,7 +29,7 @@
 */
 
 import Foundation
-import nRFMeshProvision
+import NordicMesh
 
 struct SimpleOnOffSetUnacknowledged: StaticVendorMessage {
     // The Op Code consists of:

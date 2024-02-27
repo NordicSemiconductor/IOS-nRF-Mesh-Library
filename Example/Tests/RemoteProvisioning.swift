@@ -30,7 +30,7 @@
 
 import XCTest
 import CoreBluetooth
-@testable import nRFMeshProvision
+@testable import NordicMesh
 
 class RemoteProvisioning: XCTestCase {
     let rssi: NSNumber = -50 // dBm

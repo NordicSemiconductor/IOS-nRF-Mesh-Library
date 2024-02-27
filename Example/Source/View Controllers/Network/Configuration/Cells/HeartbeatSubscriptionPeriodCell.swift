@@ -29,7 +29,7 @@
 */
 
 import UIKit
-import nRFMeshProvision
+import NordicMesh
 
 protocol HeartbeatSubscriptionPeriodDelegate {
     func periodDidChange(_ periodLog: UInt8)

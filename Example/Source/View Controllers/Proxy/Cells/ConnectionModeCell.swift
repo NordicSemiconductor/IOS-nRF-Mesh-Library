@@ -29,7 +29,7 @@
 */
 
 import UIKit
-import nRFMeshProvision
+import NordicMesh
 
 protocol ConnectionModeDelegate: AnyObject {
     func connectionModeDidChange(automatic: Bool)

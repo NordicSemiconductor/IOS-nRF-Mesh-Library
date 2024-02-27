@@ -29,7 +29,7 @@
 */
 
 import UIKit
-import nRFMeshProvision
+import NordicMesh
 
 class NodeFeaturesCell: UITableViewCell {
     @IBOutlet weak var relayLabel: UILabel!

@@ -1,4 +1,4 @@
-framework module nRFMeshProvision {
+framework module NordicMesh {
   umbrella header "nRFMeshProvision-umbrella.h"
 
   export *

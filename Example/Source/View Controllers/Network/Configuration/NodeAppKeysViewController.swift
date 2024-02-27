@@ -29,7 +29,7 @@
 */
 
 import UIKit
-import nRFMeshProvision
+import NordicMesh
 
 class NodeAppKeysViewController: ProgressViewController, Editable {
     

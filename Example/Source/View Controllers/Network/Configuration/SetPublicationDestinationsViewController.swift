@@ -29,7 +29,7 @@
 */
 
 import UIKit
-import nRFMeshProvision
+import NordicMesh
 
 protocol DestinationDelegate {
     func keySelected(_ applicationKey: ApplicationKey)

@@ -30,7 +30,7 @@
 //
 
 import UIKit
-import nRFMeshProvision
+import NordicMesh
 
 class ElementViewController: UITableViewController {
     

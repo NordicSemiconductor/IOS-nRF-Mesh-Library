@@ -29,7 +29,7 @@
 */
 
 import Foundation
-import nRFMeshProvision
+import NordicMesh
 
 /// This is an implementation of a simple Vendor Model defined in nRF Mesh SDK from
 /// Nordic Semiconductor.

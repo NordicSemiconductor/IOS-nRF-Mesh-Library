@@ -29,7 +29,7 @@
  */
 
 import UIKit
-import nRFMeshProvision
+import NordicMesh
 
 class GroupsViewController: UITableViewController, Editable, UISearchBarDelegate {
     private var groups: [Group] = []

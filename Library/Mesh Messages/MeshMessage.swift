@@ -69,7 +69,7 @@ public protocol BaseMeshMessage {
 /// received from the mesh network. For messages with the Op Code known
 /// during compilation a ``StaticMeshMessage`` protocol should be preferred.
 ///
-/// Parameters ``MeshMessage/security-5qcg9`` and ``MeshMessage/isSegmented-3lss6``
+/// Parameters ``MeshMessage/security-5eige`` and ``MeshMessage/isSegmented-891sy``
 /// are checked and should be set only for outgoing messages.
 public protocol MeshMessage: BaseMeshMessage {
     /// The message Op Code.
@@ -80,7 +80,7 @@ public protocol MeshMessage: BaseMeshMessage {
     ///
     /// Only Segmented Access Messages can use 64-bit MIC. If the payload
     /// is shorter than 11 bytes, make sure you return `true` from
-    /// ``MeshMessage/isSegmented-3lss6``, otherwise this field will be ignored.
+    /// ``MeshMessage/isSegmented-891sy``, otherwise this field will be ignored.
     var security: MeshMessageSecurity { get }
     /// Returns whether the message should be sent or was sent as
     /// Segmented Access Message. By default, this parameter returns

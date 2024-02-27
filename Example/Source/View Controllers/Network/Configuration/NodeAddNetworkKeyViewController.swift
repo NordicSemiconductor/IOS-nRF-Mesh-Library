@@ -29,7 +29,7 @@
 */
 
 import UIKit
-import nRFMeshProvision
+import NordicMesh
 
 protocol NetworkKeyDelegate {
     /// This method is called when a new Network Key has been added to the Node.

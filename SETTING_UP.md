@@ -7,7 +7,7 @@ Using CocoaPods:
 You can use [Swift Package Manager](https://swift.org/package-manager/) and specify dependency in `Package.swift` by adding this:
 
 ```swift
-.package(url: "https://github.com/NordicSemiconductor/IOS-nRF-Mesh-Library", .upToNextMinor(from: "4.0.1"))
+.package(url: "https://github.com/NordicSemiconductor/IOS-nRF-Mesh-Library", .upToNextMinor(from: "x.y")) // Replace x.y with your required version
 ```
 
 Also, have a look at [Swift Package Manager @ CryptoSwift](https://github.com/krzyzanowskim/CryptoSwift/blob/master/README.md#swift-package-manager).
@@ -30,7 +30,7 @@ Also, have a look at [Swift Package Manager @ CryptoSwift](https://github.com/kr
 
 - Open the newly created `.xcworkspace`
 
-- Import the library to any of your classes by using `import nRFMeshProvision` and begin working on your project
+- Import the library to any of your classes by using `import NordicMesh` and begin working on your project
 
 
 #### Carthage

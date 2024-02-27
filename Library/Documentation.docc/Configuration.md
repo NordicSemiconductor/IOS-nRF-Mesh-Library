@@ -12,7 +12,7 @@ and the configured Node, which know the key, can encrypt and decrypt such messag
 Use ``MeshNetworkManager/sendToLocalNode(_:)`` to configure the *local node*. The ``ConfigMessage``s
 will be handled by the *Configuration Server* model automatically by the library.
 
-To configure the remote nodes, use ``MeshNetworkManager/send(_:to:withTtl:)-2bthl``.
+To configure the remote nodes, use ``MeshNetworkManager/send(_:to:withTtl:)-j3dt``.
 
 Status messages for configuration messages are delivered using
 ``MeshNetworkDelegate/meshNetworkManager(_:didReceiveMessage:sentFrom:to:)`` to the 

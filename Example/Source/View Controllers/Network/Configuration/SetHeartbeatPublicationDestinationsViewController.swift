@@ -29,7 +29,7 @@
 */
 
 import UIKit
-import nRFMeshProvision
+import NordicMesh
 
 protocol HeartbeatDestinationDelegate {
     func keySelected(_ networkKey: NetworkKey)

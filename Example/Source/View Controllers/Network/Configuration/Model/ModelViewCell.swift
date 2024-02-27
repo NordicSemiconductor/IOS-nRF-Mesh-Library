@@ -29,7 +29,7 @@
 */
 
 import UIKit
-import nRFMeshProvision
+import NordicMesh
 
 protocol ModelViewCellDelegate: AnyObject {
     /// Encrypts the message with the first Application Key bound to the given

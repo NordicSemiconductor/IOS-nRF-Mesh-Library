@@ -29,7 +29,7 @@
 */
 
 import UIKit
-import nRFMeshProvision
+import NordicMesh
 
 protocol SubscriptionDelegate {
     /// This method is called when a new subscription was added.

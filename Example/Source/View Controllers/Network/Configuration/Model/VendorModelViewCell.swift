@@ -29,7 +29,7 @@
 */
 
 import UIKit
-import nRFMeshProvision
+import NordicMesh
 
 protocol RuntimeVendorMessage: VendorMessage {
     var isSegmented: Bool { get set }

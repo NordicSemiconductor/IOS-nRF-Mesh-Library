@@ -28,7 +28,7 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
-import nRFMeshProvision
+import NordicMesh
 
 enum MeshTaskStatus {
     case pending

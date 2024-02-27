@@ -30,7 +30,7 @@
 
 import Foundation
 import UIKit
-import nRFMeshProvision
+import NordicMesh
 
 protocol OobSelector {
     // Empty

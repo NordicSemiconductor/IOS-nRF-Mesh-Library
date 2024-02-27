@@ -29,7 +29,7 @@
 */
 
 import Foundation
-import nRFMeshProvision
+import NordicMesh
 
 class SceneServerDelegate: SceneServerModelDelegate {
     

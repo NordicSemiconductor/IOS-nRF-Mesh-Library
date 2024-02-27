@@ -29,7 +29,7 @@
 */
 
 import XCTest
-@testable import nRFMeshProvision
+@testable import NordicMesh
 
 class CryptoTest: XCTestCase {
     let data     = Data(hex: "00112233445566778899AABBCCDDEEFF")

@@ -880,7 +880,7 @@ public extension MeshNetworkManager {
     /// When the task in which the stream is iterated gets cancelled the stream
     /// will return `nil`.
     ///
-    /// - warning: This method is implemented using ``waitFor(messageWithOpCode:from:to:timeout:)-6673k``.
+    /// - warning: This method is implemented using ``waitFor(messageWithOpCode:from:to:timeout:)-2cgvz``.
     ///            It is not possible to await a message and message stream simultaneously.
     ///
     /// - parameters:
@@ -903,7 +903,7 @@ public extension MeshNetworkManager {
     /// When the task in which the stream is iterated gets cancelled the stream
     /// will return `nil`.
     ///
-    /// - warning: This method is implemented using ``waitFor(messageWithOpCode:from:to:timeout:)-6673k``.
+    /// - warning: This method is implemented using ``waitFor(messageWithOpCode:from:to:timeout:)-2qhbz``.
     ///            It is not possible to await a message and message stream simultaneously.
     ///
     /// - parameters:
@@ -922,7 +922,7 @@ public extension MeshNetworkManager {
     /// When the task in which the stream is iterated gets cancelled the stream
     /// will return `nil`.
     ///
-    /// - warning: This method is implemented using ``waitFor(messageFrom:to:timeout:)-24q2d``.
+    /// - warning: This method is implemented using ``waitFor(messageFrom:to:timeout:)-7igrw``.
     ///            It is not possible to await a message and message stream simultaneously.
     ///
     /// - parameters:
@@ -944,7 +944,7 @@ public extension MeshNetworkManager {
     /// When the task in which the stream is iterated gets cancelled the stream
     /// will return `nil`.
     ///
-    /// - warning: This method is implemented using ``waitFor(messageFrom:to:timeout:)-24q2d``.
+    /// - warning: This method is implemented using ``waitFor(messageFrom:to:timeout:)-7igrw``.
     ///            It is not possible to await a message and message stream simultaneously.
     ///
     /// - parameters:
@@ -1174,7 +1174,7 @@ public extension MeshNetworkManager {
     
     /// Forgets the currently loaded network and saves the state.
     ///
-    /// The manager gets to the state as if no ``load()`` or ``createNewMeshNetwork(withName:by:)-97wsf``
+    /// The manager gets to the state as if no ``load()`` or ``createNewMeshNetwork(withName:by:)-5b026``
     /// was called.
     ///
     /// - returns: `True` if the network settings was saved, `false` otherwise.
