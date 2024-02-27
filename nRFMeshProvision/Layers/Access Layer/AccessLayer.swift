@@ -238,8 +238,7 @@ internal class AccessLayer {
         
         // Set timers for the acknowledged messages.
         // Acknowledged messages sent to a Group address won't await a Status.
-        if message is AcknowledgedMeshMessage,
-           destination.address.isUnicast {
+        if message.isAcknowledged, destination.address.isUnicast {
             createReliableContext(for: pdu, sentFrom: element, withTtl: initialTtl, using: keySet)
         }
         
