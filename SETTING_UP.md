@@ -30,9 +30,6 @@ Also, have a look at [Swift Package Manager @ CryptoSwift](https://github.com/kr
 
 - Open the newly created `.xcworkspace`
 
-- Import the library to any of your classes by using `import NordicMesh` and begin working on your project
-
-
 #### Carthage
 
 - Create a new **Cartfile** in your project's root with the following contents
@@ -44,11 +41,12 @@ Also, have a look at [Swift Package Manager @ CryptoSwift](https://github.com/kr
 - Build with carthage
 
     ```
-    carthage update --platform iOS // also OSX platform is available for macOS builds
+    carthage update [--platform iOS] --use-xcframeworks // also OSX platform is available for macOS builds
     ```
 
-- Carthage will build the **nRFMeshProvision.framework** files in **Carthage/Build/**, 
-you may now copy all those files to your project and use the library, additionally, carthage also builds **\*.dsym** files 
-if you need to resymbolicate crash logs. you may want to keep those files bundled with your builds for future use.
+- Carthage will build the **NordicMesh.xcframework** and **CryptoSwift.xcframework** files in **Carthage/Build/**.
+  Copy frameworks for required platforms into your Xcode project like described [here](https://github.com/Carthage/Carthage?tab=readme-ov-file#quick-start).
 
-Next: [Getting started >](GETTING_STARTED.md)
+## Importing NordicMesh framework
+
+Import the library to any of your classes by using `import NordicMesh` and begin working on your project!
