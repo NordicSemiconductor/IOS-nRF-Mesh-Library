@@ -185,6 +185,9 @@
 		F09DE4D329E99A360073969A /* SelectGroupsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DE4D229E99A360073969A /* SelectGroupsViewController.swift */; };
 		F09DE4D729EEBEAD0073969A /* SelectModelsForSubscriptionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DE4D629EEBEAD0073969A /* SelectModelsForSubscriptionViewController.swift */; };
 		F0E6D64D29F2A4D2004B1C26 /* SchedulerMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E6D64B29F2A4A9004B1C26 /* SchedulerMessages.swift */; };
+		F0FB18F72B8E90CF00683C3F /* LightLCViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0FB18F52B8E90CF00683C3F /* LightLCViewCell.swift */; };
+		F0FB18F82B8E90CF00683C3F /* LightLC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0FB18F62B8E90CF00683C3F /* LightLC.xib */; };
+		F0FB18FA2B8E919C00683C3F /* LightLCClientDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0FB18F92B8E919C00683C3F /* LightLCClientDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -389,6 +392,9 @@
 		F09DE4D629EEBEAD0073969A /* SelectModelsForSubscriptionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectModelsForSubscriptionViewController.swift; sourceTree = "<group>"; };
 		F0AA20602AD6AD0100CF81FF /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		F0E6D64B29F2A4A9004B1C26 /* SchedulerMessages.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SchedulerMessages.swift; sourceTree = "<group>"; };
+		F0FB18F52B8E90CF00683C3F /* LightLCViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCViewCell.swift; sourceTree = "<group>"; };
+		F0FB18F62B8E90CF00683C3F /* LightLC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LightLC.xib; sourceTree = "<group>"; };
+		F0FB18F92B8E919C00683C3F /* LightLCClientDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCClientDelegate.swift; sourceTree = "<group>"; };
 		F57EEAABA13E16EBDF1CADFD /* Pods_nRF_Mesh_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRF_Mesh_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -491,6 +497,7 @@
 			children = (
 				5231403B22FDA8670074325A /* ConfigurationServer.xib */,
 				52A9C17C230EB9490036792A /* GenericOnOff.xib */,
+				F0FB18F62B8E90CF00683C3F /* LightLC.xib */,
 				A7A59BD4277225A70045A8ED /* GenericPowerOnOff.xib */,
 				A7B526A6277B210000F5C60D /* GenericPowerOnOffSetup.xib */,
 				52A9C1C42313D7D80036792A /* GenericLevel.xib */,
@@ -510,6 +517,7 @@
 				A7B526A5277B210000F5C60D /* GenericPowerOnOffSetupViewCell.swift */,
 				52A9C1C32313D7D80036792A /* GenericLevelViewCell.swift */,
 				5217D2E3250F90D8004FDE79 /* GenericDefaultTransitionTimeViewCell.swift */,
+				F0FB18F52B8E90CF00683C3F /* LightLCViewCell.swift */,
 				5231404B230AC4680074325A /* VendorModelViewCell.swift */,
 			);
 			path = Model;
@@ -752,6 +760,7 @@
 				52E54CE22344978300478F05 /* GenericLevelServerDelegate.swift */,
 				52E54CE62345EDA700478F05 /* GenericState.swift */,
 				A7A59BD82773218C0045A8ED /* GenericPowerOnOffClientDelegate.swift */,
+				F0FB18F92B8E919C00683C3F /* LightLCClientDelegate.swift */,
 			);
 			path = "Mesh Network";
 			sourceTree = "<group>";
@@ -1049,6 +1058,7 @@
 				5231404E230AC4680074325A /* VendorModel.xib in Resources */,
 				5231403C22FDA8670074325A /* ConfigurationServer.xib in Resources */,
 				521599DB25E9306300F602FA /* CHANGELOG.md in Resources */,
+				F0FB18F82B8E90CF00683C3F /* LightLC.xib in Resources */,
 				52A8EA8B24E6A371004C14C7 /* SetHeartbeatPublication.storyboard in Resources */,
 				607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */,
 				52835250227887970097B949 /* Settings.storyboard in Resources */,
@@ -1220,6 +1230,7 @@
 				52547EF92317ECA70002AA7B /* DialogSegue.swift in Sources */,
 				525242E0225CBFEC0044CECB /* RangeObject+String.swift in Sources */,
 				529B7575224107A5008F1CE7 /* AppInfo.swift in Sources */,
+				F0FB18FA2B8E919C00683C3F /* LightLCClientDelegate.swift in Sources */,
 				52121526231528AC0059FB3D /* GenericOnOffGroupCell.swift in Sources */,
 				527596322A138F0600B04C6F /* SelectModelsForPublicationViewController.swift in Sources */,
 				A7A59BD92773218C0045A8ED /* GenericPowerOnOffClientDelegate.swift in Sources */,
@@ -1277,6 +1288,7 @@
 				F09DE4CA29DC68900073969A /* MulticolorProgressView.swift in Sources */,
 				52A8EA8D24E6A470004C14C7 /* SetHeartbeatPublicationViewController.swift in Sources */,
 				A7A59BD7277225E70045A8ED /* GenericPowerOnOffViewCell.swift in Sources */,
+				F0FB18F72B8E90CF00683C3F /* LightLCViewCell.swift in Sources */,
 				F085CA0829D70ACB00C2DF89 /* ConfigurationViewController.swift in Sources */,
 				52547F26232A3F470002AA7B /* ProvisionersViewController.swift in Sources */,
 				529EC8DA2A309C640056BB48 /* CompanyIdentifier.swift in Sources */,
