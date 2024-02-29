@@ -33,7 +33,7 @@ import NordicMesh
 
 private class Section {
     let applicationKey: ApplicationKey
-    var items: [(modelId: UInt32, models: [Model])] = []
+    var items: [(modelId: UInt32, messageIndex: Int, models: [Model])] = []
     
     init(_ applicationKey: ApplicationKey) {
         self.applicationKey = applicationKey
@@ -71,7 +71,8 @@ class GroupControlViewController: ProgressCollectionViewController {
                                            + "- Generic OnOff Server,\n"
                                            + "- Generic Level Server,\n"
                                            + "- Scene Server,\n"
-                                           + "- Scene Setup Server.\n\n"
+                                           + "- Scene Setup Server,\n"
+                                           + "- Light LC Server.\n\n"
                                            + "This limitation only applies to the app,\n"
                                            + "not the underlying mesh library.",
                                     messageImage: #imageLiteral(resourceName: "baseline-groups"))
@@ -89,10 +90,12 @@ class GroupControlViewController: ProgressCollectionViewController {
                             section = Section(key)
                             sections.append(section)
                         }
-                        if let index = section.items.firstIndex(where: { $0.modelId == model.modelId }) {
-                            section.items[index].models.append(model)
-                        } else {
-                            section.items.append((modelId: model.modelId, models: [model]))
+                        for messageIndex in 0..<model.messageCount {
+                            if let index = section.items.firstIndex(where: { $0.modelId == model.modelId && $0.messageIndex == messageIndex }) {
+                                section.items[index].models.append(model)
+                            } else {
+                                section.items.append((modelId: model.modelId, messageIndex: messageIndex, models: [model]))
+                            }
                         }
                     }
                 }
@@ -152,7 +155,7 @@ class GroupControlViewController: ProgressCollectionViewController {
                                  cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let section = sections[indexPath.section]
         let item = section.items[indexPath.row]
-        let identifier = String(format: "%08X", item.modelId)
+        let identifier = String(format: "%08X_%d", item.modelId, item.messageIndex)
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as! ModelGroupCell
         cell.group = group
         cell.applicationKey = section.applicationKey
@@ -242,13 +245,28 @@ extension GroupControlViewController: MeshNetworkDelegate {
 
 private extension Model {
     
+    // Whether the model has dedicated UI for sending messages.
     var isSupported: Bool {
         return modelIdentifier == .genericOnOffServerModelId ||
                modelIdentifier == .genericLevelServerModelId ||
                modelIdentifier == .sceneServerModelId ||
-               modelIdentifier == .sceneSetupServerModelId
+               modelIdentifier == .sceneSetupServerModelId ||
+               modelIdentifier == .lightLCServerModelId
     }
     
+    // Number of different messages which may be sent to a model
+    // using dedicated UI.
+    var messageCount: Int {
+        guard isSupported else { return 0 }
+        if modelIdentifier == .lightLCServerModelId {
+            // Light LC Mode, Light LC Occupancy Mode, Light LC Light OnOff
+            return 3
+        }
+        return 1
+    }
+    
+    // The 32-bit Model Identifier, including the Company ID (or 0x0000)
+    // for Bluetooth SIG assigned models.
     var modelId: UInt32 {
         let companyId = isBluetoothSIGAssigned ? 0 : companyIdentifier!
         return (UInt32(companyId) << 16) | UInt32(modelIdentifier)

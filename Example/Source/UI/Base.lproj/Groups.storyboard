@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Nue-b9-dg6">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="22505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Nue-b9-dg6">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22504"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="collection view cell content view" minToolsVersion="11.0"/>
@@ -13,24 +13,24 @@
         <!--Groups-->
         <scene sceneID="OvM-cp-z6h">
             <objects>
-                <tableViewController id="GWa-8U-U7m" customClass="GroupsViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="GWa-8U-U7m" customClass="GroupsViewController" customModule="nRF_Mesh" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="uVa-zS-ghQ">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="808"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="804"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="group" rowHeight="86" id="1fT-ky-IiZ" customClass="GroupCell" customModule="nRFMeshProvision_Example" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="55.5" width="414" height="86"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="group" rowHeight="86" id="1fT-ky-IiZ" customClass="GroupCell" customModule="nRF_Mesh" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="38" width="414" height="86"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="1fT-ky-IiZ" id="rfK-Ou-kar">
-                                    <rect key="frame" x="0.0" y="0.0" width="383" height="86"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="383.5" height="86"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="mesh-group" translatesAutoresizingMaskIntoConstraints="NO" id="uT9-q1-V0U">
                                             <rect key="frame" x="20" y="19" width="48" height="48"/>
                                         </imageView>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="Group Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wi4-gM-J5Z">
-                                            <rect key="frame" x="84" y="11" width="291" height="21"/>
+                                            <rect key="frame" x="84" y="11" width="291.5" height="21"/>
                                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
@@ -42,7 +42,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" text="00000000-1234-5678-ABCD-0123456789AB" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gza-hl-jDH">
-                                            <rect key="frame" x="153.5" y="40" width="221.5" height="31.5"/>
+                                            <rect key="frame" x="153.5" y="40" width="222" height="31.5"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                             <color key="textColor" systemColor="secondaryLabelColor"/>
                                             <nil key="highlightedColor"/>
@@ -89,9 +89,9 @@
         <!--Title-->
         <scene sceneID="Mxx-sp-edq">
             <objects>
-                <collectionViewController id="NiG-9S-OVX" customClass="GroupControlViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
+                <collectionViewController id="NiG-9S-OVX" customClass="GroupControlViewController" customModule="nRF_Mesh" customModuleProvider="target" sceneMemberID="viewController">
                     <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="xEO-9b-lVz">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="756"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="752"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemGroupedBackgroundColor"/>
                         <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="16" minimumInteritemSpacing="16" sectionInsetReference="safeArea" id="gTj-r7-2ZV">
@@ -101,7 +101,7 @@
                             <inset key="sectionInset" minX="16" minY="0.0" maxX="16" maxY="0.0"/>
                         </collectionViewFlowLayout>
                         <cells>
-                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="00001000" id="msY-zV-q2n" customClass="GenericOnOffGroupCell" customModule="nRFMeshProvision_Example" customModuleProvider="target">
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="00001000_0" id="msY-zV-q2n" customClass="GenericOnOffGroupCell" customModule="nRF_Mesh" customModuleProvider="target">
                                 <rect key="frame" x="16" y="56" width="130" height="130"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
@@ -162,7 +162,7 @@
                                     <outlet property="title" destination="pDS-88-OHD" id="Lez-r1-rFN"/>
                                 </connections>
                             </collectionViewCell>
-                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="00001002" id="vv8-lb-e3T" customClass="GenericLevelGroupCell" customModule="nRFMeshProvision_Example" customModuleProvider="target">
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="00001002_0" id="vv8-lb-e3T" customClass="GenericLevelGroupCell" customModule="nRF_Mesh" customModuleProvider="target">
                                 <rect key="frame" x="268" y="56" width="130" height="130"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
@@ -223,7 +223,7 @@
                                     <outlet property="title" destination="frv-aA-PMb" id="AB1-TE-Ceo"/>
                                 </connections>
                             </collectionViewCell>
-                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" reuseIdentifier="00001203" id="sCJ-yp-20C" customClass="SceneServerGroupCell" customModule="nRFMeshProvision_Example" customModuleProvider="target">
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" reuseIdentifier="00001203_0" id="sCJ-yp-20C" customClass="SceneServerGroupCell" customModule="nRF_Mesh" customModuleProvider="target">
                                 <rect key="frame" x="16" y="202" width="130" height="130"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="u0L-eC-ePP">
@@ -270,7 +270,7 @@
                                     <outlet property="title" destination="hQQ-kO-YwC" id="4GP-rL-7rN"/>
                                 </connections>
                             </collectionViewCell>
-                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" reuseIdentifier="00001204" id="7cN-wA-mai" customClass="SceneSetupServerGroupCell" customModule="nRFMeshProvision_Example" customModuleProvider="target">
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" reuseIdentifier="00001204_0" id="7cN-wA-mai" customClass="SceneSetupServerGroupCell" customModule="nRF_Mesh" customModuleProvider="target">
                                 <rect key="frame" x="268" y="202" width="130" height="130"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="dgs-Ba-8oI">
@@ -317,8 +317,188 @@
                                     <outlet property="title" destination="037-WX-CUe" id="Tfq-33-B71"/>
                                 </connections>
                             </collectionViewCell>
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" reuseIdentifier="0000130F_0" id="maH-D7-5fU" customClass="LightLCModeGroupCell" customModule="nRF_Mesh" customModuleProvider="target">
+                                <rect key="frame" x="16" y="348" width="130" height="130"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="sSX-Rb-uPk">
+                                    <rect key="frame" x="0.0" y="0.0" width="130" height="130"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="bottom" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="groups_light_lc_mode" translatesAutoresizingMaskIntoConstraints="NO" id="MjE-cd-ccj">
+                                            <rect key="frame" x="0.0" y="0.0" width="130" height="65"/>
+                                            <color key="tintColor" red="0.78399115799999997" green="0.0123451408" blue="0.49833476539999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </imageView>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1 Device" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lCC-nL-fiS">
+                                            <rect key="frame" x="0.0" y="65" width="130" height="17"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                            <color key="textColor" systemColor="secondaryLabelColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5hg-6t-qTA">
+                                            <rect key="frame" x="0.0" y="82" width="65" height="48"/>
+                                            <state key="normal" title="Button"/>
+                                            <buttonConfiguration key="configuration" style="plain" title="ON"/>
+                                            <connections>
+                                                <action selector="onTapped:" destination="maH-D7-5fU" eventType="touchUpInside" id="1En-X3-fgD"/>
+                                            </connections>
+                                        </button>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tFL-aO-yvo">
+                                            <rect key="frame" x="65" y="82" width="65" height="48"/>
+                                            <state key="normal" title="Button"/>
+                                            <buttonConfiguration key="configuration" style="plain" title="OFF"/>
+                                            <connections>
+                                                <action selector="offTapped:" destination="maH-D7-5fU" eventType="touchUpInside" id="wwC-pY-A45"/>
+                                            </connections>
+                                        </button>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstAttribute="bottom" secondItem="MjE-cd-ccj" secondAttribute="bottom" multiplier="2" id="3kU-b7-x39"/>
+                                        <constraint firstItem="tFL-aO-yvo" firstAttribute="top" secondItem="lCC-nL-fiS" secondAttribute="bottom" id="4II-yS-531"/>
+                                        <constraint firstAttribute="bottom" secondItem="5hg-6t-qTA" secondAttribute="bottom" id="9GN-3H-yEx"/>
+                                        <constraint firstAttribute="bottom" secondItem="tFL-aO-yvo" secondAttribute="bottom" id="HLJ-bW-bdc"/>
+                                        <constraint firstItem="5hg-6t-qTA" firstAttribute="leading" secondItem="sSX-Rb-uPk" secondAttribute="leading" id="IR9-iE-07Z"/>
+                                        <constraint firstItem="lCC-nL-fiS" firstAttribute="leading" secondItem="sSX-Rb-uPk" secondAttribute="leading" id="Kuq-AW-L8j"/>
+                                        <constraint firstAttribute="trailing" secondItem="lCC-nL-fiS" secondAttribute="trailing" id="Oeh-I5-8Zp"/>
+                                        <constraint firstItem="lCC-nL-fiS" firstAttribute="top" secondItem="MjE-cd-ccj" secondAttribute="bottom" id="QXe-6N-djy"/>
+                                        <constraint firstItem="tFL-aO-yvo" firstAttribute="leading" secondItem="5hg-6t-qTA" secondAttribute="trailing" id="Rsh-zX-6vu"/>
+                                        <constraint firstItem="MjE-cd-ccj" firstAttribute="top" secondItem="sSX-Rb-uPk" secondAttribute="top" id="Tal-Tj-o13"/>
+                                        <constraint firstAttribute="trailing" secondItem="MjE-cd-ccj" secondAttribute="trailing" id="YOx-qw-D9O"/>
+                                        <constraint firstItem="5hg-6t-qTA" firstAttribute="top" secondItem="lCC-nL-fiS" secondAttribute="bottom" id="ewd-H5-J64"/>
+                                        <constraint firstItem="MjE-cd-ccj" firstAttribute="leading" secondItem="sSX-Rb-uPk" secondAttribute="leading" id="hQA-Vv-0f7"/>
+                                        <constraint firstAttribute="trailing" secondItem="5hg-6t-qTA" secondAttribute="trailing" multiplier="2" id="iH7-xH-7a7"/>
+                                        <constraint firstAttribute="trailing" secondItem="tFL-aO-yvo" secondAttribute="trailing" id="wpg-hn-rYZ"/>
+                                    </constraints>
+                                </collectionViewCellContentView>
+                                <color key="backgroundColor" systemColor="secondarySystemGroupedBackgroundColor"/>
+                                <connections>
+                                    <outlet property="icon" destination="MjE-cd-ccj" id="LjI-ZQ-g1E"/>
+                                    <outlet property="offButton" destination="tFL-aO-yvo" id="tF5-ST-1tn"/>
+                                    <outlet property="onButton" destination="5hg-6t-qTA" id="gPM-v5-6KG"/>
+                                    <outlet property="title" destination="lCC-nL-fiS" id="MGi-jt-TXV"/>
+                                </connections>
+                            </collectionViewCell>
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" reuseIdentifier="0000130F_1" id="MDY-2X-SH3" customClass="LightLCOccupancyModeGroupCell" customModule="nRF_Mesh" customModuleProvider="target">
+                                <rect key="frame" x="268" y="348" width="130" height="130"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="G0W-Fj-ZUS">
+                                    <rect key="frame" x="0.0" y="0.0" width="130" height="130"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <subviews>
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="bottom" horizontalHuggingPriority="251" verticalHuggingPriority="251" image=" groups_light_lc_occupancy_mode" translatesAutoresizingMaskIntoConstraints="NO" id="gR7-Ff-q5d">
+                                            <rect key="frame" x="0.0" y="0.0" width="130" height="65"/>
+                                            <color key="tintColor" red="0.78399115799999997" green="0.0123451408" blue="0.49833476539999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </imageView>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1 Device" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2qR-Xz-7rI">
+                                            <rect key="frame" x="0.0" y="65" width="130" height="17"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                            <color key="textColor" systemColor="secondaryLabelColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FSO-U7-8Ny">
+                                            <rect key="frame" x="0.0" y="82" width="65" height="48"/>
+                                            <state key="normal" title="Button"/>
+                                            <buttonConfiguration key="configuration" style="plain" title="ON"/>
+                                            <connections>
+                                                <action selector="onTapped:" destination="MDY-2X-SH3" eventType="touchUpInside" id="bKt-Sw-mkK"/>
+                                            </connections>
+                                        </button>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7kG-HI-gM2">
+                                            <rect key="frame" x="65" y="82" width="65" height="48"/>
+                                            <state key="normal" title="Button"/>
+                                            <buttonConfiguration key="configuration" style="plain" title="OFF"/>
+                                            <connections>
+                                                <action selector="offTapped:" destination="MDY-2X-SH3" eventType="touchUpInside" id="mUI-hA-tjo"/>
+                                            </connections>
+                                        </button>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="2qR-Xz-7rI" firstAttribute="top" secondItem="gR7-Ff-q5d" secondAttribute="bottom" id="74R-wr-Omk"/>
+                                        <constraint firstItem="7kG-HI-gM2" firstAttribute="top" secondItem="2qR-Xz-7rI" secondAttribute="bottom" id="BSz-EP-95X"/>
+                                        <constraint firstAttribute="trailing" secondItem="7kG-HI-gM2" secondAttribute="trailing" id="Fo4-gL-Gbv"/>
+                                        <constraint firstAttribute="trailing" secondItem="2qR-Xz-7rI" secondAttribute="trailing" id="JIw-oM-rXA"/>
+                                        <constraint firstAttribute="trailing" secondItem="gR7-Ff-q5d" secondAttribute="trailing" id="MQU-Kj-IDA"/>
+                                        <constraint firstAttribute="bottom" secondItem="7kG-HI-gM2" secondAttribute="bottom" id="ORm-op-nSd"/>
+                                        <constraint firstItem="FSO-U7-8Ny" firstAttribute="top" secondItem="2qR-Xz-7rI" secondAttribute="bottom" id="SI8-i2-RqP"/>
+                                        <constraint firstItem="gR7-Ff-q5d" firstAttribute="leading" secondItem="G0W-Fj-ZUS" secondAttribute="leading" id="f9W-Xd-ewb"/>
+                                        <constraint firstAttribute="trailing" secondItem="FSO-U7-8Ny" secondAttribute="trailing" multiplier="2" id="hSy-LP-iZn"/>
+                                        <constraint firstItem="2qR-Xz-7rI" firstAttribute="leading" secondItem="G0W-Fj-ZUS" secondAttribute="leading" id="k79-bX-F4f"/>
+                                        <constraint firstItem="7kG-HI-gM2" firstAttribute="leading" secondItem="FSO-U7-8Ny" secondAttribute="trailing" id="kNf-hF-3J6"/>
+                                        <constraint firstAttribute="bottom" secondItem="gR7-Ff-q5d" secondAttribute="bottom" multiplier="2" id="mJa-4J-Kps"/>
+                                        <constraint firstItem="FSO-U7-8Ny" firstAttribute="leading" secondItem="G0W-Fj-ZUS" secondAttribute="leading" id="qHm-1Q-69D"/>
+                                        <constraint firstAttribute="bottom" secondItem="FSO-U7-8Ny" secondAttribute="bottom" id="vzY-iO-mqs"/>
+                                        <constraint firstItem="gR7-Ff-q5d" firstAttribute="top" secondItem="G0W-Fj-ZUS" secondAttribute="top" id="wtz-8l-sL6"/>
+                                    </constraints>
+                                </collectionViewCellContentView>
+                                <color key="backgroundColor" systemColor="secondarySystemGroupedBackgroundColor"/>
+                                <connections>
+                                    <outlet property="icon" destination="gR7-Ff-q5d" id="nr9-ap-wk4"/>
+                                    <outlet property="offButton" destination="7kG-HI-gM2" id="oyQ-hh-q3I"/>
+                                    <outlet property="onButton" destination="FSO-U7-8Ny" id="gkS-YP-nml"/>
+                                    <outlet property="title" destination="2qR-Xz-7rI" id="6Da-1k-zJW"/>
+                                </connections>
+                            </collectionViewCell>
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" reuseIdentifier="0000130F_2" id="rzm-u7-e3y" customClass="LightLCLightOnOffGroupCell" customModule="nRF_Mesh" customModuleProvider="target">
+                                <rect key="frame" x="16" y="494" width="130" height="130"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="oMB-Ij-Ulj">
+                                    <rect key="frame" x="0.0" y="0.0" width="130" height="130"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <subviews>
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="bottom" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="groups_generic_onoff_outline" translatesAutoresizingMaskIntoConstraints="NO" id="aCK-wR-L0B">
+                                            <rect key="frame" x="0.0" y="0.0" width="130" height="65"/>
+                                            <color key="tintColor" red="0.78399115799999997" green="0.0123451408" blue="0.49833476539999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </imageView>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1 Device" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ACb-w7-njB">
+                                            <rect key="frame" x="0.0" y="65" width="130" height="17"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                            <color key="textColor" systemColor="secondaryLabelColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iix-Sh-qTh">
+                                            <rect key="frame" x="0.0" y="82" width="65" height="48"/>
+                                            <state key="normal" title="Button"/>
+                                            <buttonConfiguration key="configuration" style="plain" title="ON"/>
+                                            <connections>
+                                                <action selector="onTapped:" destination="rzm-u7-e3y" eventType="touchUpInside" id="oWH-fg-Ec8"/>
+                                            </connections>
+                                        </button>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QtR-Eq-2VV">
+                                            <rect key="frame" x="65" y="82" width="65" height="48"/>
+                                            <state key="normal" title="Button"/>
+                                            <buttonConfiguration key="configuration" style="plain" title="OFF"/>
+                                            <connections>
+                                                <action selector="offTapped:" destination="rzm-u7-e3y" eventType="touchUpInside" id="QWx-4H-UbM"/>
+                                            </connections>
+                                        </button>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="QtR-Eq-2VV" firstAttribute="leading" secondItem="iix-Sh-qTh" secondAttribute="trailing" id="0Pd-Qh-e20"/>
+                                        <constraint firstAttribute="bottom" secondItem="iix-Sh-qTh" secondAttribute="bottom" id="3tj-Hb-RaU"/>
+                                        <constraint firstAttribute="trailing" secondItem="iix-Sh-qTh" secondAttribute="trailing" multiplier="2" id="6q5-Q0-Rtu"/>
+                                        <constraint firstItem="iix-Sh-qTh" firstAttribute="leading" secondItem="oMB-Ij-Ulj" secondAttribute="leading" id="8KQ-II-4W2"/>
+                                        <constraint firstAttribute="trailing" secondItem="QtR-Eq-2VV" secondAttribute="trailing" id="A3v-L5-2VC"/>
+                                        <constraint firstItem="ACb-w7-njB" firstAttribute="top" secondItem="aCK-wR-L0B" secondAttribute="bottom" id="BZN-pc-YOY"/>
+                                        <constraint firstAttribute="bottom" secondItem="aCK-wR-L0B" secondAttribute="bottom" multiplier="2" id="CHe-bl-wth"/>
+                                        <constraint firstItem="iix-Sh-qTh" firstAttribute="top" secondItem="ACb-w7-njB" secondAttribute="bottom" id="ItT-zO-N8b"/>
+                                        <constraint firstAttribute="trailing" secondItem="aCK-wR-L0B" secondAttribute="trailing" id="cIX-Ot-2J6"/>
+                                        <constraint firstItem="QtR-Eq-2VV" firstAttribute="top" secondItem="ACb-w7-njB" secondAttribute="bottom" id="hRp-O1-dzW"/>
+                                        <constraint firstItem="aCK-wR-L0B" firstAttribute="leading" secondItem="oMB-Ij-Ulj" secondAttribute="leading" id="mgU-6s-lxn"/>
+                                        <constraint firstAttribute="trailing" secondItem="ACb-w7-njB" secondAttribute="trailing" id="oT4-6O-PhL"/>
+                                        <constraint firstItem="ACb-w7-njB" firstAttribute="leading" secondItem="oMB-Ij-Ulj" secondAttribute="leading" id="qZX-WC-yCm"/>
+                                        <constraint firstAttribute="bottom" secondItem="QtR-Eq-2VV" secondAttribute="bottom" id="rou-ZT-1aV"/>
+                                        <constraint firstItem="aCK-wR-L0B" firstAttribute="top" secondItem="oMB-Ij-Ulj" secondAttribute="top" id="wUc-L7-cmr"/>
+                                    </constraints>
+                                </collectionViewCellContentView>
+                                <color key="backgroundColor" systemColor="secondarySystemGroupedBackgroundColor"/>
+                                <connections>
+                                    <outlet property="icon" destination="aCK-wR-L0B" id="cf6-Rk-AWQ"/>
+                                    <outlet property="offButton" destination="QtR-Eq-2VV" id="YpH-7n-pNN"/>
+                                    <outlet property="onButton" destination="iix-Sh-qTh" id="W6f-fj-jsj"/>
+                                    <outlet property="title" destination="ACb-w7-njB" id="4vg-kE-OfV"/>
+                                </connections>
+                            </collectionViewCell>
                         </cells>
-                        <collectionReusableView key="sectionHeaderView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" reuseIdentifier="key" id="OxW-lD-lMj" customClass="SectionView" customModule="nRFMeshProvision_Example" customModuleProvider="target">
+                        <collectionReusableView key="sectionHeaderView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" reuseIdentifier="key" id="OxW-lD-lMj" customClass="SectionView" customModule="nRF_Mesh" customModuleProvider="target">
                             <rect key="frame" x="0.0" y="0.0" width="414" height="56"/>
                             <autoresizingMask key="autoresizingMask"/>
                             <subviews>
@@ -352,7 +532,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <segue destination="Z7x-iD-HmC" kind="custom" identifier="showDetails" customClass="DialogSegue" customModule="nRFMeshProvision_Example" customModuleProvider="target" id="Kyp-WD-PEV"/>
+                        <segue destination="Z7x-iD-HmC" kind="custom" identifier="showDetails" customClass="DialogSegue" customModule="nRF_Mesh" customModuleProvider="target" id="Kyp-WD-PEV"/>
                     </connections>
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qdR-KH-jUW" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -362,19 +542,19 @@
         <!--Targets-->
         <scene sceneID="Gaz-W4-vSH">
             <objects>
-                <tableViewController id="M2D-J7-ZN8" customClass="GroupTargetModelsViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="M2D-J7-ZN8" customClass="GroupTargetModelsViewController" customModule="nRF_Mesh" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="vak-nf-flV">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemGroupedBackgroundColor"/>
                         <view key="tableFooterView" contentMode="scaleToFill" id="rVa-mH-T78">
-                            <rect key="frame" x="0.0" y="111.5" width="414" height="1"/>
+                            <rect key="frame" x="0.0" y="133.5" width="414" height="1"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <color key="backgroundColor" systemColor="opaqueSeparatorColor"/>
                         </view>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="item" textLabel="1qu-NR-cux" detailTextLabel="CxP-Zt-Up4" imageView="KsM-xH-U4D" style="IBUITableViewCellStyleSubtitle" id="j1W-Hl-bZg">
-                                <rect key="frame" x="0.0" y="28" width="414" height="55.5"/>
+                                <rect key="frame" x="0.0" y="50" width="414" height="55.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="j1W-Hl-bZg" id="Ka5-h2-apj">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="55.5"/>
@@ -422,19 +602,19 @@
         <!--Add Group-->
         <scene sceneID="vdq-GU-Iuf">
             <objects>
-                <tableViewController id="5hl-UK-X1c" customClass="AddGroupViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="5hl-UK-X1c" customClass="AddGroupViewController" customModule="nRF_Mesh" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="DdI-sU-xdu">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <sections>
                             <tableViewSection id="Toe-0l-8ny">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="b6x-Vm-rcW" detailTextLabel="O8m-cN-JoY" style="IBUITableViewCellStyleValue1" id="t4E-Gh-GIu">
-                                        <rect key="frame" x="0.0" y="18" width="414" height="44"/>
+                                        <rect key="frame" x="0.0" y="18" width="414" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="t4E-Gh-GIu" id="7pU-et-3ev">
-                                            <rect key="frame" x="0.0" y="0.0" width="383" height="44"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="383.5" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="b6x-Vm-rcW">
@@ -445,7 +625,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Detail" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="O8m-cN-JoY">
-                                                    <rect key="frame" x="331" y="12" width="44" height="20.5"/>
+                                                    <rect key="frame" x="331.5" y="12" width="44" height="20.5"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -455,10 +635,10 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="hRm-2r-dLC" detailTextLabel="gX0-4V-JlW" style="IBUITableViewCellStyleValue1" id="fH8-Od-blH">
-                                        <rect key="frame" x="0.0" y="62" width="414" height="44"/>
+                                        <rect key="frame" x="0.0" y="61.5" width="414" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="fH8-Od-blH" id="BtG-04-1eI">
-                                            <rect key="frame" x="0.0" y="0.0" width="383" height="44"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="383.5" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Address" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="hRm-2r-dLC">
@@ -469,7 +649,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Detail" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="gX0-4V-JlW">
-                                                    <rect key="frame" x="331" y="12" width="44" height="20.5"/>
+                                                    <rect key="frame" x="331.5" y="12" width="44" height="20.5"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -483,10 +663,10 @@
                             <tableViewSection footerTitle="Nested groups are currently not supported in the sample app." id="kuM-2B-Qaw">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" textLabel="Vie-e0-1fq" detailTextLabel="UUZ-a7-loC" style="IBUITableViewCellStyleValue1" id="meK-WK-GRp">
-                                        <rect key="frame" x="0.0" y="142" width="414" height="44"/>
+                                        <rect key="frame" x="0.0" y="141" width="414" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="meK-WK-GRp" id="VCm-f2-K4V">
-                                            <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Parent Group" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Vie-e0-1fq">
@@ -539,12 +719,12 @@
         <!--Groups-->
         <scene sceneID="0cH-e0-rsP">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Nue-b9-dg6" customClass="RootViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Nue-b9-dg6" customClass="RootViewController" customModule="nRF_Mesh" customModuleProvider="target" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Groups" image="tab_groups_outline_black_24pt" id="w2f-Wt-xLj"/>
                     <toolbarItems/>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translucent="NO" largeTitles="YES" id="uLQ-RZ-HAn">
-                        <rect key="frame" x="0.0" y="44" width="414" height="96"/>
+                        <rect key="frame" x="0.0" y="48" width="414" height="96"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <color key="barTintColor" red="0.0" green="0.66274509800000003" blue="0.80784313730000001" alpha="1" colorSpace="calibratedRGB"/>
@@ -570,7 +750,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="y7P-mW-r9X" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="WJ4-lJ-7ku">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="108"/>
+                        <rect key="frame" x="0.0" y="48" width="414" height="96"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="tintColor" red="0.0" green="0.66274509800000003" blue="0.80784313730000001" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                         <textAttributes key="titleTextAttributes">
@@ -596,7 +776,7 @@
                     <toolbarItems/>
                     <value key="contentSizeForViewInPopover" type="size" width="0.0" height="300"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="769-yY-4XD">
-                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <rect key="frame" x="0.0" y="48" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="tintColor" red="0.0" green="0.66274509800000003" blue="0.80784313730000001" alpha="1" colorSpace="calibratedRGB"/>
                         <textAttributes key="titleTextAttributes">
@@ -617,27 +797,29 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="6cj-je-47S"/>
+        <segue reference="Jtn-5N-mgs"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="0.0" green="0.46666666670000001" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>
     <resources>
+        <image name=" groups_light_lc_occupancy_mode" width="50" height="50"/>
         <image name="group_scene_outline" width="50" height="50"/>
         <image name="groups_generic_level_outline" width="50" height="50"/>
         <image name="groups_generic_onoff_outline" width="50" height="50"/>
+        <image name="groups_light_lc_mode" width="50" height="50"/>
         <image name="ic_flag_24pt" width="24" height="24"/>
         <image name="mesh-group" width="48" height="48"/>
         <image name="tab_groups_outline_black_24pt" width="24" height="24"/>
         <systemColor name="opaqueSeparatorColor">
-            <color red="0.77647058823529413" green="0.77647058823529413" blue="0.78431372549019607" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.77647058820000003" green="0.77647058820000003" blue="0.7843137255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="secondaryLabelColor">
-            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="secondarySystemGroupedBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemGroupedBackgroundColor">
-            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
