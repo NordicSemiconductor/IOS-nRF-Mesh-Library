@@ -32,7 +32,6 @@ import Foundation
 
 internal struct SegmentedControlMessage: SegmentedMessage {
     let message: MeshMessage?
-    let localElement: Element?
     let userInitiated: Bool
     let source: Address
     let destination: Address
@@ -88,7 +87,6 @@ internal struct SegmentedControlMessage: SegmentedMessage {
         ivIndex = networkPdu.ivIndex
         ttl = networkPdu.ttl
         message = nil
-        localElement = nil
         userInitiated = false
     }
 }
