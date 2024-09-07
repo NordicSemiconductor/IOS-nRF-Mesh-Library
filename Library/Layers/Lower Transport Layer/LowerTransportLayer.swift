@@ -294,7 +294,7 @@ internal class LowerTransportLayer {
         if pdu.destination.address.isUnicast {
             remainingNumberOfUnicastRetransmissions[sequenceZero] = (
                 networkManager.networkParameters.sarUnicastRetransmissionsCount,
-                networkManager.networkParameters.sarMulticastRetransmissionsCount
+                networkManager.networkParameters.sarUnicastRetransmissionsWithoutProgressCount
             )
         } else {
             remainingNumberOfMulticastRetransmissions[sequenceZero] =
