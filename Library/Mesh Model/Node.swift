@@ -821,7 +821,7 @@ internal extension Node {
     ///
     /// - parameter applicationKeyIndex: The Application Key index to add.
     func update(applicationKeyWithIndex applicationKeyIndex: KeyIndex) {
-        if let key = netKeys[applicationKeyIndex] {
+        if let key = appKeys[applicationKeyIndex] {
             key.updated = true
             meshNetwork?.timestamp = Date()
         }
