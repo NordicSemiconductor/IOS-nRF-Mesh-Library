@@ -234,7 +234,8 @@ internal extension Element {
         insert(model: Model(sigModelId: .configurationClientModelId,
                             delegate: ConfigurationClientHandler(meshNetwork)), at: 1)
         insert(model: Model(sigModelId: .healthServerModelId), at: 2)
-        insert(model: Model(sigModelId: .healthClientModelId), at: 3)
+        insert(model: Model(sigModelId: .healthClientModelId,
+                            delegate: HealthClientHandler()), at: 1)
         insert(model: Model(sigModelId: .privateBeaconClientModelId,
                             delegate: PrivateBeaconClientHandler(meshNetwork)), at: 4)
         insert(model: Model(sigModelId: .sarConfigurationClientModelId,
