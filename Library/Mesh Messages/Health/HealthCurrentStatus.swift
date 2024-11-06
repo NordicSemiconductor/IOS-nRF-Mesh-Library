@@ -40,24 +40,24 @@ public struct HealthCurrentStatus: StaticMeshResponse {
     }
 
     /// Test id
-    public let testId: Int8
+    public let testId: UInt8
 
     /// Company id
-    public let companyId: Int16
+    public let companyIdentifier: UInt16
     
     /// List of faults
+    /// If no Fault fields are present (nil), it means no registered fault condition exists on an element.
     public let faultArray: [HealthFault]?
     
-    
-    public init(testId: Int8, companyId: Int16) {
+    public init(testId: UInt8, companyIdentifier: UInt16) {
         self.testId = testId
-        self.companyId = companyId
+        self.companyIdentifier = companyIdentifier
         self.faultArray = nil
     }
     
-    public init(testId: Int8, companyId: Int16, faultArray: [HealthFault]) {
+    public init(testId: UInt8, companyIdentifier: UInt16, faultArray: [HealthFault]) {
         self.testId = testId
-        self.companyId = companyId
+        self.companyIdentifier = companyIdentifier
         self.faultArray = faultArray
     }
     
@@ -66,13 +66,12 @@ public struct HealthCurrentStatus: StaticMeshResponse {
             return nil
         }
         testId = parameters.read(fromOffset: 0)
-        companyId = parameters.read(fromOffset: 1)
+        companyIdentifier = parameters.read(fromOffset: 1)
         if parameters.count > 3 {
             faultArray = parameters
                 .subdata(in: 3 ..< parameters.count - 3)
                 .bytes
-                .filter { HealthFault(rawValue: $0) != nil }
-                .map { HealthFault(rawValue: $0)! }
+                .compactMap { HealthFault(rawValue: $0) }
         } else {
             faultArray = nil
         }

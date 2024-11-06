@@ -35,9 +35,7 @@ class HealthClientHandler: ModelDelegate {
     
     var isSubscriptionSupported: Bool = false
     
-    var publicationMessageComposer: MessageComposer? {
-        nil
-    }
+    var publicationMessageComposer: MessageComposer? = nil
     
     init() {
         let types: [StaticMeshMessage.Type] = [
@@ -49,29 +47,23 @@ class HealthClientHandler: ModelDelegate {
     }
     
     func model(_ model: NordicMesh.Model, didReceiveAcknowledgedMessage request: any NordicMesh.AcknowledgedMeshMessage, from source: NordicMesh.Address, sentTo destination: NordicMesh.MeshAddress) throws -> any NordicMesh.MeshResponse {
-        fatalError("didReceiveAcknowledgedMessage not implemented yet")
+        switch request {
+            // No acknowledged message supported by this Model.
+        default:
+            fatalError("Message not supported: \(request)")
+        }
     }
     
     func model(_ model: NordicMesh.Model, didReceiveUnacknowledgedMessage message: any NordicMesh.UnacknowledgedMeshMessage, from source: NordicMesh.Address, sentTo destination: NordicMesh.MeshAddress) {
-        print("didReceiveUnacknowledgedMessage not implemented yet")
+        switch message {
+            
+        default:
+            // Ignore.
+            break
+        }
     }
     
     func model(_ model: NordicMesh.Model, didReceiveResponse response: any NordicMesh.MeshResponse, toAcknowledgedMessage request: any NordicMesh.AcknowledgedMeshMessage, from source: NordicMesh.Address) {
-        
-        switch response {
-            
-        case let status as HealthCurrentStatus:
-            print("HealthCurrentStatus")
-            print("Parameters: " + (status.parameters?.toHexString())!)
-            break
-        case let status as HealthFaultStatus:
-            print("HealthFaultStatus")
-            print("Parameters: " + (status.parameters?.toHexString())!)
-            break
-        default:
-            print("Default response received")
-            print(response)
-            print(type(of: response))
-        }
+        // Ignore. There are no CDB fields matching these parameters.
     }
 }
