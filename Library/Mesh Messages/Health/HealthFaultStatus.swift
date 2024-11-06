@@ -72,7 +72,7 @@ public struct HealthFaultStatus: StaticMeshResponse {
             faultArray = parameters
                 .subdata(in: 3 ..< parameters.count - 3)
                 .bytes
-                .compactMap { HealthFault(rawValue: $0) }
+                .compactMap { HealthFault.fromId($0) }
         } else {
             faultArray = nil
         }
