@@ -53,14 +53,14 @@ public struct PrivateBeaconStatus: ConfigResponse {
         return Data() + enabled + steps
     }
     
-    /// Creates a Private Beacon Status message with the Random Update Inteval State
+    /// Creates a Private Beacon Status message with the Random Update Interval State
     /// set to ``RandomUpdateIntervalSteps/everyTime``.
     public init(enabled: Bool) {
         self.enabled = enabled
         self.steps = 0
     }
     
-    /// Creates a Private Beacon Status message with the Random Update Inteval State
+    /// Creates a Private Beacon Status message with the Random Update Interval State
     /// set to ``RandomUpdateIntervalSteps/interval(n:)`` with given interval.
     ///
     /// The interval will be rounded to multiply of 10 seconds.
@@ -73,10 +73,10 @@ public struct PrivateBeaconStatus: ConfigResponse {
         self.steps = UInt8(min(2560.0, max(interval, 10.0)) / 10.0)
     }
     
-    /// Creates a Private Beacon Status message with the Random Update Inteval State
+    /// Creates a Private Beacon Status message with the Random Update Interval State
     /// set to the given value.
     ///
-    /// The interval is given in 10 secons steps. If set to 0, Random Update Interval
+    /// The interval is given in 10 seconds steps. If set to 0, Random Update Interval
     /// State will be set to ``RandomUpdateIntervalSteps/everyTime``.
     ///
     /// The maximum value is 0xFF, which indicates 42 minutes.
