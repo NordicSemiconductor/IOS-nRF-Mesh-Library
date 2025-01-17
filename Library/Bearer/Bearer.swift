@@ -68,7 +68,7 @@ public enum PduType: UInt8 {
 }
 
 /// A set of supported PDU types by the bearer object.
-public struct PduTypes: OptionSet {    
+public struct PduTypes: OptionSet {
     public let rawValue: UInt8
         
     /// Set, if the bearer supports Network PDUs.
