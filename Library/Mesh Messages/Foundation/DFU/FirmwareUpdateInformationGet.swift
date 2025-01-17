@@ -32,7 +32,7 @@ import Foundation
 
 /// The Firmware Update Information Get message is an acknowledged message used
 /// to get information about the firmware images installed on a Node.
-public struct FirmwareUpdateInformationGet: AcknowledgedConfigMessage {
+public struct FirmwareUpdateInformationGet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8308
     public static let responseType: StaticMeshResponse.Type = FirmwareUpdateInformationStatus.self
     

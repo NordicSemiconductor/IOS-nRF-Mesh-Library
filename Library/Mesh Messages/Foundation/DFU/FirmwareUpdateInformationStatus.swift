@@ -35,7 +35,7 @@ import Foundation
 ///
 /// The Firmware Update Information Status message is sent in response to a
 /// ``FirmwareUpdateInformationGet`` message.
-public struct FirmwareUpdateInformationStatus: ConfigResponse {
+public struct FirmwareUpdateInformationStatus: StaticMeshResponse {
     public static let opCode: UInt32 = 0x8309
     
     /// Index of the first requested entry from the Firmware Information List state.
@@ -66,29 +66,6 @@ public struct FirmwareUpdateInformationStatus: ConfigResponse {
             let idLength = UInt8(rhs.currentFirmwareId.version.count + 2)
             let uriLength = UInt8(rhs.updateUri?.absoluteString.lengthOfBytes(using: .utf8) ?? 0)
             return lhs + idLength + rhs.currentFirmwareId + uriLength + (rhs.updateUri?.absoluteString.data(using: .utf8) ?? Data())
-        }
-    }
-    
-    /// TheFirmware ID state identifies a firmware image on the Node or on any subsystem
-    /// within the Node.
-    public struct FirmwareId: DataConvertible {
-        /// The 16-bit Company Identifier (CID) assigned by the Bluetooth SIG.
-        ///
-        /// Company Identifiers are published in
-        /// [Assigned Numbers](https://www.bluetooth.com/specifications/assigned-numbers/).
-        public let companyIdentifier: UInt16
-        /// Vendor-specific information describing the firmware binary package.
-        ///
-        /// The version information shall be 0-106 bytes long.
-        public let version: Data
-        
-        public init(companyIdentifier: UInt16, version: Data) {
-            self.companyIdentifier = companyIdentifier
-            self.version = version
-        }
-        
-        public static func + (lhs: Data, rhs: FirmwareId) -> Data {
-            return lhs + rhs.companyIdentifier + rhs.version
         }
     }
     

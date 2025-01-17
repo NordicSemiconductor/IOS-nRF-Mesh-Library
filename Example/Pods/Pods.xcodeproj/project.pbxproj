@@ -526,6 +526,9 @@
 		EFCAFC681513B1A5A701E655BEF365C2 /* GenericMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F43911A9ADBF66C6D90F2D6A6A04AC2F /* GenericMessage.swift */; };
 		F05BEB3B3B7D9BA92171DBA20D00D99A /* LightHSLHueGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9459D3C9D4AD25E6F06783A083CDCA /* LightHSLHueGet.swift */; };
 		F0CF8137D4A439F10BA45530CE5A1826 /* HeartbeatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61AC6EE93C4A0A96E70EB495A0CA1E2 /* HeartbeatMessage.swift */; };
+		F0D9FBB72D3A844300031E7E /* FirmwareUpdateFirmwareMetadataCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D9FBB62D3A844300031E7E /* FirmwareUpdateFirmwareMetadataCheck.swift */; };
+		F0D9FBB92D3A869800031E7E /* FirmwareUpdateFirmwareMetadataStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D9FBB82D3A869800031E7E /* FirmwareUpdateFirmwareMetadataStatus.swift */; };
+		F0D9FBBB2D3A985B00031E7E /* FirmwareUpdateMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D9FBBA2D3A984700031E7E /* FirmwareUpdateMessage.swift */; };
 		F0DAF5B82D39AB78000874EA /* FirmwareUpdateInformationGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0DAF5B62D39AB78000874EA /* FirmwareUpdateInformationGet.swift */; };
 		F0DAF5BA2D39ADA9000874EA /* FirmwareUpdateInformationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0DAF5B92D39ADA9000874EA /* FirmwareUpdateInformationStatus.swift */; };
 		F1DAB5AF35C9CFE683F02B4CB58706A5 /* String+FoundationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C75468A068967107F4A2CD3C43F8546 /* String+FoundationExtension.swift */; };
@@ -1154,6 +1157,9 @@
 		F0135CC7CE5848B1FFDFF2D271BE4B7C /* MeshLoggerDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshLoggerDelegate.swift; sourceTree = "<group>"; };
 		F056F50B3F6A0A1F7E9F8FFB3D12017B /* ConfigModelSubscriptionOverwrite.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigModelSubscriptionOverwrite.swift; sourceTree = "<group>"; };
 		F09D785490AE9DC3F13CFBC70C004D2C /* TimeZoneSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TimeZoneSet.swift; sourceTree = "<group>"; };
+		F0D9FBB62D3A844300031E7E /* FirmwareUpdateFirmwareMetadataCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateFirmwareMetadataCheck.swift; sourceTree = "<group>"; };
+		F0D9FBB82D3A869800031E7E /* FirmwareUpdateFirmwareMetadataStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateFirmwareMetadataStatus.swift; sourceTree = "<group>"; };
+		F0D9FBBA2D3A984700031E7E /* FirmwareUpdateMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateMessage.swift; sourceTree = "<group>"; };
 		F0DAF5B62D39AB78000874EA /* FirmwareUpdateInformationGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateInformationGet.swift; sourceTree = "<group>"; };
 		F0DAF5B92D39ADA9000874EA /* FirmwareUpdateInformationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateInformationStatus.swift; sourceTree = "<group>"; };
 		F1B97AF62C69861336C37668E1A987D2 /* nRFMeshProvision.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = nRFMeshProvision.release.xcconfig; sourceTree = "<group>"; };
@@ -2136,6 +2142,8 @@
 			children = (
 				F0DAF5B62D39AB78000874EA /* FirmwareUpdateInformationGet.swift */,
 				F0DAF5B92D39ADA9000874EA /* FirmwareUpdateInformationStatus.swift */,
+				F0D9FBB62D3A844300031E7E /* FirmwareUpdateFirmwareMetadataCheck.swift */,
+				F0D9FBB82D3A869800031E7E /* FirmwareUpdateFirmwareMetadataStatus.swift */,
 			);
 			path = DFU;
 			sourceTree = "<group>";
@@ -2162,6 +2170,7 @@
 				C87432879BE68D521A179BF3A1417429 /* TimeMessage.swift */,
 				28E7045BA6AF4C14D8FC949519CB04F7 /* UnknownMessage.swift */,
 				6620817C5BB5F4EA713F0700462D6D9F /* VendorMessage.swift */,
+				F0D9FBBA2D3A984700031E7E /* FirmwareUpdateMessage.swift */,
 				63423C76B458B3F1C4533B2573996EFE /* Foundation */,
 				BAFCF503BE8B52A1D14A488959168C44 /* Generic */,
 				AB1A0BBE9428A7216DE441C8AAF3A074 /* Health */,
@@ -2499,6 +2508,7 @@
 				F65ACE0BEF03C2547F0F510E56AD7227 /* Element+Keys.swift in Sources */,
 				6191E712D70D0F840582CEB1FB63622F /* Element+Models.swift in Sources */,
 				04DD22BC8DF8F9A3774A02A97F6FC2F3 /* Element+Scenes.swift in Sources */,
+				F0D9FBB72D3A844300031E7E /* FirmwareUpdateFirmwareMetadataCheck.swift in Sources */,
 				CF8DB90E7324AC3014ABF88C420B657C /* ExclusionList.swift in Sources */,
 				0E7D6449398375A21B37167416C44112 /* ExportConfiguration.swift in Sources */,
 				9A7E3A0833018E94B1AED24084FEADF7 /* FilterStatus.swift in Sources */,
@@ -2594,6 +2604,7 @@
 				F3E2A29DA8C60A7B54D6C6258D78D216 /* LightHSLRangeSetUnacknowledged.swift in Sources */,
 				08806F3DBDE9EE50B57FCF37C6B5B705 /* LightHSLRangeStatus.swift in Sources */,
 				CDAD9679933AABA78F2984936EC7B7A5 /* LightHSLSaturationGet.swift in Sources */,
+				F0D9FBBB2D3A985B00031E7E /* FirmwareUpdateMessage.swift in Sources */,
 				6C20BA7765C8943634D9AE08312038A5 /* LightHSLSaturationSet.swift in Sources */,
 				E529E9ACFB294D178B55765C25E69E9E /* LightHSLSaturationSetUnacknowledged.swift in Sources */,
 				92F04FBE7C2910AE0F8AFC9059A7825D /* LightHSLSaturationStatus.swift in Sources */,
@@ -2785,6 +2796,7 @@
 				B42FD961E10D4E1E023C3248CD58CA9C /* SensorCadenceStatus.swift in Sources */,
 				9229DCAEBC7E8E87C13F62752FB6EDF1 /* SensorColumnGet.swift in Sources */,
 				7B288F227D96E0AAD2B39C53A8E7C78A /* SensorColumnStatus.swift in Sources */,
+				F0D9FBB92D3A869800031E7E /* FirmwareUpdateFirmwareMetadataStatus.swift in Sources */,
 				943A7242E0667E218CA7A4AA75732514 /* SensorDescriptorGet.swift in Sources */,
 				F24A2CBF9EDFB7B647226550B46431F4 /* SensorDescriptorStatus.swift in Sources */,
 				A26BBD6C539A92C843FFF1AE3F1857CD /* SensorGet.swift in Sources */,
