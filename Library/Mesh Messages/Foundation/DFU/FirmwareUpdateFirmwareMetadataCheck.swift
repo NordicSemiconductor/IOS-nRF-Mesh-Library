@@ -31,7 +31,7 @@
 import Foundation
 
 /// The Firmware Update Firmware Metadata Check message is an acknowledged message,
-/// sent to a Firmware Update Server, to check whether the node can accept a firmware update.
+/// sent to a Firmware Update Server, to check whether the Node can accept a firmware update.
 public struct FirmwareUpdateFirmwareMetadataCheck: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x830A
     public static let responseType: StaticMeshResponse.Type = FirmwareUpdateFirmwareMetadataStatus.self
@@ -42,7 +42,6 @@ public struct FirmwareUpdateFirmwareMetadataCheck: StaticAcknowledgedMeshMessage
     /// Firmware Information List state on the Firmware Update Server that the metadata is checked
     /// against.
     public let imageIndex: UInt8
-    
     /// Vendor-specific metadata.
     ///
     /// If present, the Incoming Firmware Metadata field shall contain the custom data from the

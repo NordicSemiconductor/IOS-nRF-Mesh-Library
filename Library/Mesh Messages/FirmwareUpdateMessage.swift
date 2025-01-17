@@ -55,56 +55,73 @@ public struct FirmwareId: DataConvertible {
 
 /// The status codes for the Firmware Update Server model and the
 /// Firmware Update Client model.
-public enum FirmwareUpdateStatus: UInt8 {
+public enum FirmwareUpdateMessageStatus: UInt8 {
     /// The message was processed successfully.
-    case success = 0x00
+    case success                 = 0x00
     /// Insufficient resources on the Node.
-    case insufficientResources = 0x01
+    case insufficientResources   = 0x01
     /// The operation cannot be performed while the server is in the current phase.
-    case wrongPhase = 0x02
+    case wrongPhase              = 0x02
     /// An internal error occurred on the Node.
-    case internalError = 0x03
+    case internalError           = 0x03
     /// The message contains a firmware index value that is not expected.
-    case wrongFirmwareIndex = 0x04
+    case wrongFirmwareIndex      = 0x04
     /// The metadata check failed.
-    case metadataCheckFailed = 0x05
+    case metadataCheckFailed     = 0x05
     /// The server cannot start a firmware update.
-    case temporarilyUnavailable = 0x06
+    case temporarilyUnavailable  = 0x06
     /// Another BLOB transfer is in progress.
-    case blobTransferBusy = 0x07
+    case blobTransferBusy        = 0x07
 }
 
 /// The status codes for the Firmware Distribution Server model and the
 /// Firmware Distribution Client model.
-enum FirmwareDistributionStatus: UInt8 {
+public enum FirmwareDistributionMessageStatus: UInt8 {
     /// The message was processed successfully.
-    case success = 0x00
+    case success                 = 0x00
     /// Insufficient resources on the Node.
-    case insufficientResources = 0x01
+    case insufficientResources   = 0x01
     /// The operation cannot be performed while the server is in the current phase.
-    case wrongPhase = 0x02
+    case wrongPhase              = 0x02
     /// An internal error occurred on the node.
-    case internalError = 0x03
+    case internalError           = 0x03
     /// The requested firmware image is not stored on the Distributor.
-    case firmwareNotFound = 0x04
+    case firmwareNotFound        = 0x04
     /// The AppKey identified by the AppKey Index is not known to the Node.
-    case invalidAppKeyIndex = 0x05
+    case invalidAppKeyIndex      = 0x05
     /// There are no Target nodes in the Distribution Receivers List state.
-    case receiversListEmpty = 0x06
+    case receiversListEmpty      = 0x06
     /// Another firmware image distribution is in progress.
-    case busyWithDistribution = 0x07
+    case busyWithDistribution    = 0x07
     /// Another upload is in progress.
-    case busyWithUpload = 0x08
+    case busyWithUpload          = 0x08
     /// The URI scheme name indicated by the Update URI is not supported.
-    case uriNotSupported = 0x09
+    case uriNotSupported         = 0x09
     /// The format of the Update URI is invalid.
-    case uriMalformed = 0x0A
+    case uriMalformed            = 0x0A
     /// The URI is unreachable.
-    case uriUnreachable = 0x0B
+    case uriUnreachable          = 0x0B
     /// The Check Firmware OOB procedure did not find any new firmware.
     case newFirmwareNotAvailable = 0x0C
     /// The suspension of the Distribute Firmware procedure failed.
-    case suspendFailed = 0x0D
+    case suspendFailed           = 0x0D
+}
+
+public enum FirmwareUpdatePhase: UInt8 {
+    ///Ready to start a Receive Firmware procedure.
+    case idle = 0x0
+    ///The Transfer BLOB procedure failed.
+    case transferError = 0x1
+    ///The Receive Firmware procedure is being executed.
+    case transferActive = 0x2
+    ///The Verify Firmware procedure is being executed.
+    case verifyingUpdate = 0x3
+    ///The Verify Firmware procedure completed successfully.
+    case verificationSucceeded = 0x4
+    ///The Verify Firmware procedure failed.
+    case verificationFailed = 0x5
+    ///The Apply New Firmware procedure is being executed.
+    case applyingUpdate = 0x6
 }
 
 /// The Firmware Update Additional Information state identifies the Node state after
@@ -112,18 +129,19 @@ enum FirmwareDistributionStatus: UInt8 {
 public struct FirmwareUpdateAdditionalInformation: OptionSet {
     public let rawValue: UInt8
 
-    /// Node’s Composition Data state will change, and remote provisioning is not supported.
+    /// Node’s Composition Data state will change, and Remote Provisioning is not supported.
     ///
     /// The new Composition Data state value is effective after the Node is reprovisioned.
     static let compositionDataChangedAndRPRUnsupported = FirmwareUpdateAdditionalInformation(rawValue: 0x1)
 
-    /// Node’s Composition Data state will change, and remote provisioning is supported.
+    /// Node’s Composition Data state will change, and Remote Provisioning is supported.
     ///
     /// The Node supports remote provisioning and Composition Data Page 128.
     /// The Composition Data Page 128 contains different information than Composition Data Page 0.
     static let compositionDataChangedAndRPRSupported = FirmwareUpdateAdditionalInformation(rawValue: 0x2)
 
-    /// The Node will become unprovisioned after successful application of a verified firmware image.
+    /// The Node will become unprovisioned after successful application of a verified
+    /// firmware image.
     static let deviceUnprovisioned = FirmwareUpdateAdditionalInformation(rawValue: 0x3)
     
     public init(rawValue: UInt8) {

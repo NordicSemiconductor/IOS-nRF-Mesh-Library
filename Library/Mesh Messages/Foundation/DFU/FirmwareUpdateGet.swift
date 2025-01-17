@@ -30,34 +30,24 @@
 
 import Foundation
 
-/// The Firmware Update Information Get message is an acknowledged message used
-/// to get information about the firmware images installed on a Node.
-public struct FirmwareUpdateInformationGet: StaticAcknowledgedMeshMessage {
-    public static let opCode: UInt32 = 0x8308
-    public static let responseType: StaticMeshResponse.Type = FirmwareUpdateInformationStatus.self
-    
-    /// The First Index field shall indicate the first entry on the Firmware Information List
-    /// state of the Firmware Update Server to return in the Firmware Update Information
-    /// Status message.
-    public let firstIndex: UInt8
-    /// The Entries Limit field shall indicate the maximum number of Firmware Information
-    /// Entry fields to return in the Firmware Update Information Status message.
-    public let entriesLimit: UInt8
+/// The Firmware Update Get message is an acknowledged message used
+/// to get the current status of the Firmware Update Server.
+public struct FirmwareUpdateGet: StaticAcknowledgedMeshMessage {
+    public static let opCode: UInt32 = 0x830C
+    public static let responseType: StaticMeshResponse.Type = FirmwareUpdateStatus.self
     
     public var parameters: Data? {
-        return Data([firstIndex, entriesLimit])
+        return nil
     }
     
-    public init(from firstIndex: UInt8, limit entriesLimit: UInt8) {
-        self.firstIndex = firstIndex
-        self.entriesLimit = entriesLimit
+    /// Creates the Firmware Update Get message.
+    public init() {
+        // Empty
     }
     
     public init?(parameters: Data) {
-        guard parameters.count == 2 else {
+        guard parameters.isEmpty else {
             return nil
         }
-        firstIndex = parameters[0]
-        entriesLimit = parameters[1]
     }
 }

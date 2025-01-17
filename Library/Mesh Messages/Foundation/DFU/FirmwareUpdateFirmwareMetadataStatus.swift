@@ -33,15 +33,16 @@ import Foundation
 /// The Firmware Update Firmware Metadata Status message is an unacknowledged message
 /// sent to a Firmware Update Client that is used to report whether a Firmware Update Server can
 /// accept a firmware update.
+///
+/// The Firmware Update Firmware Metadata Status message is sent in response to
+/// a ``FirmwareUpdateFirmwareMetadataCheck`` message.
 public struct FirmwareUpdateFirmwareMetadataStatus: StaticMeshResponse {
     public static let opCode: UInt32 = 0x830B
     
     /// Status Code from the firmware metadata check.
-    public let status: FirmwareUpdateStatus
-    
+    public let status: FirmwareUpdateMessageStatus
     /// The Firmware Update Additional Information state from the Firmware Update Server.
     public let additionalInformation: FirmwareUpdateAdditionalInformation
-    
     /// Index of the firmware image in the Firmware Information List state that was checked.
     public let imageIndex: UInt8
     
@@ -58,7 +59,7 @@ public struct FirmwareUpdateFirmwareMetadataStatus: StaticMeshResponse {
     ///   - additionalInformation:The Firmware Update Additional Information state from the
     ///   Firmware Update Server.
     ///   - imageIndex: Index of the firmware image in the Firmware Information List state that was checked.
-    public init(status: FirmwareUpdateStatus, additionalInformation: FirmwareUpdateAdditionalInformation, imageIndex: UInt8) {
+    public init(status: FirmwareUpdateMessageStatus, additionalInformation: FirmwareUpdateAdditionalInformation, imageIndex: UInt8) {
         self.status = status
         self.additionalInformation = additionalInformation
         self.imageIndex = imageIndex
@@ -70,7 +71,7 @@ public struct FirmwareUpdateFirmwareMetadataStatus: StaticMeshResponse {
         }
         let byte0 = parameters[0]
         
-        guard let status = FirmwareUpdateStatus(rawValue: byte0 >> 5) else {
+        guard let status = FirmwareUpdateMessageStatus(rawValue: byte0 >> 5) else {
             return nil
         }
         self.status = status

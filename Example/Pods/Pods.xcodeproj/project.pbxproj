@@ -524,6 +524,11 @@
 		EE94FE628D6B9EADD16277188806D769 /* GenericOnOffSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 739AFCA7CAE56E3232E12CAEF91137B1 /* GenericOnOffSetUnacknowledged.swift */; };
 		EECB895BDEA23DFE98922A379179F3AF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 384DDA2CB25005BD6479B5987C619DD4 /* Foundation.framework */; };
 		EFCAFC681513B1A5A701E655BEF365C2 /* GenericMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F43911A9ADBF66C6D90F2D6A6A04AC2F /* GenericMessage.swift */; };
+		F019B62B2D3AA2F90094B0E4 /* FirmwareUpdateGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B62A2D3AA2F90094B0E4 /* FirmwareUpdateGet.swift */; };
+		F019B62D2D3AF2F80094B0E4 /* FirmwareUpdateCancel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B62C2D3AF2F80094B0E4 /* FirmwareUpdateCancel.swift */; };
+		F019B62F2D3AF3430094B0E4 /* FirmwareUpdateApply.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B62E2D3AF3430094B0E4 /* FirmwareUpdateApply.swift */; };
+		F019B6312D3AF3A70094B0E4 /* FirmwareUpdateStart.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B6302D3AF3A70094B0E4 /* FirmwareUpdateStart.swift */; };
+		F019B6332D3B047D0094B0E4 /* FirmwareUpdateStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B6322D3B047D0094B0E4 /* FirmwareUpdateStatus.swift */; };
 		F05BEB3B3B7D9BA92171DBA20D00D99A /* LightHSLHueGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9459D3C9D4AD25E6F06783A083CDCA /* LightHSLHueGet.swift */; };
 		F0CF8137D4A439F10BA45530CE5A1826 /* HeartbeatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61AC6EE93C4A0A96E70EB495A0CA1E2 /* HeartbeatMessage.swift */; };
 		F0D9FBB72D3A844300031E7E /* FirmwareUpdateFirmwareMetadataCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D9FBB62D3A844300031E7E /* FirmwareUpdateFirmwareMetadataCheck.swift */; };
@@ -1155,6 +1160,11 @@
 		EF98789944603E966FD981068B0D498F /* TimeZoneStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TimeZoneStatus.swift; sourceTree = "<group>"; };
 		EFD8F544B5B6865E0D06A8C420EDAB67 /* RemoteProvisioningScanCapabilitiesStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RemoteProvisioningScanCapabilitiesStatus.swift; sourceTree = "<group>"; };
 		F0135CC7CE5848B1FFDFF2D271BE4B7C /* MeshLoggerDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshLoggerDelegate.swift; sourceTree = "<group>"; };
+		F019B62A2D3AA2F90094B0E4 /* FirmwareUpdateGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateGet.swift; sourceTree = "<group>"; };
+		F019B62C2D3AF2F80094B0E4 /* FirmwareUpdateCancel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateCancel.swift; sourceTree = "<group>"; };
+		F019B62E2D3AF3430094B0E4 /* FirmwareUpdateApply.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateApply.swift; sourceTree = "<group>"; };
+		F019B6302D3AF3A70094B0E4 /* FirmwareUpdateStart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateStart.swift; sourceTree = "<group>"; };
+		F019B6322D3B047D0094B0E4 /* FirmwareUpdateStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateStatus.swift; sourceTree = "<group>"; };
 		F056F50B3F6A0A1F7E9F8FFB3D12017B /* ConfigModelSubscriptionOverwrite.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigModelSubscriptionOverwrite.swift; sourceTree = "<group>"; };
 		F09D785490AE9DC3F13CFBC70C004D2C /* TimeZoneSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TimeZoneSet.swift; sourceTree = "<group>"; };
 		F0D9FBB62D3A844300031E7E /* FirmwareUpdateFirmwareMetadataCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateFirmwareMetadataCheck.swift; sourceTree = "<group>"; };
@@ -2140,6 +2150,11 @@
 		F0DAF5B72D39AB78000874EA /* DFU */ = {
 			isa = PBXGroup;
 			children = (
+				F019B62E2D3AF3430094B0E4 /* FirmwareUpdateApply.swift */,
+				F019B62C2D3AF2F80094B0E4 /* FirmwareUpdateCancel.swift */,
+				F019B62A2D3AA2F90094B0E4 /* FirmwareUpdateGet.swift */,
+				F019B6302D3AF3A70094B0E4 /* FirmwareUpdateStart.swift */,
+				F019B6322D3B047D0094B0E4 /* FirmwareUpdateStatus.swift */,
 				F0DAF5B62D39AB78000874EA /* FirmwareUpdateInformationGet.swift */,
 				F0DAF5B92D39ADA9000874EA /* FirmwareUpdateInformationStatus.swift */,
 				F0D9FBB62D3A844300031E7E /* FirmwareUpdateFirmwareMetadataCheck.swift */,
@@ -2457,6 +2472,7 @@
 				9775B345FACFB3CECF9F7A6BEB3C746E /* ConfigModelAppBind.swift in Sources */,
 				41A22A62834DE5FEE6875FD3E4AC4466 /* ConfigModelAppStatus.swift in Sources */,
 				3050A55561F63648D30AD1E05FF3A8D4 /* ConfigModelAppUnbind.swift in Sources */,
+				F019B6312D3AF3A70094B0E4 /* FirmwareUpdateStart.swift in Sources */,
 				C7CEFF7FCE2A46916D7BF751865F8B82 /* ConfigModelPublicationGet.swift in Sources */,
 				6F4A89D99CA6079976621AB0B53902FD /* ConfigModelPublicationSet.swift in Sources */,
 				29EB43310880DCF1D65D397BC846A8A3 /* ConfigModelPublicationStatus.swift in Sources */,
@@ -2521,6 +2537,7 @@
 				503EEFEB32E579DD1CEC60F5DE421527 /* GenericDefaultTransitionTimeSet.swift in Sources */,
 				3CAC0B5201C454200211CA083CE2AC88 /* GenericDefaultTransitionTimeSetUnacknowledged.swift in Sources */,
 				6E571090BA986FBAD7016A066EFAB7C4 /* GenericDefaultTransitionTimeStatus.swift in Sources */,
+				F019B62D2D3AF2F80094B0E4 /* FirmwareUpdateCancel.swift in Sources */,
 				2CF039D2DDE9AB77D302D5DEDE76E31B /* GenericDeltaSet.swift in Sources */,
 				36004C212D32CE5E173D070BE8489E54 /* GenericDeltaSetUnacknowledged.swift in Sources */,
 				6B615C956BE13005E538D5F7C0A85006 /* GenericLevelGet.swift in Sources */,
@@ -2671,6 +2688,7 @@
 				7A0BB0EFE71B65B2252717DE298A4142 /* MeshNetworkManager.swift in Sources */,
 				573664C7FE6B8C3674996D2ADAD4D890 /* MeshNetworkManager+Callbacks.swift in Sources */,
 				F76ECF70F206CC0FF457F5503C056E54 /* MeshNodeEntry.swift in Sources */,
+				F019B62B2D3AA2F90094B0E4 /* FirmwareUpdateGet.swift in Sources */,
 				DAA357E034B08844EE75B87D9CD215AB /* MeshState.swift in Sources */,
 				E14E0EEDFAA1CA4E0E51D63C6AC3EABC /* MeshStateManager.swift in Sources */,
 				F24756849895D639924A648E1F58818F /* MeshUUID.swift in Sources */,
@@ -2765,6 +2783,7 @@
 				3D1DA9BA1E5A31E56BAEA3347FA4CDD2 /* Scene+Nodes.swift in Sources */,
 				93882FDDBAE3D58AEDE524F5E73BA485 /* SceneClientHandler.swift in Sources */,
 				9A3ED38FBA2EFEFAC0B1616B2BC2F9B0 /* SceneDelete.swift in Sources */,
+				F019B62F2D3AF3430094B0E4 /* FirmwareUpdateApply.swift in Sources */,
 				98434F4117EA5555B939A3480E7817D1 /* SceneDeleteUnacknowledged.swift in Sources */,
 				8B44E9CF9F7AFF8ABC95218922E0E286 /* SceneGet.swift in Sources */,
 				63395B73AAC88EB7594E5C303342B4CE /* SceneNumber.swift in Sources */,
@@ -2786,6 +2805,7 @@
 				926223E8CB58762ACF1BBA0E4DC0E947 /* SchedulerStatus.swift in Sources */,
 				C334233BF35F7864990F62607A1FF35B /* SecureNetworkBeacon.swift in Sources */,
 				67B417B2628901877768E9C5BE988516 /* Security.swift in Sources */,
+				F019B6332D3B047D0094B0E4 /* FirmwareUpdateStatus.swift in Sources */,
 				A8B8E96AD3105D25B373EDE370059314 /* SegmentAcknowledgmentMessage.swift in Sources */,
 				A35A1221176A5C5F57C9BE3AA0A2969F /* SegmentedAccessMessage.swift in Sources */,
 				C2A4E0D74AD107CBE03C1C9A38AE40ED /* SegmentedControlMessage.swift in Sources */,
