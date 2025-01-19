@@ -39,7 +39,7 @@ public enum HealthFault: Sendable {
     case supplyVoltageToHighWarning
     case supplyVoltageToHighError
     case powerSupplyInterruptedWarning
-    case powerSupplyInterrputedError
+    case powerSupplyInterruptedError
     case noLoadWarning
     case noLoadError
     case overloadWarning
@@ -102,7 +102,7 @@ public enum HealthFault: Sendable {
             return 0x06;
         case .powerSupplyInterruptedWarning:
             return 0x07;
-        case .powerSupplyInterrputedError:
+        case .powerSupplyInterruptedError:
             return 0x08;
         case .noLoadWarning:
             return 0x09;
@@ -212,7 +212,7 @@ public enum HealthFault: Sendable {
         case 0x07:
             return .powerSupplyInterruptedWarning;
         case 0x08:
-            return .powerSupplyInterrputedError;
+            return .powerSupplyInterruptedError;
         case 0x09:
             return .noLoadWarning;
         case 0x0A:
