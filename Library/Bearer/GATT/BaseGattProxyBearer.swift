@@ -362,7 +362,7 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     
 }
 
-extension CBManagerState: CustomDebugStringConvertible {
+extension CBManagerState: @retroactive CustomDebugStringConvertible {
     
     public var debugDescription: String {
         switch self {

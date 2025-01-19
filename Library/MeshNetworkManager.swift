@@ -429,13 +429,12 @@ public extension MeshNetworkManager {
     /// the message has been sent successfully or a problem occurred.
     ///
     /// - parameters:
-    ///   - message:      The message to be sent.
-    ///   - localElement: The source Element. If `nil`, the primary
-    ///                   Element will be used. The Element must belong
-    ///                   to the local Provisioner's Node.
-    ///   - model:        The destination Model.
-    ///   - initialTtl:   The initial TTL (Time To Live) value of the message.
-    ///                   If `nil`, the default Node TTL will be used.
+    ///   - message:    The message to be sent.
+    ///   - localModel: The source Model. The Model must belong
+    ///                 to the local Provisioner's Node.
+    ///   - model:      The destination Model.
+    ///   - initialTtl: The initial TTL (Time To Live) value of the message.
+    ///                 If `nil`, the default Node TTL will be used.
     /// - throws: This method throws when the mesh network has not been created,
     ///           the local or target Model do not belong to any Element, or have
     ///           no common Application Key bound to them, or when
@@ -520,13 +519,12 @@ public extension MeshNetworkManager {
     /// the message has been sent successfully or a problem occurred.
     ///
     /// - parameters:
-    ///   - message:      The message to be sent.
-    ///   - localElement: The source Element. If `nil`, the primary
-    ///                   Element will be used. The Element must belong
-    ///                   to the local Provisioner's Node.
-    ///   - model:        The destination Model.
-    ///   - initialTtl:   The initial TTL (Time To Live) value of the message.
-    ///                   If `nil`, the default Node TTL will be used.
+    ///   - message:    The message to be sent.
+    ///   - localModel: The source Model. The Model must belong
+    ///                 to the local Provisioner's Node.
+    ///   - model:      The destination Model.
+    ///   - initialTtl: The initial TTL (Time To Live) value of the message.
+    ///                 If `nil`, the default Node TTL will be used.
     /// - throws: This method throws when the mesh network has not been created,
     ///           the local or target Model do not belong to any Element, or have
     ///           no common Application Key bound to them, or when
@@ -546,14 +544,16 @@ public extension MeshNetworkManager {
                               withTtl: initialTtl)
     }
     
-    /// Sends a Configuration Message to the Node with given destination address
-    /// and returns the received response.
+    /// Sends an Unacknowledged Configuration Message to the Node with given
+    /// destination address.
     ///
     /// The `destination` must be a Unicast Address, otherwise the method
     /// throws an ``AccessError/invalidDestination`` error.
     ///
     /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
     /// the message has been sent successfully or a problem occurred.
+    ///
+    /// This method awaits for the message to be sent.
     ///
     /// - parameters:
     ///   - message:     The message to be sent.
@@ -566,7 +566,6 @@ public extension MeshNetworkManager {
     ///           is not a Unicast Address or it belongs to an unknown Node.
     ///           Error ``AccessError/cannotDelete`` is sent when trying to
     ///           delete the last Network Key on the device.
-    /// - returns: Message handle that can be used to cancel sending.
     func send(_ message: UnacknowledgedConfigMessage, to destination: Address,
               withTtl initialTtl: UInt8? = nil) async throws {
         guard let networkManager = networkManager,
@@ -603,10 +602,13 @@ public extension MeshNetworkManager {
                                       withTtl: initialTtl)
     }
     
-    /// Sends a Configuration Message to the primary Element on the given ``Node``.
+    /// Sends an Unacknowledged Configuration Message to the primary Element
+    /// on the given ``Node``.
     ///
     /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
     /// the message has been sent successfully or a problem occurred.
+    ///
+    /// This method awaits for the message to be sent.
     ///
     /// - parameters:
     ///   - message:    The message to be sent.
@@ -619,20 +621,17 @@ public extension MeshNetworkManager {
     ///           is not a Unicast Address or it belongs to an unknown Node.
     ///           Error ``AccessError/cannotDelete`` is sent when trying to
     ///           delete the last Network Key on the device.
-    /// - returns: Message handle that can be used to cancel sending.
     func send(_ message: UnacknowledgedConfigMessage, to node: Node,
               withTtl initialTtl: UInt8? = nil) async throws {
         return try await send(message, to: node.primaryUnicastAddress,
                               withTtl: initialTtl)
     }
     
-    /// Sends Configuration Message to the Node with given destination Address.
+    /// Sends Configuration Message to the Node with given destination Address
+    /// and returns received response.
     ///
     /// The `destination` must be a Unicast Address, otherwise the method
     /// throws an ``AccessError/invalidDestination`` error.
-    ///
-    /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
-    /// the message has been sent successfully or a problem occurred.
     ///
     /// - parameters:
     ///   - message:     The message to be sent.
@@ -645,7 +644,7 @@ public extension MeshNetworkManager {
     ///           is not a Unicast Address or it belongs to an unknown Node.
     ///           Error ``AccessError/cannotDelete`` is sent when trying to
     ///           delete the last Network Key on the device.
-    /// - returns: The response associated with the message.
+    /// - returns: The received response.
     func send(_ message: AcknowledgedConfigMessage,
               to destination: Address,
               withTtl initialTtl: UInt8? = nil) async throws -> ConfigResponse {
@@ -744,13 +743,11 @@ public extension MeshNetworkManager {
     /// Sends the Proxy Configuration Message to the connected Proxy Node.
     ///
     /// This method will only work if the bearer uses is GATT Proxy.
+    ///
     /// The message will be encrypted and sent to the ``Transmitter``, which
     /// should deliver the PDU to the connected Node.
     ///
-    /// - parameters:
-    ///   - message: The Proxy Configuration message to be sent.
-    ///   - initialTtl: The initial TTL (Time To Live) value of the message.
-    ///                 If `nil`, the default Node TTL will be used.
+    /// - parameter message: The Proxy Configuration message to be sent.
     /// - throws: This method throws when the mesh network has not been created.
     func send(_ message: ProxyConfigurationMessage) throws {
         guard let networkManager = networkManager else {
@@ -824,7 +821,7 @@ public extension MeshNetworkManager {
                                  timeout: timeout)
     }
     
-    /// This is a blocking method awaiting a mesh message with given OpCode
+    /// This is a blocking method awaiting a mesh message of given type
     /// sent from a specified source Unicast Address.
     ///
     /// The destination is optional. If not set, the destination of the received
@@ -834,7 +831,6 @@ public extension MeshNetworkManager {
     /// ``AccessError/timeout`` error.
     ///
     /// - parameters:
-    ///   - type: The message type.
     ///   - source: The Unicast Address of the Element from which the message is expected.
     ///   - destination: The optional destination of the message.
     ///   - timeout: The timeout in seconds. Use 0 for not timeout.
@@ -850,7 +846,7 @@ public extension MeshNetworkManager {
                                  timeout: timeout) as! T
     }
     
-    /// This is a blocking method awaiting a mesh message with given OpCode
+    /// This is a blocking method awaiting a mesh message of given type
     /// sent from a specified source ``Element``.
     ///
     /// The destination is optional. If not set, the destination of the received
@@ -860,7 +856,6 @@ public extension MeshNetworkManager {
     /// ``AccessError/timeout`` error.
     ///
     /// - parameters:
-    ///   - type: The message type.
     ///   - element: The Element from which the message is expected.
     ///   - destination: The optional destination of the message.
     ///   - timeout: The timeout in seconds. Use 0 for not timeout.
@@ -917,7 +912,7 @@ public extension MeshNetworkManager {
         return try messages(withOpCode: opCode, from: element.unicastAddress, to: destination)
     }
     
-    /// Returns an async stream of messages matching given criteria.
+    /// Returns an async stream of messages of given type sent from the specified address.
     ///
     /// When the task in which the stream is iterated gets cancelled the stream
     /// will return `nil`.
@@ -926,7 +921,6 @@ public extension MeshNetworkManager {
     ///            It is not possible to await a message and message stream simultaneously.
     ///
     /// - parameters:
-    ///   - opCode: The OpCode of the messages to await for.
     ///   - address: The Unicast Address of the sender.
     ///   - destination: The optional destination address of the messages.
     /// - returns: The stream of messages with given type.
@@ -939,7 +933,7 @@ public extension MeshNetworkManager {
         return networkManager.messages(from: address, to: destination)
     }
     
-    /// Returns an async stream of messages matching given criteria.
+    /// Returns an async stream of messages of given type send from the specified Element.
     ///
     /// When the task in which the stream is iterated gets cancelled the stream
     /// will return `nil`.
@@ -948,7 +942,6 @@ public extension MeshNetworkManager {
     ///            It is not possible to await a message and message stream simultaneously.
     ///
     /// - parameters:
-    ///   - opCode: The OpCode of the messages to await for.
     ///   - element: The sender Element.
     ///   - destination: The optional destination address of the messages.
     /// - returns: The stream of messages with given type.

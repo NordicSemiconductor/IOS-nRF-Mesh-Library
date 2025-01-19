@@ -69,7 +69,7 @@ public extension Data {
     /// 
     /// - parameters:
     ///   - numBits: The number of bits to read.
-    ///   - fromOffset: The offset in bits in the Data to read from.
+    ///   - offset: The offset in bits in the Data to read from.
     func readBits(_ numBits: Int, fromOffset offset: Int) -> UInt64 {
         var res: UInt64 = 0
 
@@ -137,7 +137,7 @@ public extension Data {
     /// - parameters:
     ///   - value: The value to read bits from.
     ///   - numBits: The number of bits to write.
-    ///   - atOffset: The offset in bits in the Data object to write to.
+    ///   - offset: The offset in bits in the Data object to write to.
     mutating func writeBits(value: UInt64, numBits: Int, atOffset offset: Int) {
         let currentOffset = offset % 8
         var writtenBits = 0

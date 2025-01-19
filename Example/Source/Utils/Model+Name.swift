@@ -30,7 +30,7 @@
 
 import NordicMesh
 
-extension Model: CustomDebugStringConvertible {
+extension Model: @retroactive CustomDebugStringConvertible {
     
     public var debugDescription: String {
         return modelName

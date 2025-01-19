@@ -97,8 +97,8 @@ public extension MeshNetwork {
     /// Provisioner.
     ///
     /// - parameters:
-    ///   - ranges:      The range to be checked.
-    ///   - provisioner: The Provisioner to check the allocation for.   
+    ///   - range:       The range to be checked.
+    ///   - provisioner: The Provisioner to check the allocation for.
     /// - returns: `True`, if the range does not overlap with any address
     ///            range already allocated by any other Provisioner added to the mesh
     ///            network; `false` otherwise.
@@ -143,7 +143,7 @@ public extension MeshNetwork {
     /// Provisioner.
     ///
     /// - parameters:
-    ///   - ranges:      The range to be checked.
+    ///   - range:       The range to be checked.
     ///   - provisioner: The Provisioner to check the allocation for.
     /// - returns: `True`, if the range does not overlap with any scene
     ///            range already allocated by any other Provisioner added to the mesh

@@ -26,7 +26,7 @@ import Foundation
 
 // https://github.com/AvdLee/AsyncOperations
 
-internal class AsyncOperation: Operation {
+internal class AsyncOperation: Operation, @unchecked Sendable {
     private let lockQueue = DispatchQueue(label: "AsyncOperation", attributes: .concurrent)
 
     override var isAsynchronous: Bool {

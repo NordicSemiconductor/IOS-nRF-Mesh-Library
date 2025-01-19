@@ -50,7 +50,7 @@ public struct RemoteProvisioningScanCapabilitiesStatus: RemoteProvisioningRespon
     /// Creates a Remote Provisioning Scan Capabilities Status message.
     ///
     /// - parameters:
-    ///   - maxScannerItems: The maximum number of UUIDs that can be reported during
+    ///   - maxScannedItems: The maximum number of UUIDs that can be reported during
     ///                      scanning. The minimum value of the state is 4.
     ///                      The maximum value of the state is 255.
     ///   - activeScanSupported: Whether the Remote Provisioning Server supports

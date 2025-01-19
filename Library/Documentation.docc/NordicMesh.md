@@ -29,7 +29,7 @@ To learn how to use the library, start here: <doc:Usage>.
 - <doc:Usage>
 - <doc:LocalNode>
 - <doc:CreatingNetwork>
-- <doc:Provisioning>
+- <doc:ProvisioningDevices>
 - <doc:Connecting>
 - <doc:SendingMessages>
 - <doc:Configuration>

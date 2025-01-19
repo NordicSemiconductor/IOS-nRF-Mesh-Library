@@ -188,15 +188,14 @@ public extension MeshNetworkManager {
     /// successfully or a problem occurred.
     ///
     /// - parameters:
-    ///   - message:      The message to be sent.
-    ///   - localElement: The source Element. If `nil`, the primary
-    ///                   Element will be used. The Element must belong
-    ///                   to the local Provisioner's Node.
-    ///   - model:        The destination Model.
-    ///   - initialTtl:   The initial TTL (Time To Live) value of the message.
-    ///                   If `nil`, the default Node TTL will be used.
-    ///   - completion:   The completion handler called when the message
-    ///                   has been sent.
+    ///   - message:    The message to be sent.
+    ///   - localModel: The source Model. The Model must belong
+    ///                 to the local Provisioner's Node.
+    ///   - model:      The destination Model.
+    ///   - initialTtl: The initial TTL (Time To Live) value of the message.
+    ///                 If `nil`, the default Node TTL will be used.
+    ///   - completion: The completion handler called when the message
+    ///                 has been sent.
     /// - throws: This method throws when the mesh network has not been created,
     ///           the local or target Model do not belong to any Element, or have
     ///           no common Application Key bound to them, or when
@@ -233,7 +232,6 @@ public extension MeshNetworkManager {
     ///   - model:          The destination Model.
     ///   - initialTtl:     The initial TTL (Time To Live) value of the message.
     ///                     If `nil`, the default Node TTL will be used.
-    ///   - applicationKey: The Application Key to sign the message.
     ///   - completion:     The completion handler called when the response
     ///                     has been received.
     /// - throws: This method throws when the mesh network has not been created,
@@ -305,15 +303,14 @@ public extension MeshNetworkManager {
     /// successfully or a problem occurred.
     ///
     /// - parameters:
-    ///   - message:      The message to be sent.
-    ///   - localElement: The source Element. If `nil`, the primary
-    ///                   Element will be used. The Element must belong
-    ///                   to the local Provisioner's Node.
-    ///   - model:        The destination Model.
-    ///   - initialTtl:   The initial TTL (Time To Live) value of the message.
-    ///                   If `nil`, the default Node TTL will be used.
-    ///   - completion:   The completion handler which is called when the response
-    ///                   has been received.
+    ///   - message:    The message to be sent.
+    ///   - localModel: The source Model. The Model must belong
+    ///                 to the local Provisioner's Node.
+    ///   - model:      The destination Model.
+    ///   - initialTtl: The initial TTL (Time To Live) value of the message.
+    ///                 If `nil`, the default Node TTL will be used.
+    ///   - completion: The completion handler which is called when the response
+    ///                 has been received.
     /// - throws: This method throws when the mesh network has not been created,
     ///           the local or target Model do not belong to any Element, or have
     ///           no common Application Key bound to them, or when
@@ -555,7 +552,9 @@ public extension MeshNetworkManager {
     /// ``MeshNetworkDelegate`` will be called when the message has been sent
     /// successfully or a problem occurred. 
     ///
-    /// - parameter message: The acknowledged configuration message to be sent.
+    /// - parameters:
+    ///   - message: The acknowledged configuration message to be sent.
+    ///   - completion: The completion callback.
     /// - throws: This method throws when the mesh network has not been created,
     ///           or the local Node does not have configuration capabilities
     ///           (no Unicast Address assigned).
@@ -605,7 +604,6 @@ public extension MeshNetworkManager {
     /// - throws: This method throws when the network is not created, the `source` address
     ///           is not a Unicast Address, `timeout` is negative or the manager is already
     ///           awaiting a message with the same parameters.
-    /// - returns: The message received.
     func waitFor(messageWithOpCode opCode: UInt32,
                  from source: Address, to destination: MeshAddress? = nil,
                  timeout: TimeInterval,
@@ -651,7 +649,6 @@ public extension MeshNetworkManager {
     ///   - completion: The completion callback.
     /// - throws: This method throws when the network is not created, `timeout` is negative
     ///           or the manager is already awaiting a message with the same parameters.
-    /// - returns: The message received.
     func waitFor(messageWithOpCode opCode: UInt32,
                  from element: Element, to destination: MeshAddress? = nil,
                  timeout: TimeInterval,
@@ -661,14 +658,13 @@ public extension MeshNetworkManager {
                     timeout: timeout, completion: completion)
     }
     
-    /// Sets a callback awaiting a mesh message with the given OpCode
+    /// Sets a callback awaiting a mesh message of given type
     /// sent from a specified source Unicast Address.
     ///
     /// The destination is optional. If not set, the destination of the received
     /// message is not validated.
     ///
     /// - parameters:
-    ///   - type: The message type.
     ///   - source: The Unicast Address of the Element from which the message is expected.
     ///   - destination: The optional destination of the message.
     ///   - timeout: The timeout in seconds. Use 0 for not timeout.
@@ -676,7 +672,6 @@ public extension MeshNetworkManager {
     /// - throws: This method throws when the network is not created, the `source` address
     ///           is not a Unicast Address, `timeout` is negative or the manager is already
     ///           awaiting a message with the same parameters.
-    /// - returns: The message received.
     func waitFor<T: StaticMeshMessage>(messageFrom source: Address,
                                        to destination: MeshAddress? = nil,
                                        timeout: TimeInterval,
@@ -693,21 +688,19 @@ public extension MeshNetworkManager {
         }
     }
     
-    /// Sets a callback awaiting a mesh message with the given OpCode
+    /// Sets a callback awaiting a mesh message of given type
     /// sent from a specified source ``Element``.
     ///
     /// The destination is optional. If not set, the destination of the received
     /// message is not validated.
     ///
     /// - parameters:
-    ///   - type: The message type.
     ///   - element: The Element from which the message is expected.
     ///   - destination: The optional destination of the message.
     ///   - timeout: The timeout in seconds. Use 0 for not timeout.
     ///   - completion: The completion callback.
     /// - throws: This method throws when the network is not created, `timeout` is negative
     ///           or the manager is already awaiting a message with the same parameters.
-    /// - returns: The message received.
     func waitFor<T: StaticMeshMessage>(messageFrom element: Element,
                                        to destination: MeshAddress? = nil,
                                        timeout: TimeInterval,

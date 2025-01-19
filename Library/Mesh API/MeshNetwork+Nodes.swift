@@ -156,7 +156,7 @@ public extension MeshNetwork {
     /// Returns whether any of the Network Keys in the mesh network
     /// matches the given Network Identity.
     ///
-    /// - parameter networkId: The Network Identity.
+    /// - parameter networkIdentity: The Network Identity.
     /// - returns: `True` if the Network ID matches any subnetwork of
     ///            this mesh network, `false` otherwise.
     func matches(networkIdentity: NetworkIdentity) -> Bool {

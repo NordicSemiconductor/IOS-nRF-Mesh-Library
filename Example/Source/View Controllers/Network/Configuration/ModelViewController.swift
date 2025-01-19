@@ -1050,7 +1050,7 @@ private extension Model {
     
 }
 
-extension NodeFeatures: CustomStringConvertible {
+extension NodeFeatures: @retroactive CustomStringConvertible {
     
     public var description: String {
         guard !isEmpty else {

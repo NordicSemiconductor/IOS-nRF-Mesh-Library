@@ -180,8 +180,8 @@ extension UIViewController {
     ///   - title:         The alert title.
     ///   - message:       The message below the title.
     ///   - text:          Initial value of the text field.
-    ///   - placeholder:   The placeholder if text is empty.
-    ///   - type:          The selector to be used for value validation.
+    ///   - placeHolder:   The placeholder if text is empty.
+    ///   - selector:      The selector to be used for value validation.
     ///   - action:        An optional additional action.
     ///   - cancelHandler: The Cancel button handler.
     ///   - handler:       The OK button handler.

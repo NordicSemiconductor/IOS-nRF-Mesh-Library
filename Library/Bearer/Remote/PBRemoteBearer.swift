@@ -30,7 +30,7 @@
 
 import Foundation
 
-final private class Send: AsyncResultOperation<Void, Error> {
+final private class Send: AsyncResultOperation<Void, Error>, @unchecked Sendable {
     private let message: RemoteProvisioningPDUSend
     private let destination: Address
     private let manager: MeshNetworkManager

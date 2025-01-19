@@ -99,8 +99,7 @@ class ProgressCollectionViewController: UICollectionViewController {
     }
     
     /// This method dismisses the progress alert dialog.
-    ///
-    /// - parameter message: Message to be displayed to the user.
+    ///.
     /// - parameter completion: An optional completion handler.
     func done(completion: (() -> Void)? = nil) {
         if let alert = alert {
