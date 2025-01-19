@@ -80,7 +80,7 @@ public extension Provisioner {
     /// Allocates the given Unicast Address ranges for the Provisioner.
     /// This method will automatically merge ranges if they overlap.
     ///
-    /// - parameter range: The new unicast ranges to allocate.
+    /// - parameter ranges: The new unicast ranges to allocate.
     /// - throws: The method throws an error when the Provisioner is added
     ///           to the mesh network and at least one new range overlaps any of
     ///           other Provisioners' ranges, or the range is of invalid type.
@@ -101,7 +101,7 @@ public extension Provisioner {
     /// Allocates the given Unicast Address ranges for the Provisioner.
     /// This method will automatically merge ranges if they overlap.
     ///
-    /// - parameter range: The new unicast ranges to allocate.
+    /// - parameter ranges: The new unicast ranges to allocate.
     /// - throws: The method throws an error when the Provisioner is added
     ///           to the mesh network and at least one new range overlaps any of
     ///           other Provisioners' ranges, or the range is of invalid type.
@@ -147,7 +147,7 @@ public extension Provisioner {
     /// Allocates the given Group Address ranges for the Provisioner.
     /// This method will automatically merge ranges if they overlap.
     ///
-    /// - parameter range: The new group ranges to allocate.
+    /// - parameter ranges: The new group ranges to allocate.
     /// - throws: The method throws an error when the Provisioner is added
     ///           to the mesh network and at least one new range overlaps any of
     ///           other Provisioners' ranges, or the range is of invalid type.
@@ -168,7 +168,7 @@ public extension Provisioner {
     /// Allocates the given Group Address ranges for the Provisioner.
     /// This method will automatically merge ranges if they overlap.
     ///
-    /// - parameter range: The new group ranges to allocate.
+    /// - parameter ranges: The new group ranges to allocate.
     /// - throws: The method throws an error when the Provisioner is added
     ///           to the mesh network and at least one new range overlaps any of
     ///           other Provisioners' ranges, or the range is of invalid type.
@@ -214,7 +214,7 @@ public extension Provisioner {
     /// Allocates the given Scene ranges for the Provisioner.
     /// This method will automatically merge ranges if they overlap.
     ///
-    /// - parameter range: The new scene ranges to allocate.
+    /// - parameter ranges: The new scene ranges to allocate.
     /// - throws: The method throws an error when the Provisioner is added
     ///           to the mesh network and at least one new range overlaps any of
     ///           other Provisioners' ranges, or the range is of invalid type.
@@ -235,7 +235,7 @@ public extension Provisioner {
     /// Allocates the given Scene ranges for the Provisioner.
     /// This method will automatically merge ranges if they overlap.
     ///
-    /// - parameter range: The new scene ranges to allocate.
+    /// - parameter ranges: The new scene ranges to allocate.
     /// - throws: The method throws an error when the Provisioner is added
     ///           to the mesh network and at least one new range overlaps any of
     ///           other Provisioners' ranges, or the range is of invalid type.

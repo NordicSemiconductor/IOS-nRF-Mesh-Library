@@ -72,7 +72,7 @@ public extension RangeObject {
     /// Returns a Boolean value indicating whether this range and the given
     /// array of ranges contain a common element.
     ///
-    /// - parameter other: A range to check for elements in common.
+    /// - parameter otherRanges: A range to check for elements in common.
     /// - returns: `True` if this range and other have at least one element in
     ///            common; otherwise, `false`.
     func overlaps(_ otherRanges: [RangeObject]) -> Bool {
@@ -86,7 +86,7 @@ public extension RangeObject {
     /// the distance is 0 and they can be merged.
     /// If ranges overlap each other, the distance is 0.
     ///
-    /// - parameter range: The range to check distance to.
+    /// - parameter other: The range to check distance to.
     /// - returns: The distance between ranges in units.
     func distance(to other: RangeObject) -> UInt16 {
         if upperBound < other.lowerBound {
@@ -158,7 +158,7 @@ public extension Array where Element: RangeObject {
     
     /// Returns whether the given value is in the range array.
     ///
-    /// - parameter address: The value to be checked.
+    /// - parameter value: The value to be checked.
     /// - returns: `True` if the value is inside the range array, `false` otherwise.
     func contains(_ value: UInt16) -> Bool {
         return contains { $0.contains(value) }

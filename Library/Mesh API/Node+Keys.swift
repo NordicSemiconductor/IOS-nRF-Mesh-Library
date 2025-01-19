@@ -177,7 +177,7 @@ public extension Array where Element == Node {
     /// Returns whether any of elements of this array is using an
     /// Network Key with given Key Index.
     ///
-    /// - parameter applicationKeyIndex: The Network Key Index to look for.
+    /// - parameter networkKeyIndex: The Network Key Index to look for.
     /// - returns: `True` if any of the Nodes have knowledge about the
     ///            Network Key Index, `false` otherwise.
     func knows(networkKeyIndex: KeyIndex) -> Bool {

@@ -26,7 +26,7 @@ import Foundation
 
 // https://github.com/AvdLee/AsyncOperations
 
-internal class AsyncResultOperation<Success, Failure>: AsyncOperation where Failure: Error {
+internal class AsyncResultOperation<Success, Failure>: AsyncOperation, @unchecked Sendable where Failure: Error {
 
     private(set) public var result: Result<Success, Failure>! {
         didSet {

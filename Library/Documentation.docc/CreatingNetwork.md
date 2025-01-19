@@ -26,5 +26,5 @@ automatically.
 
 ## What's next
 
-Now, with the mesh network manager and network set up we can provision a device: <doc:Provisioning>,
+Now, with the mesh network manager and network set up we can provision a device: <doc:ProvisioningDevices>,
 or connect to the network using a GATT Proxy node: <doc:Connecting>.

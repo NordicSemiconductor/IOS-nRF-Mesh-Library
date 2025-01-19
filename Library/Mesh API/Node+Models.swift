@@ -56,7 +56,7 @@ public extension Node {
     
     /// Returns whether the Node contains the given Model on any of its Elements.
     ///
-    /// - parameter modelId: The Model to look for.
+    /// - parameter model: The Model to look for.
     /// - returns: `True` if the Node contains the given Model on any of its Elements,
     ///            `false` otherwise.
     func contains(model: Model) -> Bool {

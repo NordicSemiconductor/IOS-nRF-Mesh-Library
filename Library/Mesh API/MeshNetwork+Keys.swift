@@ -89,7 +89,6 @@ public extension MeshNetwork {
     /// - parameter index: The Key Index of a key to be removed.
     /// - parameter force: If set to `true`, the key will be deleted even
     ///                    if there are other Nodes known to use this key.
-    /// - returns: The removed key.
     /// - throws: The method throws if the key is in use and cannot be
     ///           removed (unless `force` was set to `true`).
     func remove(applicationKeyWithKeyIndex index: KeyIndex, force: Bool = false) throws {
@@ -107,6 +106,7 @@ public extension MeshNetwork {
     /// - returns: The removed key.
     /// - throws: The method throws if the key is in use and cannot be
     ///           removed (unless `force` was set to `true`).
+    @discardableResult
     func remove(applicationKeyAt index: Int, force: Bool = false) throws -> ApplicationKey {
         let applicationKey = applicationKeys[index]
         // Ensure no Node is using this Application Key.
@@ -156,12 +156,11 @@ public extension MeshNetwork {
     /// - parameter index: The Key Index of a key to be removed.
     /// - parameter force: If set to `true`, the key will be deleted even
     ///                    if there are other Nodes known to use this key.
-    /// - returns: The removed key.
     /// - throws: The method throws if the key is in use and cannot be
     ///           removed (unless `force` was set to `true`).
     func remove(networkKeyWithKeyIndex index: KeyIndex, force: Bool = false) throws {
-        if let networkKey = networkKeys[index] {
-            _ = try remove(networkKey: networkKey, force: force)
+        if let index = networkKeys.firstIndex(where: { $0.index == index }) {
+            _ = try remove(networkKeyAt: index, force: force)
         }
     }
     
@@ -174,6 +173,7 @@ public extension MeshNetwork {
     /// - returns: The removed key.
     /// - throws: The method throws if the key is in use and cannot be
     ///           removed (unless `force` was set to `true`).
+    @discardableResult
     func remove(networkKeyAt index: Int, force: Bool = false) throws -> NetworkKey {
         let networkKey = networkKeys[index]
         // Ensure no Node is using this Application Key.

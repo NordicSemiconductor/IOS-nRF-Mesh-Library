@@ -33,9 +33,7 @@ import Foundation
 public extension Array where Element == ApplicationKey {
     
     subscript(keyIndex: KeyIndex) -> ApplicationKey? {
-        return first {
-            $0.index == keyIndex
-        }
+        return first { $0.index == keyIndex }
     }
     
     /// Returns a new list of Application Keys containing all the Application Keys

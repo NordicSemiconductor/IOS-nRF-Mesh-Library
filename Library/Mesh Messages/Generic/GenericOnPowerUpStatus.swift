@@ -42,7 +42,7 @@ public struct GenericOnPowerUpStatus: StaticMeshResponse {
     
     /// Creates the Generic On Power Up Status message.
     ///
-    /// - parameter transitionTime: The value of the Generic OnPowerUp state.
+    /// - parameter state: The value of the Generic OnPowerUp state.
     public init(state: OnPowerUp) {
         self.state = state
     }

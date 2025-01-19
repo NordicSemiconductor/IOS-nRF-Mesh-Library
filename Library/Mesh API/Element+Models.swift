@@ -34,7 +34,7 @@ public extension Element {
     
     /// Returns the first found Model with given identifier.
     ///
-    /// - parameter sigModelId: The 32-bit Model identifier.
+    /// - parameter modelId: The 32-bit Model identifier.
     /// - returns: The Model found, or `nil` if no such exist.
     func model(withModelId modelId: UInt32) -> Model? {
         return models.first {
@@ -121,7 +121,7 @@ public extension Element {
     
     /// Returns whether the Element contains the given Model.
     ///
-    /// - parameter modelId: The Model to look for.
+    /// - parameter model: The Model to look for.
     /// - returns: `True` if the Element contains the given Model, `false` otherwise.
     func contains(model: Model) -> Bool {
         return models.contains(model)

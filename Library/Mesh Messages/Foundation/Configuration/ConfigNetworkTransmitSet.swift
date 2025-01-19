@@ -66,7 +66,7 @@ public struct ConfigNetworkTransmitSet: AcknowledgedConfigMessage {
     
     /// Sets the Network Transmit property of the Node.
     ///
-    /// - parameter networkTranismit: The Network Transmit value.
+    /// - parameter networkTransmit: The Network Transmit value.
     /// - since: 4.0.0 
     public init(_ networkTransmit: Node.NetworkTransmit) {
         self.count = networkTransmit.count - 1

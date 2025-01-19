@@ -201,7 +201,7 @@ public struct RemoteProvisioningExtendedScanStart: UnacknowledgedRemoteProvision
     ///
     /// - note: It is not possible to request more than 16 AD Types using this method.
     ///
-    /// - parameter adTypeFilter: AD Types to be reported.
+    /// - parameter filter: AD Types to be reported.
     public init(filter: AdTypes) {
         self.init(filter: [filter])
     }
@@ -214,7 +214,7 @@ public struct RemoteProvisioningExtendedScanStart: UnacknowledgedRemoteProvision
     ///
     /// - note: It is not possible to request more than 16 AD Types using this method.
     ///
-    /// - parameter adTypeFilter: AD Types to be reported.
+    /// - parameter filter: AD Types to be reported.
     public init(filter: [AdTypes]) {
         let types = filter.flatMap { $0.adTypes }
         self.adTypeFilterCount = UInt8(types.count)
