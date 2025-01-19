@@ -41,7 +41,7 @@ import Foundation
 ///         implemented in this library. For those,
 ///         ``DevicePropertyCharacteristic/other(_:)`` should be used
 ///         until they are implemented.
-public enum DeviceProperty {
+public enum DeviceProperty: Sendable {
     case averageAmbientTemperatureInAPeriodOfDay
     case averageInputCurrent
     case averageInputVoltage
@@ -1215,7 +1215,7 @@ internal extension DeviceProperty {
 /// An enum representing valid or invalid decimal values.
 ///
 /// - since: 4.0.0
-public enum ValidDecimal: Equatable {
+public enum ValidDecimal: Equatable, Sendable {
     /// The value is valid.
     case valid(Decimal)
     /// The value is invalid.
@@ -1225,10 +1225,10 @@ public enum ValidDecimal: Equatable {
 /// The time is represented by the value `1.1^(N–64)` in seconds, with `N` being the raw 8-bit value.
 ///
 /// - since: 4.0.0
-public enum TimeExponential: Equatable {
+public enum TimeExponential: Equatable, Sendable {
     /// Creates a ``TimeExponential`` object based on the given time.
     ///
-    /// As the time is represented as `1.1^(N-64)` it will be ronded to the nearest possible value.
+    /// As the time is represented as `1.1^(N-64)` it will be rounded to the nearest possible value.
     ///
     /// - parameter seconds: The time in seconds as `TimeInterval`.
     static func interval(_ seconds: TimeInterval) -> TimeExponential {
@@ -1292,7 +1292,7 @@ public enum TimeExponential: Equatable {
 /// The unit of a characteristic is specified in the comment.
 ///
 /// For example, ``DevicePropertyCharacteristic/electricCurrent(_:)`` unit is Ampere
-/// with resulution of 0.01 A.
+/// with resolution of 0.01 A.
 ///
 /// #### Encoding sample
 /// ```swift
@@ -1306,7 +1306,7 @@ public enum TimeExponential: Equatable {
 /// }
 /// print(current) // -> "12.34 A"
 /// ```
-public enum DevicePropertyCharacteristic: Equatable {
+public enum DevicePropertyCharacteristic: Equatable, Sendable {
     /// The integral of Apparent Power over a time interval,
     /// represented in units of kVAh (kilo-volt-ampere-hour).
     ///

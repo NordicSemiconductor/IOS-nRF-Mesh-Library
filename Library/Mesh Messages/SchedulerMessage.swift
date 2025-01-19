@@ -32,7 +32,7 @@ import Foundation
 
 /// Scheduler Registry entry contains the time information,
 /// the scheduler action and Scene Number.
-public struct SchedulerRegistryEntry {
+public struct SchedulerRegistryEntry: Sendable {
     public let year: SchedulerYear
     public let month: SchedulerMonth
     public let day: SchedulerDay
@@ -78,7 +78,7 @@ public struct SchedulerRegistryEntry {
 // MARK: Structures to represent scheduler entry properties.
 
 /// The scheduler year.
-public struct SchedulerYear {
+public struct SchedulerYear: Sendable {
     /// The year in a century.
     ///
     /// This filed contains a 2-digit value in a century. E.g. a year 1985 is stored as 85.
@@ -116,7 +116,7 @@ public enum Month: UInt16 {
 }
 
 /// The scheduler month bit field.
-public struct SchedulerMonth {
+public struct SchedulerMonth: Sendable {
     /// A bit field representing scheduler months.
     public let value: UInt16 // 12 bits
     
@@ -127,7 +127,7 @@ public struct SchedulerMonth {
 }
 
 /// The scheduler day.
-public struct SchedulerDay {
+public struct SchedulerDay: Sendable {
     /// The 5-bit field representing a day number.
     public let value: UInt8 // 5 bits
 
@@ -143,7 +143,7 @@ public struct SchedulerDay {
 }
 
 /// The scheduler hour.
-public struct SchedulerHour {
+public struct SchedulerHour: Sendable {
     /// The 5-bit field representing a hour number.
     public let value: UInt8 // 5 bits
 
@@ -164,7 +164,7 @@ public struct SchedulerHour {
 }
 
 /// The scheduler month.
-public struct SchedulerMinute {
+public struct SchedulerMinute: Sendable {
     /// The 6-bit field representing a minute number.
     public let value: UInt8 // 6 bits
 
@@ -195,7 +195,7 @@ public struct SchedulerMinute {
 }
 
 /// The scheduler second.
-public struct SchedulerSecond {
+public struct SchedulerSecond: Sendable {
     /// The 6-bit field representing a second number.
     public let value: UInt8 // 6 bits
 
@@ -237,7 +237,7 @@ public enum WeekDay: UInt8 {
 }
 
 /// The scheduler day of week.
-public struct SchedulerDayOfWeek {
+public struct SchedulerDayOfWeek: Sendable {
     /// A 7-bit long bit field representation of week days.
     public let value: UInt8 // 7 bits
     
@@ -248,14 +248,14 @@ public struct SchedulerDayOfWeek {
 }
 
 /// The scheduler action enumeration as defined in Mesh Model specification..
-public enum SchedulerAction: UInt8 {
+public enum SchedulerAction: UInt8, Sendable {
     case turnOff     = 0x00
     case turnOn      = 0x01
     case sceneRecall = 0x02
     case noAction    = 0x0F
 }
 
-// MARK: Marshalling
+// MARK: Marshaling
 
 /// Entry is encoded with multiple bitfields to pack data as densely as possible.
 /// Below are the fields in order, with the number of bits each one occupies.

@@ -30,7 +30,7 @@
 * Created by Jules DOMMARTIN on 04/11/2024.
 */
 
-public enum HealthFault {
+public enum HealthFault: Sendable {
     case noFault
     case batteryLowWarning
     case batteryLowError

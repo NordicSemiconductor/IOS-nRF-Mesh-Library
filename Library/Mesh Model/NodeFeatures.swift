@@ -62,7 +62,7 @@ public enum NodeFeature: String, Codable {
 }
 
 /// A set of currently active features of a Node.
-public struct NodeFeatures: OptionSet {
+public struct NodeFeatures: OptionSet, Sendable {
     public let rawValue: UInt16
     
     /// If present, the ``NodeFeatures/relay`` feature is enabled on the Node.
@@ -99,7 +99,7 @@ public struct NodeFeatures: OptionSet {
 /// The state of a feature.
 ///
 /// A Node can have features enabled, disabled, or may not support one.
-public enum NodeFeatureState: UInt8, Codable {
+public enum NodeFeatureState: UInt8, Codable, Sendable {
     /// The feature is disabled.
     case notEnabled   = 0
     /// The feature is enabled.

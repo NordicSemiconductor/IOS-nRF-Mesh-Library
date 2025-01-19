@@ -36,7 +36,7 @@ import Foundation
 /// the Elements it includes, and the supported models.
 ///
 /// The Composition Data is composed of a number of pages of information.
-public protocol CompositionDataPage {
+public protocol CompositionDataPage: Sendable {
     /// Page number of the Composition Data to get.
     var page: UInt8 { get }
     /// Composition Data parameters as Data.
@@ -100,7 +100,7 @@ public struct Page0: CompositionDataPage {
     /// or not. Read the state of each feature using corresponding Config
     /// message.
     public let features: NodeFeaturesState
-    /// An array of node's elements.
+    /// An array of Node's Elements.
     public let elements: [Element]
     
     public var parameters: Data? {

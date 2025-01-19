@@ -39,7 +39,7 @@ public protocol SensorPropertyMessage: MeshMessage {
 /// The Sensor Descriptor state represents the attributes describing the
 /// sensor data. This state does not change throughout the lifetime of an
 /// Element.
-public struct SensorDescriptor {
+public struct SensorDescriptor: Sendable {
     /// The Sensor Property describes the meaning and the format of data
     /// reported by a sensor.
     public let property: DeviceProperty
@@ -100,7 +100,7 @@ public struct SensorDescriptor {
     public var isPositiveToleranceSpecified: Bool {
         return positiveTolerance > 0
     }
-    /// Whether the negatove tolerance is specified.
+    /// Whether the negative tolerance is specified.
     public var isNegativeToleranceSpecified: Bool {
         return negativeTolerance > 0
     }
@@ -184,7 +184,7 @@ public struct SensorDescriptor {
         }
         let propertyId: UInt16 = parameters.read(fromOffset: offset)
         self.property = DeviceProperty(propertyId)
-        // Decode two 12-bit tolerace values from 2 bytes.
+        // Decode two 12-bit tolerance values from 2 bytes.
         self.positiveTolerance = UInt16(parameters[offset + 3] & 0x0F) << 8 | UInt16(parameters[offset + 2])
         self.negativeTolerance = UInt16(parameters[offset + 4]) << 4 | UInt16(parameters[offset + 3] >> 4)
         guard let function = SensorSamplingFunction(rawValue: parameters[offset + 5]) else {
@@ -197,7 +197,7 @@ public struct SensorDescriptor {
 }
 
 /// Enumeration of sensor sampling functions.
-public enum SensorSamplingFunction: UInt8 {
+public enum SensorSamplingFunction: UInt8, Sendable {
     /// Sampling function is not made available.
     case unspecified    = 0x00
     /// The presented value is an instantaneous sample.
@@ -228,14 +228,14 @@ public enum SensorSamplingFunction: UInt8 {
 }
 
 /// The structure of sensor cadence.
-public struct SensorCadence {
+public struct SensorCadence: Sendable {
     
     /// The Status Trigger Delta controls the positive and negative
     /// change of a measured quantity that triggers more rapid publication of
     /// a Sensor Status message.
     ///
     /// Depending on the Sensor Trigger Type value, the
-    public enum StatusTriggerDelta {
+    public enum StatusTriggerDelta: Sendable {
         /// The delta type and unit is defined by the Format Type of the characteristic
         /// of the Sensor Property.
         case values(down: DevicePropertyCharacteristic, up: DevicePropertyCharacteristic)

@@ -53,7 +53,7 @@ public protocol AcknowledgedRemoteProvisioningMessage: RemoteProvisioningMessage
 }
 
 /// The status of a Config operation.
-public enum RemoteProvisioningMessageStatus: UInt8 {
+public enum RemoteProvisioningMessageStatus: UInt8, Sendable {
     /// Success.
     case success                            = 0x00
     /// Scanning Cannot Start.
@@ -111,7 +111,7 @@ public extension RemoteProvisioningStatusMessage {
 
 /// The Remote Provisioning Scan state describes the state of the Remote Provisioning
 /// Scan procedure in the Remote Provisioning Server model.
-public enum RemoteProvisioningScanState: UInt8 {
+public enum RemoteProvisioningScanState: UInt8, Sendable {
     /// Idle.
     case idle               = 0x00
     /// Remote Provisioning Multiple Devices Scan (not limited to one device).
@@ -125,7 +125,7 @@ public enum RemoteProvisioningScanState: UInt8 {
 ///
 /// During the execution of any of the Node Provisioning Protocol Interface procedures,
 /// the Link Opening, Outbound Packet Transfer, and Link Closing values are not used.
-public enum RemoteProvisioningLinkState: UInt8 {
+public enum RemoteProvisioningLinkState: UInt8, Sendable {
     /// Idle.
     case idle                   = 0x00
     /// Link Opening.
@@ -139,7 +139,7 @@ public enum RemoteProvisioningLinkState: UInt8 {
 }
 
 /// Provisioning bearer link close reason.
-public enum RemoteProvisioningLinkCloseReason: UInt8 {
+public enum RemoteProvisioningLinkCloseReason: UInt8, Sendable {
     /// Success.
     case success      = 0x00
     // Value 0x01 is prohibited.
@@ -152,7 +152,7 @@ public enum RemoteProvisioningLinkCloseReason: UInt8 {
 /// The Node Provisioning Protocol Interface is an interface used by the Node
 /// to route the Provisioning PDUs between the Provisioner and the layer that
 /// is executing the provisioning protocol.
-public enum NodeProvisioningProtocolInterfaceProcedure: UInt8 {
+public enum NodeProvisioningProtocolInterfaceProcedure: UInt8, Sendable {
     /// The Device Key Refresh procedure is used to change the Device Key
     /// without reprovisioning a Node and without a need to reconfigure the Node.
     ///
@@ -189,7 +189,7 @@ public enum NodeProvisioningProtocolInterfaceProcedure: UInt8 {
 /// - note: This list does not contain Incomplete Lists of Service Class UUIDs and
 ///         Shortened Local Name AD Types, as those are not supported in
 ///         ``RemoteProvisioningExtendedScanStart`` message.
-internal enum AdType: UInt8 {
+internal enum AdType: UInt8, Sendable {
     case localName     = 0x09
     case txPowerLevel  = 0x0A
     case uri           = 0x24
@@ -271,7 +271,7 @@ public struct AdTypes {
 }
 
 /// An Advertising Structure.
-public struct AdStructure {
+public struct AdStructure: Sendable {
     /// The AD Type associated with the value.
     public let type: UInt8
     /// The value.

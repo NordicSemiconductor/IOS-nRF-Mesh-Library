@@ -35,7 +35,7 @@ import Foundation
 ///
 /// Internally, it uses steps and step resolution. Thanks to that only some time
 /// intervals are possible. Use ``TransitionTime/interval`` to get exact time
-public struct TransitionTime {
+public struct TransitionTime: Sendable {
     /// Transition Number of Steps, 6-bit value.
     ///
     /// Value 0 indicates an immediate transition.

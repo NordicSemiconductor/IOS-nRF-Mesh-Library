@@ -79,7 +79,7 @@ public enum ProvisioningError: Error {
 
 /// Set of errors which may be reported by an unprovisioned device
 /// during provisioning process.
-public enum RemoteProvisioningError: UInt8 {
+public enum RemoteProvisioningError: UInt8, Sendable {
     /// The provisioning protocol PDU is not recognized by the device.
     case invalidPdu            = 1
     /// The arguments of the protocol PDUs are outside expected values
@@ -105,13 +105,13 @@ public enum RemoteProvisioningError: UInt8 {
 
 /// A set of authentication actions aiming to strengthen device provisioning
 /// security.
-public enum AuthAction {
+public enum AuthAction: Sendable {
     /// The user shall provide 16 byte OOB Static Key.
-    case provideStaticKey(callback: (Data) -> Void)
+    case provideStaticKey(callback: @Sendable (Data) -> Void)
     /// The user shall provide a number.
-    case provideNumeric(maximumNumberOfDigits: UInt8, outputAction: OutputAction, callback: (UInt) -> Void)
+    case provideNumeric(maximumNumberOfDigits: UInt8, outputAction: OutputAction, callback: @Sendable (UInt) -> Void)
     /// The user shall provide an alphanumeric text.
-    case provideAlphanumeric(maximumNumberOfCharacters: UInt8, callback: (String) -> Void)
+    case provideAlphanumeric(maximumNumberOfCharacters: UInt8, callback: @Sendable (String) -> Void)
     /// The application should display this number to the user.
     /// User should perform selected action given number of times,
     /// or enter the number on the remote device.

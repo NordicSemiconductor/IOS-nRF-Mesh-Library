@@ -43,7 +43,7 @@ import Foundation
 /// For unsegmented messages, the size of the TransMIC is 32 bits for data messages.
 ///
 /// Control messages do not have a TransMIC.
-public enum MeshMessageSecurity {
+public enum MeshMessageSecurity: Sendable {
     /// Message will be sent with 32-bit Transport MIC.
     case low
     /// Message will be sent with 64-bit Transport MIC.
@@ -54,7 +54,7 @@ public enum MeshMessageSecurity {
 
 /// The base class of every mesh message. Mesh messages can be sent to and
 /// received from a mesh network.
-public protocol BaseMeshMessage {
+public protocol BaseMeshMessage: Sendable {
     /// Access Layer payload, including the Op Code.
     var parameters: Data? { get }
     

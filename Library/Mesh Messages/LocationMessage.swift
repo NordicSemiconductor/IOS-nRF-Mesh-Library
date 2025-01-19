@@ -40,8 +40,8 @@ public protocol LocationStatusMessage: MeshMessage {
     var altitude: Altitude { get }
 }
 
-/// The representation of latitide coordinate.
-public enum Latitude {
+/// The representation of latitude coordinate.
+public enum Latitude: Sendable {
     init(raw parameter: Int32) {
         if (parameter == -1) {
             self = .notConfigured
@@ -87,7 +87,7 @@ public enum Latitude {
 }
 
 /// The representation of longitude coordinate.
-public enum Longitude {
+public enum Longitude: Sendable {
     init(raw parameter: Int32) {
         if (parameter == -1) {
             self = .notConfigured
@@ -133,7 +133,7 @@ public enum Longitude {
 }
 
 /// The representation of altitude above see level.
-public enum Altitude : Equatable {
+public enum Altitude: Equatable, Sendable {
     init(raw parameter: Int16) {
         if (parameter == 0x7FFF) {
             self = .notConfigured

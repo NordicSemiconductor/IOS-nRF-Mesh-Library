@@ -31,7 +31,7 @@
 import Foundation
 
 /// The enumeration for different actions for On Power Up state.
-public enum OnPowerUp: UInt8 {
+public enum OnPowerUp: UInt8, Sendable {
     case off       = 0x00
     case `default` = 0x01
     case restore   = 0x02

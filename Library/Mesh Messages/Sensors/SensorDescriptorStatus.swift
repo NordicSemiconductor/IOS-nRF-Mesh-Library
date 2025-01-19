@@ -34,7 +34,7 @@ public struct SensorDescriptorStatus: StaticMeshResponse {
     public static let opCode: UInt32 = 0x51
     
     /// The result returned in Sensor Descriptor Status message.
-    public enum Result {
+    public enum Result: Sendable {
         /// List of sensor descriptors returned in the response.
         ///
         /// If Sensor Descriptor Get was sent with the ``SensorDescriptorGet/property``
@@ -42,7 +42,7 @@ public struct SensorDescriptorStatus: StaticMeshResponse {
         /// found on the target Element. Otherwise, in case the requested property
         /// was found, this list will contain only the requested descriptor.
         case descriptors([SensorDescriptor])
-        /// The Propery was not found on the Element.
+        /// The Property was not found on the Element.
         ///
         /// This result is returned when a Sensor Descriptor Get was sent with
         /// a ``SensorDescriptorGet/property`` parameter that does not exist on the

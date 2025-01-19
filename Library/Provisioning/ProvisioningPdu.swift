@@ -69,7 +69,7 @@ internal enum ProvisioningPduType: UInt8 {
 }
 
 /// Provisioning requests are sent by the Provisioner to an unprovisioned device.
-public enum ProvisioningRequest {
+public enum ProvisioningRequest: Sendable {
     /// A Provisioner sends a Provisioning Invite PDU to indicate to the intended
     /// Provisionee that the provisioning process is starting.
     case invite(attentionTimer: UInt8)
@@ -138,7 +138,7 @@ public enum ProvisioningRequest {
 
 /// Provisioning responses are sent by the Provisionee to the Provisioner
 /// as a response to ``ProvisioningRequest``.
-public enum ProvisioningResponse {
+public enum ProvisioningResponse: Sendable {
     /// The Provisionee sends a Provisioning Capabilities PDU to indicate its
     /// supported provisioning capabilities to a Provisioner.
     case capabilities(_ capabilities: ProvisioningCapabilities)

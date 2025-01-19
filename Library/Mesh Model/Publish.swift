@@ -39,7 +39,7 @@ import Foundation
 /// To set the publication on a Model, send the ``ConfigModelPublicationSet`` or
 /// ``ConfigModelPublicationVirtualAddressSet`` messages to the Configuration Server model
 /// on the Node. The *Set* messages are confirmed with a ``ConfigModelPublicationStatus``.
-public struct Publish: Codable, Equatable {
+public struct Publish: Codable, Equatable, Sendable {
     /// The configuration for disabling publication.
     ///
     /// - since: 3.0
@@ -47,7 +47,7 @@ public struct Publish: Codable, Equatable {
     
     /// The object is used to describe the number of times a message is published and
     /// the interval between retransmissions of the published message.
-    public struct Retransmit: Codable, Equatable {
+    public struct Retransmit: Codable, Equatable, Sendable {
         /// Retransmission of published messages is disabled.
         ///
         /// - since: 3.0
@@ -104,7 +104,7 @@ public struct Publish: Codable, Equatable {
     /// are periodically published by a Model.
     ///
     /// - since: 3.0
-    public struct Period: Codable, Equatable {
+    public struct Period: Codable, Equatable, Sendable {
         /// Periodic publishing of status messages is disabled.
         ///
         /// - since: 3.0

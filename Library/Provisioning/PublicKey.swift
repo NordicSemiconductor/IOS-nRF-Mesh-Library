@@ -34,7 +34,7 @@ import Foundation
 ///
 /// This enumeration is used to specify the Public Key type during provisioning
 /// in ``ProvisioningManager/provision(usingAlgorithm:publicKey:authenticationMethod:)``.
-public enum PublicKey {
+public enum PublicKey: Sendable {
     /// No OOB Public Key is used.
     case noOobPublicKey
     /// OOB Public Key is used. The key must contain the full value of the Public Key,
@@ -69,7 +69,7 @@ extension PublicKey: CustomDebugStringConvertible {
 ///
 /// This enumeration is used in ``ProvisioningRequest/start(algorithm:publicKey:authenticationMethod:)``
 /// to encode the selected Public Key type.
-public enum PublicKeyMethod {
+public enum PublicKeyMethod: Sendable {
     /// No OOB Public Key is used.
     case noOobPublicKey
     /// OOB Public Key is used. The key must contain the full value of the Public Key,
@@ -91,7 +91,7 @@ extension PublicKeyMethod: CustomDebugStringConvertible {
 }
 
 /// The type of Public Key information.
-public struct PublicKeyType: OptionSet {
+public struct PublicKeyType: OptionSet, Sendable {
     public let rawValue: UInt8
     
     /// Public Key OOB Information is available.
