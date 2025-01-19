@@ -93,7 +93,7 @@ public struct SensorDescriptor: Sendable {
     /// For those cases where a value for the Sensor Update Interval is
     /// not available or is not applicable, a special number has been assigned
     /// to indicate Not Applicable equal to 0.
-    /// - seeAlso: ``SensorDescriptor/updateInteval``
+    /// - seeAlso: ``SensorDescriptor/updateInterval``
     internal let updateIntervalValue: UInt8
     
     /// Whether the positive tolerance is specified.
@@ -117,7 +117,7 @@ public struct SensorDescriptor: Sendable {
     }
     /// The update interval in seconds, or `nil`, if update interval is
     /// not available or is not applicable.
-    public var updateInteval: TimeInterval? {
+    public var updateInterval: TimeInterval? {
         if updateIntervalValue == 0 {
             return nil
         }
