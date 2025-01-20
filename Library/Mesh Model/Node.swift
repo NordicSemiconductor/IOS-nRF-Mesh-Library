@@ -886,22 +886,20 @@ internal extension Node {
         // Don't override features if they already were known.
         // Accurate features states could have been acquired by reading each feature state,
         // while the Page 0 of the Composition Data contains only Supported / Not Supported.
-        if let features { // `NodeFeaturesState` is a reference type
-            features.applyMissing(from: page0.features)
+        if features != nil {
+            features?.applyMissing(from: page0.features)
         } else {
             features = page0.features
         }
         // And set the Elements received.
-        set(elements: page0.elements)
-        meshNetwork?.timestamp = Date()
-    }
-    
-    var ensureFeatures: NodeFeaturesState {
-        if features == nil {
-            features = NodeFeaturesState()
+        let elements = page0.elements.map { element in
+            let models = element.models.map { model in
+                return Model(modelId: model.modelId)
+            }
+            return Element(location: element.location, models: models)
         }
+        set(elements: elements)
         meshNetwork?.timestamp = Date()
-        return features!
     }
     
 }

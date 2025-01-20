@@ -110,7 +110,7 @@ public enum NodeFeatureState: UInt8, Codable, Sendable {
 
 /// The features state object represents the functionality of a mesh node
 /// that is determined by the set features that the node supports.
-public class NodeFeaturesState: Codable {
+public struct NodeFeaturesState: Codable, Sendable {
     /// The state of Relay feature or `nil` if unknown.
     public internal(set) var relay: NodeFeatureState?
     /// The state of Proxy feature or `nil` if unknown.
@@ -169,7 +169,7 @@ public class NodeFeaturesState: Codable {
         self.lowPower = mask & 0x08 == 0 ? .notSupported : .enabled
     }
     
-    internal func applyMissing(from other: NodeFeaturesState) {
+    internal mutating func applyMissing(from other: NodeFeaturesState) {
         if self.friend == nil {
             self.friend = other.friend
         }
