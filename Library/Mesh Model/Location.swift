@@ -36,7 +36,7 @@ import Foundation
 ///
 /// Imported from:
 /// https://www.bluetooth.com/specifications/assigned-numbers -> GATT Namespace Descriptors
-public enum Location: UInt16, Codable {
+public enum Location: UInt16, Codable, Sendable {
     case auxiliary                    = 0x0108
     case back                         = 0x0101
     case backup                       = 0x0107

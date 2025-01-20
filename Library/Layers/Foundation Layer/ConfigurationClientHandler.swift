@@ -302,7 +302,10 @@ internal class ConfigurationClientHandler: ModelDelegate {
         // Relay settings
         case let status as ConfigRelayStatus:
             if let node = meshNetwork.node(withAddress: source) {
-                node.ensureFeatures.relay = status.state
+                if node.features == nil {
+                    node.features = NodeFeaturesState()
+                }
+                node.features?.relay = status.state
                 if case .notSupported = status.state {
                     node.relayRetransmit = nil
                 } else {
@@ -313,13 +316,19 @@ internal class ConfigurationClientHandler: ModelDelegate {
         // GATT Proxy settings
         case let status as ConfigGATTProxyStatus:
             if let node = meshNetwork.node(withAddress: source) {
-                node.ensureFeatures.proxy = status.state
+                if node.features == nil {
+                    node.features = NodeFeaturesState()
+                }
+                node.features?.proxy = status.state
             }
             
         // Friend settings
         case let status as ConfigFriendStatus:
             if let node = meshNetwork.node(withAddress: source) {
-                node.ensureFeatures.friend = status.state
+                if node.features == nil {
+                    node.features = NodeFeaturesState()
+                }
+                node.features?.friend = status.state
             }
                 
         // Secure Network Beacon configuration

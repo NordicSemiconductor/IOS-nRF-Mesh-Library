@@ -91,49 +91,6 @@ public class Element: Codable {
         self.index = 0
     }
     
-    internal init?(compositionData: Data, offset: inout Int) {
-        // Composition Data must have at least 4 bytes: 2 for Location and one for NumS and NumV.
-        guard compositionData.count >= offset + 4 else {
-            return nil
-        }
-        // Is Location valid?
-        let rawValue: UInt16 = compositionData.read(fromOffset: offset)
-        guard let location = Location(rawValue: rawValue) else {
-            return nil
-        }
-        self.location = location
-        
-        // Read NumS and NumV.
-        let sigModelsByteCount    = Int(compositionData[offset + 2]) * 2 // SIG Model ID is 16-bit long.
-        let vendorModelsByteCount = Int(compositionData[offset + 3]) * 4 // Vendor Model ID is 32-bit long.
-        
-        // Ensure the Composition Data have enough data.
-        guard compositionData.count >= offset + 3 + sigModelsByteCount + vendorModelsByteCount else {
-            return nil
-        }
-        // 4 bytes have been read.
-        offset += 4
-        
-        // Set temporary index.
-        // Final index will be set when Element is added to the Node.
-        self.index = 0
-        
-        // Read models.
-        self.models = []
-        for o in stride(from: offset, to: offset + sigModelsByteCount, by: 2) {
-            let sigModelId: UInt16 = compositionData.read(fromOffset: o)
-            add(model: Model(sigModelId: sigModelId))
-        }
-        offset += sigModelsByteCount
-        
-        for o in stride(from: offset, to: offset + vendorModelsByteCount, by: 4) {
-            let companyId: UInt16 = compositionData.read(fromOffset: o)
-            let vendorModelId: UInt16 = compositionData.read(fromOffset: o + 2)
-            add(model: Model(vendorModelId: vendorModelId, companyId: companyId))
-        }
-        offset += vendorModelsByteCount
-    }
-    
     internal init(copy element: Element,
                   andTruncateTo applicationKeys: [ApplicationKey], nodes: [Node], groups: [Group]) {
         self.name = element.name

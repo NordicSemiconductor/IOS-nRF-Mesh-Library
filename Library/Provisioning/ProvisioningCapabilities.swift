@@ -32,7 +32,7 @@ import Foundation
 
 /// The device sends this PDU to indicate its supported provisioning
 /// capabilities to a Provisioner.
-public struct ProvisioningCapabilities {
+public struct ProvisioningCapabilities: Sendable {
     /// Number of elements supported by the device.
     public let numberOfElements: UInt8
     /// Supported algorithms and other capabilities.

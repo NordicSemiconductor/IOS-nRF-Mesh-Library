@@ -60,7 +60,7 @@ public protocol AcknowledgedConfigMessage: ConfigMessage, StaticAcknowledgedMesh
 }
 
 /// The status of a Config operation.
-public enum ConfigMessageStatus: UInt8 {
+public enum ConfigMessageStatus: UInt8, Sendable {
     /// Success.
     case success                        = 0x00
     /// Invalid Address.

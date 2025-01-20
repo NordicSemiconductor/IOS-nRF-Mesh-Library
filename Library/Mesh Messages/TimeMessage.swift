@@ -40,14 +40,14 @@ public protocol TimeMessage: MeshMessage {
 ///
 /// Mesh defines times based on International Atomic Time (TAI). The base representation of times is the number of
 /// seconds after 00:00:00 TAI on 2000-01-01 (that is, 1999-12-31T23:59:28 Coordinated Universal Time (UTC)).
-public struct TaiTime {
+public struct TaiTime: Sendable {
     /// The current TAI time in seconds after the epoch 2000-01-01T00:00:00 TAI (1999-12-31T23:59:28 UTC).
     public let seconds: UInt64
     /// The sub-second time in units of 1/256th second.
     public let subSecond: UInt8
     /// The estimated uncertainty in 10-millisecond steps.
     public let uncertainty: UInt8
-    /// Whether this time is authorative (from a "known good" source, such as GPS or NTP).
+    /// Whether this time is authoritative (from a "known good" source, such as GPS or NTP).
     public let authority: Bool
     /// Current difference between TAI and UTC in seconds (range -255 to 32512).
     public let taiDelta: Int16
@@ -57,7 +57,7 @@ public struct TaiTime {
     /// Creates an unknown TAI time.
     ///
     /// When an element cannot determine the time with the accuracy necessary for the implementation,
-    /// a special value of 0 seonds shall be used.
+    /// a special value of 0 seconds shall be used.
     public init() {
         self.seconds = 0
         self.subSecond = 0
@@ -73,7 +73,7 @@ public struct TaiTime {
     ///   - seconds: The current TAI time in seconds.
     ///   - subSecond: The sub-second time in units of 1/256th second.
     ///   - uncertainty: The estimated uncertainty in 10-millisecond steps.
-    ///   - authority: Whether this time is authorative (from a "known good" source, such as GPS or NTP).
+    ///   - authority: Whether this time is authoritative (from a "known good" source, such as GPS or NTP).
     ///   - taiDelta: Current difference between TAI and UTC in seconds (range -255 to 32512).
     ///   - tzOffset: The Local time zone offset.
     public init(seconds: UInt64, subSecond: UInt8,
@@ -88,7 +88,7 @@ public struct TaiTime {
     }
     
     /// When an element cannot determine the time with the accuracy necessary for the implementation,
-    /// a special value of 0 seonds shall be used, in which case this property returns `false`.
+    /// a special value of 0 seconds shall be used, in which case this property returns `false`.
     public var isKnown: Bool {
         return seconds > 0
     }
@@ -146,7 +146,7 @@ extension TaiTime {
     
     /// Marshals the TAI Time to raw bytes.
     ///
-    /// - parameter time: The TAI time to marshall.
+    /// - parameter time: The TAI time to marshal.
     /// - returns: The raw bytes of length 10.
     public static func marshal(_ time: TaiTime) -> Data {
         var data = Data(count: 10)

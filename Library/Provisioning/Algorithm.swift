@@ -31,7 +31,7 @@
 import Foundation
 
 /// The algorithm used for calculating Device Key.
-public enum Algorithm {
+public enum Algorithm: Sendable {
     /// FIPS P-256 Elliptic Curve algorithm will be used to calculate the
     /// shared secret.
     ///
@@ -75,7 +75,7 @@ extension Algorithm: CustomDebugStringConvertible {
 }
 
 /// A set of algorithms supported by the Unprovisioned Device.
-public struct Algorithms: OptionSet {
+public struct Algorithms: OptionSet, Sendable {
     public let rawValue: UInt16
     
     /// BTM_ECDH_P256_CMAC_AES128_AES_CCM algorithm is supported.

@@ -31,7 +31,7 @@
 import Foundation
 
 /// The type representing Key Refresh phase.
-public enum KeyRefreshPhase: Int, Codable {
+public enum KeyRefreshPhase: Int, Codable, Sendable {
     /// Phase 0: Normal Operation.
     case normalOperation = 0
     /// Phase 1: Distributing new keys to all nodes. Nodes will transmit using
@@ -57,7 +57,7 @@ public enum KeyRefreshPhase: Int, Codable {
 }
 
 /// The type representing Key Refresh phase transition.
-public enum KeyRefreshPhaseTransition: UInt8 {
+public enum KeyRefreshPhaseTransition: UInt8, Sendable {
     /// The Node will start encoding messages using the new keys,
     /// but will continue to decode using the old and new keys.
     /// The Node will only accept beacons secured using the new

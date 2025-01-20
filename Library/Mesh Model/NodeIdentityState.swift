@@ -33,7 +33,7 @@ import Foundation
 /// The Node Identity state determines if a node is advertising with Node Identity
 /// messages on a subnet. If the Mesh Proxy Service is exposed, the node can be
 /// configured to advertise with Node Identity on a subnet.
-public enum NodeIdentityState: UInt8 {
+public enum NodeIdentityState: UInt8, Sendable {
     /// Advertising with Node Identity for a subnet is stopped.
     case stopped      = 0x00
     /// Advertising with Node Identity for a subnet is running.

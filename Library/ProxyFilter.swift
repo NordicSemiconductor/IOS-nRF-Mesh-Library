@@ -31,7 +31,7 @@
 import Foundation
 
 /// A type of the Proxy Filter.
-public enum ProxyFilerType {
+public enum ProxyFilerType: Sendable {
     /// An accept list filter has an associated accept list containing
     /// destination addresses that are of interest for the Proxy Client.
     ///

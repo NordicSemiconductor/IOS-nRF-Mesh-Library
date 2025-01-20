@@ -33,7 +33,7 @@ import Foundation
 // MARK: - RangeMessageStatus
 
 /// Enumeration of available statuses of a generic message.
-public enum RangeMessageStatus: UInt8 {
+public enum RangeMessageStatus: UInt8, Sendable {
     /// The operation was successful.
     case success           = 0x00
     /// The operation failed. Min range cannot be set.
@@ -80,7 +80,7 @@ extension RangeMessageStatus: CustomDebugStringConvertible {
 // MARK: - SceneMessageStatus
 
 /// Enumeration of available statuses of a scene message.
-public enum SceneMessageStatus: UInt8 {
+public enum SceneMessageStatus: UInt8, Sendable {
     /// The operation was successful.
     case success           = 0x00
     /// The scene register is full and cannot store any mode scenes.

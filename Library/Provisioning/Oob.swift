@@ -33,7 +33,7 @@ import CoreBluetooth
 
 /// Information that points to Out-Of-Band (OOB) information
 /// needed for provisioning.
-public struct OobInformation: OptionSet {
+public struct OobInformation: OptionSet, Sendable {
     public let rawValue: UInt16
     
     public static let other          = OobInformation(rawValue: 1 << 0)
@@ -77,7 +77,7 @@ public struct OobInformation: OptionSet {
 }
 
 /// The authentication method chosen for provisioning.
-public enum AuthenticationMethod {
+public enum AuthenticationMethod: Sendable {
     /// No OOB authentication.
     ///
     /// - warning: This method is considered not secure.
@@ -120,7 +120,7 @@ public enum AuthenticationMethod {
 /// For example,if the Unprovisioned Device is a light, then it would blink random
 /// number of times. That number should be provided to
 /// ``ProvisioningDelegate/authenticationActionRequired(_:)``.
-public enum OutputAction: UInt8 {
+public enum OutputAction: UInt8, Sendable {
     case blink              = 0
     case beep               = 1
     case vibrate            = 2
@@ -134,7 +134,7 @@ public enum OutputAction: UInt8 {
 /// the user to input the random number by pressing a button an appropriate number
 /// of times. When the action is complete, ``ProvisioningDelegate/inputComplete()``
 /// will be called.
-public enum InputAction: UInt8 {
+public enum InputAction: UInt8, Sendable {
     case push               = 0
     case twist              = 1
     case inputNumeric       = 2
@@ -170,7 +170,7 @@ open class InputActionValueGenerator {
 }
 
 /// A set of supported Out-Of-Band types.
-public struct OobType: OptionSet {
+public struct OobType: OptionSet, Sendable {
     public let rawValue: UInt8
     
     /// Static OOB Information is available.
@@ -187,7 +187,7 @@ public struct OobType: OptionSet {
 }
 
 /// A set of supported Output Out-of-band actions.
-public struct OutputOobActions: OptionSet {
+public struct OutputOobActions: OptionSet, Sendable {
     public let rawValue: UInt16
     
     public static let blink              = OutputOobActions(rawValue: 1 << 0)
@@ -203,7 +203,7 @@ public struct OutputOobActions: OptionSet {
 }
 
 /// A set of supported Input Out-of-band actions.
-public struct InputOobActions: OptionSet {
+public struct InputOobActions: OptionSet, Sendable {
     public let rawValue: UInt16
     
     public static let push              = InputOobActions(rawValue: 1 << 0)

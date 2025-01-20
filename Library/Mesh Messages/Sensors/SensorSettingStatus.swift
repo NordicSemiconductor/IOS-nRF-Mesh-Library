@@ -35,7 +35,7 @@ public struct SensorSettingStatus: StaticMeshResponse, SensorPropertyMessage {
     
     /// The Sensor Setting Access field is an enumeration indicating whether
     /// the device property can be read or written.
-    public enum SensorSettingAccess: UInt8 {
+    public enum SensorSettingAccess: UInt8, Sendable {
         /// The device property can be read.
         case readonly  = 0x01
         /// The device property can be read and written.
