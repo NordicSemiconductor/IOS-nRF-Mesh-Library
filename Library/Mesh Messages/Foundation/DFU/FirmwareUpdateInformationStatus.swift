@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2023, Nordic Semiconductor
+* Copyright (c) 2025, Nordic Semiconductor
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -51,7 +51,7 @@ public struct FirmwareUpdateInformationStatus: StaticMeshResponse {
     
     /// The Firmware Information Entry field shall identify the information for a firmware
     /// subsystem on the Node from the Firmware Information List state.
-    public struct Entry: DataConvertible {
+    public struct Entry: DataConvertible, Sendable {
         /// Identifies the firmware image on the Node or any subsystem on the Node.
         public let currentFirmwareId: FirmwareId
         /// URI used to retrieve a new firmware image (optional).

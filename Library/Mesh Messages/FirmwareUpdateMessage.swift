@@ -32,7 +32,7 @@ import Foundation
 
 /// The Firmware ID state identifies a firmware image on the Node or on any subsystem
 /// within the Node.
-public struct FirmwareId: DataConvertible {
+public struct FirmwareId: DataConvertible, Sendable {
     /// The 16-bit Company Identifier (CID) assigned by the Bluetooth SIG.
     ///
     /// Company Identifiers are published in
@@ -55,7 +55,7 @@ public struct FirmwareId: DataConvertible {
 
 /// The status codes for the Firmware Update Server model and the
 /// Firmware Update Client model.
-public enum FirmwareUpdateMessageStatus: UInt8 {
+public enum FirmwareUpdateMessageStatus: UInt8, Sendable {
     /// The message was processed successfully.
     case success                 = 0x00
     /// Insufficient resources on the Node.
@@ -76,7 +76,7 @@ public enum FirmwareUpdateMessageStatus: UInt8 {
 
 /// The status codes for the Firmware Distribution Server model and the
 /// Firmware Distribution Client model.
-public enum FirmwareDistributionMessageStatus: UInt8 {
+public enum FirmwareDistributionMessageStatus: UInt8, Sendable {
     /// The message was processed successfully.
     case success                 = 0x00
     /// Insufficient resources on the Node.
@@ -107,7 +107,7 @@ public enum FirmwareDistributionMessageStatus: UInt8 {
     case suspendFailed           = 0x0D
 }
 
-public enum FirmwareUpdatePhase: UInt8 {
+public enum FirmwareUpdatePhase: UInt8, Sendable {
     ///Ready to start a Receive Firmware procedure.
     case idle = 0x0
     ///The Transfer BLOB procedure failed.
@@ -126,7 +126,7 @@ public enum FirmwareUpdatePhase: UInt8 {
 
 /// The Firmware Update Additional Information state identifies the Node state after
 /// successful application of a verified firmware image.
-public struct FirmwareUpdateAdditionalInformation: OptionSet {
+public struct FirmwareUpdateAdditionalInformation: OptionSet, Sendable {
     public let rawValue: UInt8
 
     /// Node’s Composition Data state will change, and Remote Provisioning is not supported.
