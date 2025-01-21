@@ -38,20 +38,31 @@ import Foundation
 public struct FirmwareUpdateInformationStatus: StaticMeshResponse {
     public static let opCode: UInt32 = 0x8309
     
+    /// The total number of entries in the Firmware Information List state.
+    public let totalCount: UInt8
     /// Index of the first requested entry from the Firmware Information List state.
     public let firstIndex: UInt8
     /// List of entries.
-    public let entries: [Entry]
+    ///
+    /// The list starts at ``FirmwareUpdateInformationGet/firstIndex``
+    /// and contains at most ``FirmwareUpdateInformationGet/entriesLimit`` entries.
+    ///
+    /// The list is empty if no Entries were found within the requested range.
+    public let list: [FirmwareInformation]
     
     public var parameters: Data? {
-        return entries.reduce(into: Data([UInt8(entries.count), firstIndex])) { result, entry in
-            return result += entry
+        let initial = Data([totalCount, firstIndex])
+        return list.reduce(initial) { data, entry in
+            let idLength = UInt8(entry.currentFirmwareId.version.count + 2)
+            let uriLength = UInt8(entry.updateUri?.absoluteString.lengthOfBytes(using: .utf8) ?? 0)
+            let uriData = entry.updateUri?.absoluteString.data(using: .utf8) ?? Data()
+            return data + Data([idLength]) + entry.currentFirmwareId.companyIdentifier + entry.currentFirmwareId.version + uriLength + uriData
         }
     }
     
     /// The Firmware Information Entry field shall identify the information for a firmware
     /// subsystem on the Node from the Firmware Information List state.
-    public struct Entry: DataConvertible, Sendable {
+    public struct FirmwareInformation: Sendable {
         /// Identifies the firmware image on the Node or any subsystem on the Node.
         public let currentFirmwareId: FirmwareId
         /// URI used to retrieve a new firmware image (optional).
@@ -71,32 +82,52 @@ public struct FirmwareUpdateInformationStatus: StaticMeshResponse {
             self.currentFirmwareId = currentFirmwareId
             self.updateUri = updateUri
         }
-        
-        public static func + (lhs: Data, rhs: Entry) -> Data {
-            let idLength = UInt8(rhs.currentFirmwareId.version.count + 2)
-            let uriLength = UInt8(rhs.updateUri?.absoluteString.lengthOfBytes(using: .utf8) ?? 0)
-            return lhs + idLength + rhs.currentFirmwareId + uriLength + (rhs.updateUri?.absoluteString.data(using: .utf8) ?? Data())
-        }
     }
     
     /// Creates a Firmware Update Information Status message with given parameters.
     ///
+    /// This initiator returns the given list of receivers. User is responsible for
+    /// providing the correct list of entries, the first index and the total size of the
+    /// Firmware Information List state.
+    ///
     /// - parameters:
+    ///   - entries:List of entries to be reported.  This should be a sublist of the Firmware
+    ///             Information List state starting at index `firstIndex` and contain at most
+    ///             `totalCount` entries.
     ///   - firstIndex:Index of the first requested entry from the Firmware Information List state.
-    ///   - entries:List of entries.
-    public init(from firstIndex: UInt8, entries: [Entry]) {
+    ///   - totalCount: The total number of entries in the Firmware Information List state.
+    public init(list: [FirmwareInformation], from firstIndex: UInt8, outOf totalCount: UInt8) {
+        self.list = list
         self.firstIndex = firstIndex
-        self.entries = entries
+        self.totalCount = totalCount
+    }
+    
+    /// Creates the Firmware Update Information Status message.
+    ///
+    /// This initiator takes the complete Firmware Information List and returns a sublist using the
+    /// criteria from the `request`.
+    ///
+    /// - parameters:
+    ///  - request: The received request.
+    ///  - list: Complete list of entries in the Firmware Information List state.
+    public init(responseTo request: FirmwareUpdateInformationGet, using list: [FirmwareInformation]) {
+        self.totalCount = UInt8(list.count)
+        self.firstIndex = request.firstIndex
+        if request.firstIndex < list.count {
+            self.list = Array(list[Int(request.firstIndex)..<Int(request.firstIndex) + Int(request.entriesLimit)])
+        } else {
+            self.list = []
+        }
     }
     
     public init?(parameters: Data) {
         guard parameters.count >= 2 else {
             return nil
         }
-        let count = parameters[0]
-        let firstIndex = parameters[1]
+        self.totalCount = parameters[0]
+        self.firstIndex = parameters[1]
         
-        var entries: [Entry] = []
+        var list: [FirmwareInformation] = []
         var offset = 2
         while offset < parameters.count {
             // Decode Firmware ID
@@ -131,13 +162,9 @@ public struct FirmwareUpdateInformationStatus: StaticMeshResponse {
             }
             offset += updateUriLength
             
-            let entry = Entry(currentFirmwareId: currentFirmwareId, updateUri: updateUri)
-            entries.append(entry)
+            let entry = FirmwareInformation(currentFirmwareId: currentFirmwareId, updateUri: updateUri)
+            list.append(entry)
         }
-        guard count == entries.count else {
-            return nil
-        }
-        self.firstIndex = firstIndex
-        self.entries = entries
+        self.list = list
     }
 }

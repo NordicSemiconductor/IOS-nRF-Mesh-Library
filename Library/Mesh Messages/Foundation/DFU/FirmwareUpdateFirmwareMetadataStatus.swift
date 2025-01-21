@@ -39,7 +39,7 @@ import Foundation
 public struct FirmwareUpdateFirmwareMetadataStatus: StaticMeshResponse {
     public static let opCode: UInt32 = 0x830B
     
-    /// Status Code from the firmware metadata check.
+    /// Status from the firmware metadata check.
     public let status: FirmwareUpdateMessageStatus
     /// The Firmware Update Additional Information state from the Firmware Update Server.
     public let additionalInformation: FirmwareUpdateAdditionalInformation
@@ -55,14 +55,35 @@ public struct FirmwareUpdateFirmwareMetadataStatus: StaticMeshResponse {
     /// Creates the Firmware Update Firmware Metadata Status message.
     ///
     /// - parameters:
-    ///   - status: Status Code from the firmware metadata check.
+    ///   - status: Status from the firmware metadata check. This should be one of:
+    ///             ``FirmwareUpdateMessageStatus/success``,
+    ///             ``FirmwareUpdateMessageStatus/metadataCheckFailed``,
+    ///             or ``FirmwareUpdateMessageStatus/wrongFirmwareIndex``.
     ///   - additionalInformation:The Firmware Update Additional Information state from the
-    ///   Firmware Update Server.
+    ///                           Firmware Update Server.
     ///   - imageIndex: Index of the firmware image in the Firmware Information List state that was checked.
     public init(status: FirmwareUpdateMessageStatus, additionalInformation: FirmwareUpdateAdditionalInformation, imageIndex: UInt8) {
         self.status = status
         self.additionalInformation = additionalInformation
         self.imageIndex = imageIndex
+    }
+    
+    /// Creates the Firmware Update Firmware Metadata Status message.
+    ///
+    /// - parameters:
+    ///   - request: The Firmware Update Firmware Metadata Check message to response to.
+    ///   - status: Status from the firmware metadata check. This should be one of:
+    ///             ``FirmwareUpdateMessageStatus/success``,
+    ///             ``FirmwareUpdateMessageStatus/metadataCheckFailed``,
+    ///             or ``FirmwareUpdateMessageStatus/wrongFirmwareIndex``.
+    ///   - additionalInformation:The Firmware Update Additional Information state from the
+    ///                           Firmware Update Server.   
+    public init(responseTo request: FirmwareUpdateFirmwareMetadataCheck,
+                with status: FirmwareUpdateMessageStatus,
+                additionalInformation: FirmwareUpdateAdditionalInformation) {
+        self.status = status
+        self.additionalInformation = additionalInformation
+        self.imageIndex = request.imageIndex
     }
     
     public init?(parameters: Data) {

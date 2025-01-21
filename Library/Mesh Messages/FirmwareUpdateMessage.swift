@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2022, Nordic Semiconductor
+* Copyright (c) 2025, Nordic Semiconductor
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -32,7 +32,7 @@ import Foundation
 
 /// The Firmware ID state identifies a firmware image on the Node or on any subsystem
 /// within the Node.
-public struct FirmwareId: DataConvertible, Sendable {
+public struct FirmwareId: Sendable {
     /// The 16-bit Company Identifier (CID) assigned by the Bluetooth SIG.
     ///
     /// Company Identifiers are published in
@@ -46,10 +46,6 @@ public struct FirmwareId: DataConvertible, Sendable {
     public init(companyIdentifier: UInt16, version: Data) {
         self.companyIdentifier = companyIdentifier
         self.version = version
-    }
-    
-    public static func + (lhs: Data, rhs: FirmwareId) -> Data {
-        return lhs + rhs.companyIdentifier + rhs.version
     }
 }
 
@@ -107,21 +103,55 @@ public enum FirmwareDistributionMessageStatus: UInt8, Sendable {
     case suspendFailed           = 0x0D
 }
 
+/// The Update Phase state identifies the firmware update phase of the
+/// Firmware Update Server.
 public enum FirmwareUpdatePhase: UInt8, Sendable {
-    ///Ready to start a Receive Firmware procedure.
+    /// Ready to start a Receive Firmware procedure.
     case idle = 0x0
-    ///The Transfer BLOB procedure failed.
+    /// The Transfer BLOB procedure failed.
     case transferError = 0x1
-    ///The Receive Firmware procedure is being executed.
+    /// The Receive Firmware procedure is being executed.
     case transferActive = 0x2
-    ///The Verify Firmware procedure is being executed.
+    /// The Verify Firmware procedure is being executed.
     case verifyingUpdate = 0x3
-    ///The Verify Firmware procedure completed successfully.
+    /// The Verify Firmware procedure completed successfully.
     case verificationSucceeded = 0x4
-    ///The Verify Firmware procedure failed.
+    /// The Verify Firmware procedure failed.
     case verificationFailed = 0x5
-    ///The Apply New Firmware procedure is being executed.
+    /// The Apply New Firmware procedure is being executed.
     case applyingUpdate = 0x6
+}
+
+/// The Retrieved Update Phase field identifies the phase of the firmware update
+/// on the Firmware Update Server.
+///
+/// The value of the Retrieved Update Phase field is either the retrieved value of
+/// the Update Phase state or a value set by the client.
+public enum RetrievedUpdatePhase: UInt8, Sendable {
+    /// No firmware transfer is in progress.
+    case idle = 0x0
+    /// Firmware transfer was not completed.
+    case transferError = 0x1
+    /// Firmware transfer is in progress.
+    case transferActive = 0x2
+    /// Verification of the firmware image is in progress.
+    case verifyingUpdate = 0x3
+    /// Firmware image verification succeeded.
+    case verificationSucceeded = 0x4
+    /// Firmware image verification failed.
+    case verificationFailed = 0x5
+    /// Firmware applying is in progress.
+    case applyingUpdate = 0x6
+    /// Firmware transfer has been canceled.
+    case transferCanceled = 0x7
+    /// Firmware applying succeeded.
+    case applySuccess = 0x8
+    /// Firmware applying failed.
+    case applyFailed = 0x9
+    /// Phase of a Node was not yet retrieved.
+    ///
+    /// This phase should never be reported by a Node.
+    case unknown = 0xA
 }
 
 /// The Firmware Update Additional Information state identifies the Node state after

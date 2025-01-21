@@ -529,6 +529,12 @@
 		F019B62F2D3AF3430094B0E4 /* FirmwareUpdateApply.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B62E2D3AF3430094B0E4 /* FirmwareUpdateApply.swift */; };
 		F019B6312D3AF3A70094B0E4 /* FirmwareUpdateStart.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B6302D3AF3A70094B0E4 /* FirmwareUpdateStart.swift */; };
 		F019B6332D3B047D0094B0E4 /* FirmwareUpdateStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B6322D3B047D0094B0E4 /* FirmwareUpdateStatus.swift */; };
+		F019B6482D3E664A0094B0E4 /* FirmwareDistributionReceiversAdd.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B6472D3E664A0094B0E4 /* FirmwareDistributionReceiversAdd.swift */; };
+		F019B64A2D3E69470094B0E4 /* FirmwareDistributionReceiversDeleteAll.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B6492D3E69470094B0E4 /* FirmwareDistributionReceiversDeleteAll.swift */; };
+		F019B64C2D3E69E60094B0E4 /* FirmwareDistributionReceiversStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B64B2D3E69E60094B0E4 /* FirmwareDistributionReceiversStatus.swift */; };
+		F019B64E2D3E6E730094B0E4 /* FirmwareDistributionReceiversGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B64D2D3E6E730094B0E4 /* FirmwareDistributionReceiversGet.swift */; };
+		F019B6502D3E6F680094B0E4 /* FirmwareDistributionReceiversList.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B64F2D3E6F680094B0E4 /* FirmwareDistributionReceiversList.swift */; };
+		F019B6522D3E7B970094B0E4 /* BLOBMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B6512D3E7B970094B0E4 /* BLOBMessage.swift */; };
 		F05BEB3B3B7D9BA92171DBA20D00D99A /* LightHSLHueGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9459D3C9D4AD25E6F06783A083CDCA /* LightHSLHueGet.swift */; };
 		F0CF8137D4A439F10BA45530CE5A1826 /* HeartbeatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61AC6EE93C4A0A96E70EB495A0CA1E2 /* HeartbeatMessage.swift */; };
 		F0D9FBB72D3A844300031E7E /* FirmwareUpdateFirmwareMetadataCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D9FBB62D3A844300031E7E /* FirmwareUpdateFirmwareMetadataCheck.swift */; };
@@ -1165,6 +1171,12 @@
 		F019B62E2D3AF3430094B0E4 /* FirmwareUpdateApply.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateApply.swift; sourceTree = "<group>"; };
 		F019B6302D3AF3A70094B0E4 /* FirmwareUpdateStart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateStart.swift; sourceTree = "<group>"; };
 		F019B6322D3B047D0094B0E4 /* FirmwareUpdateStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateStatus.swift; sourceTree = "<group>"; };
+		F019B6472D3E664A0094B0E4 /* FirmwareDistributionReceiversAdd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareDistributionReceiversAdd.swift; sourceTree = "<group>"; };
+		F019B6492D3E69470094B0E4 /* FirmwareDistributionReceiversDeleteAll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareDistributionReceiversDeleteAll.swift; sourceTree = "<group>"; };
+		F019B64B2D3E69E60094B0E4 /* FirmwareDistributionReceiversStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareDistributionReceiversStatus.swift; sourceTree = "<group>"; };
+		F019B64D2D3E6E730094B0E4 /* FirmwareDistributionReceiversGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareDistributionReceiversGet.swift; sourceTree = "<group>"; };
+		F019B64F2D3E6F680094B0E4 /* FirmwareDistributionReceiversList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareDistributionReceiversList.swift; sourceTree = "<group>"; };
+		F019B6512D3E7B970094B0E4 /* BLOBMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLOBMessage.swift; sourceTree = "<group>"; };
 		F056F50B3F6A0A1F7E9F8FFB3D12017B /* ConfigModelSubscriptionOverwrite.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigModelSubscriptionOverwrite.swift; sourceTree = "<group>"; };
 		F09D785490AE9DC3F13CFBC70C004D2C /* TimeZoneSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TimeZoneSet.swift; sourceTree = "<group>"; };
 		F0D9FBB62D3A844300031E7E /* FirmwareUpdateFirmwareMetadataCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateFirmwareMetadataCheck.swift; sourceTree = "<group>"; };
@@ -2150,6 +2162,11 @@
 		F0DAF5B72D39AB78000874EA /* DFU */ = {
 			isa = PBXGroup;
 			children = (
+				F019B6472D3E664A0094B0E4 /* FirmwareDistributionReceiversAdd.swift */,
+				F019B6492D3E69470094B0E4 /* FirmwareDistributionReceiversDeleteAll.swift */,
+				F019B64B2D3E69E60094B0E4 /* FirmwareDistributionReceiversStatus.swift */,
+				F019B64D2D3E6E730094B0E4 /* FirmwareDistributionReceiversGet.swift */,
+				F019B64F2D3E6F680094B0E4 /* FirmwareDistributionReceiversList.swift */,
 				F019B62E2D3AF3430094B0E4 /* FirmwareUpdateApply.swift */,
 				F019B62C2D3AF2F80094B0E4 /* FirmwareUpdateCancel.swift */,
 				F019B62A2D3AA2F90094B0E4 /* FirmwareUpdateGet.swift */,
@@ -2186,6 +2203,7 @@
 				28E7045BA6AF4C14D8FC949519CB04F7 /* UnknownMessage.swift */,
 				6620817C5BB5F4EA713F0700462D6D9F /* VendorMessage.swift */,
 				F0D9FBBA2D3A984700031E7E /* FirmwareUpdateMessage.swift */,
+				F019B6512D3E7B970094B0E4 /* BLOBMessage.swift */,
 				63423C76B458B3F1C4533B2573996EFE /* Foundation */,
 				BAFCF503BE8B52A1D14A488959168C44 /* Generic */,
 				AB1A0BBE9428A7216DE441C8AAF3A074 /* Health */,
@@ -2422,6 +2440,7 @@
 				DC025FA3EAC115FF0011ADD8D2610EB4 /* Address.swift in Sources */,
 				CF69587BBE059B32E4E103FA32AEA420 /* AddressRange.swift in Sources */,
 				1DA178309C409984C5D9EC548EDB594E /* Algorithm.swift in Sources */,
+				F019B6522D3E7B970094B0E4 /* BLOBMessage.swift in Sources */,
 				448BBDFD31F11777F9FA3DE380D36F0D /* ApplicationKey.swift in Sources */,
 				6CC6589269716C798E2DD9345F5D574D /* ApplicationKey+MeshNetwork.swift in Sources */,
 				DD4CB79C0229C260183F07C7930E8808 /* ApplicationKey+NetworkKey.swift in Sources */,
@@ -2584,8 +2603,10 @@
 				F0CF8137D4A439F10BA45530CE5A1826 /* HeartbeatMessage.swift in Sources */,
 				D91320C2F43F590460F97FFE4690443F /* HeartbeatPublication.swift in Sources */,
 				9BED63CABF8D2E8949CC00E3CF6D8A34 /* HeartbeatSubscription.swift in Sources */,
+				F019B64A2D3E69470094B0E4 /* FirmwareDistributionReceiversDeleteAll.swift in Sources */,
 				EA87997A71BDD86F99E4DF4CAC2ACCA6 /* Int+Hex.swift in Sources */,
 				30346F26524EB4E5E081C4848154F456 /* IvIndex.swift in Sources */,
+				F019B6482D3E664A0094B0E4 /* FirmwareDistributionReceiversAdd.swift in Sources */,
 				E470CE79C9D929CD2682ED146C135A05 /* Key.swift in Sources */,
 				BEB76B83A95C437B5B11BE0C9D07B3B8 /* KeyedDecodingContainer+Legacy.swift in Sources */,
 				7AA01CA58AF77B2CED45732D7CA196DB /* KeyIndex.swift in Sources */,
@@ -2690,6 +2711,7 @@
 				F76ECF70F206CC0FF457F5503C056E54 /* MeshNodeEntry.swift in Sources */,
 				F019B62B2D3AA2F90094B0E4 /* FirmwareUpdateGet.swift in Sources */,
 				DAA357E034B08844EE75B87D9CD215AB /* MeshState.swift in Sources */,
+				F019B64E2D3E6E730094B0E4 /* FirmwareDistributionReceiversGet.swift in Sources */,
 				E14E0EEDFAA1CA4E0E51D63C6AC3EABC /* MeshStateManager.swift in Sources */,
 				F24756849895D639924A648E1F58818F /* MeshUUID.swift in Sources */,
 				00F2192354A746C6F79D12CE21FED535 /* MessageHandle.swift in Sources */,
@@ -2720,6 +2742,7 @@
 				1D00BA0172DD19F7CB8FAC169C0333DD /* NodeIdentityState.swift in Sources */,
 				F9A30F9A5EE05793EA465C7B5F28D160 /* nRFMeshProvision-dummy.m in Sources */,
 				B6CFCC7C995789EE38DED2A1FEDAE8B2 /* OnPowerUp.swift in Sources */,
+				F019B64C2D3E69E60094B0E4 /* FirmwareDistributionReceiversStatus.swift in Sources */,
 				A27255143E672F5A8D89BDA248C14B69 /* Oob.swift in Sources */,
 				1459F32CB80689BF692245727AE5B436 /* OptionSet+Data.swift in Sources */,
 				A8CA9DC15177C2380C28A7E956C86B53 /* PBGattBearer.swift in Sources */,
@@ -2729,6 +2752,7 @@
 				5B8AC3CCF163A4013B94676F4C492DE4 /* PrivateBeaconGet.swift in Sources */,
 				91345DB642439B79DCD0F710E062DABC /* PrivateBeaconSet.swift in Sources */,
 				DE8ACE192DEA6F5FC5DE18998DE6B8FE /* PrivateBeaconStatus.swift in Sources */,
+				F019B6502D3E6F680094B0E4 /* FirmwareDistributionReceiversList.swift in Sources */,
 				A4F8CB79C03199E68BAB387A397F619B /* PrivateGATTProxyGet.swift in Sources */,
 				17C30B3669ACE0066C66942E89E6B25D /* PrivateGATTProxySet.swift in Sources */,
 				79801E0CFAEAF5376BD7C1A22849658E /* PrivateGATTProxyStatus.swift in Sources */,
