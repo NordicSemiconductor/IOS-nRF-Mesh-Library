@@ -35,7 +35,8 @@ import Foundation
 /// The values are defined by Bluetooth SIG.
 ///
 /// Imported from:
-/// https://www.bluetooth.com/specifications/assigned-numbers -> GATT Namespace Descriptors
+/// [Assigned Numbers](https://www.bluetooth.com/specifications/assigned-numbers)
+/// -> 2.4.2.1 Bluetooth SIG GATT Characteristic Presentation Format Description
 public enum Location: UInt16, Codable, Sendable {
     case auxiliary                    = 0x0108
     case back                         = 0x0101

@@ -63,7 +63,7 @@ public struct MeshProvisioningService: MeshService {
     private init() {}
 }
 
-/// A structore defining Mesh Proxy service, which shall be present on
+/// A structure defining Mesh Proxy service, which shall be present on
 /// provisioned Nodes.
 ///
 /// The Mesh Proxy service is used to send mesh messages over GATT.
@@ -81,7 +81,7 @@ public struct MeshProxyService: MeshService {
 
 public extension CBService {
     
-    /// Whether the service UUID matches Mesh Privisioning Service UUID.
+    /// Whether the service UUID matches Mesh Provisioning Service UUID.
     var isMeshProvisioningService: Bool {
         return uuid == MeshProvisioningService.uuid
     }

@@ -62,10 +62,11 @@ public class Element: Codable {
     /// This initiator should be used to create Elements that will
     /// be set as local elements using ``MeshNetworkManager/localElements``.
     ///
-    /// - parameter name:     The optional Element name.
-    /// - parameter location: The Element location, by default set to `.unknown`.
-    /// - parameter models:   Array of models belonging to this Element.
-    ///                       It must contain at least one Model.
+    /// - parameters:
+    ///   - name:     The optional Element name.
+    ///   - location: The Element location, by default set to `.unknown`.
+    ///   - models:   Array of models belonging to this Element.
+    ///               It must contain at least one Model.
     public init(name: String? = nil, location: Location = .unknown, models: [Model]) {
         guard !models.isEmpty else {
             fatalError("An element must contain at least one model.")
