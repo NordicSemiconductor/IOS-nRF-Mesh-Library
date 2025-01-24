@@ -32,6 +32,12 @@ import Foundation
 
 /// The Firmware ID state identifies a firmware image on the Node or on any subsystem
 /// within the Node.
+///
+/// The Firmware ID consists of a Company Identifier and an optional vendor-specific version identifier
+/// and is used to identify the firmware image on a Node.
+///
+/// The Firmware ID is used by the Firmware Distribution Server to query new firmware image
+/// based on the current Firmware ID. If should identify the device type and firmware version.
 public struct FirmwareId: Sendable, Equatable {
     /// The 16-bit Company Identifier (CID) assigned by the Bluetooth SIG.
     ///

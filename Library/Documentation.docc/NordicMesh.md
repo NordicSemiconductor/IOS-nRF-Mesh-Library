@@ -243,6 +243,8 @@ Provisioning is the process of adding an unprovisioned device to a mesh network 
 - ``ConfigCompositionDataStatus``
 - ``CompositionDataPage``
 - ``Page0``
+- ``ElementData``
+- ``ModelData``
 
 - ``ConfigDefaultTtlGet``
 - ``ConfigDefaultTtlSet``
@@ -370,6 +372,12 @@ Provisioning is the process of adding an unprovisioned device to a mesh network 
 - ``SarTransmitterSet``
 - ``SarTransmitterStatus``
 
+### Health Messages
+
+- ``HealthFault``
+- ``HealthCurrentStatus``
+- ``HealthFaultStatus``
+
 ### Remote Provisioning Message Types
 
 - ``RemoteProvisioningMessage``
@@ -406,6 +414,59 @@ Provisioning is the process of adding an unprovisioned device to a mesh network 
 - ``RemoteProvisioningPDUSend``
 - ``RemoteProvisioningPDUReport``
 - ``RemoteProvisioningPDUOutboundReport``
+
+### Firmware Update Messages Types
+
+- ``FirmwareId``
+- ``UriScheme``
+- ``TransferMode``
+- ``FirmwareUpdatePolicy``
+- ``FirmwareUpdateMessageStatus``
+- ``FirmwareUpdateAdditionalInformation``
+- ``FirmwareDistributionMessageStatus``
+- ``BLOBTransferMessageStatus``
+
+- ``FirmwareUpdatePhase``
+- ``FirmwareDistributionPhase``
+- ``RetrievedUpdatePhase``
+
+### Firmware Update Messages
+
+- ``FirmwareUpdateInformationGet``
+- ``FirmwareUpdateInformationStatus``
+- ``FirmwareUpdateFirmwareMetadataCheck``
+- ``FirmwareUpdateFirmwareMetadataStatus``
+- ``FirmwareUpdateGet``
+- ``FirmwareUpdateStart``
+- ``FirmwareUpdateCancel``
+- ``FirmwareUpdateApply``
+- ``FirmwareUpdateStatus``
+
+### Firmware Distribution Messages
+
+- ``FirmwareDistributionCapabilitiesGet``
+- ``FirmwareDistributionCapabilitiesStatus``
+- ``FirmwareDistributionReceiversAdd``
+- ``FirmwareDistributionReceiversDeleteAll``
+- ``FirmwareDistributionReceiversStatus``
+- ``FirmwareDistributionReceiversGet``
+- ``FirmwareDistributionReceiversList``
+- ``FirmwareDistributionGet``
+- ``FirmwareDistributionStart``
+- ``FirmwareDistributionApply``
+- ``FirmwareDistributionCancel``
+- ``FirmwareDistributionSuspend``
+- ``FirmwareDistributionStatus``
+- ``FirmwareDistributionUploadGet``
+- ``FirmwareDistributionUploadStart``
+- ``FirmwareDistributionUploadOOBStart``
+- ``FirmwareDistributionUploadCancel``
+- ``FirmwareDistributionUploadStatus``
+- ``FirmwareDistributionFirmwareGet``
+- ``FirmwareDistributionFirmwareGetByIndex``
+- ``FirmwareDistributionFirmwareDelete``
+- ``FirmwareDistributionFirmwareDeleteAll``
+- ``FirmwareDistributionFirmwareStatus``
 
 ### Generic Message Types
 
