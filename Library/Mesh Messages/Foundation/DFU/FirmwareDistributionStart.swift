@@ -54,6 +54,8 @@ public struct FirmwareDistributionStart: StaticAcknowledgedMeshMessage {
     /// `Timeout = (10,000 × (Timeout Base + 2)) + (100 × Transfer TTL)` milliseconds.
     let timeoutBase: UInt16
     /// Mode of the transfer.
+    ///
+    /// This has to be one of ``TransferMode/push`` or ``TransferMode/pull``.
     let transferMode: TransferMode
     /// Firmware update policy.
     ///
