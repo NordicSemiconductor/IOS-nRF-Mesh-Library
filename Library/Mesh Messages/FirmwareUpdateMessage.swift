@@ -154,6 +154,27 @@ public enum RetrievedUpdatePhase: UInt8, Sendable {
     case unknown = 0xA
 }
 
+/// The Distribution Phase state indicates the phase of a firmware image distribution
+/// being performed by the Firmware Distribution Server.
+public enum FirmwareDistributionPhase: UInt8, Sendable {
+    /// No firmware distribution is in progress.
+    case idle              = 0x00
+    /// Firmware distribution is in progress.
+    case transferActive    = 0x01
+    /// The Transfer BLOB procedure has completed successfully.
+    case transferSuccess   = 0x02
+    /// The Apply Firmware On Target Nodes procedure is being executed.
+    case applyingUpdate    = 0x03
+    /// The Distribute Firmware procedure has completed successfully.
+    case completed         = 0x04
+    /// The Distribute Firmware procedure has failed.
+    case failed            = 0x05
+    /// The Cancel Firmware Update procedure is being executed.
+    case cancelingUpdate   = 0x06
+    /// The Transfer BLOB procedure is suspended.
+    case transferSuspended = 0x07
+}
+
 /// The Firmware Update Additional Information state identifies the Node state after
 /// successful application of a verified firmware image.
 public struct FirmwareUpdateAdditionalInformation: OptionSet, Sendable {
@@ -177,4 +198,15 @@ public struct FirmwareUpdateAdditionalInformation: OptionSet, Sendable {
     public init(rawValue: UInt8) {
         self.rawValue = rawValue
     }
+}
+
+/// The Update Policy state indicates when to apply a new firmware image.
+public enum FirmwareUpdatePolicy: UInt8, Sendable {
+    /// The Firmware Distribution Server verifies that firmware image distribution completed
+    /// successfully but does not apply the update. The Initiator (the Firmware Distribution Client)
+    /// initiates firmware image application.
+    case verifyOnly = 0x00
+    /// The Firmware Distribution Server verifies that firmware image distribution completed
+    /// successfully and then applies the firmware update.
+    case verifyAndApply = 0x01
 }

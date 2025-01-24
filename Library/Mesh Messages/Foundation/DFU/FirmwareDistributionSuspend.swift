@@ -30,42 +30,24 @@
 
 import Foundation
 
-/// The Firmware Distribution Receivers Status message is an unacknowledged message sent by
-/// a Firmware Distribution Server to report the size of the Distribution Receivers List state.
-///
-///A Firmware Distribution Receivers Status message is sent as a response to
-///a ``FirmwareDistributionReceiversAdd`` message or
-///a ``FirmwareDistributionReceiversDeleteAll`` message.
-public struct FirmwareDistributionReceiversStatus: StaticMeshResponse {
-    public static let opCode: UInt32 = 0x8313
-    
-    /// Status for the requesting message.
-    public let status: FirmwareDistributionMessageStatus
-    /// The number of entries in the Distribution Receivers List state.
-    public let totalCount: UInt16
+/// The Firmware Distribution Suspend message is an acknowledged message sent by
+/// a Firmware Distribution Client to suspend the firmware image distribution from a Firmware Distribution Server.
+public struct FirmwareDistributionSuspend: StaticAcknowledgedMeshMessage {
+    public static let opCode: UInt32 = 0x831A
+    public static let responseType: StaticMeshResponse.Type = FirmwareDistributionStatus.self
     
     public var parameters: Data? {
-        return Data([status.rawValue]) + totalCount
+        return nil
     }
     
-    /// Creates the Firmware Distribution Receivers Status message.
-    ///
-    /// - parameters:
-    ///  - status: Status for the requesting message.
-    ///  - totalCount: The number of entries in the Distribution Receivers List state.
-    public init(status: FirmwareDistributionMessageStatus, totalCount: UInt16) {
-        self.status = status
-        self.totalCount = totalCount
+    /// Creates the Firmware Distribution Suspend message.
+    public init() {
+        // Empty
     }
     
     public init?(parameters: Data) {
-        guard parameters.count != 3 else {
+        guard parameters.isEmpty else {
             return nil
         }
-        guard let status = FirmwareDistributionMessageStatus(rawValue: parameters[0]) else {
-            return nil
-        }
-        self.status = status
-        self.totalCount = parameters.read(fromOffset: 1)
     }
 }

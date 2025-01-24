@@ -57,3 +57,13 @@ public enum BLOBTransferMessageStatus: UInt8, Sendable {
     /// The requested information cannot be provided while the server is in the current phase.
     case informationUnavailable  = 0x0A
 }
+
+/// The Transfer Mode state indicates the mode of the BLOB transfer.
+public enum TransferMode: UInt8, Sendable {
+    /// No Active Transfer.
+    case noActiveTransfer = 0x00
+    /// Push BLOB Transfer mode.
+    case push             = 0x01
+    /// Pull BLOB Transfer mode.
+    case pull             = 0x02
+}
