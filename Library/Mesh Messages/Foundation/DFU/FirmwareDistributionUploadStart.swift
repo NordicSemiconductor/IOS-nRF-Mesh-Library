@@ -40,22 +40,22 @@ public struct FirmwareDistributionUploadStart: StaticAcknowledgedMeshMessage {
     ///
     /// Valid values are in the range 0...127 (`0x00 - 0x7F`). Value 255 (`0xFF`) means that
     /// the default TTL value is to be used. Other values are Prohibited.
-    let ttl: UInt8
+    public let ttl: UInt8
     /// The value that is used to calculate when firmware image upload will be suspended.
     ///
     /// The Timeout is calculated using the following formula:
     /// `Timeout = 10 × (Timeout Base + 1)` seconds.
-    let timeoutBase: UInt16
+    public let timeoutBase: UInt16
     /// BLOB identifier for the firmware image.
-    let blobId: UInt64
+    public let blobId: UInt64
     /// Firmware image size (in octets).
-    let firmwareSize: UInt32
+    public let firmwareSize: UInt32
     /// Optional vendor-specific firmware metadata.
     ///
     /// Maximum size is 255 bytes.
-    let firmwareMetadata: Data?
+    public let firmwareMetadata: Data?
     /// The Firmware ID identifying the firmware image being uploaded.
-    let firmwareId: FirmwareId
+    public let firmwareId: FirmwareId
     
     public var parameters: Data? {
         var data = Data([ttl]) + timeoutBase + blobId.bigEndian + firmwareSize.bigEndian

@@ -43,17 +43,17 @@ public struct FirmwareDistributionStatus: StaticMeshResponse {
     public static let opCode: UInt32 = 0x831D
     
     /// Status for the requesting message.
-    let status: FirmwareDistributionMessageStatus
+    public let status: FirmwareDistributionMessageStatus
     /// Phase of the firmware image distribution.
-    let phase: FirmwareDistributionPhase
+    public let phase: FirmwareDistributionPhase
     /// Multicast address used in a firmware image distribution.
     ///
     /// The value of the Distribution Multicast Address field shall be a Group Address
     /// or the Unassigned Address. When using a Label UUID, the status
     /// message provides this value as a Virtual Address.
-    let multicastAddress: Address?
+    public let multicastAddress: Address?
     /// Index of the application key used in a firmware image distribution
-    let applicationKeyIndex: KeyIndex?
+    public let applicationKeyIndex: KeyIndex?
     /// Time To Live (TTL) value used in a firmware image distribution.
     ///
     /// The TTL value is the maximum number of hops the message is allowed to go through.
@@ -62,20 +62,20 @@ public struct FirmwareDistributionStatus: StaticMeshResponse {
     ///
     /// Valid values are in the range 0...127 (`0x00 - 0x7F`). Value 255 (`0xFF`) means that
     /// the default TTL value is to be used. Other values are Prohibited.
-    let ttl: UInt8?
+    public let ttl: UInt8?
     /// The value that is used to calculate when firmware image distribution will be suspended.
     ///
     /// The Timeout is calculated using the following formula:
     /// `Timeout = (10,000 × (Timeout Base + 2)) + (100 × Transfer TTL)` milliseconds.
-    let timeoutBase: UInt16?
+    public let timeoutBase: UInt16?
     /// Mode of the transfer.
-    let transferMode: TransferMode?
+    public let transferMode: TransferMode?
     /// Firmware update policy.
     ///
     /// The update policy that the Firmware Distribution Server will use for this firmware image distribution.
-    let updatePolicy: FirmwareUpdatePolicy?
+    public let updatePolicy: FirmwareUpdatePolicy?
     /// Index of the firmware image in the Firmware Images List state to use during firmware image distribution.
-    let firmwareImageIndex: UInt16?
+    public let firmwareImageIndex: UInt16?
     
     public var parameters: Data? {
         var data = Data([status.rawValue, phase.rawValue])

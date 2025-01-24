@@ -32,7 +32,7 @@ import Foundation
 
 /// The Firmware ID state identifies a firmware image on the Node or on any subsystem
 /// within the Node.
-public struct FirmwareId: Sendable {
+public struct FirmwareId: Sendable, Equatable {
     /// The 16-bit Company Identifier (CID) assigned by the Bluetooth SIG.
     ///
     /// Company Identifiers are published in
@@ -46,6 +46,11 @@ public struct FirmwareId: Sendable {
     public init(companyIdentifier: UInt16, version: Data) {
         self.companyIdentifier = companyIdentifier
         self.version = version
+    }
+    
+    public static func == (lhs: FirmwareId, rhs: FirmwareId) -> Bool {
+        return lhs.companyIdentifier == rhs.companyIdentifier &&
+               lhs.version == rhs.version
     }
 }
 

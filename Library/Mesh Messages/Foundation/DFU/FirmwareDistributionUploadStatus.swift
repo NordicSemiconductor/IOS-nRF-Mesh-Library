@@ -42,16 +42,16 @@ public struct FirmwareDistributionUploadStatus: StaticMeshResponse {
     public static let opCode: UInt32 = 0x8322
     
     /// Status for the requesting message.
-    let status: FirmwareDistributionMessageStatus
+    public let status: FirmwareDistributionMessageStatus
     /// Phase of the firmware image upload to a Firmware Distribution Server.
-    let phase: FirmwareDistributionPhase
+    public let phase: FirmwareDistributionPhase
     /// A percentage indicating the progress of the firmware image upload (0-100).
-    let progress: UInt8?
+    public let progress: UInt8?
     /// Whether the upload is done Out of Band (true) or using BLOB Transfer (false).
-    let isOob: Bool?
+    public let isOob: Bool?
     /// The Firmware ID of the new firmware image that is being uploaded or was
     /// uploaded to the Firmware Distribution Server.
-    let firmwareId: FirmwareId?
+    public  let firmwareId: FirmwareId?
     
     public var parameters: Data? {
         var data = Data([status.rawValue, phase.rawValue])

@@ -39,19 +39,19 @@ public struct FirmwareDistributionCapabilitiesStatus: StaticMeshResponse {
     public static let opCode: UInt32 = 0x8317
     
     /// Maximum number of entries in the Distribution Receivers List state.
-    let maxReceiversCount: UInt16
+    public let maxReceiversCount: UInt16
     /// Maximum number of entries in the Firmware Images List state.
-    let maxFirmwareImagesListSize: UInt16
+    public let maxFirmwareImagesListSize: UInt16
     /// Maximum size of one firmware image (in octets).
-    let maxFirmwareImageSize: UInt32
+    public let maxFirmwareImageSize: UInt32
     /// Total space dedicated to storage of firmware images (in octets).
-    let maxUploadSpace: UInt32
+    public let maxUploadSpace: UInt32
     /// Remaining available space in firmware image storage (in octets).
-    let remainingUploadSpace: UInt32
+    public let remainingUploadSpace: UInt32
     /// Supported Out-of-Band URI schemes.
     ///
     /// If the array is empty, the OOB Retrieval is not supported.
-    let supportedUriSchemes: [UriScheme]
+    public let supportedUriSchemes: [UriScheme]
     
     public var parameters: Data? {
         let data = Data() + maxReceiversCount + maxFirmwareImagesListSize + maxFirmwareImageSize + maxUploadSpace + remainingUploadSpace

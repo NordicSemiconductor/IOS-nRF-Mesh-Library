@@ -43,7 +43,7 @@ public struct FirmwareDistributionUploadOOBStart: StaticAcknowledgedMeshMessage 
     /// image and its retrieval.
     ///
     /// The maximum length of the URI is 255 bytes using UTF-8 encoding.
-    let uri: URL
+    public let uri: URL
     /// The current Firmware ID of a Target Node(s).
     ///
     /// The Firmware ID, together with the URI, will be used to check whether there is a newer
@@ -53,7 +53,7 @@ public struct FirmwareDistributionUploadOOBStart: StaticAcknowledgedMeshMessage 
     /// If the URI scheme is `https://`, the FWID will be appended to the URI
     /// using `/check?cfwid=<FWID as hex>` to check the availability of a new firmware image over HTTP
     /// and `/get?cfwid=<FWID as hex>` to retrieve the firmware.
-    let currentFirmwareId: FirmwareId
+    public let currentFirmwareId: FirmwareId
     
     public var parameters: Data? {
         let uriData = uri.absoluteString.data(using: .utf8)!
