@@ -183,7 +183,7 @@ extension GenericState where T: BinaryInteger {
     init(animateFrom state: GenericState<T>, to targetValue: T,
          delay: TimeInterval, duration: TimeInterval?,
          storedWithScene: Bool = false) {
-        self.value = state.value
+        self.value = state.currentValue
         self.transition = nil
         self.storedWithScene = storedWithScene
         guard let duration = duration,

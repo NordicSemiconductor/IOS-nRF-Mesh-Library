@@ -103,7 +103,7 @@ class GenericLevelServerCell: BaseModelControlCell<GenericLevelServerDelegate> {
         let duration: TimeInterval = 2 * Double(Int16.max) / abs(Double(speed))
         
         progress.frame = CGRect(x: 0, y: height - currentHeight,
-                                     width: width, height: currentHeight)
+                                width: width, height: currentHeight)
         UIView.animate(withDuration: duration, delay: 0,
                        options: .curveLinear, animations: { [weak self] in
             guard let self = self else { return }

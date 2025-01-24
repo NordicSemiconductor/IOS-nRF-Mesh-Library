@@ -262,10 +262,10 @@ public class TransactionHelper {
         return mutex.sync {
             let lastTransaction = self.lastTransactions[message.opCode]
             let isNew = lastTransaction == nil ||
-            lastTransaction!.source != source ||
-            lastTransaction!.destination != destination ||
-            message.isNewTransaction(previousTid: lastTransaction!.tid,
-                                     timestamp: lastTransaction!.timestamp)
+                        lastTransaction!.source != source ||
+                        lastTransaction!.destination != destination ||
+                        message.isNewTransaction(previousTid: lastTransaction!.tid,
+                                                 timestamp: lastTransaction!.timestamp)
             
             self.lastTransactions[message.opCode] = (
                 source: source, destination: destination,
