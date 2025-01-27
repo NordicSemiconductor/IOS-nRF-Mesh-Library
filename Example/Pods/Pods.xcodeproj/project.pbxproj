@@ -524,8 +524,43 @@
 		EE94FE628D6B9EADD16277188806D769 /* GenericOnOffSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 739AFCA7CAE56E3232E12CAEF91137B1 /* GenericOnOffSetUnacknowledged.swift */; };
 		EECB895BDEA23DFE98922A379179F3AF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 384DDA2CB25005BD6479B5987C619DD4 /* Foundation.framework */; };
 		EFCAFC681513B1A5A701E655BEF365C2 /* GenericMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F43911A9ADBF66C6D90F2D6A6A04AC2F /* GenericMessage.swift */; };
+		F019B62B2D3AA2F90094B0E4 /* FirmwareUpdateGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B62A2D3AA2F90094B0E4 /* FirmwareUpdateGet.swift */; };
+		F019B62D2D3AF2F80094B0E4 /* FirmwareUpdateCancel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B62C2D3AF2F80094B0E4 /* FirmwareUpdateCancel.swift */; };
+		F019B62F2D3AF3430094B0E4 /* FirmwareUpdateApply.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B62E2D3AF3430094B0E4 /* FirmwareUpdateApply.swift */; };
+		F019B6312D3AF3A70094B0E4 /* FirmwareUpdateStart.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B6302D3AF3A70094B0E4 /* FirmwareUpdateStart.swift */; };
+		F019B6332D3B047D0094B0E4 /* FirmwareUpdateStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B6322D3B047D0094B0E4 /* FirmwareUpdateStatus.swift */; };
+		F019B6482D3E664A0094B0E4 /* FirmwareDistributionReceiversAdd.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B6472D3E664A0094B0E4 /* FirmwareDistributionReceiversAdd.swift */; };
+		F019B64A2D3E69470094B0E4 /* FirmwareDistributionReceiversDeleteAll.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B6492D3E69470094B0E4 /* FirmwareDistributionReceiversDeleteAll.swift */; };
+		F019B64C2D3E69E60094B0E4 /* FirmwareDistributionReceiversStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B64B2D3E69E60094B0E4 /* FirmwareDistributionReceiversStatus.swift */; };
+		F019B64E2D3E6E730094B0E4 /* FirmwareDistributionReceiversGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B64D2D3E6E730094B0E4 /* FirmwareDistributionReceiversGet.swift */; };
+		F019B6502D3E6F680094B0E4 /* FirmwareDistributionReceiversList.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B64F2D3E6F680094B0E4 /* FirmwareDistributionReceiversList.swift */; };
+		F019B6522D3E7B970094B0E4 /* BLOBMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B6512D3E7B970094B0E4 /* BLOBMessage.swift */; };
+		F019B6542D3FD56B0094B0E4 /* FirmwareDistributionCapabilitiesGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B6532D3FD56B0094B0E4 /* FirmwareDistributionCapabilitiesGet.swift */; };
+		F019B6562D3FD5C90094B0E4 /* FirmwareDistributionCapabilitiesStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B6552D3FD5C90094B0E4 /* FirmwareDistributionCapabilitiesStatus.swift */; };
+		F019B6582D40E3820094B0E4 /* UriScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B6572D40E3700094B0E4 /* UriScheme.swift */; };
+		F019B65A2D40F9250094B0E4 /* FirmwareDistributionGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B6592D40F9250094B0E4 /* FirmwareDistributionGet.swift */; };
+		F019B65C2D40F98D0094B0E4 /* FirmwareDistributionStart.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B65B2D40F98D0094B0E4 /* FirmwareDistributionStart.swift */; };
+		F019B65E2D413D510094B0E4 /* FirmwareDistributionSuspend.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B65D2D413D510094B0E4 /* FirmwareDistributionSuspend.swift */; };
+		F019B6602D413D850094B0E4 /* FirmwareDistributionCancel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B65F2D413D850094B0E4 /* FirmwareDistributionCancel.swift */; };
+		F019B6622D413DE90094B0E4 /* FirmwareDistributionApply.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B6612D413DE90094B0E4 /* FirmwareDistributionApply.swift */; };
+		F019B6642D4239490094B0E4 /* FirmwareDistributionStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B6632D4239490094B0E4 /* FirmwareDistributionStatus.swift */; };
+		F019B6662D4260B20094B0E4 /* FirmwareDistributionUploadGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B6652D4260B20094B0E4 /* FirmwareDistributionUploadGet.swift */; };
+		F019B6682D4261BD0094B0E4 /* FirmwareDistributionUploadStart.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B6672D4261BD0094B0E4 /* FirmwareDistributionUploadStart.swift */; };
+		F019B66A2D428C350094B0E4 /* FirmwareDistributionUploadOOBStart.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B6692D428C350094B0E4 /* FirmwareDistributionUploadOOBStart.swift */; };
+		F019B66C2D43A68B0094B0E4 /* FirmwareDistributionUploadCancel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B66B2D43A68B0094B0E4 /* FirmwareDistributionUploadCancel.swift */; };
+		F019B66E2D43A6EC0094B0E4 /* FirmwareDistributionUploadStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B66D2D43A6EC0094B0E4 /* FirmwareDistributionUploadStatus.swift */; };
+		F019B6702D443C610094B0E4 /* FirmwareDistributionFirmwareGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B66F2D443C610094B0E4 /* FirmwareDistributionFirmwareGet.swift */; };
+		F019B6722D443DE70094B0E4 /* FirmwareDistributionFirmwareGetByIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B6712D443DE70094B0E4 /* FirmwareDistributionFirmwareGetByIndex.swift */; };
+		F019B6742D443EFE0094B0E4 /* FirmwareDistributionFirmwareDelete.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B6732D443EFE0094B0E4 /* FirmwareDistributionFirmwareDelete.swift */; };
+		F019B6762D443F9F0094B0E4 /* FirmwareDistributionFirmwareDeleteAll.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B6752D443F9F0094B0E4 /* FirmwareDistributionFirmwareDeleteAll.swift */; };
+		F019B6782D4442E40094B0E4 /* FirmwareDistributionFirmwareStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B6772D4442E40094B0E4 /* FirmwareDistributionFirmwareStatus.swift */; };
 		F05BEB3B3B7D9BA92171DBA20D00D99A /* LightHSLHueGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9459D3C9D4AD25E6F06783A083CDCA /* LightHSLHueGet.swift */; };
 		F0CF8137D4A439F10BA45530CE5A1826 /* HeartbeatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61AC6EE93C4A0A96E70EB495A0CA1E2 /* HeartbeatMessage.swift */; };
+		F0D9FBB72D3A844300031E7E /* FirmwareUpdateFirmwareMetadataCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D9FBB62D3A844300031E7E /* FirmwareUpdateFirmwareMetadataCheck.swift */; };
+		F0D9FBB92D3A869800031E7E /* FirmwareUpdateFirmwareMetadataStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D9FBB82D3A869800031E7E /* FirmwareUpdateFirmwareMetadataStatus.swift */; };
+		F0D9FBBB2D3A985B00031E7E /* FirmwareUpdateMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D9FBBA2D3A984700031E7E /* FirmwareUpdateMessage.swift */; };
+		F0DAF5B82D39AB78000874EA /* FirmwareUpdateInformationGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0DAF5B62D39AB78000874EA /* FirmwareUpdateInformationGet.swift */; };
+		F0DAF5BA2D39ADA9000874EA /* FirmwareUpdateInformationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0DAF5B92D39ADA9000874EA /* FirmwareUpdateInformationStatus.swift */; };
 		F1DAB5AF35C9CFE683F02B4CB58706A5 /* String+FoundationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C75468A068967107F4A2CD3C43F8546 /* String+FoundationExtension.swift */; };
 		F20B124E62C51E08102EF26D00763A35 /* Division.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C05A80EB0FAD8E6E3637AF6EE94CB05 /* Division.swift */; };
 		F24756849895D639924A648E1F58818F /* MeshUUID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1160E46C3BFF616DED70346C1BC555E7 /* MeshUUID.swift */; };
@@ -626,7 +661,7 @@
 		090F16FF658855BD34DD412A02E5BC38 /* HKDF.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = HKDF.swift; path = Sources/CryptoSwift/HKDF.swift; sourceTree = "<group>"; };
 		09219B22171E2E5C022CA8DAB7CE11CE /* BlockDecryptor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BlockDecryptor.swift; path = Sources/CryptoSwift/BlockDecryptor.swift; sourceTree = "<group>"; };
 		09301A84CEF04CDC52D71AE6C85962F5 /* PrivateBeaconStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PrivateBeaconStatus.swift; sourceTree = "<group>"; };
-		0979C0EE1D3083505C0C7FF87C4628E4 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; path = README.md; sourceTree = "<group>"; };
+		0979C0EE1D3083505C0C7FF87C4628E4 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		09F7FA7ADC6BDCBED633B8C16D562D6C /* ConfigBeaconSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigBeaconSet.swift; sourceTree = "<group>"; };
 		0B3CFA80D2DE08E4A500FCE0B1999845 /* AccessError.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AccessError.swift; sourceTree = "<group>"; };
 		0B800D54CFEC53A1B8ABC328D29347E0 /* AEADXChaCha20Poly1305.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AEADXChaCha20Poly1305.swift; path = Sources/CryptoSwift/AEAD/AEADXChaCha20Poly1305.swift; sourceTree = "<group>"; };
@@ -688,7 +723,7 @@
 		27F496B0839ADCBF435487092BBEF4A5 /* Pods-nRF Mesh-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-nRF Mesh-frameworks.sh"; sourceTree = "<group>"; };
 		2877FE5B1A6B9F9FAEAEF506D51F5B02 /* PKCS7Padding.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PKCS7Padding.swift; path = Sources/CryptoSwift/PKCS/PKCS7Padding.swift; sourceTree = "<group>"; };
 		28E7045BA6AF4C14D8FC949519CB04F7 /* UnknownMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UnknownMessage.swift; sourceTree = "<group>"; };
-		28FDBBC47A370A209785899F53E1164B /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = Library/Resources/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		28FDBBC47A370A209785899F53E1164B /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = Library/Resources/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		29AA4EAABFDD15632D2271C041F3988B /* SceneRegisterGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneRegisterGet.swift; sourceTree = "<group>"; };
 		29C8F024794EA1676E28D606767CAA6A /* GenericPowerDefautGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericPowerDefautGet.swift; sourceTree = "<group>"; };
 		29D3D0AF3C0146C9D51E634BF89EB1D6 /* ConfigDefaultTtlGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigDefaultTtlGet.swift; sourceTree = "<group>"; };
@@ -809,9 +844,9 @@
 		61073C6FD6529D9161C37FEED2D355E4 /* AsyncOperation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AsyncOperation.swift; sourceTree = "<group>"; };
 		613D724F585AE6F4CECD177A270B4774 /* ConfigRelaySet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigRelaySet.swift; sourceTree = "<group>"; };
 		61ACE0703FD1B63CDF7A41DADE404C4F /* AccessLayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AccessLayer.swift; sourceTree = "<group>"; };
-		61BE037A951BEE8CBBB17BAAB40A55E1 /* nRFMeshProvision.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = nRFMeshProvision.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		61BE037A951BEE8CBBB17BAAB40A55E1 /* nRFMeshProvision.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; path = nRFMeshProvision.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		62AB741B37A5F5BFFB8CCF7E2DC6DCE9 /* SecureNetworkBeacon.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SecureNetworkBeacon.swift; sourceTree = "<group>"; };
-		63D46D377C01814AE242B65111996146 /* Documentation.docc */ = {isa = PBXFileReference; includeInIndex = 1; name = Documentation.docc; path = Library/Documentation.docc; sourceTree = "<group>"; };
+		63D46D377C01814AE242B65111996146 /* Documentation.docc */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder.documentationcatalog; name = Documentation.docc; path = Library/Documentation.docc; sourceTree = "<group>"; };
 		64EE180748CEACF2ED45EC480E53A45C /* NetworkIdentity.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NetworkIdentity.swift; sourceTree = "<group>"; };
 		652AEE1BA1DBAD0954404070FFE9612A /* Node.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Node.swift; sourceTree = "<group>"; };
 		6553E1FEE3483D93B026329EED73046A /* Pods-nRF Mesh Tests.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-nRF Mesh Tests.modulemap"; sourceTree = "<group>"; };
@@ -835,7 +870,7 @@
 		6CAACA767F9F826E2C39633935924BC8 /* MeshNetwork+Scenes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+Scenes.swift"; sourceTree = "<group>"; };
 		6CEF66738DBB505294EB24C7A6AA4886 /* LightLCModeSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightLCModeSet.swift; sourceTree = "<group>"; };
 		6CF8026919E50290AD7EEFF76371FD3C /* PrivateNodeIdentityGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PrivateNodeIdentityGet.swift; sourceTree = "<group>"; };
-		6D18FD07C89318B82C93EBFECFFC13CE /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE; sourceTree = "<group>"; };
+		6D18FD07C89318B82C93EBFECFFC13CE /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		6D2ADE28AD6B0D7C0BFF47B032F2A7EF /* Unique.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Unique.swift; sourceTree = "<group>"; };
 		6D631527123B15561EE88BB347D37999 /* LightLightnessLastStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightLightnessLastStatus.swift; sourceTree = "<group>"; };
 		6D8F41CA7B145E8F5570125B66E8A075 /* PrivateNodeIdentityStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PrivateNodeIdentityStatus.swift; sourceTree = "<group>"; };
@@ -952,7 +987,7 @@
 		987B6F09831B7A7DB019E69EFB6FFB45 /* Pods-nRF Mesh Tests-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-nRF Mesh Tests-Info.plist"; sourceTree = "<group>"; };
 		994DBE919BE31277F59B811E3C662E70 /* Models.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		995343CCED24B96B9F71C45F0AD8967C /* NodeIdentityState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NodeIdentityState.swift; sourceTree = "<group>"; };
-		99F4A9428724D15042D10C670D973833 /* Pods-nRF Mesh */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "Pods-nRF Mesh"; path = Pods_nRF_Mesh.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		99F4A9428724D15042D10C670D973833 /* Pods_nRF_Mesh.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRF_Mesh.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A790F3EA3FD862F791F09C91C020509 /* MeshAddress.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshAddress.swift; sourceTree = "<group>"; };
 		9B5689AD32BB62250621074E7A7E27D1 /* Strideable.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Strideable.swift; path = Sources/CryptoSwift/CS_BigInt/Strideable.swift; sourceTree = "<group>"; };
 		9BAE1624914CCB2618E35E87CF6CE0E7 /* CryptoSwift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = CryptoSwift.release.xcconfig; sourceTree = "<group>"; };
@@ -966,7 +1001,7 @@
 		9CFF831113F3D7A195F2B714C27FE0F9 /* ProxyConfigurationMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProxyConfigurationMessage.swift; sourceTree = "<group>"; };
 		9D295B7F1D23414BF824E07A13570A24 /* Operators.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Operators.swift; path = Sources/CryptoSwift/Operators.swift; sourceTree = "<group>"; };
 		9D73B151D30F2C2757BE1D8FD7ED1CF8 /* ConfigGATTProxyStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigGATTProxyStatus.swift; sourceTree = "<group>"; };
-		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		9ED436D5FD350B0DFC629CEA66675FBA /* LightHSLSetUnackowledged.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightHSLSetUnackowledged.swift; sourceTree = "<group>"; };
 		A00927122F0A1BE4EE8CFB169AB768BA /* LightLCPropertyGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightLCPropertyGet.swift; sourceTree = "<group>"; };
 		A0D5E787786B27CBA7483EDE58A059EC /* Scene.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Scene.swift; sourceTree = "<group>"; };
@@ -1021,7 +1056,7 @@
 		B3602E3E61D7BC155094198B769D80B9 /* HealthFaultStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = HealthFaultStatus.swift; sourceTree = "<group>"; };
 		B3EBBC614026803E59EAA266BB64A467 /* BeaconPdu.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BeaconPdu.swift; sourceTree = "<group>"; };
 		B44C1D138C154F01333AEBEB544A1DAD /* LightCTLTemperatureStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightCTLTemperatureStatus.swift; sourceTree = "<group>"; };
-		B4C001B7D2FB9649EC19C565872AF0D8 /* nRFMeshProvision */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = nRFMeshProvision; path = NordicMesh.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B4C001B7D2FB9649EC19C565872AF0D8 /* NordicMesh.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = NordicMesh.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B530DC8672EC471A54AED7EE65162690 /* ConfigModelSubscriptionVirtualAddressAdd.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigModelSubscriptionVirtualAddressAdd.swift; sourceTree = "<group>"; };
 		B53C350EAFF44F3C1AEE31168337D91B /* ConfigHeartbeatPublicationStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigHeartbeatPublicationStatus.swift; sourceTree = "<group>"; };
 		B5C7F5ADDF6CAC555543BC76DCF4DDD8 /* MeshNetwork+Ranges.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+Ranges.swift"; sourceTree = "<group>"; };
@@ -1063,7 +1098,7 @@
 		C8118E53EE74D4BFD9855E6A8486F910 /* PKCS7.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PKCS7.swift; path = Sources/CryptoSwift/PKCS/PKCS7.swift; sourceTree = "<group>"; };
 		C87432879BE68D521A179BF3A1417429 /* TimeMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TimeMessage.swift; sourceTree = "<group>"; };
 		C96E7225BDCAAF1B0A6F7DC6A41572B0 /* PrivateGATTProxySet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PrivateGATTProxySet.swift; sourceTree = "<group>"; };
-		CA80C0D59F7A865DBC76AA728C8C3E0F /* Pods-nRF Mesh Tests */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "Pods-nRF Mesh Tests"; path = Pods_nRF_Mesh_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CA80C0D59F7A865DBC76AA728C8C3E0F /* Pods_nRF_Mesh_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRF_Mesh_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CAE1926B80567D146E6967517264E838 /* ConfigAppKeyUpdate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigAppKeyUpdate.swift; sourceTree = "<group>"; };
 		CBCB20B28585C9F66BB4E00C2499E552 /* ConfigModelSubscriptionAdd.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigModelSubscriptionAdd.swift; sourceTree = "<group>"; };
 		CD5F7527ABC78BDFD399D8FDEAF40838 /* MeshNetwork+Nodes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+Nodes.swift"; sourceTree = "<group>"; };
@@ -1150,12 +1185,47 @@
 		EF98789944603E966FD981068B0D498F /* TimeZoneStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TimeZoneStatus.swift; sourceTree = "<group>"; };
 		EFD8F544B5B6865E0D06A8C420EDAB67 /* RemoteProvisioningScanCapabilitiesStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RemoteProvisioningScanCapabilitiesStatus.swift; sourceTree = "<group>"; };
 		F0135CC7CE5848B1FFDFF2D271BE4B7C /* MeshLoggerDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshLoggerDelegate.swift; sourceTree = "<group>"; };
+		F019B62A2D3AA2F90094B0E4 /* FirmwareUpdateGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateGet.swift; sourceTree = "<group>"; };
+		F019B62C2D3AF2F80094B0E4 /* FirmwareUpdateCancel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateCancel.swift; sourceTree = "<group>"; };
+		F019B62E2D3AF3430094B0E4 /* FirmwareUpdateApply.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateApply.swift; sourceTree = "<group>"; };
+		F019B6302D3AF3A70094B0E4 /* FirmwareUpdateStart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateStart.swift; sourceTree = "<group>"; };
+		F019B6322D3B047D0094B0E4 /* FirmwareUpdateStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateStatus.swift; sourceTree = "<group>"; };
+		F019B6472D3E664A0094B0E4 /* FirmwareDistributionReceiversAdd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareDistributionReceiversAdd.swift; sourceTree = "<group>"; };
+		F019B6492D3E69470094B0E4 /* FirmwareDistributionReceiversDeleteAll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareDistributionReceiversDeleteAll.swift; sourceTree = "<group>"; };
+		F019B64B2D3E69E60094B0E4 /* FirmwareDistributionReceiversStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareDistributionReceiversStatus.swift; sourceTree = "<group>"; };
+		F019B64D2D3E6E730094B0E4 /* FirmwareDistributionReceiversGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareDistributionReceiversGet.swift; sourceTree = "<group>"; };
+		F019B64F2D3E6F680094B0E4 /* FirmwareDistributionReceiversList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareDistributionReceiversList.swift; sourceTree = "<group>"; };
+		F019B6512D3E7B970094B0E4 /* BLOBMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLOBMessage.swift; sourceTree = "<group>"; };
+		F019B6532D3FD56B0094B0E4 /* FirmwareDistributionCapabilitiesGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareDistributionCapabilitiesGet.swift; sourceTree = "<group>"; };
+		F019B6552D3FD5C90094B0E4 /* FirmwareDistributionCapabilitiesStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareDistributionCapabilitiesStatus.swift; sourceTree = "<group>"; };
+		F019B6572D40E3700094B0E4 /* UriScheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UriScheme.swift; sourceTree = "<group>"; };
+		F019B6592D40F9250094B0E4 /* FirmwareDistributionGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareDistributionGet.swift; sourceTree = "<group>"; };
+		F019B65B2D40F98D0094B0E4 /* FirmwareDistributionStart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareDistributionStart.swift; sourceTree = "<group>"; };
+		F019B65D2D413D510094B0E4 /* FirmwareDistributionSuspend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareDistributionSuspend.swift; sourceTree = "<group>"; };
+		F019B65F2D413D850094B0E4 /* FirmwareDistributionCancel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareDistributionCancel.swift; sourceTree = "<group>"; };
+		F019B6612D413DE90094B0E4 /* FirmwareDistributionApply.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareDistributionApply.swift; sourceTree = "<group>"; };
+		F019B6632D4239490094B0E4 /* FirmwareDistributionStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareDistributionStatus.swift; sourceTree = "<group>"; };
+		F019B6652D4260B20094B0E4 /* FirmwareDistributionUploadGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareDistributionUploadGet.swift; sourceTree = "<group>"; };
+		F019B6672D4261BD0094B0E4 /* FirmwareDistributionUploadStart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareDistributionUploadStart.swift; sourceTree = "<group>"; };
+		F019B6692D428C350094B0E4 /* FirmwareDistributionUploadOOBStart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareDistributionUploadOOBStart.swift; sourceTree = "<group>"; };
+		F019B66B2D43A68B0094B0E4 /* FirmwareDistributionUploadCancel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareDistributionUploadCancel.swift; sourceTree = "<group>"; };
+		F019B66D2D43A6EC0094B0E4 /* FirmwareDistributionUploadStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareDistributionUploadStatus.swift; sourceTree = "<group>"; };
+		F019B66F2D443C610094B0E4 /* FirmwareDistributionFirmwareGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareDistributionFirmwareGet.swift; sourceTree = "<group>"; };
+		F019B6712D443DE70094B0E4 /* FirmwareDistributionFirmwareGetByIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareDistributionFirmwareGetByIndex.swift; sourceTree = "<group>"; };
+		F019B6732D443EFE0094B0E4 /* FirmwareDistributionFirmwareDelete.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareDistributionFirmwareDelete.swift; sourceTree = "<group>"; };
+		F019B6752D443F9F0094B0E4 /* FirmwareDistributionFirmwareDeleteAll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareDistributionFirmwareDeleteAll.swift; sourceTree = "<group>"; };
+		F019B6772D4442E40094B0E4 /* FirmwareDistributionFirmwareStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareDistributionFirmwareStatus.swift; sourceTree = "<group>"; };
 		F056F50B3F6A0A1F7E9F8FFB3D12017B /* ConfigModelSubscriptionOverwrite.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigModelSubscriptionOverwrite.swift; sourceTree = "<group>"; };
 		F09D785490AE9DC3F13CFBC70C004D2C /* TimeZoneSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TimeZoneSet.swift; sourceTree = "<group>"; };
+		F0D9FBB62D3A844300031E7E /* FirmwareUpdateFirmwareMetadataCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateFirmwareMetadataCheck.swift; sourceTree = "<group>"; };
+		F0D9FBB82D3A869800031E7E /* FirmwareUpdateFirmwareMetadataStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateFirmwareMetadataStatus.swift; sourceTree = "<group>"; };
+		F0D9FBBA2D3A984700031E7E /* FirmwareUpdateMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateMessage.swift; sourceTree = "<group>"; };
+		F0DAF5B62D39AB78000874EA /* FirmwareUpdateInformationGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateInformationGet.swift; sourceTree = "<group>"; };
+		F0DAF5B92D39ADA9000874EA /* FirmwareUpdateInformationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateInformationStatus.swift; sourceTree = "<group>"; };
 		F1B97AF62C69861336C37668E1A987D2 /* nRFMeshProvision.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = nRFMeshProvision.release.xcconfig; sourceTree = "<group>"; };
 		F2319EF4BFCCA5C949B924616582FB77 /* ConfigurationServerHandler.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigurationServerHandler.swift; sourceTree = "<group>"; };
 		F266B1D0B0919999F2A837E9F8F27845 /* SceneRange.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneRange.swift; sourceTree = "<group>"; };
-		F2B4756E2C21F882362AD8AF85FD6727 /* nRFMeshProvision-PrivacyInfo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = "nRFMeshProvision-PrivacyInfo"; path = PrivacyInfo.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		F2B4756E2C21F882362AD8AF85FD6727 /* PrivacyInfo.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PrivacyInfo.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3D73022874018CE23AC62A5A4F33724 /* LightLCLightOnOffStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightLCLightOnOffStatus.swift; sourceTree = "<group>"; };
 		F3E621A62E62CB217A12DA73C022B80A /* ApplicationKeys.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ApplicationKeys.swift; sourceTree = "<group>"; };
 		F43911A9ADBF66C6D90F2D6A6A04AC2F /* GenericMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericMessage.swift; sourceTree = "<group>"; };
@@ -1168,7 +1238,7 @@
 		F6C578EFD191E4C0C2561DB175B90254 /* LightHSLGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightHSLGet.swift; sourceTree = "<group>"; };
 		F6C6D2AAA6A28A3E1CE2DA1817353D12 /* ProvisioningManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProvisioningManager.swift; sourceTree = "<group>"; };
 		F7ED7BC630539B7D46C7DB8C96EC0D2C /* SetFilterType.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SetFilterType.swift; sourceTree = "<group>"; };
-		F81274EDB681F11E7CB05F7DCA2BB33C /* CryptoSwift */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = CryptoSwift; path = CryptoSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F81274EDB681F11E7CB05F7DCA2BB33C /* CryptoSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CryptoSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F903C501DE3819F6F0475CED39D2A1B0 /* ApplicationKey+MeshNetwork.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "ApplicationKey+MeshNetwork.swift"; sourceTree = "<group>"; };
 		F905D934CE16CF14A9FA4A4FB31360F1 /* NoPadding.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NoPadding.swift; path = Sources/CryptoSwift/NoPadding.swift; sourceTree = "<group>"; };
 		FBCBC39F6244D8FF28D0269ED6B115DA /* NetworkPdu.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NetworkPdu.swift; sourceTree = "<group>"; };
@@ -1280,7 +1350,6 @@
 				BFD073F668319B6C7B43823FF242C3A8 /* SegmentedControlMessage.swift */,
 				20B2629A29AC9F765A43561DA2CC685B /* SegmentedMessage.swift */,
 			);
-			name = "Lower Transport Layer";
 			path = "Lower Transport Layer";
 			sourceTree = "<group>";
 		};
@@ -1402,7 +1471,6 @@
 				149C57DCA5322B83B3C88235D1281878 /* ZeroPadding.swift */,
 				4CC9D90BAC1783B638544A4451B2EB67 /* Support Files */,
 			);
-			name = CryptoSwift;
 			path = CryptoSwift;
 			sourceTree = "<group>";
 		};
@@ -1461,7 +1529,6 @@
 				AF8618A8B654BFB21A9FC2D90D4C9F99 /* SensorSettingStatus.swift */,
 				83F715A587D865FDF652F32C645E8690 /* SensorStatus.swift */,
 			);
-			name = Sensors;
 			path = Sensors;
 			sourceTree = "<group>";
 		};
@@ -1541,7 +1608,6 @@
 				3849ACD3ED50FEAD1D24EF1D0FA257F4 /* LightLightnessSetUnacknowledged.swift */,
 				3395035984251AAAD35B038AF2E1AA7C /* LightLightnessStatus.swift */,
 			);
-			name = Lighting;
 			path = Lighting;
 			sourceTree = "<group>";
 		};
@@ -1554,7 +1620,6 @@
 				A6DB76513F217C90E03CB5572BCB7D14 /* RemoveAddressesFromFilter.swift */,
 				F7ED7BC630539B7D46C7DB8C96EC0D2C /* SetFilterType.swift */,
 			);
-			name = "Proxy Configuration";
 			path = "Proxy Configuration";
 			sourceTree = "<group>";
 		};
@@ -1633,7 +1698,6 @@
 				A481113681567A23A831FCB64CCE5ACF /* ConfigVendorModelSubscriptionGet.swift */,
 				D185E0B78CB579BD6ACF5A09D2496571 /* ConfigVendorModelSubscriptionList.swift */,
 			);
-			name = Configuration;
 			path = Configuration;
 			sourceTree = "<group>";
 		};
@@ -1656,11 +1720,11 @@
 			isa = PBXGroup;
 			children = (
 				4CA3E36A2303A1FF95CB65395B0EEA42 /* Configuration */,
+				F0DAF5B72D39AB78000874EA /* DFU */,
 				8AF1A4BB5529E9B6C729A6F6B0103584 /* Private Beacon */,
 				B2D66245813A525595B7666F9A08D22F /* Remote Provisioning */,
 				90BA3F51A43320EAD68739C3D7FB029E /* SAR Configuration */,
 			);
-			name = Foundation;
 			path = Foundation;
 			sourceTree = "<group>";
 		};
@@ -1701,6 +1765,7 @@
 				83FC191C28CF2E899AC69A7C2B13AF45 /* Security.swift */,
 				268DA28EC4F602A6E4459D4704AE2590 /* StepResolution.swift */,
 				D9036E81366245A312D528D460808292 /* TransitionTime.swift */,
+				F019B6572D40E3700094B0E4 /* UriScheme.swift */,
 			);
 			name = "Mesh Model";
 			path = "Library/Mesh Model";
@@ -1766,7 +1831,6 @@
 				F09D785490AE9DC3F13CFBC70C004D2C /* TimeZoneSet.swift */,
 				EF98789944603E966FD981068B0D498F /* TimeZoneStatus.swift */,
 			);
-			name = "Time and Scenes";
 			path = "Time and Scenes";
 			sourceTree = "<group>";
 		};
@@ -1777,7 +1841,6 @@
 				61ACE0703FD1B63CDF7A41DADE404C4F /* AccessLayer.swift */,
 				7C29A01F361735983A611ABFEDD3ADBE /* AccessPdu.swift */,
 			);
-			name = "Access Layer";
 			path = "Access Layer";
 			sourceTree = "<group>";
 		};
@@ -1806,7 +1869,6 @@
 				EC2C678D24145D513F74338DB2956D0F /* PrivateNodeIdentitySet.swift */,
 				6D8F41CA7B145E8F5570125B66E8A075 /* PrivateNodeIdentityStatus.swift */,
 			);
-			name = "Private Beacon";
 			path = "Private Beacon";
 			sourceTree = "<group>";
 		};
@@ -1815,7 +1877,6 @@
 			children = (
 				2B2CC93E278AAC959D6F0DC5EE6151D9 /* PBRemoteBearer.swift */,
 			);
-			name = Remote;
 			path = Remote;
 			sourceTree = "<group>";
 		};
@@ -1829,7 +1890,6 @@
 				75DD55D10976431A9991BB26B5C5F1D4 /* SarTransmitterSet.swift */,
 				0303D9B2FA1B669AF965B7BD1740218D /* SarTransmitterStatus.swift */,
 			);
-			name = "SAR Configuration";
 			path = "SAR Configuration";
 			sourceTree = "<group>";
 		};
@@ -1844,7 +1904,6 @@
 				4B40BB694D0289C1331D732DFB0CA3B3 /* SarConfigurationClientHandler.swift */,
 				29E955741459922F65D39B019BF6FD48 /* SceneClientHandler.swift */,
 			);
-			name = "Foundation Layer";
 			path = "Foundation Layer";
 			sourceTree = "<group>";
 		};
@@ -1901,7 +1960,6 @@
 				62AB741B37A5F5BFFB8CCF7E2DC6DCE9 /* SecureNetworkBeacon.swift */,
 				7DF20810153E10E4E18C2761C4831B4E /* UnprovisionedDeviceBeacon.swift */,
 			);
-			name = "Network Layer";
 			path = "Network Layer";
 			sourceTree = "<group>";
 		};
@@ -1925,7 +1983,6 @@
 				237C56C62770795A78A516CB41086A49 /* HealthFaultEnum.swift */,
 				B3602E3E61D7BC155094198B769D80B9 /* HealthFaultStatus.swift */,
 			);
-			name = Health;
 			path = Health;
 			sourceTree = "<group>";
 		};
@@ -1950,7 +2007,6 @@
 				837EF9D6A93C73E4BD28FA830C410183 /* RemoteProvisioningScanStatus.swift */,
 				A15E6368AB97B9440014EB1C2AA050A8 /* RemoteProvisioningScanStop.swift */,
 			);
-			name = "Remote Provisioning";
 			path = "Remote Provisioning";
 			sourceTree = "<group>";
 		};
@@ -1967,11 +2023,11 @@
 		BAB096B9671E1507A54FECBC61179528 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F81274EDB681F11E7CB05F7DCA2BB33C /* CryptoSwift */,
-				B4C001B7D2FB9649EC19C565872AF0D8 /* nRFMeshProvision */,
-				F2B4756E2C21F882362AD8AF85FD6727 /* nRFMeshProvision-PrivacyInfo */,
-				99F4A9428724D15042D10C670D973833 /* Pods-nRF Mesh */,
-				CA80C0D59F7A865DBC76AA728C8C3E0F /* Pods-nRF Mesh Tests */,
+				F81274EDB681F11E7CB05F7DCA2BB33C /* CryptoSwift.framework */,
+				B4C001B7D2FB9649EC19C565872AF0D8 /* NordicMesh.framework */,
+				F2B4756E2C21F882362AD8AF85FD6727 /* PrivacyInfo.bundle */,
+				99F4A9428724D15042D10C670D973833 /* Pods_nRF_Mesh.framework */,
+				CA80C0D59F7A865DBC76AA728C8C3E0F /* Pods_nRF_Mesh_Tests.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2020,7 +2076,6 @@
 				4463484308FD38578F69A5CB7481D90C /* GenericPowerRangeSetUnacknowledged.swift */,
 				8D76BEC9D78468B576251CE6549409ED /* GenericPowerRangeStatus.swift */,
 			);
-			name = Generic;
 			path = Generic;
 			sourceTree = "<group>";
 		};
@@ -2031,7 +2086,6 @@
 				BE306B56934033F2BDA60543E076720E /* UpperTransportLayer.swift */,
 				5EE6BF14FE0C8DB34B4230664692CED6 /* UpperTransportPdu.swift */,
 			);
-			name = "Upper Transport Layer";
 			path = "Upper Transport Layer";
 			sourceTree = "<group>";
 		};
@@ -2062,7 +2116,6 @@
 				CF8CBE03EFCE49B939AD2B597109651D /* PBGattBearer.swift */,
 				244C4DDCF3443C7891BBEA2A18147228 /* ProxyProtocolHandler.swift */,
 			);
-			name = GATT;
 			path = GATT;
 			sourceTree = "<group>";
 		};
@@ -2145,6 +2198,45 @@
 			path = "Target Support Files/Pods-nRF Mesh";
 			sourceTree = "<group>";
 		};
+		F0DAF5B72D39AB78000874EA /* DFU */ = {
+			isa = PBXGroup;
+			children = (
+				F019B6472D3E664A0094B0E4 /* FirmwareDistributionReceiversAdd.swift */,
+				F019B6492D3E69470094B0E4 /* FirmwareDistributionReceiversDeleteAll.swift */,
+				F019B64B2D3E69E60094B0E4 /* FirmwareDistributionReceiversStatus.swift */,
+				F019B64D2D3E6E730094B0E4 /* FirmwareDistributionReceiversGet.swift */,
+				F019B64F2D3E6F680094B0E4 /* FirmwareDistributionReceiversList.swift */,
+				F019B6532D3FD56B0094B0E4 /* FirmwareDistributionCapabilitiesGet.swift */,
+				F019B6552D3FD5C90094B0E4 /* FirmwareDistributionCapabilitiesStatus.swift */,
+				F019B6612D413DE90094B0E4 /* FirmwareDistributionApply.swift */,
+				F019B65F2D413D850094B0E4 /* FirmwareDistributionCancel.swift */,
+				F019B6592D40F9250094B0E4 /* FirmwareDistributionGet.swift */,
+				F019B65B2D40F98D0094B0E4 /* FirmwareDistributionStart.swift */,
+				F019B6632D4239490094B0E4 /* FirmwareDistributionStatus.swift */,
+				F019B65D2D413D510094B0E4 /* FirmwareDistributionSuspend.swift */,
+				F019B6652D4260B20094B0E4 /* FirmwareDistributionUploadGet.swift */,
+				F019B6672D4261BD0094B0E4 /* FirmwareDistributionUploadStart.swift */,
+				F019B6692D428C350094B0E4 /* FirmwareDistributionUploadOOBStart.swift */,
+				F019B66B2D43A68B0094B0E4 /* FirmwareDistributionUploadCancel.swift */,
+				F019B66D2D43A6EC0094B0E4 /* FirmwareDistributionUploadStatus.swift */,
+				F019B66F2D443C610094B0E4 /* FirmwareDistributionFirmwareGet.swift */,
+				F019B6712D443DE70094B0E4 /* FirmwareDistributionFirmwareGetByIndex.swift */,
+				F019B6732D443EFE0094B0E4 /* FirmwareDistributionFirmwareDelete.swift */,
+				F019B6752D443F9F0094B0E4 /* FirmwareDistributionFirmwareDeleteAll.swift */,
+				F019B6772D4442E40094B0E4 /* FirmwareDistributionFirmwareStatus.swift */,
+				F019B62E2D3AF3430094B0E4 /* FirmwareUpdateApply.swift */,
+				F019B62C2D3AF2F80094B0E4 /* FirmwareUpdateCancel.swift */,
+				F019B62A2D3AA2F90094B0E4 /* FirmwareUpdateGet.swift */,
+				F019B6302D3AF3A70094B0E4 /* FirmwareUpdateStart.swift */,
+				F019B6322D3B047D0094B0E4 /* FirmwareUpdateStatus.swift */,
+				F0DAF5B62D39AB78000874EA /* FirmwareUpdateInformationGet.swift */,
+				F0DAF5B92D39ADA9000874EA /* FirmwareUpdateInformationStatus.swift */,
+				F0D9FBB62D3A844300031E7E /* FirmwareUpdateFirmwareMetadataCheck.swift */,
+				F0D9FBB82D3A869800031E7E /* FirmwareUpdateFirmwareMetadataStatus.swift */,
+			);
+			path = DFU;
+			sourceTree = "<group>";
+		};
 		F7A66588F8D33DDCACC80BE48A9E2F12 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -2167,6 +2259,8 @@
 				C87432879BE68D521A179BF3A1417429 /* TimeMessage.swift */,
 				28E7045BA6AF4C14D8FC949519CB04F7 /* UnknownMessage.swift */,
 				6620817C5BB5F4EA713F0700462D6D9F /* VendorMessage.swift */,
+				F0D9FBBA2D3A984700031E7E /* FirmwareUpdateMessage.swift */,
+				F019B6512D3E7B970094B0E4 /* BLOBMessage.swift */,
 				63423C76B458B3F1C4533B2573996EFE /* Foundation */,
 				BAFCF503BE8B52A1D14A488959168C44 /* Generic */,
 				AB1A0BBE9428A7216DE441C8AAF3A074 /* Health */,
@@ -2232,7 +2326,7 @@
 			);
 			name = CryptoSwift;
 			productName = CryptoSwift;
-			productReference = F81274EDB681F11E7CB05F7DCA2BB33C /* CryptoSwift */;
+			productReference = F81274EDB681F11E7CB05F7DCA2BB33C /* CryptoSwift.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		C55C8C96A59EE76A4638D61F44E12DF6 /* Pods-nRF Mesh Tests */ = {
@@ -2251,7 +2345,7 @@
 			);
 			name = "Pods-nRF Mesh Tests";
 			productName = Pods_nRF_Mesh_Tests;
-			productReference = CA80C0D59F7A865DBC76AA728C8C3E0F /* Pods-nRF Mesh Tests */;
+			productReference = CA80C0D59F7A865DBC76AA728C8C3E0F /* Pods_nRF_Mesh_Tests.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		DBF639A39D1896128BCA040EDD84174E /* nRFMeshProvision */ = {
@@ -2271,7 +2365,7 @@
 			);
 			name = nRFMeshProvision;
 			productName = NordicMesh;
-			productReference = B4C001B7D2FB9649EC19C565872AF0D8 /* nRFMeshProvision */;
+			productReference = B4C001B7D2FB9649EC19C565872AF0D8 /* NordicMesh.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		FE9A7A7292F5AFCEEC420BFA81C650C0 /* Pods-nRF Mesh */ = {
@@ -2291,7 +2385,7 @@
 			);
 			name = "Pods-nRF Mesh";
 			productName = Pods_nRF_Mesh;
-			productReference = 99F4A9428724D15042D10C670D973833 /* Pods-nRF Mesh */;
+			productReference = 99F4A9428724D15042D10C670D973833 /* Pods_nRF_Mesh.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		FF713C26E3DCEABD707975F2EC98608B /* nRFMeshProvision-PrivacyInfo */ = {
@@ -2308,7 +2402,7 @@
 			);
 			name = "nRFMeshProvision-PrivacyInfo";
 			productName = PrivacyInfo;
-			productReference = F2B4756E2C21F882362AD8AF85FD6727 /* nRFMeshProvision-PrivacyInfo */;
+			productReference = F2B4756E2C21F882362AD8AF85FD6727 /* PrivacyInfo.bundle */;
 			productType = "com.apple.product-type.bundle";
 		};
 /* End PBXNativeTarget section */
@@ -2330,8 +2424,6 @@
 				en,
 			);
 			mainGroup = CF1408CF629C7361332E53B88F7BD30C;
-			minimizedProjectReferenceProxies = 0;
-			preferredProjectObjectVersion = 77;
 			productRefGroup = BAB096B9671E1507A54FECBC61179528 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -2405,6 +2497,7 @@
 				DC025FA3EAC115FF0011ADD8D2610EB4 /* Address.swift in Sources */,
 				CF69587BBE059B32E4E103FA32AEA420 /* AddressRange.swift in Sources */,
 				1DA178309C409984C5D9EC548EDB594E /* Algorithm.swift in Sources */,
+				F019B6522D3E7B970094B0E4 /* BLOBMessage.swift in Sources */,
 				448BBDFD31F11777F9FA3DE380D36F0D /* ApplicationKey.swift in Sources */,
 				6CC6589269716C798E2DD9345F5D574D /* ApplicationKey+MeshNetwork.swift in Sources */,
 				DD4CB79C0229C260183F07C7930E8808 /* ApplicationKey+NetworkKey.swift in Sources */,
@@ -2423,6 +2516,7 @@
 				D0373B6940410AB972BD8BF9C6FE26A4 /* ConfigAppKeyAdd.swift in Sources */,
 				B06F8E16ECBC0CB883169F39E21471C1 /* ConfigAppKeyDelete.swift in Sources */,
 				766F324F8BDCEE1B2804751CB9694F71 /* ConfigAppKeyGet.swift in Sources */,
+				F019B6762D443F9F0094B0E4 /* FirmwareDistributionFirmwareDeleteAll.swift in Sources */,
 				C5B401C3520BC7E1388CE9C23F43E51C /* ConfigAppKeyList.swift in Sources */,
 				ACD7331407F0953E885AEFD626F1280B /* ConfigAppKeyStatus.swift in Sources */,
 				B61A0AD5CBFC5EEB3FA23AF6C66E4E4C /* ConfigAppKeyUpdate.swift in Sources */,
@@ -2455,6 +2549,7 @@
 				9775B345FACFB3CECF9F7A6BEB3C746E /* ConfigModelAppBind.swift in Sources */,
 				41A22A62834DE5FEE6875FD3E4AC4466 /* ConfigModelAppStatus.swift in Sources */,
 				3050A55561F63648D30AD1E05FF3A8D4 /* ConfigModelAppUnbind.swift in Sources */,
+				F019B6312D3AF3A70094B0E4 /* FirmwareUpdateStart.swift in Sources */,
 				C7CEFF7FCE2A46916D7BF751865F8B82 /* ConfigModelPublicationGet.swift in Sources */,
 				6F4A89D99CA6079976621AB0B53902FD /* ConfigModelPublicationSet.swift in Sources */,
 				29EB43310880DCF1D65D397BC846A8A3 /* ConfigModelPublicationStatus.swift in Sources */,
@@ -2467,6 +2562,7 @@
 				92B2BD5F5A1EAB82339147586BC7EB2E /* ConfigModelSubscriptionVirtualAddressAdd.swift in Sources */,
 				370D8E1014F7594A2014CE717636B1F6 /* ConfigModelSubscriptionVirtualAddressDelete.swift in Sources */,
 				A765E15769ADB65F722A036E101680ED /* ConfigModelSubscriptionVirtualAddressOverwrite.swift in Sources */,
+				F019B6562D3FD5C90094B0E4 /* FirmwareDistributionCapabilitiesStatus.swift in Sources */,
 				612BEAB5408204278677868DDE2F70C6 /* ConfigNetKeyAdd.swift in Sources */,
 				0870F553ECE1365A901E37DA94FB895A /* ConfigNetKeyDelete.swift in Sources */,
 				57B1088FBDB68A73DE9AD07996C56A9D /* ConfigNetKeyGet.swift in Sources */,
@@ -2481,6 +2577,7 @@
 				E5C31591BAD83D32839AC4DA6E8BDCC6 /* ConfigNodeIdentityStatus.swift in Sources */,
 				2521C11E11A6D40CB67B42C482A8F701 /* ConfigNodeReset.swift in Sources */,
 				1AA73DF5D69553E4A690FE1C53331A20 /* ConfigNodeResetStatus.swift in Sources */,
+				F019B6602D413D850094B0E4 /* FirmwareDistributionCancel.swift in Sources */,
 				DEA1C3E9BD6685B654D1D9BF27BE287C /* ConfigRelayGet.swift in Sources */,
 				643FA23985640FE3DC09FC741B9E1A2E /* ConfigRelaySet.swift in Sources */,
 				E28836F2CEA836D60C09C3C5907F74B5 /* ConfigRelayStatus.swift in Sources */,
@@ -2506,6 +2603,7 @@
 				F65ACE0BEF03C2547F0F510E56AD7227 /* Element+Keys.swift in Sources */,
 				6191E712D70D0F840582CEB1FB63622F /* Element+Models.swift in Sources */,
 				04DD22BC8DF8F9A3774A02A97F6FC2F3 /* Element+Scenes.swift in Sources */,
+				F0D9FBB72D3A844300031E7E /* FirmwareUpdateFirmwareMetadataCheck.swift in Sources */,
 				CF8DB90E7324AC3014ABF88C420B657C /* ExclusionList.swift in Sources */,
 				0E7D6449398375A21B37167416C44112 /* ExportConfiguration.swift in Sources */,
 				9A7E3A0833018E94B1AED24084FEADF7 /* FilterStatus.swift in Sources */,
@@ -2518,10 +2616,12 @@
 				503EEFEB32E579DD1CEC60F5DE421527 /* GenericDefaultTransitionTimeSet.swift in Sources */,
 				3CAC0B5201C454200211CA083CE2AC88 /* GenericDefaultTransitionTimeSetUnacknowledged.swift in Sources */,
 				6E571090BA986FBAD7016A066EFAB7C4 /* GenericDefaultTransitionTimeStatus.swift in Sources */,
+				F019B62D2D3AF2F80094B0E4 /* FirmwareUpdateCancel.swift in Sources */,
 				2CF039D2DDE9AB77D302D5DEDE76E31B /* GenericDeltaSet.swift in Sources */,
 				36004C212D32CE5E173D070BE8489E54 /* GenericDeltaSetUnacknowledged.swift in Sources */,
 				6B615C956BE13005E538D5F7C0A85006 /* GenericLevelGet.swift in Sources */,
 				FE9F53D44812377C60555236540713A3 /* GenericLevelSet.swift in Sources */,
+				F0DAF5BA2D39ADA9000874EA /* FirmwareUpdateInformationStatus.swift in Sources */,
 				6F19EE7E11CF6A2AA8F934AC221B390B /* GenericLevelSetUnacknowledged.swift in Sources */,
 				527FB20E4558554E8AA2B38741B605A1 /* GenericLevelStatus.swift in Sources */,
 				B08EFBF7459E2ACFD5EE8E16F9AF5E1B /* GenericLocationGlobalGet.swift in Sources */,
@@ -2531,6 +2631,7 @@
 				EFCAFC681513B1A5A701E655BEF365C2 /* GenericMessage.swift in Sources */,
 				205B63CC1C6D32EE6DB9E38A0113CFF2 /* GenericMoveSet.swift in Sources */,
 				E720B3BCE052944F203EF213AD4490CD /* GenericMoveSetUnacknowledged.swift in Sources */,
+				F019B6722D443DE70094B0E4 /* FirmwareDistributionFirmwareGetByIndex.swift in Sources */,
 				52F41E9C5DE302A537B9C6B40092228F /* GenericOnOffGet.swift in Sources */,
 				732D918AC02FF9108FDD18B53E63D474 /* GenericOnOffSet.swift in Sources */,
 				EE94FE628D6B9EADD16277188806D769 /* GenericOnOffSetUnacknowledged.swift in Sources */,
@@ -2563,8 +2664,10 @@
 				F0CF8137D4A439F10BA45530CE5A1826 /* HeartbeatMessage.swift in Sources */,
 				D91320C2F43F590460F97FFE4690443F /* HeartbeatPublication.swift in Sources */,
 				9BED63CABF8D2E8949CC00E3CF6D8A34 /* HeartbeatSubscription.swift in Sources */,
+				F019B64A2D3E69470094B0E4 /* FirmwareDistributionReceiversDeleteAll.swift in Sources */,
 				EA87997A71BDD86F99E4DF4CAC2ACCA6 /* Int+Hex.swift in Sources */,
 				30346F26524EB4E5E081C4848154F456 /* IvIndex.swift in Sources */,
+				F019B6482D3E664A0094B0E4 /* FirmwareDistributionReceiversAdd.swift in Sources */,
 				E470CE79C9D929CD2682ED146C135A05 /* Key.swift in Sources */,
 				BEB76B83A95C437B5B11BE0C9D07B3B8 /* KeyedDecodingContainer+Legacy.swift in Sources */,
 				7AA01CA58AF77B2CED45732D7CA196DB /* KeyIndex.swift in Sources */,
@@ -2573,6 +2676,7 @@
 				0844FA878071DBCF564162688A72E35C /* LightCTLDefaultGet.swift in Sources */,
 				233C8B703985237D5D8486A845558B3F /* LightCTLDefaultSet.swift in Sources */,
 				B41AF2F558A547FC8683F917AA70E309 /* LightCTLDefaultSetUnacknowledged.swift in Sources */,
+				F019B66E2D43A6EC0094B0E4 /* FirmwareDistributionUploadStatus.swift in Sources */,
 				AFB364F4D8C68FEAEBA41FB4AF60B1E3 /* LightCTLDefaultStatus.swift in Sources */,
 				8380ADAC94D56F6BD7273251FFA28095 /* LightCTLGet.swift in Sources */,
 				5C20C84079485AE878F32DB046EBC150 /* LightCTLSet.swift in Sources */,
@@ -2580,6 +2684,7 @@
 				94C526788628E60EBB56CCE621073879 /* LightCTLStatus.swift in Sources */,
 				B7973E922DC07F809D6B66FE51AD774D /* LightCTLTemperatureGet.swift in Sources */,
 				7F39CF8B4723116346095CE2B767384D /* LightCTLTemperatureRangeGet.swift in Sources */,
+				F019B65A2D40F9250094B0E4 /* FirmwareDistributionGet.swift in Sources */,
 				063347DC85C6B2E4550D74F8ED99BE09 /* LightCTLTemperatureRangeSet.swift in Sources */,
 				77BBDAD0A08B341964799AA7FA2C7780 /* LightCTLTemperatureRangeSetUnacknowledged.swift in Sources */,
 				65B675990A045FFC3553F8923F9229FC /* LightCTLTemperatureRangeStatus.swift in Sources */,
@@ -2591,6 +2696,8 @@
 				445620B54A17295590E6380678655E8C /* LightHSLDefaultSetUnacknowledged.swift in Sources */,
 				FF6BEF3A743AFE8ED4C397FD6DB89CA2 /* LightHSLDefaultStatus.swift in Sources */,
 				D25E3480BF87231932BA5059FAD79154 /* LightHSLGet.swift in Sources */,
+				F019B6702D443C610094B0E4 /* FirmwareDistributionFirmwareGet.swift in Sources */,
+				F019B6622D413DE90094B0E4 /* FirmwareDistributionApply.swift in Sources */,
 				F05BEB3B3B7D9BA92171DBA20D00D99A /* LightHSLHueGet.swift in Sources */,
 				608C48799C7837EE03E48F0103AC4A09 /* LightHSLHueSet.swift in Sources */,
 				78E1CA02F0D896D70402507ACD530037 /* LightHSLHueSetUnacknowledged.swift in Sources */,
@@ -2600,6 +2707,7 @@
 				F3E2A29DA8C60A7B54D6C6258D78D216 /* LightHSLRangeSetUnacknowledged.swift in Sources */,
 				08806F3DBDE9EE50B57FCF37C6B5B705 /* LightHSLRangeStatus.swift in Sources */,
 				CDAD9679933AABA78F2984936EC7B7A5 /* LightHSLSaturationGet.swift in Sources */,
+				F0D9FBBB2D3A985B00031E7E /* FirmwareUpdateMessage.swift in Sources */,
 				6C20BA7765C8943634D9AE08312038A5 /* LightHSLSaturationSet.swift in Sources */,
 				E529E9ACFB294D178B55765C25E69E9E /* LightHSLSaturationSetUnacknowledged.swift in Sources */,
 				92F04FBE7C2910AE0F8AFC9059A7825D /* LightHSLSaturationStatus.swift in Sources */,
@@ -2620,9 +2728,11 @@
 				5524650B5DC581D8C8CF13901DCABA0B /* LightLCOccupancyModeSet.swift in Sources */,
 				6D31A7B74D227128DCCE46A74345A49E /* LightLCOccupancyModeSetUnacknowledged.swift in Sources */,
 				96753A0CECAD50591B799ED86B826736 /* LightLCOccupancyModeStatus.swift in Sources */,
+				F019B65C2D40F98D0094B0E4 /* FirmwareDistributionStart.swift in Sources */,
 				B025F2BB7AEED99EB3D794ED531EC3DC /* LightLCPropertyGet.swift in Sources */,
 				76D1FD0186EE08BA3F739B1218B3BE94 /* LightLCPropertySet.swift in Sources */,
 				F5B90E25437A8DB8AEE23ADD6932C7A6 /* LightLCPropertySetUnacknowledged.swift in Sources */,
+				F019B6662D4260B20094B0E4 /* FirmwareDistributionUploadGet.swift in Sources */,
 				5433CE109740AC0D9DE3A3E70DEC03D0 /* LightLCPropertyStatus.swift in Sources */,
 				35E09960671B3AFA04B4065D9532D536 /* LightLightnessDefaultGet.swift in Sources */,
 				9F1E12CEAE579B8683D4FB53E25AA1B7 /* LightLightnessDefaultSet.swift in Sources */,
@@ -2639,6 +2749,7 @@
 				CCDC3463B7CDDCE25C4CB62B65093E93 /* LightLightnessRangeSet.swift in Sources */,
 				4894A0CA0A8713DEA951B25E3E7D1554 /* LightLightnessRangeSetUnacknowledged.swift in Sources */,
 				93485D8E11FAAF362F42F215B0EE6677 /* LightLightnessRangeStatus.swift in Sources */,
+				F019B6642D4239490094B0E4 /* FirmwareDistributionStatus.swift in Sources */,
 				3BF8353104BE32DA7F03E52DA3636525 /* LightLightnessSet.swift in Sources */,
 				3E085ECEABB9E962096BB91700FB9DC4 /* LightLightnessSetUnacknowledged.swift in Sources */,
 				1F227F4D632E51976EEA5EF94842C7BC /* LightLightnessStatus.swift in Sources */,
@@ -2648,6 +2759,7 @@
 				F2D3F5EE394B0273225CBD691C7FE97D /* LowerTransportLayer.swift in Sources */,
 				2CE4C3E8061F9B7507C9E1A202C44C44 /* LowerTransportPdu.swift in Sources */,
 				54F965CE78B50557906DCF40E021970C /* MeshAddress.swift in Sources */,
+				F019B66C2D43A68B0094B0E4 /* FirmwareDistributionUploadCancel.swift in Sources */,
 				0EF68F4DB3B3CED9050D25E8A99E7FE6 /* MeshConstants.swift in Sources */,
 				BAE545A1D9CE9BA9C24DA3D2232B17B8 /* MeshData.swift in Sources */,
 				DECD4F7F582C10CE2D5651549E015211 /* MeshLoggerDelegate.swift in Sources */,
@@ -2666,7 +2778,10 @@
 				7A0BB0EFE71B65B2252717DE298A4142 /* MeshNetworkManager.swift in Sources */,
 				573664C7FE6B8C3674996D2ADAD4D890 /* MeshNetworkManager+Callbacks.swift in Sources */,
 				F76ECF70F206CC0FF457F5503C056E54 /* MeshNodeEntry.swift in Sources */,
+				F019B62B2D3AA2F90094B0E4 /* FirmwareUpdateGet.swift in Sources */,
+				F019B6782D4442E40094B0E4 /* FirmwareDistributionFirmwareStatus.swift in Sources */,
 				DAA357E034B08844EE75B87D9CD215AB /* MeshState.swift in Sources */,
+				F019B64E2D3E6E730094B0E4 /* FirmwareDistributionReceiversGet.swift in Sources */,
 				E14E0EEDFAA1CA4E0E51D63C6AC3EABC /* MeshStateManager.swift in Sources */,
 				F24756849895D639924A648E1F58818F /* MeshUUID.swift in Sources */,
 				00F2192354A746C6F79D12CE21FED535 /* MessageHandle.swift in Sources */,
@@ -2697,6 +2812,7 @@
 				1D00BA0172DD19F7CB8FAC169C0333DD /* NodeIdentityState.swift in Sources */,
 				F9A30F9A5EE05793EA465C7B5F28D160 /* nRFMeshProvision-dummy.m in Sources */,
 				B6CFCC7C995789EE38DED2A1FEDAE8B2 /* OnPowerUp.swift in Sources */,
+				F019B64C2D3E69E60094B0E4 /* FirmwareDistributionReceiversStatus.swift in Sources */,
 				A27255143E672F5A8D89BDA248C14B69 /* Oob.swift in Sources */,
 				1459F32CB80689BF692245727AE5B436 /* OptionSet+Data.swift in Sources */,
 				A8CA9DC15177C2380C28A7E956C86B53 /* PBGattBearer.swift in Sources */,
@@ -2706,6 +2822,7 @@
 				5B8AC3CCF163A4013B94676F4C492DE4 /* PrivateBeaconGet.swift in Sources */,
 				91345DB642439B79DCD0F710E062DABC /* PrivateBeaconSet.swift in Sources */,
 				DE8ACE192DEA6F5FC5DE18998DE6B8FE /* PrivateBeaconStatus.swift in Sources */,
+				F019B6502D3E6F680094B0E4 /* FirmwareDistributionReceiversList.swift in Sources */,
 				A4F8CB79C03199E68BAB387A397F619B /* PrivateGATTProxyGet.swift in Sources */,
 				17C30B3669ACE0066C66942E89E6B25D /* PrivateGATTProxySet.swift in Sources */,
 				79801E0CFAEAF5376BD7C1A22849658E /* PrivateGATTProxyStatus.swift in Sources */,
@@ -2715,6 +2832,7 @@
 				1E7FB42CB60DB11C43E0B5805A950E78 /* Provisioner.swift in Sources */,
 				58366508EC848CDBECC924D473A34CC5 /* Provisioner+Node.swift in Sources */,
 				817CB6164044BA25C0DD429610117854 /* Provisioner+Ranges.swift in Sources */,
+				F019B6582D40E3820094B0E4 /* UriScheme.swift in Sources */,
 				E7A8C1A46CF628AA646BB63D96C93C0A /* ProvisioningCapabilities.swift in Sources */,
 				20B755A5C78711138D0336F866EDD579 /* ProvisioningData.swift in Sources */,
 				38A7E9B506B14EC167F474D09AD8EB5D /* ProvisioningManager.swift in Sources */,
@@ -2731,6 +2849,7 @@
 				D0B3626061E98F17F198DB5346309928 /* RemoteProvisioningClientHandler.swift in Sources */,
 				D3AC2236476532B3F81F6E566D656FA6 /* RemoteProvisioningExtendedScanReport.swift in Sources */,
 				835D636EF7BD15332EA52F450B8EB67E /* RemoteProvisioningExtendedScanStart.swift in Sources */,
+				F019B6542D3FD56B0094B0E4 /* FirmwareDistributionCapabilitiesGet.swift in Sources */,
 				03E44E0FAD3E14DD8C2B1A0724264463 /* RemoteProvisioningLinkClose.swift in Sources */,
 				2986BC226F48479977F3D319DB86CB74 /* RemoteProvisioningLinkGet.swift in Sources */,
 				ED8D765986B054CD195CF53090E9063B /* RemoteProvisioningLinkOpen.swift in Sources */,
@@ -2742,12 +2861,14 @@
 				9B387CCCF5A293A60E258515DBCAE9ED /* RemoteProvisioningPDUSend.swift in Sources */,
 				5EF744F4B38C4F939EFE42E9E9EE74D3 /* RemoteProvisioningScanCapabilitiesGet.swift in Sources */,
 				B2CDBB4F53258ACA28456E36F10D87AF /* RemoteProvisioningScanCapabilitiesStatus.swift in Sources */,
+				F019B6682D4261BD0094B0E4 /* FirmwareDistributionUploadStart.swift in Sources */,
 				31D98F82278548F59FC008209E74A752 /* RemoteProvisioningScanGet.swift in Sources */,
 				C8FAC4A64E9E6237A8D52020D66A72B7 /* RemoteProvisioningScanReport.swift in Sources */,
 				2DF9E276FB122BBFCF9B49BCA6B61DBC /* RemoteProvisioningScanStart.swift in Sources */,
 				B38513F96E3C41DD9AD6DBCA3B6F30B6 /* RemoteProvisioningScanStatus.swift in Sources */,
 				CC0EDD64AA552C5E993CC24D311FD1DD /* RemoteProvisioningScanStop.swift in Sources */,
 				BF234A4760D07227258687F1555BF53D /* RemoveAddressesFromFilter.swift in Sources */,
+				F0DAF5B82D39AB78000874EA /* FirmwareUpdateInformationGet.swift in Sources */,
 				5E6BAD9EE1908F00D0B00C6802A9B414 /* SarConfigurationClientHandler.swift in Sources */,
 				80FC48E0440B04E4174D4C56510BD46F /* SarReceiverGet.swift in Sources */,
 				13E5D1E975DD741F63C93C2583133879 /* SarReceiverSet.swift in Sources */,
@@ -2759,6 +2880,7 @@
 				3D1DA9BA1E5A31E56BAEA3347FA4CDD2 /* Scene+Nodes.swift in Sources */,
 				93882FDDBAE3D58AEDE524F5E73BA485 /* SceneClientHandler.swift in Sources */,
 				9A3ED38FBA2EFEFAC0B1616B2BC2F9B0 /* SceneDelete.swift in Sources */,
+				F019B62F2D3AF3430094B0E4 /* FirmwareUpdateApply.swift in Sources */,
 				98434F4117EA5555B939A3480E7817D1 /* SceneDeleteUnacknowledged.swift in Sources */,
 				8B44E9CF9F7AFF8ABC95218922E0E286 /* SceneGet.swift in Sources */,
 				63395B73AAC88EB7594E5C303342B4CE /* SceneNumber.swift in Sources */,
@@ -2780,6 +2902,7 @@
 				926223E8CB58762ACF1BBA0E4DC0E947 /* SchedulerStatus.swift in Sources */,
 				C334233BF35F7864990F62607A1FF35B /* SecureNetworkBeacon.swift in Sources */,
 				67B417B2628901877768E9C5BE988516 /* Security.swift in Sources */,
+				F019B6332D3B047D0094B0E4 /* FirmwareUpdateStatus.swift in Sources */,
 				A8B8E96AD3105D25B373EDE370059314 /* SegmentAcknowledgmentMessage.swift in Sources */,
 				A35A1221176A5C5F57C9BE3AA0A2969F /* SegmentedAccessMessage.swift in Sources */,
 				C2A4E0D74AD107CBE03C1C9A38AE40ED /* SegmentedControlMessage.swift in Sources */,
@@ -2790,6 +2913,7 @@
 				B42FD961E10D4E1E023C3248CD58CA9C /* SensorCadenceStatus.swift in Sources */,
 				9229DCAEBC7E8E87C13F62752FB6EDF1 /* SensorColumnGet.swift in Sources */,
 				7B288F227D96E0AAD2B39C53A8E7C78A /* SensorColumnStatus.swift in Sources */,
+				F0D9FBB92D3A869800031E7E /* FirmwareUpdateFirmwareMetadataStatus.swift in Sources */,
 				943A7242E0667E218CA7A4AA75732514 /* SensorDescriptorGet.swift in Sources */,
 				F24A2CBF9EDFB7B647226550B46431F4 /* SensorDescriptorStatus.swift in Sources */,
 				A26BBD6C539A92C843FFF1AE3F1857CD /* SensorGet.swift in Sources */,
@@ -2812,8 +2936,11 @@
 				377870626059D09C787362AB7AD72449 /* TimeSet.swift in Sources */,
 				C6DA4099F35B04107B5257CEC0DC865F /* TimeStatus.swift in Sources */,
 				BF9E82B2840EC4A9F835A80536BA17AA /* TimeZoneGet.swift in Sources */,
+				F019B66A2D428C350094B0E4 /* FirmwareDistributionUploadOOBStart.swift in Sources */,
+				F019B6742D443EFE0094B0E4 /* FirmwareDistributionFirmwareDelete.swift in Sources */,
 				ED4C4E9C305E2E8D9D77CB2078B1C874 /* TimeZoneSet.swift in Sources */,
 				98EFD812F6E1C42C4AC04985426819D1 /* TimeZoneStatus.swift in Sources */,
+				F019B65E2D413D510094B0E4 /* FirmwareDistributionSuspend.swift in Sources */,
 				1CA1A0C6BD1390CA57C8A84A03A04AB0 /* TransitionTime.swift in Sources */,
 				327849B8E4778C8638180684AE0ED99C /* Unique.swift in Sources */,
 				20009811E710C66AC97431D337AA29B2 /* UnknownMessage.swift in Sources */,

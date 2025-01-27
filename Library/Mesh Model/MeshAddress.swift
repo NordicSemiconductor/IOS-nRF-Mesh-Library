@@ -37,7 +37,7 @@ import Foundation
 /// * Unicast Address
 /// * Group Address
 /// * Virtual Label - a 16-byte UUID
-public struct MeshAddress {
+public struct MeshAddress: Sendable {
     /// 16-bit address.
     public let address: Address
     /// Virtual label UUID.
@@ -55,7 +55,9 @@ public struct MeshAddress {
         }
     }
     
-    /// Creates a Mesh Address. For virtual addresses use the other init instead.
+    /// Creates a Mesh Address.
+    ///
+    /// For virtual addresses use the other init with `virtualLabel` instead.
     ///
     /// To get a next available Group Address for the local Provisioner, use
     /// ``MeshNetwork/nextAvailableGroupAddress()``.
@@ -72,7 +74,7 @@ public struct MeshAddress {
     
     /// Creates a Mesh Address based on the Virtual Label.
     ///
-    /// - parameter virtualLabel: The UUID associated with the Group.
+    /// - parameter virtualLabel: The UUID associated with the Virtual Group.
     public init(_ virtualLabel: UUID) {
         self.virtualLabel = virtualLabel
         self.address = Crypto.calculateVirtualAddress(from: virtualLabel)

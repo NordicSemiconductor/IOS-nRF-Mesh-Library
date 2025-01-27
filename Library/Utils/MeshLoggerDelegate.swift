@@ -85,7 +85,7 @@ public protocol LoggerDelegate: AnyObject {
     
     /// This method is called whenever a new log entry is to be saved.
     ///
-    /// - Important: It is NOT safe to update the UI from this method as multiple
+    /// - important: It is NOT safe to update the UI from this method as multiple
     ///              threads may log.
     ///
     /// - parameters:

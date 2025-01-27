@@ -162,7 +162,7 @@ public protocol ConfigAddressMessage: ConfigMessage {
 
 /// A base protocol for config messages with Virtual Label property.
 public protocol ConfigVirtualLabelMessage: ConfigMessage {
-    /// Value of the 128-bt Virtual Label UUID.
+    /// Value of the 128-bit Virtual Label UUID.
     var virtualLabel: UUID { get }
 }
 
