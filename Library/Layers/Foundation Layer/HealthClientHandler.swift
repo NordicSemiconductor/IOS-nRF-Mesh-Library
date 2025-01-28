@@ -40,13 +40,15 @@ class HealthClientHandler: ModelDelegate {
     init() {
         let types: [StaticMeshMessage.Type] = [
             HealthCurrentStatus.self,
-            HealthFaultStatus.self
+            HealthFaultStatus.self,
+            HealthPeriodStatus.self,
+            HealthAttentionStatus.self
         ]
-        
         messageTypes = types.toMap()
     }
     
-    func model(_ model: NordicMesh.Model, didReceiveAcknowledgedMessage request: any NordicMesh.AcknowledgedMeshMessage, from source: NordicMesh.Address, sentTo destination: NordicMesh.MeshAddress) throws -> any NordicMesh.MeshResponse {
+    func model(_ model: Model, didReceiveAcknowledgedMessage request: any AcknowledgedMeshMessage,
+               from source: Address, sentTo destination: MeshAddress) throws -> any MeshResponse {
         switch request {
             // No acknowledged message supported by this Model.
         default:
@@ -54,7 +56,8 @@ class HealthClientHandler: ModelDelegate {
         }
     }
     
-    func model(_ model: NordicMesh.Model, didReceiveUnacknowledgedMessage message: any NordicMesh.UnacknowledgedMeshMessage, from source: NordicMesh.Address, sentTo destination: NordicMesh.MeshAddress) {
+    func model(_ model: Model, didReceiveUnacknowledgedMessage message: any UnacknowledgedMeshMessage,
+               from source: Address, sentTo destination: MeshAddress) {
         switch message {
             
         default:
@@ -63,7 +66,9 @@ class HealthClientHandler: ModelDelegate {
         }
     }
     
-    func model(_ model: NordicMesh.Model, didReceiveResponse response: any NordicMesh.MeshResponse, toAcknowledgedMessage request: any NordicMesh.AcknowledgedMeshMessage, from source: NordicMesh.Address) {
+    func model(_ model: Model, didReceiveResponse response: any MeshResponse,
+               toAcknowledgedMessage request: any AcknowledgedMeshMessage,
+               from source: NordicMesh.Address) {
         // Ignore. There are no CDB fields matching these parameters.
     }
 }
