@@ -30,6 +30,7 @@
 * Created by Jules DOMMARTIN on 04/11/2024.
 */
 
+/// Health Fault IDs assigned to the health models.
 public enum HealthFault: Sendable {
     case noFault
     case batteryLowWarning
@@ -84,6 +85,7 @@ public enum HealthFault: Sendable {
     case mechanismJammedError
     case vendor(_ id: UInt8)
         
+    /// The ID of the fault.
     var id : UInt8 {
         switch self {
         case .noFault:
@@ -193,6 +195,7 @@ public enum HealthFault: Sendable {
         }
     }
     
+    /// Creates a ``HealthFault`` from the given ID.
     static func fromId(_ id: UInt8) -> HealthFault? {
         switch id {
         case 0x00:

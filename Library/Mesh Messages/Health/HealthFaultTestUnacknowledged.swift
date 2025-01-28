@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2024, Nordic Semiconductor
+* Copyright (c) 2019, Nordic Semiconductor
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -26,74 +26,45 @@
 * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
-*
-* Created by Jules DOMMARTIN on 04/11/2024.
 */
 
 import Foundation
 
-/// A Health Current Status is an unacknowledged message used to report the Current Health
-/// state of an Element.
+/// A Health Fault Test Unacknowledged is an unacknowledged message used to invoke a self-test procedure
+/// of an Element.
 ///
-/// The message may contain several Fault fields, depending on the number of concurrently
-/// present fault conditions.If no Fault fields are present, it means no fault condition exists on an Element.
-public struct HealthCurrentStatus: StaticMeshResponse {
-    public static var opCode: UInt32 = 0x0004
+/// The procedure is implementation specific and may result in changing the Health Fault state of an Element.
+public struct HealthFaultTestUnacknowledged: StaticMeshMessage {
+    public static let opCode: UInt32 = 0x8033
     
     public var parameters: Data? {
-        var data = Data([testId]) + companyIdentifier
-        if let faults = faults {
-            data += Data(faults.map { $0.id })
-        }
-        return data
+        return Data([testId]) + companyIdentifier
     }
 
-    /// Identifier of a most recently performed test.
+    /// Identifier of a specific test to be performed.
     public let testId: UInt8
-
+    
     /// 16-bit Bluetooth assigned Company Identifier.
     public let companyIdentifier: UInt16
     
-    /// List of faults.
-    ///
-    /// If no Fault fields are present (nil), it means no registered fault condition exists on an Element.
-    public let faults: [HealthFault]?
-    
-    /// Creates a Health Current Status message with no faults.
+    /// Creates the Health Fault Test Unacknowledged message.
     ///
     /// - parameters:
-    ///   - testId: Identifier of a most recently performed test.
+    ///   - testId: Identifier of a specific test to be performed.
     ///   - companyIdentifier: 16-bit Bluetooth assigned Company Identifier.
-    public init(testId: UInt8, companyIdentifier: UInt16) {
+    ///             It shall be used to resolve specific fault codes as specified in Bluetooth assigned
+    ///             Health Fault values.
+    public init(testId: UInt8, for companyIdentifier: UInt16) {
         self.testId = testId
         self.companyIdentifier = companyIdentifier
-        self.faults = nil
-    }
-    
-    /// Creates a Health Current Status message.
-    ///
-    /// - parameters:
-    ///   - testId: Identifier of a most recently performed test.
-    ///   - companyIdentifier: 16-bit Bluetooth assigned Company Identifier.
-    ///   - faults: List of faults.
-    public init(testId: UInt8, companyIdentifier: UInt16, faults: [HealthFault]) {
-        self.testId = testId
-        self.companyIdentifier = companyIdentifier
-        self.faults = faults
     }
     
     public init?(parameters: Data) {
-        guard parameters.count >= 3 else {
+        guard parameters.count == 3 else {
             return nil
         }
         testId = parameters[0]
         companyIdentifier = parameters.read(fromOffset: 1)
-        if parameters.count > 3 {
-            faults = parameters
-                .subdata(in: 3..<parameters.count - 3)
-                .compactMap { HealthFault.fromId($0) }
-        } else {
-            faults = nil
-        }
     }
+    
 }
