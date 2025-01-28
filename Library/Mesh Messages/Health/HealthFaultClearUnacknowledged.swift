@@ -32,7 +32,7 @@ import Foundation
 
 /// A Health Fault Clear Unacknowledged is an unacknowledged message used to clear the current Registered Fault
 /// state identified by Company ID of an Element.
-public struct HealthFaultClearUnacknowledged: StaticMeshMessage {
+public struct HealthFaultClearUnacknowledged: StaticUnacknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8030
     
     /// 16-bit Bluetooth assigned Company Identifier.

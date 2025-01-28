@@ -32,7 +32,7 @@ import Foundation
 
 /// A Health Period Set Unacknowledged is an unacknowledged message used to set the current Health Fast
 /// Period Divisor state of an Element.
-public struct HealthPeriodSetUnacknowledged: StaticMeshMessage {
+public struct HealthPeriodSetUnacknowledged: StaticUnacknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8036
     
     public var parameters: Data? {

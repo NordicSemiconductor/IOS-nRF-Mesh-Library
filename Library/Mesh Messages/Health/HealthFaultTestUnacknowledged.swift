@@ -34,7 +34,7 @@ import Foundation
 /// of an Element.
 ///
 /// The procedure is implementation specific and may result in changing the Health Fault state of an Element.
-public struct HealthFaultTestUnacknowledged: StaticMeshMessage {
+public struct HealthFaultTestUnacknowledged: StaticUnacknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8033
     
     public var parameters: Data? {

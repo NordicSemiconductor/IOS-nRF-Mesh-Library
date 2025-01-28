@@ -569,6 +569,7 @@
 		F0D9EEEB2D47C97F0063AF3E /* HealthAttentionSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D9EEEA2D47C97F0063AF3E /* HealthAttentionSet.swift */; };
 		F0D9EEEF2D4898C00063AF3E /* HealthAttentionSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D9EEEE2D4898C00063AF3E /* HealthAttentionSetUnacknowledged.swift */; };
 		F0D9EEF12D4899B40063AF3E /* HealthAttentionStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D9EEF02D4899B40063AF3E /* HealthAttentionStatus.swift */; };
+		F0D9EEF32D489E450063AF3E /* HealthServerHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D9EEF22D489E450063AF3E /* HealthServerHandler.swift */; };
 		F0D9FBB72D3A844300031E7E /* FirmwareUpdateFirmwareMetadataCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D9FBB62D3A844300031E7E /* FirmwareUpdateFirmwareMetadataCheck.swift */; };
 		F0D9FBB92D3A869800031E7E /* FirmwareUpdateFirmwareMetadataStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D9FBB82D3A869800031E7E /* FirmwareUpdateFirmwareMetadataStatus.swift */; };
 		F0D9FBBB2D3A985B00031E7E /* FirmwareUpdateMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D9FBBA2D3A984700031E7E /* FirmwareUpdateMessage.swift */; };
@@ -1243,6 +1244,7 @@
 		F0D9EEEA2D47C97F0063AF3E /* HealthAttentionSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthAttentionSet.swift; sourceTree = "<group>"; };
 		F0D9EEEE2D4898C00063AF3E /* HealthAttentionSetUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthAttentionSetUnacknowledged.swift; sourceTree = "<group>"; };
 		F0D9EEF02D4899B40063AF3E /* HealthAttentionStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthAttentionStatus.swift; sourceTree = "<group>"; };
+		F0D9EEF22D489E450063AF3E /* HealthServerHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthServerHandler.swift; sourceTree = "<group>"; };
 		F0D9FBB62D3A844300031E7E /* FirmwareUpdateFirmwareMetadataCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateFirmwareMetadataCheck.swift; sourceTree = "<group>"; };
 		F0D9FBB82D3A869800031E7E /* FirmwareUpdateFirmwareMetadataStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateFirmwareMetadataStatus.swift; sourceTree = "<group>"; };
 		F0D9FBBA2D3A984700031E7E /* FirmwareUpdateMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateMessage.swift; sourceTree = "<group>"; };
@@ -1925,6 +1927,7 @@
 				D93DFD4712AACE1484C2B50777573FD2 /* ConfigurationClientHandler.swift */,
 				F2319EF4BFCCA5C949B924616582FB77 /* ConfigurationServerHandler.swift */,
 				E36373F3CAF09318EA80BB1A75396C98 /* HealthClientHandler.swift */,
+				F0D9EEF22D489E450063AF3E /* HealthServerHandler.swift */,
 				18BEBC2D7BBD8ACDBE7477A8868CF9F8 /* PrivateBeaconClientHandler.swift */,
 				8C39493DFD6E3A89B55E1D5BDA26D34E /* RemoteProvisioningClientHandler.swift */,
 				4B40BB694D0289C1331D732DFB0CA3B3 /* SarConfigurationClientHandler.swift */,
@@ -2859,6 +2862,7 @@
 				F9A30F9A5EE05793EA465C7B5F28D160 /* nRFMeshProvision-dummy.m in Sources */,
 				B6CFCC7C995789EE38DED2A1FEDAE8B2 /* OnPowerUp.swift in Sources */,
 				F019B64C2D3E69E60094B0E4 /* FirmwareDistributionReceiversStatus.swift in Sources */,
+				F0D9EEF32D489E450063AF3E /* HealthServerHandler.swift in Sources */,
 				A27255143E672F5A8D89BDA248C14B69 /* Oob.swift in Sources */,
 				1459F32CB80689BF692245727AE5B436 /* OptionSet+Data.swift in Sources */,
 				A8CA9DC15177C2380C28A7E956C86B53 /* PBGattBearer.swift in Sources */,

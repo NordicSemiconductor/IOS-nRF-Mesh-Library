@@ -40,7 +40,7 @@ import Foundation
 /// remain attracting human’s attention. The Element does that by behaving in a human-recognizable
 /// way (e.g., a lamp flashes, a motor makes noise, an LED blinks). The exact behavior is implementation
 /// specific and depends on the type of device.
-public struct HealthAttentionSetUnacknowledged: StaticMeshMessage {
+public struct HealthAttentionSetUnacknowledged: StaticUnacknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8006
     
     public var parameters: Data? {
