@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2024, Nordic Semiconductor
+* Copyright (c) 2019, Nordic Semiconductor
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -26,49 +26,40 @@
 * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
-*
-* Created by Jules DOMMARTIN on 04/11/2024.
 */
 
-class HealthClientHandler: ModelDelegate {
-    var messageTypes: [UInt32 : MeshMessage.Type]
+import Foundation
+
+/// A Health Period Status is an unacknowledged message used to report the Health Fast Period Divisor state of an Element.
+public struct HealthPeriodStatus: StaticMeshResponse {
+    public static let opCode: UInt32 = 0x8037
     
-    var isSubscriptionSupported: Bool = false
-    
-    var publicationMessageComposer: MessageComposer? = nil
-    
-    init() {
-        let types: [StaticMeshMessage.Type] = [
-            HealthCurrentStatus.self,
-            HealthFaultStatus.self,
-            HealthPeriodStatus.self,
-            HealthAttentionStatus.self
-        ]
-        messageTypes = types.toMap()
+    public var parameters: Data? {
+        return Data([fastPeriodDivisor])
     }
     
-    func model(_ model: Model, didReceiveAcknowledgedMessage request: any AcknowledgedMeshMessage,
-               from source: Address, sentTo destination: MeshAddress) throws -> any MeshResponse {
-        switch request {
-            // No acknowledged message supported by this Model.
-        default:
-            fatalError("Message not supported: \(request)")
+    /// The Health Fast Period Divisor state controls the increased cadence of publishing
+    /// Health Current Status messages.
+    ///
+    /// Modified Publish Period is used for sending Current Health Status messages when there are
+    /// active faults to communicate. The value is used to divide the Publish Period state of the
+    /// Health Server model by `2^n` where `n `is the value of the Health Fast Period Divisor state.
+    public let fastPeriodDivisor: UInt8
+    
+    /// Creates the Health Period Status message.
+    ///
+    /// - parameter fastPeriodDivisor: Divider for the Publish Period..
+    ///             The value range for the Health Fast Period Divisor state is 0 through 15;
+    ///             all other values are Prohibited.
+    public init(fastPeriodDivisor: UInt8) {
+        self.fastPeriodDivisor = min(fastPeriodDivisor, 15)
+    }
+    
+    public init?(parameters: Data) {
+        guard parameters.count == 1 else {
+            return nil
         }
+        fastPeriodDivisor = parameters[0]
     }
     
-    func model(_ model: Model, didReceiveUnacknowledgedMessage message: any UnacknowledgedMeshMessage,
-               from source: Address, sentTo destination: MeshAddress) {
-        switch message {
-            
-        default:
-            // Ignore.
-            break
-        }
-    }
-    
-    func model(_ model: Model, didReceiveResponse response: any MeshResponse,
-               toAcknowledgedMessage request: any AcknowledgedMeshMessage,
-               from source: NordicMesh.Address) {
-        // Ignore. There are no CDB fields matching these parameters.
-    }
 }

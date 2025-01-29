@@ -308,7 +308,7 @@
 		8FB8A938079E54A78D3A93AC5785D7D0 /* SensorSettingSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C81F65ED1AFDA74A2F398D01B8CA2C /* SensorSettingSetUnacknowledged.swift */; };
 		9094732C092F0C3C7837BD1D84FA10FA /* ConfigModelSubscriptionDelete.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDDE4A14E2BE2CFFBE3C7B0C786F7B34 /* ConfigModelSubscriptionDelete.swift */; };
 		90AA867C0EEE70EF726FB8A1D3CF49A7 /* Pods-nRF Mesh Tests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 977CACA35C2CE241D8FFC6B245CCF578 /* Pods-nRF Mesh Tests-dummy.m */; };
-		9100E5DCF0A6F4FA824D1EB73BEC6B95 /* HealthFaultEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 237C56C62770795A78A516CB41086A49 /* HealthFaultEnum.swift */; };
+		9100E5DCF0A6F4FA824D1EB73BEC6B95 /* HealthFault.swift in Sources */ = {isa = PBXBuildFile; fileRef = 237C56C62770795A78A516CB41086A49 /* HealthFault.swift */; };
 		911C89AA798A54E9540128D1145E4B2A /* ConfigGATTProxyStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D73B151D30F2C2757BE1D8FD7ED1CF8 /* ConfigGATTProxyStatus.swift */; };
 		9133B383208719CB386F4AD86F5261A1 /* AsyncResultOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAEBB32257AEACD71D93C6A04DA146A7 /* AsyncResultOperation.swift */; };
 		91345DB642439B79DCD0F710E062DABC /* PrivateBeaconSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A2A19DE4CB954374D6B3EB3B728910 /* PrivateBeaconSet.swift */; };
@@ -556,6 +556,20 @@
 		F019B6782D4442E40094B0E4 /* FirmwareDistributionFirmwareStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019B6772D4442E40094B0E4 /* FirmwareDistributionFirmwareStatus.swift */; };
 		F05BEB3B3B7D9BA92171DBA20D00D99A /* LightHSLHueGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9459D3C9D4AD25E6F06783A083CDCA /* LightHSLHueGet.swift */; };
 		F0CF8137D4A439F10BA45530CE5A1826 /* HeartbeatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61AC6EE93C4A0A96E70EB495A0CA1E2 /* HeartbeatMessage.swift */; };
+		F0D9EED52D47A3BB0063AF3E /* HealthFaultGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D9EED42D47A3BB0063AF3E /* HealthFaultGet.swift */; };
+		F0D9EED92D47A55A0063AF3E /* HealthFaultClear.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D9EED82D47A55A0063AF3E /* HealthFaultClear.swift */; };
+		F0D9EEDB2D47A5B40063AF3E /* HealthFaultClearUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D9EEDA2D47A5B40063AF3E /* HealthFaultClearUnacknowledged.swift */; };
+		F0D9EEDD2D47A66E0063AF3E /* HealthFaultTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D9EEDC2D47A66E0063AF3E /* HealthFaultTest.swift */; };
+		F0D9EEDF2D47A70C0063AF3E /* HealthFaultTestUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D9EEDE2D47A70C0063AF3E /* HealthFaultTestUnacknowledged.swift */; };
+		F0D9EEE12D47A8FD0063AF3E /* HealthPeriodGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D9EEE02D47A8FD0063AF3E /* HealthPeriodGet.swift */; };
+		F0D9EEE32D47A9AA0063AF3E /* HealthPeriodSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D9EEE22D47A9AA0063AF3E /* HealthPeriodSet.swift */; };
+		F0D9EEE52D47AA370063AF3E /* HealthPeriodSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D9EEE42D47AA370063AF3E /* HealthPeriodSetUnacknowledged.swift */; };
+		F0D9EEE72D47B48D0063AF3E /* HealthPeriodStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D9EEE62D47B48D0063AF3E /* HealthPeriodStatus.swift */; };
+		F0D9EEE92D47C8FC0063AF3E /* HealthAttentionGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D9EEE82D47C8FC0063AF3E /* HealthAttentionGet.swift */; };
+		F0D9EEEB2D47C97F0063AF3E /* HealthAttentionSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D9EEEA2D47C97F0063AF3E /* HealthAttentionSet.swift */; };
+		F0D9EEEF2D4898C00063AF3E /* HealthAttentionSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D9EEEE2D4898C00063AF3E /* HealthAttentionSetUnacknowledged.swift */; };
+		F0D9EEF12D4899B40063AF3E /* HealthAttentionStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D9EEF02D4899B40063AF3E /* HealthAttentionStatus.swift */; };
+		F0D9EEF32D489E450063AF3E /* HealthServerHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D9EEF22D489E450063AF3E /* HealthServerHandler.swift */; };
 		F0D9FBB72D3A844300031E7E /* FirmwareUpdateFirmwareMetadataCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D9FBB62D3A844300031E7E /* FirmwareUpdateFirmwareMetadataCheck.swift */; };
 		F0D9FBB92D3A869800031E7E /* FirmwareUpdateFirmwareMetadataStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D9FBB82D3A869800031E7E /* FirmwareUpdateFirmwareMetadataStatus.swift */; };
 		F0D9FBBB2D3A985B00031E7E /* FirmwareUpdateMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D9FBBA2D3A984700031E7E /* FirmwareUpdateMessage.swift */; };
@@ -710,7 +724,7 @@
 		221E23CDC2506A385CFA002A8B9DF45A /* ConfigAppKeyGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigAppKeyGet.swift; sourceTree = "<group>"; };
 		22DBAA404C11EF4BD2DCECC4FC6E1FCD /* TimeZoneGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TimeZoneGet.swift; sourceTree = "<group>"; };
 		22FC47DB517B264EC4A461F37293645B /* MeshNetwork+Keys.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+Keys.swift"; sourceTree = "<group>"; };
-		237C56C62770795A78A516CB41086A49 /* HealthFaultEnum.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = HealthFaultEnum.swift; sourceTree = "<group>"; };
+		237C56C62770795A78A516CB41086A49 /* HealthFault.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = HealthFault.swift; sourceTree = "<group>"; };
 		244C4DDCF3443C7891BBEA2A18147228 /* ProxyProtocolHandler.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProxyProtocolHandler.swift; sourceTree = "<group>"; };
 		252835519A0093DCAF0E34E9A2EF328E /* ConfigSIGModelSubscriptionList.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigSIGModelSubscriptionList.swift; sourceTree = "<group>"; };
 		25286D10F60C9B274247F124DB81A38E /* AEADChaCha20Poly1305.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AEADChaCha20Poly1305.swift; path = Sources/CryptoSwift/AEAD/AEADChaCha20Poly1305.swift; sourceTree = "<group>"; };
@@ -1217,6 +1231,20 @@
 		F019B6772D4442E40094B0E4 /* FirmwareDistributionFirmwareStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareDistributionFirmwareStatus.swift; sourceTree = "<group>"; };
 		F056F50B3F6A0A1F7E9F8FFB3D12017B /* ConfigModelSubscriptionOverwrite.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigModelSubscriptionOverwrite.swift; sourceTree = "<group>"; };
 		F09D785490AE9DC3F13CFBC70C004D2C /* TimeZoneSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TimeZoneSet.swift; sourceTree = "<group>"; };
+		F0D9EED42D47A3BB0063AF3E /* HealthFaultGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthFaultGet.swift; sourceTree = "<group>"; };
+		F0D9EED82D47A55A0063AF3E /* HealthFaultClear.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthFaultClear.swift; sourceTree = "<group>"; };
+		F0D9EEDA2D47A5B40063AF3E /* HealthFaultClearUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthFaultClearUnacknowledged.swift; sourceTree = "<group>"; };
+		F0D9EEDC2D47A66E0063AF3E /* HealthFaultTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthFaultTest.swift; sourceTree = "<group>"; };
+		F0D9EEDE2D47A70C0063AF3E /* HealthFaultTestUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthFaultTestUnacknowledged.swift; sourceTree = "<group>"; };
+		F0D9EEE02D47A8FD0063AF3E /* HealthPeriodGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthPeriodGet.swift; sourceTree = "<group>"; };
+		F0D9EEE22D47A9AA0063AF3E /* HealthPeriodSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthPeriodSet.swift; sourceTree = "<group>"; };
+		F0D9EEE42D47AA370063AF3E /* HealthPeriodSetUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthPeriodSetUnacknowledged.swift; sourceTree = "<group>"; };
+		F0D9EEE62D47B48D0063AF3E /* HealthPeriodStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthPeriodStatus.swift; sourceTree = "<group>"; };
+		F0D9EEE82D47C8FC0063AF3E /* HealthAttentionGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthAttentionGet.swift; sourceTree = "<group>"; };
+		F0D9EEEA2D47C97F0063AF3E /* HealthAttentionSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthAttentionSet.swift; sourceTree = "<group>"; };
+		F0D9EEEE2D4898C00063AF3E /* HealthAttentionSetUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthAttentionSetUnacknowledged.swift; sourceTree = "<group>"; };
+		F0D9EEF02D4899B40063AF3E /* HealthAttentionStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthAttentionStatus.swift; sourceTree = "<group>"; };
+		F0D9EEF22D489E450063AF3E /* HealthServerHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthServerHandler.swift; sourceTree = "<group>"; };
 		F0D9FBB62D3A844300031E7E /* FirmwareUpdateFirmwareMetadataCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateFirmwareMetadataCheck.swift; sourceTree = "<group>"; };
 		F0D9FBB82D3A869800031E7E /* FirmwareUpdateFirmwareMetadataStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateFirmwareMetadataStatus.swift; sourceTree = "<group>"; };
 		F0D9FBBA2D3A984700031E7E /* FirmwareUpdateMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateMessage.swift; sourceTree = "<group>"; };
@@ -1899,6 +1927,7 @@
 				D93DFD4712AACE1484C2B50777573FD2 /* ConfigurationClientHandler.swift */,
 				F2319EF4BFCCA5C949B924616582FB77 /* ConfigurationServerHandler.swift */,
 				E36373F3CAF09318EA80BB1A75396C98 /* HealthClientHandler.swift */,
+				F0D9EEF22D489E450063AF3E /* HealthServerHandler.swift */,
 				18BEBC2D7BBD8ACDBE7477A8868CF9F8 /* PrivateBeaconClientHandler.swift */,
 				8C39493DFD6E3A89B55E1D5BDA26D34E /* RemoteProvisioningClientHandler.swift */,
 				4B40BB694D0289C1331D732DFB0CA3B3 /* SarConfigurationClientHandler.swift */,
@@ -1979,9 +2008,22 @@
 		AB1A0BBE9428A7216DE441C8AAF3A074 /* Health */ = {
 			isa = PBXGroup;
 			children = (
+				237C56C62770795A78A516CB41086A49 /* HealthFault.swift */,
+				F0D9EEE82D47C8FC0063AF3E /* HealthAttentionGet.swift */,
+				F0D9EEEA2D47C97F0063AF3E /* HealthAttentionSet.swift */,
+				F0D9EEEE2D4898C00063AF3E /* HealthAttentionSetUnacknowledged.swift */,
+				F0D9EEF02D4899B40063AF3E /* HealthAttentionStatus.swift */,
 				AF120CE0794B060EE0419AD2ADB14955 /* HealthCurrentStatus.swift */,
-				237C56C62770795A78A516CB41086A49 /* HealthFaultEnum.swift */,
 				B3602E3E61D7BC155094198B769D80B9 /* HealthFaultStatus.swift */,
+				F0D9EED82D47A55A0063AF3E /* HealthFaultClear.swift */,
+				F0D9EEDA2D47A5B40063AF3E /* HealthFaultClearUnacknowledged.swift */,
+				F0D9EED42D47A3BB0063AF3E /* HealthFaultGet.swift */,
+				F0D9EEDC2D47A66E0063AF3E /* HealthFaultTest.swift */,
+				F0D9EEDE2D47A70C0063AF3E /* HealthFaultTestUnacknowledged.swift */,
+				F0D9EEE02D47A8FD0063AF3E /* HealthPeriodGet.swift */,
+				F0D9EEE22D47A9AA0063AF3E /* HealthPeriodSet.swift */,
+				F0D9EEE42D47AA370063AF3E /* HealthPeriodSetUnacknowledged.swift */,
+				F0D9EEE62D47B48D0063AF3E /* HealthPeriodStatus.swift */,
 			);
 			path = Health;
 			sourceTree = "<group>";
@@ -2521,6 +2563,7 @@
 				ACD7331407F0953E885AEFD626F1280B /* ConfigAppKeyStatus.swift in Sources */,
 				B61A0AD5CBFC5EEB3FA23AF6C66E4E4C /* ConfigAppKeyUpdate.swift in Sources */,
 				E5882CF2A3C68BDECEFD431F0E8ABBD0 /* ConfigBeaconGet.swift in Sources */,
+				F0D9EEDD2D47A66E0063AF3E /* HealthFaultTest.swift in Sources */,
 				B47EACEF023AE53D906AB4A389490675 /* ConfigBeaconSet.swift in Sources */,
 				947F2DB3881F568442599C2D36FE2197 /* ConfigBeaconStatus.swift in Sources */,
 				E5DE6AAC44BF6461EC7A956F5DDD396C /* ConfigCompositionDataGet.swift in Sources */,
@@ -2531,6 +2574,7 @@
 				1741F90966D5188A7C5CDB86EAD09F9A /* ConfigFriendGet.swift in Sources */,
 				E8B383561463A2A8A084AA9B0792DEF2 /* ConfigFriendSet.swift in Sources */,
 				B1261C96A971546AD7E2D6E879CAC34A /* ConfigFriendStatus.swift in Sources */,
+				F0D9EEE52D47AA370063AF3E /* HealthPeriodSetUnacknowledged.swift in Sources */,
 				1302484A28D2B4B045C14E9164B0FEEB /* ConfigGATTProxyGet.swift in Sources */,
 				AA56D075427EFDB167025C78BB4DCE33 /* ConfigGATTProxySet.swift in Sources */,
 				911C89AA798A54E9540128D1145E4B2A /* ConfigGATTProxyStatus.swift in Sources */,
@@ -2574,6 +2618,7 @@
 				4D089B31ADF3A46329F780B068768CFF /* ConfigNetworkTransmitStatus.swift in Sources */,
 				040AA70C0FA601E460C4F3DE915E1EA1 /* ConfigNodeIdentityGet.swift in Sources */,
 				40835514A5AB16C7F17896D95D2B6258 /* ConfigNodeIdentitySet.swift in Sources */,
+				F0D9EED92D47A55A0063AF3E /* HealthFaultClear.swift in Sources */,
 				E5C31591BAD83D32839AC4DA6E8BDCC6 /* ConfigNodeIdentityStatus.swift in Sources */,
 				2521C11E11A6D40CB67B42C482A8F701 /* ConfigNodeReset.swift in Sources */,
 				1AA73DF5D69553E4A690FE1C53331A20 /* ConfigNodeResetStatus.swift in Sources */,
@@ -2589,6 +2634,7 @@
 				315BC30B1A566246805657E0C5742203 /* ConfigurationServerHandler.swift in Sources */,
 				F30B329A6BC93AAC1C149EB9CBB915C2 /* ConfigVendorModelAppGet.swift in Sources */,
 				68F6A3BCD4BC12F79DAD44891146B1D3 /* ConfigVendorModelAppList.swift in Sources */,
+				F0D9EEE12D47A8FD0063AF3E /* HealthPeriodGet.swift in Sources */,
 				5A4CD3A7EF64F3BD7DB154E323FFD2A4 /* ConfigVendorModelSubscriptionGet.swift in Sources */,
 				07767BB806ADEB6BB318A51F8C7F7405 /* ConfigVendorModelSubscriptionList.swift in Sources */,
 				F9D21055B61BA503D0EB2591D92CA2E2 /* ControlMessage.swift in Sources */,
@@ -2598,6 +2644,7 @@
 				D46FC30B3ECEF8DAD1894744BB5D73C4 /* Data+Keys.swift in Sources */,
 				70230A8B6E70BB5F5C309B879DB587B3 /* DeviceProperty.swift in Sources */,
 				01B4C1A0E5E4667FF864F5CB09E8814C /* Documentation.docc in Sources */,
+				F0D9EEDF2D47A70C0063AF3E /* HealthFaultTestUnacknowledged.swift in Sources */,
 				8C40F3C150EBD13B90DAE9F8ABF19B28 /* Element.swift in Sources */,
 				3BF18261BC94413E5CE636AE3C260633 /* Element+Address.swift in Sources */,
 				F65ACE0BEF03C2547F0F510E56AD7227 /* Element+Keys.swift in Sources */,
@@ -2659,7 +2706,7 @@
 				4F627ED2E2B0C318AA4B63178FE61B36 /* Group+Scenes.swift in Sources */,
 				89080B4F548D29F2FEB624EFC40700FE /* HealthClientHandler.swift in Sources */,
 				C564A4784B0A9E32D970F5E767FEE72E /* HealthCurrentStatus.swift in Sources */,
-				9100E5DCF0A6F4FA824D1EB73BEC6B95 /* HealthFaultEnum.swift in Sources */,
+				9100E5DCF0A6F4FA824D1EB73BEC6B95 /* HealthFault.swift in Sources */,
 				2AB23765AE53D4E80E922B0F07996C57 /* HealthFaultStatus.swift in Sources */,
 				F0CF8137D4A439F10BA45530CE5A1826 /* HeartbeatMessage.swift in Sources */,
 				D91320C2F43F590460F97FFE4690443F /* HeartbeatPublication.swift in Sources */,
@@ -2763,6 +2810,7 @@
 				0EF68F4DB3B3CED9050D25E8A99E7FE6 /* MeshConstants.swift in Sources */,
 				BAE545A1D9CE9BA9C24DA3D2232B17B8 /* MeshData.swift in Sources */,
 				DECD4F7F582C10CE2D5651549E015211 /* MeshLoggerDelegate.swift in Sources */,
+				F0D9EED52D47A3BB0063AF3E /* HealthFaultGet.swift in Sources */,
 				98B9F95ACF23BF653CAF8EA9A91A0DD6 /* MeshMessage.swift in Sources */,
 				18E86C835F61A9FEE191415FB5465A46 /* MeshNetwork.swift in Sources */,
 				7EC30A72572FA1E705BB2D51C390397A /* MeshNetwork+Address.swift in Sources */,
@@ -2797,6 +2845,7 @@
 				9FE049C7C4944D3E8D9F305A8E025BF8 /* NetworkKeys.swift in Sources */,
 				D02D81C9823C6036EE3D94C95E538029 /* NetworkLayer.swift in Sources */,
 				6CD51086F4C047909850E2A8E42A7DB4 /* NetworkManager.swift in Sources */,
+				F0D9EEEB2D47C97F0063AF3E /* HealthAttentionSet.swift in Sources */,
 				FE4AB33782AA10CA2F549201D6C04D1E /* NetworkManagerDelegate.swift in Sources */,
 				B0DA33644FDF8418A2630DA789714FD2 /* NetworkParameters.swift in Sources */,
 				CDC3DA2F80793246236911B91AF5C31F /* NetworkPdu.swift in Sources */,
@@ -2813,6 +2862,7 @@
 				F9A30F9A5EE05793EA465C7B5F28D160 /* nRFMeshProvision-dummy.m in Sources */,
 				B6CFCC7C995789EE38DED2A1FEDAE8B2 /* OnPowerUp.swift in Sources */,
 				F019B64C2D3E69E60094B0E4 /* FirmwareDistributionReceiversStatus.swift in Sources */,
+				F0D9EEF32D489E450063AF3E /* HealthServerHandler.swift in Sources */,
 				A27255143E672F5A8D89BDA248C14B69 /* Oob.swift in Sources */,
 				1459F32CB80689BF692245727AE5B436 /* OptionSet+Data.swift in Sources */,
 				A8CA9DC15177C2380C28A7E956C86B53 /* PBGattBearer.swift in Sources */,
@@ -2839,6 +2889,8 @@
 				776E3295F4628CB9442424172C8D85A0 /* ProvisioningPdu.swift in Sources */,
 				9B91C7DE5986F3ADD46736D589CF6C16 /* ProvisioningState.swift in Sources */,
 				33FE42D89519FC0627110197D1BED1BA /* ProxyConfigurationMessage.swift in Sources */,
+				F0D9EEE72D47B48D0063AF3E /* HealthPeriodStatus.swift in Sources */,
+				F0D9EEE92D47C8FC0063AF3E /* HealthAttentionGet.swift in Sources */,
 				439F06D6CDA6D83906DFBC78038ABA4D /* ProxyFilter.swift in Sources */,
 				0875EEE8F2F26318DB33499560C3C1D5 /* ProxyProtocolHandler.swift in Sources */,
 				10794DCA75895F6AB936C643FAC459F2 /* PublicKey.swift in Sources */,
@@ -2849,6 +2901,7 @@
 				D0B3626061E98F17F198DB5346309928 /* RemoteProvisioningClientHandler.swift in Sources */,
 				D3AC2236476532B3F81F6E566D656FA6 /* RemoteProvisioningExtendedScanReport.swift in Sources */,
 				835D636EF7BD15332EA52F450B8EB67E /* RemoteProvisioningExtendedScanStart.swift in Sources */,
+				F0D9EEE32D47A9AA0063AF3E /* HealthPeriodSet.swift in Sources */,
 				F019B6542D3FD56B0094B0E4 /* FirmwareDistributionCapabilitiesGet.swift in Sources */,
 				03E44E0FAD3E14DD8C2B1A0724264463 /* RemoteProvisioningLinkClose.swift in Sources */,
 				2986BC226F48479977F3D319DB86CB74 /* RemoteProvisioningLinkGet.swift in Sources */,
@@ -2896,6 +2949,7 @@
 				9B4D96EF19D97273B16B1A8B2CA02949 /* SchedulerActionGet.swift in Sources */,
 				A972D0861F5357D024BD4C10C749F881 /* SchedulerActionSet.swift in Sources */,
 				12DB96AB61EC6465F9C3916B3F67B963 /* SchedulerActionSetUnacknowledged.swift in Sources */,
+				F0D9EEF12D4899B40063AF3E /* HealthAttentionStatus.swift in Sources */,
 				05A910FFE1C4A22CC37D2E5B0E347579 /* SchedulerActionStatus.swift in Sources */,
 				4EA9C98877CB380B4C65960688A7D2C9 /* SchedulerGet.swift in Sources */,
 				C493FE12DC37B2FFF4DFB08650033CE4 /* SchedulerMessage.swift in Sources */,
@@ -2917,6 +2971,7 @@
 				943A7242E0667E218CA7A4AA75732514 /* SensorDescriptorGet.swift in Sources */,
 				F24A2CBF9EDFB7B647226550B46431F4 /* SensorDescriptorStatus.swift in Sources */,
 				A26BBD6C539A92C843FFF1AE3F1857CD /* SensorGet.swift in Sources */,
+				F0D9EEDB2D47A5B40063AF3E /* HealthFaultClearUnacknowledged.swift in Sources */,
 				DDE4E1A209569B4D8DABC0616693727C /* SensorMessage.swift in Sources */,
 				1C0C67D52BA188C7715405BDEE8AFC87 /* SensorSeriesGet.swift in Sources */,
 				BB5FF877DB157E6F33B7311808395CBC /* SensorSeriesStatus.swift in Sources */,
@@ -2947,6 +3002,7 @@
 				60346D44D80CA99C6827378302E5EDA1 /* UnprovisionedDevice.swift in Sources */,
 				38AF679EE574B1A7BEAA7AFDBC8635D1 /* UnprovisionedDeviceBeacon.swift in Sources */,
 				C7FEC5EC4957B91B71B5BB7AC1BFF3FE /* UpperTransportLayer.swift in Sources */,
+				F0D9EEEF2D4898C00063AF3E /* HealthAttentionSetUnacknowledged.swift in Sources */,
 				A0C3AA19BF4C2836D3B9AC226D7E83DD /* UpperTransportPdu.swift in Sources */,
 				0864ED20B9377E6D850C91AC0C014726 /* UserDefaults+SeqAuth.swift in Sources */,
 				407C910E63A52613177AFED875905667 /* UUID+Hex.swift in Sources */,

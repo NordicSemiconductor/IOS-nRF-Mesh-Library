@@ -372,11 +372,31 @@ Provisioning is the process of adding an unprovisioned device to a mesh network 
 - ``SarTransmitterSet``
 - ``SarTransmitterStatus``
 
-### Health Messages
+### Health Types
 
 - ``HealthFault``
+
+### Health Messages
+
 - ``HealthCurrentStatus``
+- ``HealthFaultGet``
+- ``HealthFaultClear``
+- ``HealthFaultClearUnacknowledged``
+- ``HealthFaultTest``
+- ``HealthFaultTestUnacknowledged``
 - ``HealthFaultStatus``
+- ``HealthAttentionGet``
+- ``HealthAttentionSet``
+- ``HealthAttentionSetUnacknowledged``
+- ``HealthAttentionStatus``
+- ``HealthPeriodGet``
+- ``HealthPeriodSet``
+- ``HealthPeriodSetUnacknowledged``
+- ``HealthPeriodStatus``
+- ``HealthAttentionGet``
+- ``HealthAttentionSet``
+- ``HealthAttentionSetUnacknowledged``
+- ``HealthAttentionStatus``
 
 ### Remote Provisioning Message Types
 

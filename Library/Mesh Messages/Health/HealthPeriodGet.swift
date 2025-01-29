@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2024, Nordic Semiconductor
+* Copyright (c) 2019, Nordic Semiconductor
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -26,49 +26,29 @@
 * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
-*
-* Created by Jules DOMMARTIN on 04/11/2024.
 */
 
-class HealthClientHandler: ModelDelegate {
-    var messageTypes: [UInt32 : MeshMessage.Type]
+import Foundation
+
+/// A Health Period Get is an acknowledged message used to get the current Health Fast Period Divisor
+/// state of an Element.
+public struct HealthPeriodGet: StaticAcknowledgedMeshMessage {
+    public static let opCode: UInt32 = 0x8034
+    public static let responseType: StaticMeshResponse.Type = HealthPeriodStatus.self
     
-    var isSubscriptionSupported: Bool = false
-    
-    var publicationMessageComposer: MessageComposer? = nil
-    
-    init() {
-        let types: [StaticMeshMessage.Type] = [
-            HealthCurrentStatus.self,
-            HealthFaultStatus.self,
-            HealthPeriodStatus.self,
-            HealthAttentionStatus.self
-        ]
-        messageTypes = types.toMap()
+    public var parameters: Data? {
+        return nil
     }
     
-    func model(_ model: Model, didReceiveAcknowledgedMessage request: any AcknowledgedMeshMessage,
-               from source: Address, sentTo destination: MeshAddress) throws -> any MeshResponse {
-        switch request {
-            // No acknowledged message supported by this Model.
-        default:
-            fatalError("Message not supported: \(request)")
+    /// Creates the Health Period Get message.
+    public init() {
+        // Empty
+    }
+    
+    public init?(parameters: Data) {
+        guard parameters.isEmpty else {
+            return nil
         }
     }
     
-    func model(_ model: Model, didReceiveUnacknowledgedMessage message: any UnacknowledgedMeshMessage,
-               from source: Address, sentTo destination: MeshAddress) {
-        switch message {
-            
-        default:
-            // Ignore.
-            break
-        }
-    }
-    
-    func model(_ model: Model, didReceiveResponse response: any MeshResponse,
-               toAcknowledgedMessage request: any AcknowledgedMeshMessage,
-               from source: NordicMesh.Address) {
-        // Ignore. There are no CDB fields matching these parameters.
-    }
 }
