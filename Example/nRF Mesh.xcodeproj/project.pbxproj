@@ -1586,8 +1586,10 @@
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
 				CODE_SIGN_ENTITLEMENTS = "nRF Mesh.entitlements";
 				CURRENT_PROJECT_VERSION = 2;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = P3R8YQEV4L;
 				ENABLE_BITCODE = NO;
+				ENABLE_DEBUG_DYLIB = YES;
 				INFOPLIST_FILE = Source/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "nRF Mesh";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
@@ -1619,8 +1621,10 @@
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
 				CODE_SIGN_ENTITLEMENTS = "nRF Mesh.entitlements";
 				CURRENT_PROJECT_VERSION = 2;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = P3R8YQEV4L;
 				ENABLE_BITCODE = NO;
+				ENABLE_DEBUG_DYLIB = YES;
 				INFOPLIST_FILE = Source/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "nRF Mesh";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";

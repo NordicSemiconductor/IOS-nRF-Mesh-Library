@@ -36,7 +36,8 @@
 ///
 // TODO: Currently, the Current Fault state always contains no faults.
 class HealthServerHandler: ModelDelegate {
-    weak var meshNetwork: MeshNetwork!
+    private weak var meshNetwork: MeshNetwork!
+    private weak var manager: MeshNetworkManager!
     
     /// Identifier of a most recently performed self-test/
     private var mostRecentTestId: UInt8 = 0
@@ -47,7 +48,9 @@ class HealthServerHandler: ModelDelegate {
     /// the corresponding record is removed from the state automatically.
     private var currentFaultState: [HealthFault] = [] {
         didSet {
-            // TODO: Changing this value should publish Health Current Status message
+            if let manager = manager {
+                publish(using: manager)
+            }
             
             // Whenever a fault condition has been present in the
             // Current Fault state, the corresponding record is added
@@ -88,7 +91,7 @@ class HealthServerHandler: ModelDelegate {
     
     // TODO: Add some API to emulate faults
     
-    init(_ meshNetwork: MeshNetwork) {
+    init(_ meshNetwork: MeshNetwork?, _ manager: MeshNetworkManager) {
         let types: [StaticMeshMessage.Type] = [
             HealthFaultGet.self,
             HealthFaultClear.self,
@@ -102,7 +105,9 @@ class HealthServerHandler: ModelDelegate {
             HealthPeriodSet.self,
             HealthPeriodSetUnacknowledged.self
         ]
-        messageTypes = types.toMap()
+        self.messageTypes = types.toMap()
+        self.meshNetwork = meshNetwork
+        self.manager = manager
     }
     
     func model(_ model: Model, didReceiveAcknowledgedMessage request: any AcknowledgedMeshMessage,

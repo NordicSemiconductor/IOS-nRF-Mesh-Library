@@ -89,21 +89,7 @@ public class MeshNetwork: Codable {
         get {
             return _localElements
         }
-        set {
-            var elements = newValue
-            // Some models, which are supported by the library, will be added automatically.
-            // Let's make sure they are not in the array.
-            elements.forEach { element in
-                element.removePrimaryElementModels()
-            }
-            // Remove all empty Elements.
-            elements = elements.filter { !$0.models.isEmpty }
-            // Add the required Models in the Primary Element.
-            if elements.isEmpty {
-                elements.append(Element(location: .unknown))
-            }
-            elements[0].addPrimaryElementModels(self)
-            
+        set(elements) {
             // Make sure the indexes are correct.
             for (index, element) in elements.enumerated() {
                 element.index = UInt8(index)

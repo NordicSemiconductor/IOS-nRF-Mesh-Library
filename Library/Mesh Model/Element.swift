@@ -53,7 +53,7 @@ public class Element: Codable {
     /// Description of the Element's location.
     public internal(set) var location: Location
     /// An array of Model objects in the Element.
-    public private(set) var models: [Model]
+    public internal(set) var models: [Model]
     
     /// Parent Node. This may be `nil` if the Element was obtained in
     /// Composition Data and has not yet been added to a Node.
@@ -177,46 +177,6 @@ internal extension Element {
     func insert(model: Model, at i: Int) {
         models.insert(model, at: i)
         model.parentElement = self
-    }
-    
-    /// This methods adds the natively supported Models to the Element.
-    ///
-    /// This method should only be called for the primary Element of the
-    /// local Node.
-    ///
-    /// - parameter meshNetwork: The mesh network object.
-    func addPrimaryElementModels(_ meshNetwork: MeshNetwork) {
-        guard isPrimary else { return }
-        insert(model: Model(sigModelId: .configurationServerModelId,
-                            delegate: ConfigurationServerHandler(meshNetwork)), at: 0)
-        insert(model: Model(sigModelId: .configurationClientModelId,
-                            delegate: ConfigurationClientHandler(meshNetwork)), at: 1)
-        insert(model: Model(sigModelId: .healthServerModelId,
-                            delegate: HealthServerHandler(meshNetwork)), at: 2)
-        insert(model: Model(sigModelId: .healthClientModelId,
-                            delegate: HealthClientHandler()), at: 3)
-        insert(model: Model(sigModelId: .privateBeaconClientModelId,
-                            delegate: PrivateBeaconClientHandler(meshNetwork)), at: 4)
-        insert(model: Model(sigModelId: .sarConfigurationClientModelId,
-                            delegate: SarConfigurationClientHandler(meshNetwork)), at: 5)
-        insert(model: Model(sigModelId: .remoteProvisioningClientModelId,
-                            delegate: RemoteProvisioningClientHandler(meshNetwork)), at: 6)
-        insert(model: Model(sigModelId: .sceneClientModelId,
-                            delegate: SceneClientHandler(meshNetwork)), at: 7)
-    }
-    
-    /// Removes the models that are or should be supported natively.
-    func removePrimaryElementModels() {
-        models = models.filter { model in
-            // Health models are not yet supported.
-            !model.isHealthServer &&
-            !model.isHealthClient &&
-            // The library supports Scene Client model natively.
-            !model.isSceneClient &&
-            // The models that require Device Key should not be managed by users.
-            // Some of them are supported natively in the library.
-            !model.requiresDeviceKey
-        }
     }
     
     /// The primary Element for Provisioner's Node.
