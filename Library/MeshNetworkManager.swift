@@ -48,6 +48,8 @@ public class MeshNetworkManager: NetworkParametersProvider {
     /// The delegate will receive callbacks whenever a complete
     /// Mesh Message has been received and reassembled.
     public weak var delegate: MeshNetworkDelegate?
+    /// The delegate will be created when the Attention Timer is started by a remote Node.
+    public weak var attentionTimerDelegate: AttentionTimerDelegate?
     /// The sender object should send PDUs created by the manager
     /// using any Bearer.
     public weak var transmitter: Transmitter? {

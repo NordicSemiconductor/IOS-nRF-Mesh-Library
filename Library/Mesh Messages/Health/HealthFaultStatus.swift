@@ -50,10 +50,8 @@ public struct HealthFaultStatus: StaticMeshResponse {
 
     /// Identifier of a most recently performed test.
     public let testId: UInt8
-
     /// 16-bit Bluetooth assigned Company Identifier.
     public let companyIdentifier: UInt16
-    
     /// List of faults.
     ///
     /// If no Fault fields are present, it means no registered fault condition exists on an Element.
@@ -79,7 +77,7 @@ public struct HealthFaultStatus: StaticMeshResponse {
         companyIdentifier = parameters.read(fromOffset: 1)
         if parameters.count > 3 {
             faults = parameters
-                .subdata(in: 3..<parameters.count - 3)
+                .subdata(in: 3..<parameters.count)
                 .compactMap { HealthFault.fromId($0) }
         } else {
             faults = []

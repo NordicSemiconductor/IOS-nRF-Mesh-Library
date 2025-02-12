@@ -29,6 +29,7 @@ Use it to create, load or import a Bluetooth mesh network and send messages.
 - ``delegate``
 - ``transmitter``
 - ``logger``
+- ``attentionTimerDelegate``
 
 ### Provisioning
 

@@ -51,7 +51,6 @@ public struct HealthAttentionSetUnacknowledged: StaticUnacknowledgedMeshMessage 
     ///
     /// Set to 0 if the Timer is off, or not supported.
     public let attentionTimer: UInt8
-    
     /// Returns whether the Attention Timer is on, or off.
     public var isOn: Bool {
         return attentionTimer != 0

@@ -40,6 +40,7 @@ private enum Section: String {
     case heartbeatPublication = "Heartbeat Publication"
     case heartbeatSubscription = "Heartbeat Subscriptions"
     case sensors = "Sensor Values"
+    case healthServer = "Attention Timer"
     case custom = "Control"
     
     var title: String {
@@ -59,6 +60,8 @@ class ModelViewController: ProgressViewController {
     private var heartbeatPublicationCount: RemainingHeartbeatPublicationCount?
     private var heartbeatPublicationFeatures: NodeFeatures?
     private var heartbeatSubscriptionStatus: ConfigHeartbeatSubscriptionStatus?
+    private var healthFaultStatus: HealthFaultStatus?
+    private var healthCurrentStatus: HealthCurrentStatus?
     
     /// Sensor values are defined only for Sensor Server model,
     /// and only when the value has been read.
@@ -95,6 +98,9 @@ class ModelViewController: ProgressViewController {
         if model.isSensorServer {
             sections.append(.sensors)
         }
+        if model.isHealthServer {
+            sections.append(.healthServer)
+        }
         if model.hasCustomUI {
             sections.append(.custom)
         }
@@ -114,6 +120,8 @@ class ModelViewController: ProgressViewController {
         // Registed Nibs for Custom UI.
         tableView.register(UINib(nibName: "ConfigurationServer", bundle: nil),
                            forCellReuseIdentifier: UInt16.configurationServerModelId.hex)
+        tableView.register(UINib(nibName: "HealthServer", bundle: nil),
+                           forCellReuseIdentifier: UInt16.healthServerModelId.hex)
         tableView.register(UINib(nibName: "GenericOnOff", bundle: nil),
                            forCellReuseIdentifier: UInt16.genericOnOffServerModelId.hex)
         tableView.register(UINib(nibName: "GenericLevel", bundle: nil),
@@ -203,7 +211,7 @@ class ModelViewController: ProgressViewController {
         case .details:
             return 3
         case .configurationServer:
-            return 1 + nodeIdentityStates.count /* Network Keys for Node Identity view */
+            return 1 + nodeIdentityStates.count // Network Keys for Node Identity view.
         case .appKeyBinding:
             return model.boundApplicationKeys.count + 1 // Add Action.
         case .heartbeatPublication:
@@ -224,6 +232,8 @@ class ModelViewController: ProgressViewController {
             return (sensorValues?.count ?? 0) + 1 // Get Action.
         case .custom:
             return 1
+        case .healthServer:
+            return 1 + (healthCurrentStatus?.faults.count ?? healthFaultStatus?.faults.count ?? 0) // Custom View, Faults.
         }
     }
     
@@ -301,6 +311,19 @@ class ModelViewController: ProgressViewController {
                 return cell
             }
             // The first row of the section is rendered as a Custom section.
+            fallthrough
+        case .healthServer:
+            if section == .healthServer && indexPath.row > 0 {
+                if let faults = healthCurrentStatus?.faults ?? healthFaultStatus?.faults,
+                   indexPath.row - 1 < faults.count { // Fault
+                    let fault = faults[indexPath.row - 1]
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "normal", for: indexPath)
+                    cell.textLabel?.text = "\(fault)"
+                    cell.detailTextLabel?.text = nil
+                    cell.accessoryType = .none
+                    return cell
+                }
+            }
             fallthrough
         case .custom:
             // A custom cell for the Model.
@@ -456,7 +479,7 @@ class ModelViewController: ProgressViewController {
             return indexPath.row == model.subscriptions.count
         case .sensors:
             return indexPath.row == sensorValues?.count ?? 0
-        case .custom, .configurationServer:
+        case .custom, .configurationServer, .healthServer:
             return false
         }
     }
@@ -609,6 +632,31 @@ private extension ModelViewController {
     
     func reloadSections(_ section: Section, with animation: UITableView.RowAnimation) {
         reloadSections([section], with: animation)
+    }
+    
+    func reloadSections(_ section: Section, from row: Int, with animation: UITableView.RowAnimation) {
+        DispatchQueue.main.async {
+            if let section = self.sections.firstIndex(of: section) {
+                let oldCount = max(row, self.tableView.numberOfRows(inSection: section))
+                let newCount = max(row, self.tableView(self.tableView, numberOfRowsInSection: section))
+                self.tableView.beginUpdates()
+                if newCount < oldCount {
+                    let deletedIndexPaths = (newCount..<oldCount).map { IndexPath(row: $0, section: section) }
+                    self.tableView.deleteRows(at: deletedIndexPaths, with: animation)
+                    let modifiedIndexPaths = (row..<newCount).map { IndexPath(row: $0, section: section) }
+                    self.tableView.reloadRows(at: modifiedIndexPaths, with: animation)
+                } else if newCount > oldCount {
+                    let newIndexPaths = (oldCount..<newCount).map { IndexPath(row: $0, section: section) }
+                    self.tableView.insertRows(at: newIndexPaths, with: animation)
+                    let modifiedIndexPaths = (row..<oldCount).map { IndexPath(row: $0, section: section) }
+                    self.tableView.reloadRows(at: modifiedIndexPaths, with: animation)
+                } else {
+                    let modifiedIndexPaths = (row..<oldCount).map { IndexPath(row: $0, section: section) }
+                    self.tableView.reloadRows(at: modifiedIndexPaths, with: animation)
+                }
+                self.tableView.endUpdates()
+            }
+        }
     }
     
 }
@@ -937,8 +985,17 @@ extension ModelViewController: MeshNetworkDelegate {
                 self.reloadSections(.sensors, with: .automatic)
             }
             
-        // Custom UI
+        // Custom UI & Health Server
         default:
+            if let status = message as? HealthFaultStatus {
+                healthCurrentStatus = nil
+                healthFaultStatus = status
+                reloadSections(.healthServer, from: 1, with: .automatic)
+            }
+            if let status = message as? HealthCurrentStatus {
+                healthCurrentStatus = status
+                reloadSections(.healthServer, from: 1, with: .automatic)
+            }
             guard let cell = modelViewCell, cell.supports(type(of: message)) else {
                 break
             }
@@ -1032,6 +1089,10 @@ private extension Model {
     
     var isSensorServer: Bool {
         return isBluetoothSIGAssigned && modelIdentifier == .sensorServerModelId
+    }
+    
+    var isHealthServer: Bool {
+        return isBluetoothSIGAssigned && modelIdentifier == .healthServerModelId
     }
     
 }
