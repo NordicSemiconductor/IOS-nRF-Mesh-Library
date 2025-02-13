@@ -167,6 +167,108 @@ class NetworkViewController: UITableViewController, UISearchBarDelegate {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     }
+    
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let action = UIContextualAction(style: .normal, title: "Identify") { action, source, completionHandler in
+            let manager = MeshNetworkManager.instance
+            guard let _ = manager.meshNetwork else {
+                completionHandler(false)
+                return
+            }
+            
+            let node = self.filteredSections[indexPath.section].nodes[indexPath.row]
+            guard let _ = node.companyIdentifier else {
+                self.presentAlert(title: "Unknown Node", message: "Before identifying, tap the Node to obtain its Composition Data.")
+                completionHandler(false)
+                return
+            }
+            guard let healthServerModel = node.models(withSigModelId: .healthServerModelId).first,
+                  !healthServerModel.boundApplicationKeys.isEmpty else {
+                self.presentAlert(title: "Identify", message: "Attention timer requires the Health Server model to be bound to at least one Application Key.\n\nWould you like to configure \(node.name ?? "the Node") automatically?") { _ in
+                    Task { [weak self] in
+                        let success = await self?.identify(node: node) ?? false
+                        completionHandler(success)
+                    }
+                }
+                return
+            }
+            
+            Task { [weak self] in
+                let success = await self?.identify(node: node) ?? false
+                completionHandler(success)
+            }
+        }
+        action.backgroundColor = .systemYellow
+        return UISwipeActionsConfiguration(actions: [action])
+    }
+}
+
+private extension NetworkViewController {
+    
+    @discardableResult
+    func createApplicationKey() -> Bool {
+        let manager = MeshNetworkManager.instance
+        guard let meshNetwork = manager.meshNetwork else {
+            return false
+        }
+        do {
+            try meshNetwork.add(applicationKey: Data.random128BitKey(), name: "App Key 1")
+            return manager.save()
+        } catch {
+            return false
+        }
+    }
+    
+    func identify(node: Node) async -> Bool {
+        let manager = MeshNetworkManager.instance
+        guard let meshNetwork = manager.meshNetwork else {
+            return false
+        }
+        
+        // Check if the Health Server model exist (it is mandatory)
+        // and has at least one bound Application Key.
+        guard let healthServerModel = node.models(withSigModelId: .healthServerModelId).first else {
+            return false
+        }
+        
+        // Check if the mesh network has at least one Application Key.
+        if meshNetwork.applicationKeys.isEmpty {
+            guard createApplicationKey() else {
+                return false
+            }
+        }
+        guard let applicationKey = meshNetwork.applicationKeys.first else {
+            return false
+        }
+        
+        // Check if the Node has at least one Application Key.
+        if node.applicationKeys.isEmpty {
+            let request = ConfigAppKeyAdd(applicationKey: applicationKey)
+            let response = try? await manager.send(request, to: node) as? ConfigAppKeyStatus
+            guard response?.status == .success else {
+                return false
+            }
+        }
+        
+        // Check if the Health Server model is bound to at least one Application Key.
+        if healthServerModel.boundApplicationKeys.isEmpty {
+            guard let request = ConfigModelAppBind(applicationKey: applicationKey, to: healthServerModel) else {
+                return false
+            }
+            let response = try? await manager.send(request, to: node) as? ConfigModelAppStatus
+            guard response?.status == .success else {
+                return false
+            }
+        }
+        
+        try? await manager.send(HealthAttentionSetUnacknowledged(3.0), to: healthServerModel)
+        return true
+    }
+    
 }
 
 private extension NetworkViewController {
@@ -260,10 +362,12 @@ extension NetworkViewController: MeshNetworkDelegate {
         switch message {
             
         case is ConfigNodeReset:
-            // The node has been reset remotely.
-            (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
+            if destination.address == manager.meshNetwork?.localProvisioner?.primaryUnicastAddress {
+                // The node has been reset remotely.
+                (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
+                presentAlert(title: "Reset", message: "The mesh network was reset remotely.")
+            }
             reloadData()
-            presentAlert(title: "Reset", message: "The mesh network was reset remotely.")
             
         default:
             break
