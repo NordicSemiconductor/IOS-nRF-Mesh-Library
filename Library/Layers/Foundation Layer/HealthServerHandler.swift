@@ -121,13 +121,13 @@ class HealthServerHandler: ModelDelegate {
             attentionTimer?.invalidate()
             let duration = TimeInterval(request.attentionTimer)
             if duration > 0 {
-                manager?.attentionTimerDelegate?.startAttentionTimer(timeout: duration)
+                manager?.attentionTimerDelegate?.attentionTimerDidStart(duration: duration)
                 attentionTimer = BackgroundTimer.scheduledTimer(withTimeInterval: duration, repeats: false) { [weak self] _ in
-                    self?.manager?.attentionTimerDelegate?.stopAttentionTimer()
+                    self?.manager?.attentionTimerDelegate?.attentionTimerDidStop()
                     self?.attentionTimer = nil
                 }
             } else if let attentionTimer = attentionTimer {
-                manager?.attentionTimerDelegate?.stopAttentionTimer()
+                manager?.attentionTimerDelegate?.attentionTimerDidStop()
                 self.attentionTimer = nil
             }
             return HealthAttentionStatus(duration)
@@ -197,13 +197,13 @@ class HealthServerHandler: ModelDelegate {
             attentionTimer?.invalidate()
             let duration = TimeInterval(request.attentionTimer)
             if duration > 0 {
-                manager?.attentionTimerDelegate?.startAttentionTimer(timeout: duration)
+                manager?.attentionTimerDelegate?.attentionTimerDidStart(duration: duration)
                 attentionTimer = BackgroundTimer.scheduledTimer(withTimeInterval: duration, repeats: false) { [weak self] _ in
-                    self?.manager?.attentionTimerDelegate?.stopAttentionTimer()
+                    self?.manager?.attentionTimerDelegate?.attentionTimerDidStop()
                     self?.attentionTimer = nil
                 }
             } else if let attentionTimer = attentionTimer {
-                manager?.attentionTimerDelegate?.stopAttentionTimer()
+                manager?.attentionTimerDelegate?.attentionTimerDidStop()
                 self.attentionTimer = nil
             }
             

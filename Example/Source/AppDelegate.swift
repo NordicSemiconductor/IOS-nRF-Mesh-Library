@@ -235,11 +235,11 @@ extension MeshNetworkManager {
 
 extension AppDelegate: AttentionTimerDelegate {
     
-    func startAttentionTimer(timeout: TimeInterval) {
-        log(message: "Attention Timer started for \(timeout) seconds", ofCategory: .foundationModel, withLevel: .application)
+    func attentionTimerDidStart(duration: TimeInterval) {
+        log(message: "Attention Timer started for \(duration) seconds", ofCategory: .foundationModel, withLevel: .application)
     }
     
-    func stopAttentionTimer() {
+    func attentionTimerDidStop() {
         log(message: "Attention Timer stopped", ofCategory: .foundationModel, withLevel: .application)
     }
     

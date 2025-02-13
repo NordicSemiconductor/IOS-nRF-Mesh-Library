@@ -40,12 +40,12 @@ public protocol AttentionTimerDelegate: AnyObject {
     ///
     ///The app should start attracting the user's attention.
     ///
-    /// - parameter timeout: The time after which the Attention Timer will time out, in range 1-255 seconds.
-    func startAttentionTimer(timeout: TimeInterval)
+    /// - parameter duration: The time after which the Attention Timer will time out, in range 1-255 seconds.
+    func attentionTimerDidStart(duration: TimeInterval)
     
     /// A callback called when the Attention Timer state has been stopped.
     ///
     /// This callback is called when the Attention Timer times out, or is stopped
     /// remotely by a remote user.
-    func stopAttentionTimer()
+    func attentionTimerDidStop()
 }
