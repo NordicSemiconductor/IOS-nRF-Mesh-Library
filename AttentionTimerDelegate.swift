@@ -31,14 +31,16 @@ import Foundation
 
 /// An Attention Timer Delegate is used to notify the app about the Attention Timer state.
 ///
-/// The Attention Timer is used to attract the user's attention to the device. It may be started and stopped remotely
-/// using ``HealthAttentionSet`` or ``HealthAttentionSetUnacknowledged`` messages
-/// sent to the main Element of the local Node.
+/// The Attention Timer is used to attract the user's attention to the device.
+///
+/// It may only be started and stopped by sending a ``HealthAttentionSet`` or
+/// ``HealthAttentionSetUnacknowledged`` message to the main Element
+/// of the local Node.
 public protocol AttentionTimerDelegate: AnyObject {
     
     /// A callback called when the Attention Timer state has been started..
     ///
-    ///The app should start attracting the user's attention.
+    /// The app should start attracting the user's attention.
     ///
     /// - parameter duration: The time after which the Attention Timer will time out, in range 1-255 seconds.
     func attentionTimerDidStart(duration: TimeInterval)
