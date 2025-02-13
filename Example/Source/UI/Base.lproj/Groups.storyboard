@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="22505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Nue-b9-dg6">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Nue-b9-dg6">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22504"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="collection view cell content view" minToolsVersion="11.0"/>
@@ -14,20 +14,20 @@
         <scene sceneID="OvM-cp-z6h">
             <objects>
                 <tableViewController id="GWa-8U-U7m" customClass="GroupsViewController" customModule="nRF_Mesh" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="uVa-zS-ghQ">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="77" sectionHeaderHeight="18" sectionFooterHeight="18" id="uVa-zS-ghQ">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="804"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="group" rowHeight="86" id="1fT-ky-IiZ" customClass="GroupCell" customModule="nRF_Mesh" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="38" width="414" height="86"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="group" rowHeight="77" id="1fT-ky-IiZ" customClass="GroupCell" customModule="nRF_Mesh" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="38" width="414" height="77"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="1fT-ky-IiZ" id="rfK-Ou-kar">
-                                    <rect key="frame" x="0.0" y="0.0" width="383.5" height="86"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="383.5" height="77"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="mesh-group" translatesAutoresizingMaskIntoConstraints="NO" id="uT9-q1-V0U">
-                                            <rect key="frame" x="20" y="19" width="48" height="48"/>
+                                            <rect key="frame" x="20" y="14.5" width="48" height="48"/>
                                         </imageView>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="Group Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wi4-gM-J5Z">
                                             <rect key="frame" x="84" y="11" width="291.5" height="21"/>
@@ -36,13 +36,13 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" text="Address:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MxP-9A-xOw">
-                                            <rect key="frame" x="84" y="40" width="53.5" height="16"/>
+                                            <rect key="frame" x="84" y="34" width="53.5" height="16"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                             <color key="textColor" systemColor="secondaryLabelColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" text="00000000-1234-5678-ABCD-0123456789AB" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gza-hl-jDH">
-                                            <rect key="frame" x="153.5" y="40" width="222" height="31.5"/>
+                                            <rect key="frame" x="153.5" y="34" width="222" height="31.5"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                             <color key="textColor" systemColor="secondaryLabelColor"/>
                                             <nil key="highlightedColor"/>
@@ -53,13 +53,13 @@
                                         <constraint firstAttribute="trailingMargin" secondItem="wi4-gM-J5Z" secondAttribute="trailing" id="3c1-3N-iCl"/>
                                         <constraint firstItem="MxP-9A-xOw" firstAttribute="leading" secondItem="wi4-gM-J5Z" secondAttribute="leading" id="Rw5-Va-vjY"/>
                                         <constraint firstItem="wi4-gM-J5Z" firstAttribute="top" secondItem="rfK-Ou-kar" secondAttribute="topMargin" id="TrM-3m-niE"/>
+                                        <constraint firstItem="uT9-q1-V0U" firstAttribute="centerY" secondItem="rfK-Ou-kar" secondAttribute="centerY" id="W3I-F7-Ofv"/>
                                         <constraint firstItem="gza-hl-jDH" firstAttribute="trailing" secondItem="rfK-Ou-kar" secondAttribute="trailingMargin" id="XME-Xm-qm2"/>
-                                        <constraint firstItem="MxP-9A-xOw" firstAttribute="top" secondItem="wi4-gM-J5Z" secondAttribute="bottom" constant="8" id="erV-Kz-ZPY"/>
-                                        <constraint firstItem="uT9-q1-V0U" firstAttribute="top" secondItem="rfK-Ou-kar" secondAttribute="topMargin" constant="8" id="lfM-gi-oA5"/>
-                                        <constraint firstAttribute="bottomMargin" secondItem="uT9-q1-V0U" secondAttribute="bottom" constant="8" id="ltu-Qw-gqe"/>
+                                        <constraint firstItem="MxP-9A-xOw" firstAttribute="top" secondItem="wi4-gM-J5Z" secondAttribute="bottom" constant="2" id="erV-Kz-ZPY"/>
                                         <constraint firstItem="gza-hl-jDH" firstAttribute="leading" secondItem="MxP-9A-xOw" secondAttribute="trailing" constant="16" id="pGQ-uC-N7M"/>
                                         <constraint firstItem="uT9-q1-V0U" firstAttribute="leading" secondItem="rfK-Ou-kar" secondAttribute="leadingMargin" id="qgf-pp-nwW"/>
                                         <constraint firstItem="wi4-gM-J5Z" firstAttribute="leading" secondItem="uT9-q1-V0U" secondAttribute="trailing" constant="16" id="sgM-1X-fdC"/>
+                                        <constraint firstAttribute="bottomMargin" secondItem="gza-hl-jDH" secondAttribute="bottom" constant="0.5" id="xeT-h9-keQ"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
@@ -604,7 +604,7 @@
             <objects>
                 <tableViewController id="5hl-UK-X1c" customClass="AddGroupViewController" customModule="nRF_Mesh" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="DdI-sU-xdu">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="886"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <sections>
@@ -750,7 +750,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="y7P-mW-r9X" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="WJ4-lJ-7ku">
-                        <rect key="frame" x="0.0" y="48" width="414" height="96"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="108"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="tintColor" red="0.0" green="0.66274509800000003" blue="0.80784313730000001" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                         <textAttributes key="titleTextAttributes">
@@ -797,7 +797,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="Jtn-5N-mgs"/>
+        <segue reference="6cj-je-47S"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="0.0" green="0.46666666670000001" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>
     <resources>
