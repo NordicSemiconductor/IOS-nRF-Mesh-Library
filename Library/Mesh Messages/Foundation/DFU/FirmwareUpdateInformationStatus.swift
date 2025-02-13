@@ -91,9 +91,9 @@ public struct FirmwareUpdateInformationStatus: StaticMeshResponse {
     /// Firmware Information List state.
     ///
     /// - parameters:
-    ///   - entries:List of entries to be reported.  This should be a sublist of the Firmware
-    ///             Information List state starting at index `firstIndex` and contain at most
-    ///             `totalCount` entries.
+    ///   - list:List of entries to be reported.  This should be a sublist of the Firmware
+    ///          Information List state starting at index `firstIndex` and contain at most
+    ///          `totalCount` entries.
     ///   - firstIndex:Index of the first requested entry from the Firmware Information List state.
     ///   - totalCount: The total number of entries in the Firmware Information List state.
     public init(list: [FirmwareInformation], from firstIndex: UInt8, outOf totalCount: UInt8) {

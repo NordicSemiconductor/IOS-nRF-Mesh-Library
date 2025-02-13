@@ -575,7 +575,7 @@
 		F0D9FBBB2D3A985B00031E7E /* FirmwareUpdateMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D9FBBA2D3A984700031E7E /* FirmwareUpdateMessage.swift */; };
 		F0DAF5B82D39AB78000874EA /* FirmwareUpdateInformationGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0DAF5B62D39AB78000874EA /* FirmwareUpdateInformationGet.swift */; };
 		F0DAF5BA2D39ADA9000874EA /* FirmwareUpdateInformationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0DAF5B92D39ADA9000874EA /* FirmwareUpdateInformationStatus.swift */; };
-		F0FEE6FB2D5CEBD00092B7B7 /* AttentionTimerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0FEE6FA2D5CEBC80092B7B7 /* AttentionTimerDelegate.swift */; };
+		F0FEE6FD2D5E06C20092B7B7 /* AttentionTimerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0FEE6FC2D5E06C20092B7B7 /* AttentionTimerDelegate.swift */; };
 		F1DAB5AF35C9CFE683F02B4CB58706A5 /* String+FoundationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C75468A068967107F4A2CD3C43F8546 /* String+FoundationExtension.swift */; };
 		F20B124E62C51E08102EF26D00763A35 /* Division.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C05A80EB0FAD8E6E3637AF6EE94CB05 /* Division.swift */; };
 		F24756849895D639924A648E1F58818F /* MeshUUID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1160E46C3BFF616DED70346C1BC555E7 /* MeshUUID.swift */; };
@@ -1251,7 +1251,7 @@
 		F0D9FBBA2D3A984700031E7E /* FirmwareUpdateMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateMessage.swift; sourceTree = "<group>"; };
 		F0DAF5B62D39AB78000874EA /* FirmwareUpdateInformationGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateInformationGet.swift; sourceTree = "<group>"; };
 		F0DAF5B92D39ADA9000874EA /* FirmwareUpdateInformationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateInformationStatus.swift; sourceTree = "<group>"; };
-		F0FEE6FA2D5CEBC80092B7B7 /* AttentionTimerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttentionTimerDelegate.swift; sourceTree = "<group>"; };
+		F0FEE6FC2D5E06C20092B7B7 /* AttentionTimerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttentionTimerDelegate.swift; sourceTree = "<group>"; };
 		F1B97AF62C69861336C37668E1A987D2 /* nRFMeshProvision.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = nRFMeshProvision.release.xcconfig; sourceTree = "<group>"; };
 		F2319EF4BFCCA5C949B924616582FB77 /* ConfigurationServerHandler.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigurationServerHandler.swift; sourceTree = "<group>"; };
 		F266B1D0B0919999F2A837E9F8F27845 /* SceneRange.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneRange.swift; sourceTree = "<group>"; };
@@ -1341,9 +1341,9 @@
 			isa = PBXGroup;
 			children = (
 				63D46D377C01814AE242B65111996146 /* Documentation.docc */,
+				F0FEE6FC2D5E06C20092B7B7 /* AttentionTimerDelegate.swift */,
 				4E49438D23B49434C2EC54291D8F7562 /* ExportConfiguration.swift */,
 				10FAE53C65025FB6E59F5C4FBBB67C5F /* MeshNetworkDelegate.swift */,
-				F0FEE6FA2D5CEBC80092B7B7 /* AttentionTimerDelegate.swift */,
 				BAB7EF22A03E0D463FFAC06EE27992AE /* MeshNetworkError.swift */,
 				C0E549AD913DA513C1ABDFBFB453ED6C /* MeshNetworkManager.swift */,
 				380B476B359A61A45744BD92F5C78D5E /* MeshNetworkManager+Callbacks.swift */,
@@ -2863,7 +2863,7 @@
 				F86D3B738531ED4B1A5BB0CE410210F0 /* NodeIdentity.swift in Sources */,
 				1D00BA0172DD19F7CB8FAC169C0333DD /* NodeIdentityState.swift in Sources */,
 				F9A30F9A5EE05793EA465C7B5F28D160 /* nRFMeshProvision-dummy.m in Sources */,
-				F0FEE6FB2D5CEBD00092B7B7 /* AttentionTimerDelegate.swift in Sources */,
+				F0FEE6FD2D5E06C20092B7B7 /* AttentionTimerDelegate.swift in Sources */,
 				B6CFCC7C995789EE38DED2A1FEDAE8B2 /* OnPowerUp.swift in Sources */,
 				F019B64C2D3E69E60094B0E4 /* FirmwareDistributionReceiversStatus.swift in Sources */,
 				F0D9EEF32D489E450063AF3E /* HealthServerHandler.swift in Sources */,

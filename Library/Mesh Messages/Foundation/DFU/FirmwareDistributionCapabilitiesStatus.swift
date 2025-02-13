@@ -34,7 +34,7 @@ import Foundation
 /// sent by a Firmware Distribution Server to report Distributor capabilities.
 ///
 /// A Firmware Distribution Capabilities Status message is sent as a response to
-/// a ``FirmwareDistributorCapabilitiesGet`` message.
+/// a ``FirmwareDistributionCapabilitiesGet`` message.
 public struct FirmwareDistributionCapabilitiesStatus: StaticMeshResponse {
     public static let opCode: UInt32 = 0x8317
     
