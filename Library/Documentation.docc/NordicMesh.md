@@ -375,6 +375,7 @@ Provisioning is the process of adding an unprovisioned device to a mesh network 
 ### Health Types
 
 - ``HealthFault``
+- ``AttentionTimerDelegate``
 
 ### Health Messages
 
@@ -397,7 +398,6 @@ Provisioning is the process of adding an unprovisioned device to a mesh network 
 - ``HealthAttentionSet``
 - ``HealthAttentionSetUnacknowledged``
 - ``HealthAttentionStatus``
-- ``AttentionTimerDelegate``
 
 ### Remote Provisioning Message Types
 
