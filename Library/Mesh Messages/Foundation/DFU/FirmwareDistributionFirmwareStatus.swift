@@ -141,7 +141,10 @@ public struct FirmwareDistributionFirmwareStatus: StaticMeshResponse {
     /// If the Firmware Image List was already empty, the return status should
     /// be equal to the situation when at least one entry was found and deleted.
     ///
-    /// - parameter request: The ``FirmwareDistributionFirmwareDeleteAll`` message that was received.
+    /// - parameters:
+    ///   - status: The status of processing the request.
+    ///   - firmwareImageList: The list of firmware images stored on the Firmware Distribution Server
+    ///                        with the given image removed.
     public init(report status: FirmwareDistributionMessageStatus,
                 with firmwareImageList: [FirmwareId]) {
         self.status = status

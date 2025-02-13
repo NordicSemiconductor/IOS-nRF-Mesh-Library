@@ -28,6 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
+import Foundation
+
 /// A stub implementation of Health Server model.
 ///
 /// To test ``HealthFaultGet`` send a ``HealthFaultTest``
@@ -126,7 +128,7 @@ class HealthServerHandler: ModelDelegate {
                     self?.manager?.attentionTimerDelegate?.attentionTimerDidStop()
                     self?.attentionTimer = nil
                 }
-            } else if let attentionTimer = attentionTimer {
+            } else if let _ = attentionTimer {
                 manager?.attentionTimerDelegate?.attentionTimerDidStop()
                 self.attentionTimer = nil
             }
@@ -202,7 +204,7 @@ class HealthServerHandler: ModelDelegate {
                     self?.manager?.attentionTimerDelegate?.attentionTimerDidStop()
                     self?.attentionTimer = nil
                 }
-            } else if let attentionTimer = attentionTimer {
+            } else if let _ = attentionTimer {
                 manager?.attentionTimerDelegate?.attentionTimerDidStop()
                 self.attentionTimer = nil
             }
