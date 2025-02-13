@@ -48,6 +48,8 @@ public class MeshNetworkManager: NetworkParametersProvider {
     /// The delegate will receive callbacks whenever a complete
     /// Mesh Message has been received and reassembled.
     public weak var delegate: MeshNetworkDelegate?
+    /// The delegate will be created when the Attention Timer is started by a remote Node.
+    public weak var attentionTimerDelegate: AttentionTimerDelegate?
     /// The sender object should send PDUs created by the manager
     /// using any Bearer.
     public weak var transmitter: Transmitter? {
@@ -208,10 +210,71 @@ public extension MeshNetworkManager {
             return meshNetwork?.localElements ?? []
         }
         set {
-            meshNetwork?.localElements = newValue
-            networkManager?.accessLayer.reinitializePublishers()
+            guard let meshNetwork = meshNetwork,
+                  let networkManager = networkManager else { return }
+            var elements = newValue
+            // Some models, which are supported by the library, will be added automatically.
+            // Let's make sure they are not in the array.
+            elements.forEach { element in
+                element.removePrimaryElementModels()
+            }
+            // Remove all empty Elements.
+            elements = elements.filter { !$0.models.isEmpty }
+            // Add the required Models in the Primary Element.
+            if elements.isEmpty {
+                elements.append(Element(location: .unknown))
+            }
+            elements[0].addPrimaryElementModels(meshNetwork, publisher: self)
+            
+            meshNetwork.localElements = elements
+            networkManager.accessLayer.reinitializePublishers()
         }
     }
+    
+}
+
+private extension Element {
+    
+    /// This methods adds the natively supported Models to the Element.
+    ///
+    /// This method should only be called for the primary Element of the
+    /// local Node.
+    ///
+    /// - parameter meshNetwork: The mesh network object.
+    func addPrimaryElementModels(_ meshNetwork: MeshNetwork, publisher: MeshNetworkManager) {
+        guard isPrimary else { return }
+        insert(model: Model(sigModelId: .configurationServerModelId,
+                            delegate: ConfigurationServerHandler(meshNetwork)), at: 0)
+        insert(model: Model(sigModelId: .configurationClientModelId,
+                            delegate: ConfigurationClientHandler(meshNetwork)), at: 1)
+        insert(model: Model(sigModelId: .healthServerModelId,
+                            delegate: HealthServerHandler(meshNetwork, publisher)), at: 2)
+        insert(model: Model(sigModelId: .healthClientModelId,
+                            delegate: HealthClientHandler()), at: 3)
+        insert(model: Model(sigModelId: .privateBeaconClientModelId,
+                            delegate: PrivateBeaconClientHandler(meshNetwork)), at: 4)
+        insert(model: Model(sigModelId: .sarConfigurationClientModelId,
+                            delegate: SarConfigurationClientHandler(meshNetwork)), at: 5)
+        insert(model: Model(sigModelId: .remoteProvisioningClientModelId,
+                            delegate: RemoteProvisioningClientHandler(meshNetwork)), at: 6)
+        insert(model: Model(sigModelId: .sceneClientModelId,
+                            delegate: SceneClientHandler(meshNetwork)), at: 7)
+    }
+    
+    /// Removes the models that are or should be supported natively.
+    func removePrimaryElementModels() {
+        models = models.filter { model in
+            // Health models are not yet supported.
+            !model.isHealthServer &&
+            !model.isHealthClient &&
+            // The library supports Scene Client model natively.
+            !model.isSceneClient &&
+            // The models that require Device Key should not be managed by users.
+            // Some of them are supported natively in the library.
+            !model.requiresDeviceKey
+        }
+    }
+    
 }
 
 // MARK: - Provisioning

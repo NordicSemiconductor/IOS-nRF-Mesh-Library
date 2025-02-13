@@ -35,6 +35,12 @@ internal class BackgroundTimer {
     
     let interval: TimeInterval
     let repeats: Bool
+    private var startTime: Date
+    
+    var remainingTime: TimeInterval {
+        let elapsed = Date().timeIntervalSince(startTime)
+        return max(0, interval - elapsed)
+    }
     
     /// Schedules a timer that can be started from a background DispatchQueue.
     @discardableResult
@@ -49,9 +55,11 @@ internal class BackgroundTimer {
         self.interval = interval
         self.repeats = repeats
         
+        startTime = Date()
         timer = DispatchSource.makeTimerSource(queue: queue)
         timer.setEventHandler {
             block(self)
+            self.startTime = Date()
             if !repeats {
                 self.invalidate()
             }

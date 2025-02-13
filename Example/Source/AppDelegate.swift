@@ -107,6 +107,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         */
         meshNetworkManager.logger = self
+        meshNetworkManager.attentionTimerDelegate = self
         
         // Try loading the saved configuration.
         do {
@@ -228,6 +229,18 @@ extension MeshNetworkManager {
                 return (UIApplication.shared.delegate as! AppDelegate).connection
             }
         }
+    }
+    
+}
+
+extension AppDelegate: AttentionTimerDelegate {
+    
+    func attentionTimerDidStart(duration: TimeInterval) {
+        log(message: "Attention Timer started for \(duration) seconds", ofCategory: .foundationModel, withLevel: .application)
+    }
+    
+    func attentionTimerDidStop() {
+        log(message: "Attention Timer stopped", ofCategory: .foundationModel, withLevel: .application)
     }
     
 }

@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2019, Nordic Semiconductor
+* Copyright (c) 2025, Nordic Semiconductor
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -27,43 +27,25 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 */
-
 import Foundation
 
-/// A Health Fault Test is an acknowledged message used to invoke a self-test procedure of an Element.
+/// An Attention Timer Delegate is used to notify the app about the Attention Timer state.
 ///
-/// The procedure is implementation specific and may result in changing the Health Fault state of an Element.
-public struct HealthFaultTest: StaticAcknowledgedMeshMessage {
-    public static let opCode: UInt32 = 0x8032
-    public static let responseType: StaticMeshResponse.Type = HealthFaultStatus.self
-
-    /// Identifier of a specific test to be performed.
-    public let testId: UInt8
-    /// 16-bit Bluetooth assigned Company Identifier.
-    public let companyIdentifier: UInt16
+/// The Attention Timer is used to attract the user's attention to the device. It may be started and stopped remotely
+/// using ``HealthAttentionSet`` or ``HealthAttentionSetUnacknowledged`` messages
+/// sent to the main Element of the local Node.
+public protocol AttentionTimerDelegate: AnyObject {
     
-    public var parameters: Data? {
-        return Data([testId]) + companyIdentifier
-    }
-    
-    /// Creates the Health Fault Test message.
+    /// A callback called when the Attention Timer state has been started..
     ///
-    /// - parameters:
-    ///   - testId: Identifier of a specific test to be performed.
-    ///   - companyIdentifier: 16-bit Bluetooth assigned Company Identifier.
-    ///             It shall be used to resolve specific fault codes as specified in Bluetooth assigned
-    ///             Health Fault values.
-    public init(testId: UInt8, for companyIdentifier: UInt16) {
-        self.testId = testId
-        self.companyIdentifier = companyIdentifier
-    }
+    ///The app should start attracting the user's attention.
+    ///
+    /// - parameter duration: The time after which the Attention Timer will time out, in range 1-255 seconds.
+    func attentionTimerDidStart(duration: TimeInterval)
     
-    public init?(parameters: Data) {
-        guard parameters.count == 3 else {
-            return nil
-        }
-        testId = parameters[0]
-        companyIdentifier = parameters.read(fromOffset: 1)
-    }
-    
+    /// A callback called when the Attention Timer state has been stopped.
+    ///
+    /// This callback is called when the Attention Timer times out, or is stopped
+    /// remotely by a remote user.
+    func attentionTimerDidStop()
 }

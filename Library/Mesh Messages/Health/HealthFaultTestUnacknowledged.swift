@@ -43,7 +43,6 @@ public struct HealthFaultTestUnacknowledged: StaticUnacknowledgedMeshMessage {
 
     /// Identifier of a specific test to be performed.
     public let testId: UInt8
-    
     /// 16-bit Bluetooth assigned Company Identifier.
     public let companyIdentifier: UInt16
     

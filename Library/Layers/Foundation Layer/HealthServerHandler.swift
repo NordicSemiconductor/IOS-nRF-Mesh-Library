@@ -33,27 +33,30 @@
 /// To test ``HealthFaultGet`` send a ``HealthFaultTest``
 /// with an expected id of a fault set as ``HealthFaultTest/testId``.
 /// The fault will be added to the Registered Fault state.
-///
-// TODO: Currently, the Current Fault state always contains no faults.
 class HealthServerHandler: ModelDelegate {
-    weak var meshNetwork: MeshNetwork!
+    private weak var meshNetwork: MeshNetwork!
+    private weak var manager: MeshNetworkManager!
     
     /// Identifier of a most recently performed self-test/
     private var mostRecentTestId: UInt8 = 0
+    /// The Attention Timer.
+    private var attentionTimer: BackgroundTimer?
     /// The Current Fault state is empty when no warning or error condition is present.
     ///
     /// The FaultArray reflects a real-time state. This means when a fault condition arises,
     /// a corresponding record is present in the state and when a fault condition is not present,
     /// the corresponding record is removed from the state automatically.
-    private var currentFaultState: [HealthFault] = [] {
+    private var currentFaultState: Set<HealthFault> = [] {
         didSet {
-            // TODO: Changing this value should publish Health Current Status message
+            if let manager = manager {
+                publish(using: manager)
+            }
             
             // Whenever a fault condition has been present in the
             // Current Fault state, the corresponding record is added
             // to the Registered Fault state.
             if !currentFaultState.isEmpty {
-                registeredFaultState = currentFaultState
+                registeredFaultState.formUnion(currentFaultState)
             }
         }
     }
@@ -61,7 +64,7 @@ class HealthServerHandler: ModelDelegate {
     /// the corresponding record is added to the Registered Fault state.
     ///
     /// The FaultArray is cleared with a dedicated Health Fault Clear message
-    private var registeredFaultState: [HealthFault] = []
+    private var registeredFaultState: Set<HealthFault> = []
     /// The Company Identifier (CID) of Nordic Semiconductor ASA.
     private let nordicSemiconductor: UInt16 = 0x0059
     /// Returns the Company Identifier (CID) of the local Node.
@@ -77,7 +80,7 @@ class HealthServerHandler: ModelDelegate {
             return HealthCurrentStatus(
                 testId: mostRecentTestId,
                 companyIdentifier: companyIdentifier,
-                faults: currentFaultState
+                faults: currentFaultState.sorted { $0.id < $1.id }
             )
         }
         let status = compose()
@@ -88,7 +91,7 @@ class HealthServerHandler: ModelDelegate {
     
     // TODO: Add some API to emulate faults
     
-    init(_ meshNetwork: MeshNetwork) {
+    init(_ meshNetwork: MeshNetwork?, _ manager: MeshNetworkManager) {
         let types: [StaticMeshMessage.Type] = [
             HealthFaultGet.self,
             HealthFaultClear.self,
@@ -102,16 +105,32 @@ class HealthServerHandler: ModelDelegate {
             HealthPeriodSet.self,
             HealthPeriodSetUnacknowledged.self
         ]
-        messageTypes = types.toMap()
+        self.messageTypes = types.toMap()
+        self.meshNetwork = meshNetwork
+        self.manager = manager
     }
     
     func model(_ model: Model, didReceiveAcknowledgedMessage request: any AcknowledgedMeshMessage,
                from source: Address, sentTo destination: MeshAddress) throws -> any MeshResponse {
         switch request {
             
-        case is HealthAttentionGet, is HealthAttentionSet:
-            // Attention Timer isn't supported.
-            return HealthAttentionStatus()
+        case is HealthAttentionGet:
+            return HealthAttentionStatus(attentionTimer?.remainingTime ?? 0)
+            
+        case let request as HealthAttentionSet:
+            attentionTimer?.invalidate()
+            let duration = TimeInterval(request.attentionTimer)
+            if duration > 0 {
+                manager?.attentionTimerDelegate?.attentionTimerDidStart(duration: duration)
+                attentionTimer = BackgroundTimer.scheduledTimer(withTimeInterval: duration, repeats: false) { [weak self] _ in
+                    self?.manager?.attentionTimerDelegate?.attentionTimerDidStop()
+                    self?.attentionTimer = nil
+                }
+            } else if let attentionTimer = attentionTimer {
+                manager?.attentionTimerDelegate?.attentionTimerDidStop()
+                self.attentionTimer = nil
+            }
+            return HealthAttentionStatus(duration)
             
         case is HealthPeriodGet, is HealthPeriodSet:
             // This library does not support Fast Period Divisor.
@@ -126,7 +145,7 @@ class HealthServerHandler: ModelDelegate {
             return HealthFaultStatus(
                 testId: mostRecentTestId,
                 companyIdentifier: companyIdentifier,
-                faults: registeredFaultState
+                faults: registeredFaultState.sorted { $0.id < $1.id }
             )
             
         case let request as HealthFaultTest:
@@ -134,19 +153,25 @@ class HealthServerHandler: ModelDelegate {
             // When HealthFaultTest is sent with Company ID = Nordic Semiconductor (0059),
             // and the "testID" is grater than 0, the fault with the ID equal to the testID
             // is added to the Registered Fault state.
-            if request.companyIdentifier == nordicSemiconductor && request.testId > 0,
-               let fault = HealthFault.fromId(request.testId) {
-                registeredFaultState.append(fault)
-            }
-            
-            guard request.companyIdentifier == companyIdentifier else {
-                throw ModelError.invalidMessage
+            if request.companyIdentifier == nordicSemiconductor {
+                if request.testId > 0,
+                   let fault = HealthFault.fromId(request.testId) {
+                    currentFaultState.insert(fault)
+                } else {
+                    currentFaultState.removeAll()
+                }
+            } else {
+                // When the company ID isn't Nordic, check that it matches
+                // the CID of the Node.
+                guard request.companyIdentifier == companyIdentifier else {
+                    throw ModelError.invalidMessage
+                }
             }
             mostRecentTestId = request.testId
             return HealthFaultStatus(
                 testId: mostRecentTestId,
                 companyIdentifier: companyIdentifier,
-                faults: registeredFaultState
+                faults: registeredFaultState.sorted { $0.id < $1.id }
             )
             
         case let request as HealthFaultClear:
@@ -168,9 +193,22 @@ class HealthServerHandler: ModelDelegate {
                from source: Address, sentTo destination: MeshAddress) {
         switch message {
             
-        case is HealthAttentionSetUnacknowledged,
-             is HealthPeriodSetUnacknowledged:
-            // This library supports neither of these states.
+        case let request as HealthAttentionSetUnacknowledged:
+            attentionTimer?.invalidate()
+            let duration = TimeInterval(request.attentionTimer)
+            if duration > 0 {
+                manager?.attentionTimerDelegate?.attentionTimerDidStart(duration: duration)
+                attentionTimer = BackgroundTimer.scheduledTimer(withTimeInterval: duration, repeats: false) { [weak self] _ in
+                    self?.manager?.attentionTimerDelegate?.attentionTimerDidStop()
+                    self?.attentionTimer = nil
+                }
+            } else if let attentionTimer = attentionTimer {
+                manager?.attentionTimerDelegate?.attentionTimerDidStop()
+                self.attentionTimer = nil
+            }
+            
+        case is HealthPeriodSetUnacknowledged:
+            // This library supports Period divider.
             break;
             
         case let request as HealthFaultTestUnacknowledged:
@@ -178,13 +216,19 @@ class HealthServerHandler: ModelDelegate {
             // When HealthFaultTest is sent with Company ID = Nordic Semiconductor (0059),
             // and the "testID" is grater than 0, the fault with the ID equal to the testID
             // is added to the Registered Fault state.
-            if request.companyIdentifier == nordicSemiconductor && request.testId > 0,
-               let fault = HealthFault.fromId(request.testId) {
-                registeredFaultState.append(fault)
-            }
-            
-            guard request.companyIdentifier == companyIdentifier else {
-                break
+            if request.companyIdentifier == nordicSemiconductor {
+                if request.testId > 0,
+                   let fault = HealthFault.fromId(request.testId) {
+                    currentFaultState.insert(fault)
+                } else {
+                    currentFaultState.removeAll()
+                }
+            } else {
+                // When the company ID isn't Nordic, check that it matches
+                // the CID of the Node.
+                guard request.companyIdentifier == companyIdentifier else {
+                    break
+                }
             }
             mostRecentTestId = request.testId
             
