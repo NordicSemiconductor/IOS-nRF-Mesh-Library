@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name             = 'nRFMeshProvision'
   s.module_name      = 'NordicMesh'
-  s.version          = '4.2.0'
+  s.version          = '4.3.0'
   s.summary          = 'A Bluetooth Mesh library'
   s.description      = <<-DESC
   nRF Mesh is a Bluetooth mesh compliant library supporting features such as provisioning, configuration and control of Bluetooth mesh nodes.
@@ -19,6 +19,6 @@ Pod::Spec.new do |s|
   s.resource_bundles = {
      'PrivacyInfo' => ['Library/Resources/PrivacyInfo.xcprivacy']
   }
-  s.dependency 'CryptoSwift', '= 1.8.1'
+  s.dependency 'CryptoSwift', '= 1.8.4'
   s.frameworks = 'CoreBluetooth'
 end

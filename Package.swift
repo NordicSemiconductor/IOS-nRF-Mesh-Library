@@ -13,7 +13,7 @@ let package = Package(
   dependencies: [
     .package(
       url: "https://github.com/krzyzanowskim/CryptoSwift", 
-      .upToNextMinor(from: "1.8.1")
+      .upToNextMinor(from: "1.8.4")
     ),
     .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.4.3"),
   ],
