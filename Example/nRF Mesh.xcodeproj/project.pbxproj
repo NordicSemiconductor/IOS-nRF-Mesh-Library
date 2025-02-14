@@ -126,7 +126,6 @@
 		52A9C1C52313D7D80036792A /* GenericLevelViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C1C32313D7D80036792A /* GenericLevelViewCell.swift */; };
 		52A9C1C62313D7D80036792A /* GenericLevel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 52A9C1C42313D7D80036792A /* GenericLevel.xib */; };
 		52B492DB25C8A32E0096E75D /* KeyRefreshProcedure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B492DA25C8A32E0096E75D /* KeyRefreshProcedure.swift */; };
-		52B6C50F2811712D00F6E0F3 /* UITableViewCell+Disabled.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B6C50E2811712D00F6E0F3 /* UITableViewCell+Disabled.swift */; };
 		52B7F67D229829F200B0A42F /* Addresses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7F67C229829F200B0A42F /* Addresses.swift */; };
 		52B7FD6D2525B40300308673 /* NodeSceneRecallViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7FD6C2525B40300308673 /* NodeSceneRecallViewController.swift */; };
 		52BC6F4824507A5400EBEEA4 /* DisconnectCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BC6F4724507A5400EBEEA4 /* DisconnectCell.swift */; };
@@ -174,6 +173,8 @@
 		F03414832B912F95009DD792 /* LightLCModeGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03414822B912F95009DD792 /* LightLCModeGroupCell.swift */; };
 		F03414852B9131BA009DD792 /* LightLCOccupancyModeGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03414842B9131BA009DD792 /* LightLCOccupancyModeGroupCell.swift */; };
 		F03414872B91373E009DD792 /* LightLCLightOnOffGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03414862B91373E009DD792 /* LightLCLightOnOffGroupCell.swift */; };
+		F0464DAD2D5F79D200AE3684 /* UITableViewCell+Disabled.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0464DAB2D5F79D200AE3684 /* UITableViewCell+Disabled.swift */; };
+		F0464DAE2D5F79D200AE3684 /* UIViewController+Identify.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0464DAC2D5F79D200AE3684 /* UIViewController+Identify.swift */; };
 		F063C01A29C2774300A445A9 /* SelectKeysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F063C01929C2774300A445A9 /* SelectKeysViewController.swift */; };
 		F063C01D29C27EAB00A445A9 /* IntroViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F063C01C29C27EAB00A445A9 /* IntroViewController.swift */; };
 		F085C9FB29C496AB00C2DF89 /* SelectModelsForBindingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F085C9FA29C496AB00C2DF89 /* SelectModelsForBindingViewController.swift */; };
@@ -333,7 +334,6 @@
 		52A9C1C32313D7D80036792A /* GenericLevelViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLevelViewCell.swift; sourceTree = "<group>"; };
 		52A9C1C42313D7D80036792A /* GenericLevel.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GenericLevel.xib; sourceTree = "<group>"; };
 		52B492DA25C8A32E0096E75D /* KeyRefreshProcedure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyRefreshProcedure.swift; sourceTree = "<group>"; };
-		52B6C50E2811712D00F6E0F3 /* UITableViewCell+Disabled.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableViewCell+Disabled.swift"; sourceTree = "<group>"; };
 		52B7F67C229829F200B0A42F /* Addresses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Addresses.swift; sourceTree = "<group>"; };
 		52B7FD6C2525B40300308673 /* NodeSceneRecallViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeSceneRecallViewController.swift; sourceTree = "<group>"; };
 		52BC6F4724507A5400EBEEA4 /* DisconnectCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisconnectCell.swift; sourceTree = "<group>"; };
@@ -386,6 +386,8 @@
 		F03414822B912F95009DD792 /* LightLCModeGroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCModeGroupCell.swift; sourceTree = "<group>"; };
 		F03414842B9131BA009DD792 /* LightLCOccupancyModeGroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCOccupancyModeGroupCell.swift; sourceTree = "<group>"; };
 		F03414862B91373E009DD792 /* LightLCLightOnOffGroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCLightOnOffGroupCell.swift; sourceTree = "<group>"; };
+		F0464DAB2D5F79D200AE3684 /* UITableViewCell+Disabled.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableViewCell+Disabled.swift"; sourceTree = "<group>"; };
+		F0464DAC2D5F79D200AE3684 /* UIViewController+Identify.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Identify.swift"; sourceTree = "<group>"; };
 		F063C01929C2774300A445A9 /* SelectKeysViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectKeysViewController.swift; sourceTree = "<group>"; };
 		F063C01C29C27EAB00A445A9 /* IntroViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroViewController.swift; sourceTree = "<group>"; };
 		F085C9FA29C496AB00C2DF89 /* SelectModelsForBindingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectModelsForBindingViewController.swift; sourceTree = "<group>"; };
@@ -698,13 +700,14 @@
 				F09DE4C629D771F20073969A /* Model+Name.swift */,
 				529B758522428A45008F1CE7 /* UIViewController+Alert.swift */,
 				52F6AD7522BA612900F0D7DF /* UIViewController+Toast.swift */,
+				F0464DAC2D5F79D200AE3684 /* UIViewController+Identify.swift */,
 				529B7642225222E8008F1CE7 /* Address+String.swift */,
 				529B764622522D37008F1CE7 /* UITableView+EmptyView.swift */,
+				F0464DAB2D5F79D200AE3684 /* UITableViewCell+Disabled.swift */,
 				529B76482252499E008F1CE7 /* UIColor+Nordic.swift */,
 				525242DF225CBFEC0044CECB /* RangeObject+String.swift */,
 				52DA9D7124F6765C0051795B /* UInt16+Time.swift */,
 				5292F8A225021B8F00EA0F2A /* ModelIdentifiers.swift */,
-				52B6C50E2811712D00F6E0F3 /* UITableViewCell+Disabled.swift */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -1272,7 +1275,6 @@
 				5292F8A7250652BB00EA0F2A /* SceneServerGroupCell.swift in Sources */,
 				522AFFDC22BBA34900521EDC /* ActionCell.swift in Sources */,
 				52E54CE72345EDA700478F05 /* GenericState.swift in Sources */,
-				52B6C50F2811712D00F6E0F3 /* UITableViewCell+Disabled.swift in Sources */,
 				52DF5D8A228DA78A00C297C1 /* NodeViewController.swift in Sources */,
 				521215292315290F0059FB3D /* GroupControlViewController.swift in Sources */,
 				52A8EA8824E6946D004C14C7 /* HeartbeatPublicationCell.swift in Sources */,
@@ -1334,6 +1336,8 @@
 				529B7643225222E8008F1CE7 /* Address+String.swift in Sources */,
 				52248CDC251E21F000B10250 /* ExportViewController.swift in Sources */,
 				5288C2062370571100321ED3 /* ProxySelectorViewController.swift in Sources */,
+				F0464DAD2D5F79D200AE3684 /* UITableViewCell+Disabled.swift in Sources */,
+				F0464DAE2D5F79D200AE3684 /* UIViewController+Identify.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

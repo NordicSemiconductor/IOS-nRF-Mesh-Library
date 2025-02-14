@@ -31,7 +31,7 @@
 import UIKit
 import NordicMesh
 
-class NodeViewController: ProgressViewController {
+class NodeViewController: ProgressViewController, SupportsNodeIdentification {
     
     // MARK: - Public properties
     
@@ -45,6 +45,29 @@ class NodeViewController: ProgressViewController {
     // MARK: - Outlets
     
     @IBOutlet weak var configureButton: UIBarButtonItem!
+    @IBOutlet weak var identifyAction: UIBarButtonItem!
+    
+    @IBAction func identifyPressed(_ sender: UIBarButtonItem) {
+        guard let node = node,
+              let _ = node.companyIdentifier else {
+            self.presentAlert(title: "Unknown Node", message: "Before identifying, tap the Node to obtain its Composition Data.")
+            return
+        }
+        guard let healthServerModel = node.models(withSigModelId: .healthServerModelId).first,
+              !healthServerModel.boundApplicationKeys.isEmpty else {
+            self.presentAlert(title: "Identify", message: "Attention timer requires the Health Server model to be bound to at least one Application Key.\n\nWould you like to configure \(node.name ?? "the Node") automatically?") { _ in
+                Task { [weak self] in
+                    await self?.identify(node: node) ?? false
+                }
+            }
+            return
+        }
+        
+        Task { [weak self] in
+            await self?.identify(node: node) ?? false
+        }
+    }
+    
     
     // MARK: - Implementation
     
@@ -84,6 +107,8 @@ class NodeViewController: ProgressViewController {
         let localProvisioner = MeshNetworkManager.instance.meshNetwork?.localProvisioner
         guard localProvisioner?.hasConfigurationCapabilities ?? false else {
             // The Provisioner cannot sent or receive messages.
+            configureButton.isEnabled = false
+            identifyAction.isEnabled = false
             return
         }
         
@@ -96,6 +121,7 @@ class NodeViewController: ProgressViewController {
             getTtl()
         } else {
             configureButton.isEnabled = node.deviceKey != nil
+            identifyAction.isEnabled = node.deviceKey != nil
         }
     }
     
@@ -528,6 +554,7 @@ extension NodeViewController: MeshNetworkDelegate {
                     self.tableView.reloadData()
                     self.refreshControl?.endRefreshing()
                     self.configureButton.isEnabled = true
+                    self.identifyAction.isEnabled = true
                     
                     self.performSegue(withIdentifier: "reconfigure", sender: originalNode)
                     self.originalNode = nil
@@ -544,6 +571,7 @@ extension NodeViewController: MeshNetworkDelegate {
                 self.tableView.reloadRows(at: [.ttl], with: .automatic)
                 self.refreshControl?.endRefreshing()
                 self.configureButton.isEnabled = true
+                self.identifyAction.isEnabled = true
             }
             
         case is ConfigNodeResetStatus:

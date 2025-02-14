@@ -84,6 +84,8 @@ public enum MeshNetworkError: Error {
     /// Thrown when setting too small IV Index. The new IV Index must be greater than
     /// or equal to the previous one.
     case ivIndexTooSmall
+    /// Thrown when a key with the same index already exists in the network.
+    case keyIndexAlreadyExists
 }
 
 extension MeshNetworkError: LocalizedError {
@@ -111,6 +113,7 @@ extension MeshNetworkError: LocalizedError {
         case .noApplicationKey:                return NSLocalizedString("No Application Key.", comment: "")
         case .noNetwork:                       return NSLocalizedString("Mesh Network not created.", comment: "")
         case .ivIndexTooSmall:                 return NSLocalizedString("IV Index too small", comment: "")
+        case .keyIndexAlreadyExists:           return NSLocalizedString("Key with the same index already exists in the network.", comment: "")
         }
     }
     
