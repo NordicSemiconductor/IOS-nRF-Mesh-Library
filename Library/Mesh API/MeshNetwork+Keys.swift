@@ -78,6 +78,9 @@ public extension MeshNetwork {
         guard let nextIndex = index ?? nextAvailableApplicationKeyIndex else {
             throw MeshNetworkError.keyIndexOutOfRange
         }
+        guard applicationKeys[nextIndex] == nil else {
+            throw MeshNetworkError.keyIndexAlreadyExists
+        }
         let key = try ApplicationKey(name: name, index: nextIndex,
                                      key: applicationKey, boundTo: defaultNetworkKey)
         add(applicationKey: key)
@@ -145,6 +148,9 @@ public extension MeshNetwork {
     func add(networkKey: Data, withIndex index: KeyIndex? = nil, name: String) throws -> NetworkKey {
         guard let nextIndex = index ?? nextAvailableNetworkKeyIndex else {
             throw MeshNetworkError.keyIndexOutOfRange
+        }
+        guard networkKeys[nextIndex] == nil else {
+            throw MeshNetworkError.keyIndexAlreadyExists
         }
         let key = try NetworkKey(name: name, index: nextIndex, key: networkKey)
         add(networkKey: key)

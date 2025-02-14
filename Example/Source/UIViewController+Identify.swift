@@ -32,12 +32,6 @@ import NordicMesh
 
 protocol SupportsNodeIdentification {
     
-    /// Creates a new Application Key with Key Index 4095 and binds it to the given Network Key.
-    ///
-    /// - returns: The newly created Application Key, or `nil` if it could not be created
-    @discardableResult
-    func createNodeIdentificationKey(andBindToNetworkKey networkKey: NetworkKey) -> ApplicationKey?
-    
     /// Sends ``HealthAttentionSetUnacknowledged`` message to the Health Server model
     /// of the Node to make it blink for 3 seconds.
     ///
@@ -51,14 +45,14 @@ protocol SupportsNodeIdentification {
 
 extension SupportsNodeIdentification {
     
-    func createNodeIdentificationKey(andBindToNetworkKey networkKey: NetworkKey) -> ApplicationKey? {
+    func createNodeIdentificationKey(withKeyIndex index: KeyIndex, andBindToNetworkKey networkKey: NetworkKey) -> ApplicationKey? {
        let manager = MeshNetworkManager.instance
        guard let meshNetwork = manager.meshNetwork else {
            return nil
        }
        do {
            let key = try meshNetwork.add(applicationKey: Data.random128BitKey(),
-                                         withIndex: 4095,
+                                         withIndex: index,
                                          name: "Node Identification Key")
            try key.bind(to: networkKey)
            if manager.save() {
@@ -87,12 +81,14 @@ extension SupportsNodeIdentification {
         if healthServerModel.boundApplicationKeys.isEmpty {
             // If the Node does not know any Application Keys, create one and bind it.
             // For security reasons we don't want to send any of the existing keys,
-            // instead we will create a new one with Key Index 4095.
+            // instead we will create a new one with Key Index (4095 - networkKey.index).
             if node.applicationKeys.isEmpty {
                 // Let's take the Network Key known to the Node.
                 let networkKey = node.networkKeys.first!
-                guard let nodeIdentificationKey = meshNetwork.applicationKeys[KeyIndex(4095)] ??
-                                                  createNodeIdentificationKey(andBindToNetworkKey: networkKey) else {
+                let expectedIndex = KeyIndex(4095 - networkKey.index)
+                guard let nodeIdentificationKey = meshNetwork.applicationKeys.boundTo(networkKey)[expectedIndex] ??
+                        createNodeIdentificationKey(withKeyIndex: expectedIndex, andBindToNetworkKey: networkKey) else {
+                    // Abort if another key with this key index already exists, but is bound to a different Network Key.
                     return false
                 }
                 
