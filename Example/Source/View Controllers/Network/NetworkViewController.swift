@@ -67,7 +67,7 @@ private struct Section {
     }
 }
 
-class NetworkViewController: UITableViewController, UISearchBarDelegate {
+class NetworkViewController: UITableViewController, UISearchBarDelegate, SupportsNodeIdentification {
     private var sections: [Section] = []
     
     // MARK: - Search Bar
@@ -205,70 +205,6 @@ class NetworkViewController: UITableViewController, UISearchBarDelegate {
         action.backgroundColor = .systemYellow
         return UISwipeActionsConfiguration(actions: [action])
     }
-}
-
-private extension NetworkViewController {
-    
-    @discardableResult
-    func createApplicationKey() -> Bool {
-        let manager = MeshNetworkManager.instance
-        guard let meshNetwork = manager.meshNetwork else {
-            return false
-        }
-        do {
-            try meshNetwork.add(applicationKey: Data.random128BitKey(), name: "App Key 1")
-            return manager.save()
-        } catch {
-            return false
-        }
-    }
-    
-    func identify(node: Node) async -> Bool {
-        let manager = MeshNetworkManager.instance
-        guard let meshNetwork = manager.meshNetwork else {
-            return false
-        }
-        
-        // Check if the Health Server model exist (it is mandatory)
-        // and has at least one bound Application Key.
-        guard let healthServerModel = node.models(withSigModelId: .healthServerModelId).first else {
-            return false
-        }
-        
-        // Check if the mesh network has at least one Application Key.
-        if meshNetwork.applicationKeys.isEmpty {
-            guard createApplicationKey() else {
-                return false
-            }
-        }
-        guard let applicationKey = meshNetwork.applicationKeys.first else {
-            return false
-        }
-        
-        // Check if the Node has at least one Application Key.
-        if node.applicationKeys.isEmpty {
-            let request = ConfigAppKeyAdd(applicationKey: applicationKey)
-            let response = try? await manager.send(request, to: node) as? ConfigAppKeyStatus
-            guard response?.status == .success else {
-                return false
-            }
-        }
-        
-        // Check if the Health Server model is bound to at least one Application Key.
-        if healthServerModel.boundApplicationKeys.isEmpty {
-            guard let request = ConfigModelAppBind(applicationKey: applicationKey, to: healthServerModel) else {
-                return false
-            }
-            let response = try? await manager.send(request, to: node) as? ConfigModelAppStatus
-            guard response?.status == .success else {
-                return false
-            }
-        }
-        
-        try? await manager.send(HealthAttentionSetUnacknowledged(3.0), to: healthServerModel)
-        return true
-    }
-    
 }
 
 private extension NetworkViewController {

@@ -31,7 +31,7 @@
 import UIKit
 import NordicMesh
 
-class NodeViewController: ProgressViewController {
+class NodeViewController: ProgressViewController, SupportsNodeIdentification {
     
     // MARK: - Public properties
     
@@ -45,6 +45,29 @@ class NodeViewController: ProgressViewController {
     // MARK: - Outlets
     
     @IBOutlet weak var configureButton: UIBarButtonItem!
+    @IBOutlet weak var identifyAction: UIBarButtonItem!
+    
+    @IBAction func identifyPressed(_ sender: UIBarButtonItem) {
+        guard let node = node,
+              let _ = node.companyIdentifier else {
+            self.presentAlert(title: "Unknown Node", message: "Before identifying, tap the Node to obtain its Composition Data.")
+            return
+        }
+        guard let healthServerModel = node.models(withSigModelId: .healthServerModelId).first,
+              !healthServerModel.boundApplicationKeys.isEmpty else {
+            self.presentAlert(title: "Identify", message: "Attention timer requires the Health Server model to be bound to at least one Application Key.\n\nWould you like to configure \(node.name ?? "the Node") automatically?") { _ in
+                Task { [weak self] in
+                    await self?.identify(node: node) ?? false
+                }
+            }
+            return
+        }
+        
+        Task { [weak self] in
+            await self?.identify(node: node) ?? false
+        }
+    }
+    
     
     // MARK: - Implementation
     
