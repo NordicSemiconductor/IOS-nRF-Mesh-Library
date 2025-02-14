@@ -169,7 +169,7 @@ class NetworkViewController: UITableViewController, UISearchBarDelegate, Support
     }
     
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return true
+        return MeshNetworkManager.instance.meshNetwork?.localProvisioner?.hasConfigurationCapabilities == true
     }
     
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {

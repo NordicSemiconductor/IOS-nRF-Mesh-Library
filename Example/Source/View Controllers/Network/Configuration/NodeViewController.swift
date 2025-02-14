@@ -107,6 +107,8 @@ class NodeViewController: ProgressViewController, SupportsNodeIdentification {
         let localProvisioner = MeshNetworkManager.instance.meshNetwork?.localProvisioner
         guard localProvisioner?.hasConfigurationCapabilities ?? false else {
             // The Provisioner cannot sent or receive messages.
+            configureButton.isEnabled = false
+            identifyAction.isEnabled = false
             return
         }
         
@@ -119,6 +121,7 @@ class NodeViewController: ProgressViewController, SupportsNodeIdentification {
             getTtl()
         } else {
             configureButton.isEnabled = node.deviceKey != nil
+            identifyAction.isEnabled = node.deviceKey != nil
         }
     }
     
@@ -551,6 +554,7 @@ extension NodeViewController: MeshNetworkDelegate {
                     self.tableView.reloadData()
                     self.refreshControl?.endRefreshing()
                     self.configureButton.isEnabled = true
+                    self.identifyAction.isEnabled = true
                     
                     self.performSegue(withIdentifier: "reconfigure", sender: originalNode)
                     self.originalNode = nil
@@ -567,6 +571,7 @@ extension NodeViewController: MeshNetworkDelegate {
                 self.tableView.reloadRows(at: [.ttl], with: .automatic)
                 self.refreshControl?.endRefreshing()
                 self.configureButton.isEnabled = true
+                self.identifyAction.isEnabled = true
             }
             
         case is ConfigNodeResetStatus:
