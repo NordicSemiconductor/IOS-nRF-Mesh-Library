@@ -246,9 +246,10 @@ internal class AccessLayer {
         networkManager.upperTransportLayer.send(pdu, withTtl: initialTtl, using: keySet)
     }
     
-    /// Sends the ``ConfigMessage`` to the given destination. The message is encrypted
-    /// using the Device Key which belongs to the target Node, and first
-    /// Network Key known to this Node.
+    /// Sends the ``ConfigMessage`` to the given destination.
+    ///
+    /// The message is encrypted using the Device Key which belongs to the target Node
+    /// and the given Network Key.
     ///
     /// - parameters:
     ///   - message:     The Mesh Config Message to send.
@@ -256,19 +257,14 @@ internal class AccessLayer {
     ///   - destination: The destination address. This must be a Unicast Address.
     ///   - initialTtl:  The initial TTL (Time To Live) value of the message.
     ///                  If `nil`, the default Node TTL will be used.
+    ///   - networkKey:  The Network Key to sign the message with.
     func send(_ message: ConfigMessage,
               from element: Element, to destination: Address,
-              withTtl initialTtl: UInt8?) {
+              withTtl initialTtl: UInt8?,
+              using networkKey: NetworkKey) {
         guard let networkManager = networkManager,
-              let node = meshNetwork.node(withAddress: destination),
-              var networkKey = node.networkKeys.first else {
+              let node = meshNetwork.node(withAddress: destination) else {
             return
-        }
-        // ConfigNetKeyDelete must not be signed using the key that is being deleted.
-        if let netKeyDelete = message as? ConfigNetKeyDelete,
-           netKeyDelete.networkKeyIndex == networkKey.index {
-            // Existence of another Network Key was checked in MeshNetworkManager.send(...).
-            networkKey = node.networkKeys.last!
         }
         guard let keySet = DeviceKeySet(networkKey: networkKey, node: node) else {
             return

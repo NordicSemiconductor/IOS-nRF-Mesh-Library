@@ -271,7 +271,7 @@ internal class NetworkManager {
         }
     }
     
-    /// Encrypts the message with the Device Key and the first Network Key
+    /// Encrypts the message with the Device Key and the given Network Key
     /// known to the target device, and sends to the given destination address.
     ///
     /// This method does not send nor return PDUs to be sent. Instead,
@@ -286,9 +286,11 @@ internal class NetworkManager {
     ///   - destination:   The destination address.
     ///   - initialTtl:    The initial TTL (Time To Live) value of the message.
     ///                    If `nil`, the default Node TTL will be used.
+    ///   - networkKey:    The Network Key to sign the message.
     func send(_ configMessage: UnacknowledgedConfigMessage,
               from element: Element, to destination: Address,
-              withTtl initialTtl: UInt8?) async throws {
+              withTtl initialTtl: UInt8?,
+              using networkKey: NetworkKey) async throws {
         let meshAddress = MeshAddress(destination)
         return try await withTaskCancellationHandler {
             return try await withCheckedThrowingContinuation { continuation in
@@ -305,7 +307,7 @@ internal class NetworkManager {
                 }
                 guard !busy else { return }
                 accessLayer.send(configMessage, from: element, to: destination,
-                                 withTtl: initialTtl)
+                                 withTtl: initialTtl, using: networkKey)
             }
         } onCancel: {
             cancel(messageWithHandler: MessageHandle(for: configMessage, sentFrom: element.unicastAddress,
@@ -313,10 +315,10 @@ internal class NetworkManager {
         }
     }
     
-    /// Encrypts the message with the Device Key and the first Network Key
+    /// Encrypts the message with the Device Key and the given Network Key
     /// known to the target device, and sends to the given destination address.
     ///
-    /// The ``ConfigNetKeyDelete`` will be signed with a different Network Key
+    /// The ``ConfigNetKeyDelete`` must be signed with a different Network Key
     /// that is removing.
     ///
     /// This method does not send nor return PDUs to be sent. Instead,
@@ -331,9 +333,11 @@ internal class NetworkManager {
     ///   - destination:   The destination address.
     ///   - initialTtl:    The initial TTL (Time To Live) value of the message.
     ///                    If `nil`, the default Node TTL will be used.
+    ///   - networkKey:    The Network Key to sign the message.
     func send(_ configMessage: AcknowledgedConfigMessage,
               from element: Element, to destination: Address,
-              withTtl initialTtl: UInt8?) async throws -> ConfigResponse {
+              withTtl initialTtl: UInt8?,
+              using networkKey: NetworkKey) async throws -> ConfigResponse {
         let meshAddress = MeshAddress(destination)
         return try await withTaskCancellationHandler {
             return try await withCheckedThrowingContinuation { continuation in
@@ -353,7 +357,7 @@ internal class NetworkManager {
                 }
                 guard !busy else { return }
                 accessLayer.send(configMessage, from: element, to: destination,
-                                 withTtl: initialTtl)
+                                 withTtl: initialTtl, using: networkKey)
             }
         } onCancel: {
             cancel(messageWithHandler: MessageHandle(for: configMessage, sentFrom: element.unicastAddress,
