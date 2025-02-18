@@ -72,7 +72,7 @@ class LightLCOccupancyModeGroupCell: ModelGroupCell {
 private extension LightLCOccupancyModeGroupCell {
     
     func sendLightLCOccupancyModeMessage(turnOn: Bool) {
-        let label = turnOn ? "Enabling occupancy sensor binging..." : "Disabling occupancy sensor binging..."
+        let label = turnOn ? "Enabling occupancy sensor binding..." : "Disabling occupancy sensor binding..."
         delegate?.send(LightLCOccupancyModeSetUnacknowledged(turnOn),
                        description: label, using: applicationKey)
     }

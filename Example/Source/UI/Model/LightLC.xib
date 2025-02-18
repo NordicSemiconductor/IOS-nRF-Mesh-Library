@@ -315,7 +315,6 @@
                         </buttonConfiguration>
                         <connections>
                             <action selector="lightOffTapped:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="rWU-Cj-7LK"/>
-                            <action selector="modeOffTapped:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="0Mf-Ut-yEI"/>
                         </connections>
                     </button>
                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fhZ-dL-eDy">
@@ -326,7 +325,6 @@
                         </buttonConfiguration>
                         <connections>
                             <action selector="lightOnTapped:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="bKS-em-OgT"/>
-                            <action selector="modeOnTapped:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="BS2-ll-5cJ"/>
                         </connections>
                     </button>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zVi-xk-Rum">
@@ -394,7 +392,6 @@
                         </buttonConfiguration>
                         <connections>
                             <action selector="lightStatusReadTapped:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="q3o-GK-0zZ"/>
-                            <action selector="occupancyModeReadTapped:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="s3A-Uv-I6L"/>
                         </connections>
                     </button>
                 </subviews>
