@@ -72,7 +72,7 @@ class LightLCLightOnOffGroupCell: ModelGroupCell {
 private extension LightLCLightOnOffGroupCell {
     
     func sendLightLCLightOnOffMessage(turnOn: Bool) {
-        let label = turnOn ? "Enabling occupancy sensor binging..." : "Disabling occupancy sensor binging..."
+        let label = turnOn ? "Turning ON..." : "Turning OFF..."
         delegate?.send(LightLCLightOnOffSetUnacknowledged(turnOn),
                        description: label, using: applicationKey)
     }
