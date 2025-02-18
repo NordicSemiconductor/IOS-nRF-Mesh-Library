@@ -616,7 +616,7 @@ public extension UInt16 {
     static let lightLCClientModelId: UInt16 = 0x1311
     // BLOB Transfer
     static let blobTransferServer: UInt16 = 0x1400
-    static let blonTransferClient: UInt16 = 0x1401
+    static let blobTransferClient: UInt16 = 0x1401
     // Device Firmware Update
     static let firmwareUpdateServer: UInt16 = 0x1402
     static let firmwareUpdateClient: UInt16 = 0x1403

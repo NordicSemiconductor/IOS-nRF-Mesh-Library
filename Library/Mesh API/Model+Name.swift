@@ -120,7 +120,7 @@ public extension Model {
         case .lightLCClientModelId: return "Light LC Client"
         // BLOB Transfer
         case .blobTransferServer: return "BLOB Transfer Server"
-        case .blonTransferClient: return "BLOB Transfer Client"
+        case .blobTransferClient: return "BLOB Transfer Client"
         // Device Firmware Update (DFU), added in Mesh Protocol 1.1
         case .firmwareUpdateServer: return "Firmware Update Server"
         case .firmwareUpdateClient: return "Firmware Update Client"
