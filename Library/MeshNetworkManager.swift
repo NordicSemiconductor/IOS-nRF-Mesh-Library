@@ -407,6 +407,25 @@ public extension MeshNetworkManager {
             print("Error: TTL value \(initialTtl!) is invalid")
             throw AccessError.invalidTtl
         }
+        // A message may be sent to a local Node, or using a GATT Proxy Node.
+        // Check if the message can be relayed to the destination using a Proxy Node.
+        // The Proxy Node must know the Network Key; otherwise it will not be able to
+        // decode the destination and decrement TTL.
+        if destination.address.isUnicast {
+            guard localNode.contains(elementWithAddress: destination.address) ||
+                  proxyFilter.proxy?.knows(networkKey: applicationKey.boundNetworkKey) == true else {
+                print("Error: The GATT Proxy Node is not connected or it cannot decrypt \(applicationKey.boundNetworkKey)")
+                throw AccessError.cannotRelay
+            }
+        } else {
+            if let proxy = proxyFilter.proxy {
+                if !proxy.knows(networkKey: applicationKey.boundNetworkKey) {
+                    logger?.w(.proxy, "\(proxy.name ?? "The GATT Proxy Node") cannot relay messages using \(applicationKey.boundNetworkKey), message will be sent only to the local Node.")
+                }
+            } else {
+                logger?.w(.proxy, "No GATT Proxy connected, message will be sent only to the local Node.")
+            }
+        }
         try await networkManager.send(message, from: source, to: destination,
                                       withTtl: initialTtl, using: applicationKey)
     }
@@ -444,8 +463,9 @@ public extension MeshNetworkManager {
     /// Encrypts the message with the given Application Key and the Network Key
     /// bound to it, and sends it to the Node to which the Model belongs to.
     ///
-    /// The key must be bound to the given Model. If the key is not provided, the first bound
-    /// Application Key bound to the target Model will be used.
+    /// The key must be bound to the given Model. If the key is not provided, the first
+    /// Application Key bound to the target Model, which is also known by the GATT Proxy
+    /// Node, will be used.
     ///
     /// The method completes when the message has been sent or an error occurred.
     ///
@@ -474,14 +494,34 @@ public extension MeshNetworkManager {
               from localElement: Element? = nil, to model: Model,
               withTtl initialTtl: UInt8? = nil,
               using applicationKey: ApplicationKey? = nil) async throws {
-        guard let element = model.parentElement else {
+        guard let element = model.parentElement,
+              let node = element.parentNode else {
             print("Error: Element does not belong to a Node")
             throw AccessError.invalidDestination
         }
-        guard let applicationKey = applicationKey ?? model.boundApplicationKeys.first,
-              model.isBoundTo(applicationKey) else {
-            print("Error: Model is not bound to the Application Key")
-            throw AccessError.modelNotBoundToAppKey
+        // If the Application Key is given, check if it is bound to the Model.
+        if let applicationKey = applicationKey {
+            guard model.isBoundTo(applicationKey) else {
+                print("Error: Model is not bound to the Application Key")
+                throw AccessError.invalidKey
+            }
+        } else {
+            // If not, make sure there are any bound Application Keys.
+            guard !model.boundApplicationKeys.isEmpty else {
+                print("Error: No Application Key bound to the Model")
+                throw AccessError.modelNotBoundToAppKey
+            }
+        }
+        // Check if the Application Key is known to the Proxy Node, or
+        // the message is sent to the local Node.
+        guard let applicationKey = applicationKey ?? model.boundApplicationKeys
+            .first(where: {
+                // Unless the message is sent locally, take only keys known to the Proxy Node.
+                node.isLocalProvisioner || proxyFilter.proxy?.knows(networkKey: $0.boundNetworkKey) == true
+            }),
+            node.isLocalProvisioner || proxyFilter.proxy?.knows(networkKey: applicationKey.boundNetworkKey) == true else {
+            print("Error: No GATT Proxy connected or no common Network Keys")
+            throw AccessError.cannotRelay
         }
         try await send(message, from: localElement, to: MeshAddress(element.unicastAddress),
                        withTtl: initialTtl, using: applicationKey)
@@ -490,8 +530,9 @@ public extension MeshNetworkManager {
     /// Encrypts the message with the given Application Key and the Network Key
     /// bound to it, and sends it to the Node to which the Model belongs to.
     ///
-    /// The key must be bound to the given Model. If the key is not provided, the first bound
-    /// Application Key bound to the target Model will be used.
+    /// The key must be bound to the given Model. If the key is not provided, the first
+    /// Application Key bound to the target Model, which is also known by the GATT Proxy
+    /// Node, will be used.
     ///
     /// The method completes when the message has been sent or an error occurred.
     ///
@@ -530,8 +571,9 @@ public extension MeshNetworkManager {
     /// Encrypts the message with the given Application Key and the Network Key
     /// bound to it, and sends it to the Node to which the Model belongs to.
     ///
-    /// The key must be bound to the given Model. If the key is not provided, the first bound
-    /// Application Key bound to the target Model will be used.
+    /// The key must be bound to the given Model. If the key is not provided, the first
+    /// Application Key bound to the target Model, which is also known by the GATT Proxy
+    /// Node, will be used.
     ///
     /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
     /// the message has been sent successfully or a problem occurred.
@@ -564,14 +606,34 @@ public extension MeshNetworkManager {
             print("Error: Mesh Network not created")
             throw MeshNetworkError.noNetwork
         }
-        guard let element = model.parentElement else {
+        guard let element = model.parentElement,
+              let node = element.parentNode else {
             print("Error: Element does not belong to a Node")
             throw AccessError.invalidDestination
         }
-        guard let applicationKey = applicationKey ?? model.boundApplicationKeys.first,
-              model.isBoundTo(applicationKey) else {
-            print("Error: Model is not bound to the Application Key")
-            throw AccessError.modelNotBoundToAppKey
+        // If the Application Key is given, check if it is bound to the Model.
+        if let applicationKey = applicationKey {
+            guard model.isBoundTo(applicationKey) else {
+                print("Error: Model is not bound to the Application Key")
+                throw AccessError.invalidKey
+            }
+        } else {
+            // If not, make sure there are any bound Application Keys.
+            guard !model.boundApplicationKeys.isEmpty else {
+                print("Error: No Application Key bound to the Model")
+                throw AccessError.modelNotBoundToAppKey
+            }
+        }
+        // Check if the Application Key is known to the Proxy Node, or
+        // the message is sent to the local Node.
+        guard let applicationKey = applicationKey ?? model.boundApplicationKeys
+              .first(where: {
+                  // Unless the message is sent locally, take only keys known to the Proxy Node.
+                  node.isLocalProvisioner || proxyFilter.proxy?.knows(networkKey: $0.boundNetworkKey) == true
+              }),
+              node.isLocalProvisioner || proxyFilter.proxy?.knows(networkKey: applicationKey.boundNetworkKey) == true else {
+            print("Error: No GATT Proxy connected or no common Network Keys")
+            throw AccessError.cannotRelay
         }
         guard let localNode = meshNetwork.localProvisioner?.node,
               let source = localElement ?? localNode.elements.first else {
@@ -594,8 +656,9 @@ public extension MeshNetworkManager {
     /// Encrypts the message with the given Application Key and the Network Key
     /// bound to it, and sends it to the Node to which the Model belongs to.
     ///
-    /// The key must be bound to the given Model. If the key is not provided, the first bound
-    /// Application Key bound to the target Model will be used.
+    /// The key must be bound to the given Model. If the key is not provided, the first
+    /// Application Key bound to the target Model, which is also known by the GATT Proxy
+    /// Node, will be used.
     ///
     /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
     /// the message has been sent successfully or a problem occurred.
@@ -648,7 +711,7 @@ public extension MeshNetworkManager {
     ///                  If `nil`, the default Node TTL will be used.
     ///   - networkKey: The Network Key to sign the message. The Node must
     ///                 know this key. If `nil`, the first Network Key known to the
-    ///                 Node will be used.
+    ///                 Node, which is also known by the GATT Proxy Node, will be used.
     /// - throws: This method throws when the mesh network has not been created,
     ///           the local Node does not have configuration capabilities
     ///           (no Unicast Address assigned), or the destination address
@@ -676,10 +739,22 @@ public extension MeshNetworkManager {
             print("Error: Unknown destination Node")
             throw AccessError.invalidDestination
         }
-        guard let networkKey = networkKey ?? node.networkKeys.first,
-              node.knows(networkKey: networkKey) else {
-            print("Fatal Error: The target Node does not know the Network Key")
-            throw AccessError.invalidDestination
+        if let networkKey = networkKey {
+            guard node.knows(networkKey: networkKey) else {
+                print("Error: Node does not know the given Network Key")
+                throw AccessError.invalidKey
+            }
+        }
+        // Check if the Network Key is known to the Proxy Node, or
+        // the message is sent to the local Node.
+        guard let networkKey = networkKey ?? node.networkKeys
+              .first(where: {
+                    // Unless the message is sent locally, take only keys known to the Proxy Node.
+                    node.isLocalProvisioner || proxyFilter.proxy?.knows(networkKey: $0) == true
+              }),
+              node.isLocalProvisioner || proxyFilter.proxy?.knows(networkKey: networkKey) == true else {
+            print("Error: No GATT Proxy connected or no common Network Keys")
+            throw AccessError.cannotRelay
         }
         guard let _ = node.deviceKey else {
             print("Error: Node's Device Key is unknown")
@@ -708,7 +783,7 @@ public extension MeshNetworkManager {
     ///                 If `nil`, the default Node TTL will be used.
     ///   - networkKey: The Network Key to sign the message. The Node must
     ///                 know this key. If `nil`, the first Network Key known to the
-    ///                 Node will be used.
+    ///                 Node, which is also known by the GATT Proxy Node, will be used.
     /// - throws: This method throws when the mesh network has not been created,
     ///           the local Node does not have configuration capabilities
     ///           (no Unicast Address assigned), or the destination address
@@ -722,7 +797,7 @@ public extension MeshNetworkManager {
                               withTtl: initialTtl, using: networkKey)
     }
     
-    /// Sends Configuration Message to the Node with given destination Address
+    /// Sends a Configuration Message to the Node with given destination Address
     /// and returns received response.
     ///
     /// The `destination` must be a Unicast Address, otherwise the method
@@ -738,9 +813,10 @@ public extension MeshNetworkManager {
     ///   - destination: The destination Unicast Address.
     ///   - initialTtl:  The initial TTL (Time To Live) value of the message.
     ///                  If `nil`, the default Node TTL will be used.
-    ///   - networkKey: The Network Key to sign the message. The Node must
-    ///                 know this key. If `nil`, the first Network Key known to the
-    ///                 Node (that is not being deleted) will be used.
+    ///   - networkKey:  The Network Key to sign the message. The Node must
+    ///                  know this key. If `nil`, the first Network Key known to the
+    ///                  Node (that is not being deleted), which is also known by the
+    ///                  GATT Proxy Node, will be used.
     /// - throws: This method throws when the mesh network has not been created,
     ///           the local Node does not have configuration capabilities
     ///           (no Unicast Address assigned), or the destination address
@@ -770,18 +846,31 @@ public extension MeshNetworkManager {
             print("Error: Unknown destination Node")
             throw AccessError.invalidDestination
         }
+        if let networkKey = networkKey {
+            guard node.knows(networkKey: networkKey) else {
+                print("Error: Node does not know the given Network Key")
+                throw AccessError.invalidKey
+            }
+        }
+        guard let networkKey = networkKey ?? node.networkKeys
+              .first(where: {
+                    // A key that is being deleted cannot be used to send a message.
+                    (message as? ConfigNetKeyDelete)?.networkKeyIndex != $0.index &&
+                    // Unless the message is sent locally, take only keys known to the Proxy Node.
+                    (node.isLocalProvisioner || proxyFilter.proxy?.knows(networkKey: $0) == true)
+              }),
+              node.isLocalProvisioner || proxyFilter.proxy?.knows(networkKey: networkKey) == true else {
+            if let configNetKeyDelete = message as? ConfigNetKeyDelete,
+               networkKey == nil || networkKey?.index == configNetKeyDelete.networkKeyIndex {
+                print("Error: Cannot delete the last Network Key or a key used to secure the message")
+                throw AccessError.cannotDelete
+            }
+            print("Error: No GATT Proxy connected or no common Network Keys")
+            throw AccessError.cannotRelay
+        }
         guard let _ = node.deviceKey else {
             print("Error: Node's Device Key is unknown")
             throw AccessError.noDeviceKey
-        }
-        // Take the Network Key given by the user, or the first Network Key
-        // known to the Node that is not being deleted, and check whether it
-        // is not being deleted.
-        guard let networkKey = networkKey ?? node.networkKeys.first(where: { (message as? ConfigNetKeyDelete)?.networkKeyIndex != $0.index }),
-              node.knows(networkKey: networkKey),
-              (message as? ConfigNetKeyDelete)?.networkKeyIndex != networkKey.index else {
-            print("Error: Cannot delete a Network Key using given key")
-            throw AccessError.cannotDelete
         }
         guard initialTtl == nil || initialTtl! <= 127 else {
             print("Error: TTL value \(initialTtl!) is invalid")
@@ -805,7 +894,8 @@ public extension MeshNetworkManager {
     ///                 If `nil`, the default Node TTL will be used.
     ///   - networkKey: The Network Key to sign the message. The Node must
     ///                 know this key. If `nil`, the first Network Key known to the
-    ///                 Node will be used.
+    ///                 Node (that is not being deleted), which is also known by the
+    ///                 GATT Proxy Node, will be used.
     /// - throws: This method throws when the mesh network has not been created,
     ///           the local Node does not have configuration capabilities
     ///           (no Unicast Address assigned), or the destination address

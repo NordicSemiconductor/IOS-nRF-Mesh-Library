@@ -39,7 +39,7 @@ public extension Node {
     
     /// The Unicast Address range assigned to all Elements of the Node.
     ///
-    /// The address range is continous and starts with ``primaryUnicastAddress``
+    /// The address range is continuous and starts with ``primaryUnicastAddress``
     /// and ends with ``lastUnicastAddress``.
     var unicastAddressRange: AddressRange {
         return AddressRange(from: primaryUnicastAddress, elementsCount: elementsCount)
