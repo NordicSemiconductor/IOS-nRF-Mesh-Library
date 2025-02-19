@@ -256,7 +256,7 @@ private extension LightLCViewCell {
         
         var message: MeshMessage!
         
-        if modeAckSwitch.isOn {
+        if occupancyModeAckSwitch.isOn {
             message = LightLCOccupancyModeSet(on)
         } else {
             message = LightLCOccupancyModeSetUnacknowledged(on)
