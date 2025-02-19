@@ -214,9 +214,10 @@ public class ProxyFilter {
     /// By default the Proxy Filter is set to ``ProxyFilerType/acceptList``.
     public private(set) var type: ProxyFilerType = .acceptList
     
-    /// The connected Proxy Node. This may be `nil` if the connected Node is unknown
-    /// to the provisioner, that is if a Node with the proxy Unicast Address was not found
-    /// in the local mesh network database. It is also `nil` if no proxy is connected.
+    /// The connected Proxy Node.
+    ///
+    /// This is `nil` if no GATT Proxy Node is connected, or the connected Node is
+    /// not in the local mesh configuration database.
     public private(set) var proxy: Node?
     
     // MARK: - Implementation
