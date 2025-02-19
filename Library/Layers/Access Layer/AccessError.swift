@@ -45,14 +45,22 @@ public enum AccessError: Error {
     /// Thrown when the destination Address is not known and the
     /// library cannot determine the Network Key to use.
     case invalidDestination
+    /// Thrown when the target Node cannot decrypt messages
+    /// sent with the given key.
+    case invalidKey
     /// Thrown when trying to send a message from a Model that
     /// does not have any Application Key bound to it.
     case modelNotBoundToAppKey
     /// Thrown when trying to send a config message to a Node of
     /// which the Device Key is not known.
     case noDeviceKey
+    /// Thrown when a message is sent that is encrypted with a Network Key
+    /// that is not known to the connected GATT Proxy, or no GATT Proxy is
+    /// connected.
+    case cannotRelay
     /// Error thrown when the Provisioner is trying to delete
-    /// the last Network Key from the Node.
+    /// the last Network Key from the Node, or a key that is used
+    /// to secure the message.
     case cannotDelete
     /// Error thrown when trying to send a message to an address
     /// for which another message is already being sent.
@@ -70,11 +78,13 @@ extension AccessError: LocalizedError {
         switch self {
         case .invalidSource:         return NSLocalizedString("Local Provisioner does not have Unicast Address specified.", comment: "access")
         case .invalidElement:        return NSLocalizedString("Element does not belong to the local Node.", comment: "access")
-        case .invalidTtl:            return NSLocalizedString("Invalid TTL", comment: "access")
-        case .invalidDestination:    return NSLocalizedString("The destination address is invalid.", comment: "access")
+        case .invalidTtl:            return NSLocalizedString("Invalid TTL.", comment: "access")
+        case .invalidDestination:    return NSLocalizedString("The destination address is invalid or unknown.", comment: "access")
+        case .invalidKey:            return NSLocalizedString("The target Node cannot decrypt messages sent with the specified key.", comment: "access")
         case .modelNotBoundToAppKey: return NSLocalizedString("No Application Key bound to the given Model.", comment: "access")
-        case .noDeviceKey:           return NSLocalizedString("Unknown Device Key", comment: "access")
-        case .cannotDelete:          return NSLocalizedString("Cannot delete the last Network Key.", comment: "access")
+        case .noDeviceKey:           return NSLocalizedString("Unknown Device Key.", comment: "access")
+        case .cannotRelay:           return NSLocalizedString("No GATT Proxy Node is connected or the connected Proxy does not know the Network Key used to secure this message.", comment: "access")
+        case .cannotDelete:          return NSLocalizedString("Cannot delete the last Network Key or a key used to secure the message.", comment: "access")
         case .busy:                  return NSLocalizedString("Unable to send a message to specified address. Another transfer in progress.", comment: "access")
         case .timeout:               return NSLocalizedString("Request timed out.", comment: "access")
         case .cancelled:             return NSLocalizedString("Message cancelled.", comment: "access")
