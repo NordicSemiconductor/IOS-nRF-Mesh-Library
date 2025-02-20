@@ -30,6 +30,8 @@
 
 import Foundation
 
+/// The Light LC Light OnOff Status is an unacknowledged message used to report the
+/// Light LC State Machine Light OnOff state of an Element.
 public struct LightLCLightOnOffStatus: StaticMeshResponse, TransitionStatusMessage {
     public static var opCode: UInt32 = 0x829C
     
@@ -43,6 +45,8 @@ public struct LightLCLightOnOffStatus: StaticMeshResponse, TransitionStatusMessa
     }
     
     /// The present value of the Light LC Light OnOff state.
+    ///
+    /// If enabled, the Light LC State Machine state is equal to Off or equal to Standby.
     public let isOn: Bool
     /// The target value of the Light LC Light OnOff state.
     public let targetState: Bool?

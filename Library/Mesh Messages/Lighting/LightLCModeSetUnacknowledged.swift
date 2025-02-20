@@ -30,6 +30,8 @@
 
 import Foundation
 
+/// The Light LC Mode Set Unacknowledged is an unacknowledged message used to set the
+/// Light LC Mode state of an Element.
 public struct LightLCModeSetUnacknowledged: StaticUnacknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8293
     
@@ -43,7 +45,7 @@ public struct LightLCModeSetUnacknowledged: StaticUnacknowledgedMeshMessage {
     
     /// Creates the Light LC Mode Set Unacknowledged message.
     ///
-    /// - parameter status: The present value of the Light LC Mode state.
+    /// - parameter status: The target value of the Light LC Mode state.
     public init(_ status: Bool) {
         self.controllerStatus = status
     }

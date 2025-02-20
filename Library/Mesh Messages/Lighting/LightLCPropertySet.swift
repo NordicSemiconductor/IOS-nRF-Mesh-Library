@@ -30,6 +30,31 @@
 
 import Foundation
 
+/// The Light LC Property Set is an acknowledged message used to set the
+/// Light LC Property state of an Element.
+///
+/// The property can be one of:
+/// * ``DeviceProperty/lightControlAmbientLuxLevelOn``
+/// * ``DeviceProperty/lightControlAmbientLuxLevelProlong``
+/// * ``DeviceProperty/lightControlAmbientLuxLevelStandby``
+/// * ``DeviceProperty/lightControlLightnessOn``
+/// * ``DeviceProperty/lightControlLightnessProlong``
+/// * ``DeviceProperty/lightControlLightnessStandby``
+/// * ``DeviceProperty/lightControlRegulatorAccuracy``
+/// * ``DeviceProperty/lightControlRegulatorKid``
+/// * ``DeviceProperty/lightControlRegulatorKiu``
+/// * ``DeviceProperty/lightControlRegulatorKpd``
+/// * ``DeviceProperty/lightControlRegulatorKpu``
+/// * ``DeviceProperty/lightControlTimeFade``
+/// * ``DeviceProperty/lightControlTimeFadeOn``
+/// * ``DeviceProperty/lightControlTimeFadeStandbyAuto``
+/// * ``DeviceProperty/lightControlTimeFadeStandbyManual``
+/// * ``DeviceProperty/lightControlTimeOccupancyDelay``
+/// * ``DeviceProperty/lightControlTimeProlong``
+/// * ``DeviceProperty/lightControlTimeRunOn``
+///
+/// The response to the Light LC Property Set message is a ``LightLCPropertyStatus``
+/// message.
 public struct LightLCPropertySet: StaticAcknowledgedMeshMessage, SensorPropertyMessage {
     public static let opCode: UInt32 = 0x62
     public static let responseType: StaticMeshResponse.Type = LightLCPropertyStatus.self
@@ -43,6 +68,26 @@ public struct LightLCPropertySet: StaticAcknowledgedMeshMessage, SensorPropertyM
     }
     
     /// Creates a Light LC Property Set message.
+    ///
+    /// The property can be one of:
+    /// * ``DeviceProperty/lightControlAmbientLuxLevelOn``
+    /// * ``DeviceProperty/lightControlAmbientLuxLevelProlong``
+    /// * ``DeviceProperty/lightControlAmbientLuxLevelStandby``
+    /// * ``DeviceProperty/lightControlLightnessOn``
+    /// * ``DeviceProperty/lightControlLightnessProlong``
+    /// * ``DeviceProperty/lightControlLightnessStandby``
+    /// * ``DeviceProperty/lightControlRegulatorAccuracy``
+    /// * ``DeviceProperty/lightControlRegulatorKid``
+    /// * ``DeviceProperty/lightControlRegulatorKiu``
+    /// * ``DeviceProperty/lightControlRegulatorKpd``
+    /// * ``DeviceProperty/lightControlRegulatorKpu``
+    /// * ``DeviceProperty/lightControlTimeFade``
+    /// * ``DeviceProperty/lightControlTimeFadeOn``
+    /// * ``DeviceProperty/lightControlTimeFadeStandbyAuto``
+    /// * ``DeviceProperty/lightControlTimeFadeStandbyManual``
+    /// * ``DeviceProperty/lightControlTimeOccupancyDelay``
+    /// * ``DeviceProperty/lightControlTimeProlong``
+    /// * ``DeviceProperty/lightControlTimeRunOn``
     ///
     /// - parameters:
     ///   - property: The Light LC Property.

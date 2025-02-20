@@ -30,6 +30,10 @@
 
 import Foundation
 
+/// Light CTL Get is an acknowledged message used to get the Light CTL Lightness
+/// state and the Light CTL Temperature state of an Element.
+///
+/// The response to the Light CTL Get message is a ``LightCTLStatus`` message.
 public struct LightCTLGet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x825D
     public static let responseType: StaticMeshResponse.Type = LightCTLStatus.self
@@ -38,6 +42,7 @@ public struct LightCTLGet: StaticAcknowledgedMeshMessage {
         return nil
     }
     
+    /// Creates the Light CTL Get message.
     public init() {
         // Empty
     }

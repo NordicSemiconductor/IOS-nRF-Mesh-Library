@@ -30,6 +30,11 @@
 
 import Foundation
 
+/// Light LC Light OnOff Get is an acknowledged message used to get the
+/// Light LC State Machine Light OnOff state of an Element.
+///
+/// Light LC State Machine Light OnOff is a read-only binary state that represents
+/// the state of a Light LC State Machine.
 public struct LightLCLightOnOffGet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8299
     public static let responseType: StaticMeshResponse.Type = LightLCLightOnOffStatus.self
@@ -38,6 +43,7 @@ public struct LightLCLightOnOffGet: StaticAcknowledgedMeshMessage {
         return nil
     }
     
+    /// Creates the Light LC Light OnOff Get message.
     public init() {
         // Empty
     }

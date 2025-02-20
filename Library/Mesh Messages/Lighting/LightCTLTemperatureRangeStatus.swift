@@ -30,6 +30,11 @@
 
 import Foundation
 
+/// Light CTL Temperature Range Status is an unacknowledged message used
+/// to report the Light CTL Temperature Range state of an Element.
+///
+/// The Light CTL Temperature Range state determines the minimum and maximum
+/// color temperatures of tunable white light an Element is capable of emitting. 
 public struct LightCTLTemperatureRangeStatus: StaticMeshResponse, RangeStatusMessage {
     public static let opCode: UInt32 = 0x8263
     

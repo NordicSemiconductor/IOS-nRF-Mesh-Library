@@ -30,6 +30,28 @@
 
 import Foundation
 
+/// The Light LC Property Set Unacknowledged is an unacknowledged message used to
+/// set the Light LC Property state of an Element.
+///
+/// The property can be one of:
+/// * ``DeviceProperty/lightControlAmbientLuxLevelOn``
+/// * ``DeviceProperty/lightControlAmbientLuxLevelProlong``
+/// * ``DeviceProperty/lightControlAmbientLuxLevelStandby``
+/// * ``DeviceProperty/lightControlLightnessOn``
+/// * ``DeviceProperty/lightControlLightnessProlong``
+/// * ``DeviceProperty/lightControlLightnessStandby``
+/// * ``DeviceProperty/lightControlRegulatorAccuracy``
+/// * ``DeviceProperty/lightControlRegulatorKid``
+/// * ``DeviceProperty/lightControlRegulatorKiu``
+/// * ``DeviceProperty/lightControlRegulatorKpd``
+/// * ``DeviceProperty/lightControlRegulatorKpu``
+/// * ``DeviceProperty/lightControlTimeFade``
+/// * ``DeviceProperty/lightControlTimeFadeOn``
+/// * ``DeviceProperty/lightControlTimeFadeStandbyAuto``
+/// * ``DeviceProperty/lightControlTimeFadeStandbyManual``
+/// * ``DeviceProperty/lightControlTimeOccupancyDelay``
+/// * ``DeviceProperty/lightControlTimeProlong``
+/// * ``DeviceProperty/lightControlTimeRunOn``
 public struct LightLCPropertySetUnacknowledged: StaticUnacknowledgedMeshMessage, SensorPropertyMessage {
     public static let opCode: UInt32 = 0x63
     
@@ -42,6 +64,26 @@ public struct LightLCPropertySetUnacknowledged: StaticUnacknowledgedMeshMessage,
     }
     
     /// Creates a Light LC Property Set Unacknowledged message.
+    ///
+    /// The property can be one of:
+    /// * ``DeviceProperty/lightControlAmbientLuxLevelOn``
+    /// * ``DeviceProperty/lightControlAmbientLuxLevelProlong``
+    /// * ``DeviceProperty/lightControlAmbientLuxLevelStandby``
+    /// * ``DeviceProperty/lightControlLightnessOn``
+    /// * ``DeviceProperty/lightControlLightnessProlong``
+    /// * ``DeviceProperty/lightControlLightnessStandby``
+    /// * ``DeviceProperty/lightControlRegulatorAccuracy``
+    /// * ``DeviceProperty/lightControlRegulatorKid``
+    /// * ``DeviceProperty/lightControlRegulatorKiu``
+    /// * ``DeviceProperty/lightControlRegulatorKpd``
+    /// * ``DeviceProperty/lightControlRegulatorKpu``
+    /// * ``DeviceProperty/lightControlTimeFade``
+    /// * ``DeviceProperty/lightControlTimeFadeOn``
+    /// * ``DeviceProperty/lightControlTimeFadeStandbyAuto``
+    /// * ``DeviceProperty/lightControlTimeFadeStandbyManual``
+    /// * ``DeviceProperty/lightControlTimeOccupancyDelay``
+    /// * ``DeviceProperty/lightControlTimeProlong``
+    /// * ``DeviceProperty/lightControlTimeRunOn`` 
     ///
     /// - parameters:
     ///   - property: The Light LC Property.

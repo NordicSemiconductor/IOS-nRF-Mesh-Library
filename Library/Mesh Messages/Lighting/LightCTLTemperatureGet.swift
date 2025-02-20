@@ -30,6 +30,14 @@
 
 import Foundation
 
+/// Light CTL Temperature Get is an acknowledged message used to get the
+/// Light CTL Temperature state of an Element.
+///
+/// The Light CTL Temperature state determines the color temperature of
+/// tunable white light emitted by an Element, in Kelvin.
+///
+/// The response to the Light CTL Temperature Get message is a
+/// ``LightCTLTemperatureStatus`` message.
 public struct LightCTLTemperatureGet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8261
     public static let responseType: StaticMeshResponse.Type = LightCTLTemperatureStatus.self
@@ -38,6 +46,7 @@ public struct LightCTLTemperatureGet: StaticAcknowledgedMeshMessage {
         return nil
     }
     
+    /// Creates the Light CTL Temperature Get message.
     public init() {
         // Empty
     }

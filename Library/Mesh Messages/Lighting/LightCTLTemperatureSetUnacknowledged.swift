@@ -30,6 +30,11 @@
 
 import Foundation
 
+/// The Light CTL Temperature Set Unacknowledged is an unacknowledged message
+/// used to set the Light CTL Temperature state and the Light CTL Delta UV state of an Element.
+///
+/// The Light CTL Temperature state determines the color temperature of
+/// tunable white light emitted by an Element, in Kelvin. 
 public struct LightCTLTemperatureSetUnacknowledged: StaticUnacknowledgedMeshMessage, TransactionMessage, TransitionMessage {
     public static let opCode: UInt32 = 0x8265
     

@@ -30,6 +30,11 @@
 
 import Foundation
 
+/// Light CTL Temperature Status is an unacknowledged message used to report
+/// the Light CTL Temperature and Light CTL Delta UV state of an Element.
+///
+/// The Light CTL Temperature state determines the color temperature of
+/// tunable white light emitted by an Element, in Kelvin. 
 public struct LightCTLTemperatureStatus: StaticMeshResponse, TransitionStatusMessage {
     public static var opCode: UInt32 = 0x8266
     

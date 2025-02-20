@@ -30,6 +30,14 @@
 
 import Foundation
 
+/// Light LC Occupancy Mode Get is an acknowledged message used to get the
+/// Light LC Occupancy Mode state of an Element.
+///
+/// Light LC Occupancy Mode is a binary state that determines if a controller transitions
+/// from a standby state when an occupancy sensor reports occupancy.
+///
+/// The response to the Light LC Occupancy Mode Get message is a ``LightLCOccupancyModeStatus``
+/// message.
 public struct LightLCOccupancyModeGet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8295
     public static let responseType: StaticMeshResponse.Type = LightLCOccupancyModeStatus.self
@@ -38,6 +46,7 @@ public struct LightLCOccupancyModeGet: StaticAcknowledgedMeshMessage {
         return nil
     }
     
+    /// Creates the Light LC Occupancy Mode Get message.
     public init() {
         // Empty
     }

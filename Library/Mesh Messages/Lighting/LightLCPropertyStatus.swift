@@ -30,6 +30,8 @@
 
 import Foundation
 
+/// The Light LC Property Status is an unacknowledged message used to report the
+/// Light LC Property state of an Element.
 public struct LightLCPropertyStatus: StaticMeshResponse, SensorPropertyMessage {
     public static let opCode: UInt32 = 0x64
     
@@ -42,6 +44,26 @@ public struct LightLCPropertyStatus: StaticMeshResponse, SensorPropertyMessage {
     }
     
     /// Creates a Light LC Property Status message.
+    ///
+    /// The property can be one of:
+    /// * ``DeviceProperty/lightControlAmbientLuxLevelOn``
+    /// * ``DeviceProperty/lightControlAmbientLuxLevelProlong``
+    /// * ``DeviceProperty/lightControlAmbientLuxLevelStandby``
+    /// * ``DeviceProperty/lightControlLightnessOn``
+    /// * ``DeviceProperty/lightControlLightnessProlong``
+    /// * ``DeviceProperty/lightControlLightnessStandby``
+    /// * ``DeviceProperty/lightControlRegulatorAccuracy``
+    /// * ``DeviceProperty/lightControlRegulatorKid``
+    /// * ``DeviceProperty/lightControlRegulatorKiu``
+    /// * ``DeviceProperty/lightControlRegulatorKpd``
+    /// * ``DeviceProperty/lightControlRegulatorKpu``
+    /// * ``DeviceProperty/lightControlTimeFade``
+    /// * ``DeviceProperty/lightControlTimeFadeOn``
+    /// * ``DeviceProperty/lightControlTimeFadeStandbyAuto``
+    /// * ``DeviceProperty/lightControlTimeFadeStandbyManual``
+    /// * ``DeviceProperty/lightControlTimeOccupancyDelay``
+    /// * ``DeviceProperty/lightControlTimeProlong``
+    /// * ``DeviceProperty/lightControlTimeRunOn``  
     ///
     /// - parameters:
     ///   - property: The Light LC Property.
