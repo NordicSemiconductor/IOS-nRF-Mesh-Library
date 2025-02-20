@@ -83,7 +83,7 @@ public struct LightLCPropertySetUnacknowledged: StaticUnacknowledgedMeshMessage,
     /// * ``DeviceProperty/lightControlTimeFadeStandbyManual``
     /// * ``DeviceProperty/lightControlTimeOccupancyDelay``
     /// * ``DeviceProperty/lightControlTimeProlong``
-    /// * ``DeviceProperty/lightControlTimeRunOn`` 
+    /// * ``DeviceProperty/lightControlTimeRunOn``
     ///
     /// - parameters:
     ///   - property: The Light LC Property.

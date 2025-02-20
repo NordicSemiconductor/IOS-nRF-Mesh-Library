@@ -63,7 +63,7 @@ public struct LightLCPropertyStatus: StaticMeshResponse, SensorPropertyMessage {
     /// * ``DeviceProperty/lightControlTimeFadeStandbyManual``
     /// * ``DeviceProperty/lightControlTimeOccupancyDelay``
     /// * ``DeviceProperty/lightControlTimeProlong``
-    /// * ``DeviceProperty/lightControlTimeRunOn``  
+    /// * ``DeviceProperty/lightControlTimeRunOn``
     ///
     /// - parameters:
     ///   - property: The Light LC Property.
