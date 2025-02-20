@@ -30,6 +30,12 @@
 
 import Foundation
 
+/// The Light LC Mode Status is an unacknowledged message used to report the
+/// Light LC Mode state of an Element.
+///
+/// Light LC Mode is a binary state that determines the mode of operation of the controller,
+/// and the state of the binding between the Light LC Linear Output state and the
+/// Light Lightness Linear state. 
 public struct LightLCModeStatus: StaticMeshResponse {
     public static let opCode: UInt32 = 0x8294
     

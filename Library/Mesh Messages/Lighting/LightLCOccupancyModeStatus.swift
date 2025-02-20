@@ -30,6 +30,11 @@
 
 import Foundation
 
+/// The LC Occupancy Mode Status is an unacknowledged message used to report the
+/// Light LC Occupancy Mode state of an Element.
+///
+/// Light LC Occupancy Mode is a binary state that determines if a controller transitions
+/// from a standby state when an occupancy sensor reports occupancy.
 public struct LightLCOccupancyModeStatus: StaticMeshResponse {
     public static let opCode: UInt32 = 0x8298
     

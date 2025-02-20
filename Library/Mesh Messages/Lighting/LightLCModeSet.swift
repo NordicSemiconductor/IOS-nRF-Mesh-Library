@@ -30,6 +30,17 @@
 
 import Foundation
 
+/// The Light LC Mode Set is an acknowledged message used to set the Light LC Mode
+/// state of an Element.
+///
+/// Light LC Mode is a binary state that determines the mode of operation of the controller,
+/// and the state of the binding between the Light LC Linear Output state and the
+/// Light Lightness Linear state.
+///
+/// After a change of the Light Lightness Linear state that is not a result of the binding
+/// with the bound Light LC Linear Output state, the controller is turned off automatically.
+///
+/// The response to the Light LC Mode Set is ``LightLCModeStatus`` message.
 public struct LightLCModeSet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8292
     public static let responseType: StaticMeshResponse.Type = LightLCModeStatus.self
@@ -44,7 +55,7 @@ public struct LightLCModeSet: StaticAcknowledgedMeshMessage {
     
     /// Creates the Light LC Mode Set message.
     ///
-    /// - parameter status: The present value of the Light LC Mode state.
+    /// - parameter status: The target value of the Light LC Mode state.
     public init(_ status: Bool) {
         self.controllerStatus = status
     }

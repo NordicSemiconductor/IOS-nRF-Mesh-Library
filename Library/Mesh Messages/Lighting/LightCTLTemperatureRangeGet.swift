@@ -30,6 +30,11 @@
 
 import Foundation
 
+/// The Light CTL Temperature Range Get is an acknowledged message used to get
+/// the Light CTL Temperature Range state of an Element.
+///
+/// The response to the Light CTL Temperature Range Get message is a
+/// ``LightCTLTemperatureRangeStatus`` message.
 public struct LightCTLTemperatureRangeGet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8262
     public static let responseType: StaticMeshResponse.Type = LightCTLTemperatureRangeStatus.self
@@ -38,6 +43,7 @@ public struct LightCTLTemperatureRangeGet: StaticAcknowledgedMeshMessage {
         return nil
     }
     
+    /// Creates the Light CTL Temperature Range Get message.
     public init() {
         // Empty
     }

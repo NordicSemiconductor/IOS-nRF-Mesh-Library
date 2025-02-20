@@ -30,6 +30,11 @@
 
 import Foundation
 
+/// Light CTL Temperature Range Set Unacknowledged is an unacknowledged message
+/// used to set the Light CTL Temperature Range state of an Element.
+///
+/// The Light CTL Temperature Range state determines the minimum and maximum
+/// color temperatures of tunable white light an Element is capable of emitting.
 public struct LightCTLTemperatureRangeSetUnacknowledged: StaticUnacknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x826C
     

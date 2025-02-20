@@ -30,6 +30,11 @@
 
 import Foundation
 
+/// The Light LC Light OnOff Set Unacknowledged is an unacknowledged message
+/// used to set the Light LC Light OnOff state of an Element.
+///
+/// This message works only then the Light LC Mode is enabled. In that case, it
+/// will transition the state of Light LC State Machine to Fade On or Fade Standby Manual. 
 public struct LightLCLightOnOffSetUnacknowledged: StaticUnacknowledgedMeshMessage, TransactionMessage, TransitionMessage {
     public static let opCode: UInt32 = 0x829B
     

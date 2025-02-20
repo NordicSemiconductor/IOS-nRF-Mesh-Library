@@ -30,6 +30,13 @@
 
 import Foundation
 
+/// The Light LC Light OnOff Set is an acknowledged message used to set the
+/// Light LC Light OnOff state of an Element.
+///
+/// This message works only then the Light LC Mode is enabled. In that case, it
+/// will transition the state of Light LC State Machine to Fade On or Fade Standby Manual.
+///
+/// The response to the Light LC Light OnOff Set message is a ``LightLCLightOnOffStatus`` message.
 public struct LightLCLightOnOffSet: StaticAcknowledgedMeshMessage, TransactionMessage, TransitionMessage {
     public static let opCode: UInt32 = 0x829A
     public static let responseType: StaticMeshResponse.Type = LightLCLightOnOffStatus.self

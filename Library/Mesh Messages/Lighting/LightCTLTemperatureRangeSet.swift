@@ -30,6 +30,13 @@
 
 import Foundation
 
+/// Light CTL Temperature Range Set is an acknowledged message used to set the
+/// Light CTL Temperature Range state of an Element.
+///
+/// The Light CTL Temperature Range state determines the minimum and maximum
+/// color temperatures of tunable white light an Element is capable of emitting.
+///
+/// The response to the Light CTL Temperature Range Set message is a ``LightCTLTemperatureRangeStatus`` message.
 public struct LightCTLTemperatureRangeSet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x826B
     public static let responseType: StaticMeshResponse.Type = LightCTLTemperatureRangeStatus.self

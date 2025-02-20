@@ -84,23 +84,74 @@ public enum DeviceProperty: Sendable {
     case inputVoltageRangeSpecification
     case inputVoltageRippleSpecification
     case inputVoltageStatistics
+    /// The Light LC Ambient LuxLevel On is a state representing the Ambient LuxLevel
+    /// level that determines if the controller transitions from the Light Control Standby state.
     case lightControlAmbientLuxLevelOn
+    /// The Light LC Ambient LuxLevel Prolong is a state representing the required
+    /// Ambient LuxLevel level in the Prolong state.
     case lightControlAmbientLuxLevelProlong
+    /// The Light LC Ambient LuxLevel Standby is a state representing the required
+    /// Ambient LuxLevel level in the Standby state.
     case lightControlAmbientLuxLevelStandby
+    /// The Light LC Lightness On is a lightness state that determines the perceptive
+    /// light lightness at the Light LC State Machine Run state.
     case lightControlLightnessOn
+    /// The Light LC Lightness Prolong is a lightness state that determines the light
+    /// lightness at the Light LC State Machine Prolong state.
     case lightControlLightnessProlong
+    /// The Light LC Lightness Standby is a lightness state that determines the
+    /// light lightness at the Light LC State Machine Standby state.
     case lightControlLightnessStandby
+    /// The Light LC Regulator Accuracy is a state representing the percentage
+    /// accuracy of the Light LC PI Feedback Regulator.
     case lightControlRegulatorAccuracy
+    /// The Light LC Regulator Kid is a float32 state representing the integral coefficient
+    /// that determines the integral part of the equation defining the output of the
+    /// Light LC PI Feedback Regulator, when Light LC Ambient LuxLevel is greater
+    /// than or equal to the value of the LuxLevel Out state.
     case lightControlRegulatorKid
+    /// The Light LC Regulator Kiu is a float32 state representing the integral coefficient
+    /// that determines the integral part of the equation defining the output of the
+    /// Light LC PI Feedback Regulator, when Light LC Ambient LuxLevel is less than
+    /// LuxLevel Out.
     case lightControlRegulatorKiu
+    /// The Light LC Regulator Kpd is a `float32` state representing the proportional
+    /// coefficient that determines the proportional part of the equation defining the
+    /// output of the Light LC PI Feedback Regulator, when Light LC Ambient LuxLevel
+    /// is greater than or equal to the value of the LuxLevel Out state.
     case lightControlRegulatorKpd
+    /// The Light LC Regulator Kpu is a `float32` state representing the proportional
+    /// coefficient that determines the proportional part of the equation defining the
+    /// output of the Light LC PI Feedback Regulator, when Light LC Ambient LuxLevel
+    /// is less than the value of the LuxLevel Out state.
     case lightControlRegulatorKpu
+    /// The Light LC Time Fade is a timing state that determines the time the controlled
+    /// lights fade from the level determined by the Light LC Lightness On state to the
+    /// level determined by the Light Lightness Prolong state
     case lightControlTimeFade
+    /// The Light LC Time Fade On is a timing state that determines the time the controlled
+    /// lights fade to the level determined by the Light LC Lightness On state.
     case lightControlTimeFadeOn
+    /// The Light LC Time Fade Standby Auto is a timing state that determines the time
+    /// the controlled lights fade from the level determined by the
+    /// Light LC Lightness Prolong state to the level determined by the
+    /// Light LC Lightness Standby state when the transition is automatic.
     case lightControlTimeFadeStandbyAuto
+    /// The Light LC Time Fade Standby Manual is a timing state that determines the time
+    /// the controlled lights take to fade to the level determined by the
+    /// Light LC Lightness Standby state when the transition is triggered by a change in the
+    /// Light LC Light OnOff state.
     case lightControlTimeFadeStandbyManual
+    /// The Light LC Time Occupancy Delay is a timing state that determines the delay for
+    /// changing the Light LC Occupancy state upon receiving a Sensor Status message
+    /// from an occupancy sensor
     case lightControlTimeOccupancyDelay
+    /// The Light LC Time Prolong is a timing state that determines the time the controlled
+    /// lights stay at the level determined by the Light LC Lightness Prolong state.
     case lightControlTimeProlong
+    /// The Light LC Time Run On is a timing state that determines the time the controlled
+    /// lights stay at the level determined by the Light LC Lightness On state since the
+    /// occupancy input stopped detecting active occupancy information.
     case lightControlTimeRunOn
     case lumenMaintenanceFactor
     case luminousEfficacy
@@ -605,7 +656,7 @@ extension DeviceProperty: CustomDebugStringConvertible {
         case .averageOutputCurrent: return "Average Output Current"
         case .averageOutputVoltage: return "Average Output Voltage"
         case .centerBeamIntensityAtFullPower: return "Center Beam Intensity At Full Power"
-        case .chromaticityTolerance: return "Chromaticity T olerance"
+        case .chromaticityTolerance: return "Chromaticity Tolerance"
         case .colorRenderingIndexR9: return "Color Rendering Index R9"
         case .colorRenderingIndexRa: return "Color Rendering Index Ra"
         case .deviceAppearance: return "Device Appearance"
@@ -784,7 +835,7 @@ extension DeviceProperty: CustomDebugStringConvertible {
 
 internal extension DeviceProperty {
     
-    /// Lenght of the characteristic value in bytes.
+    /// Length of the characteristic value in bytes.
     ///
     /// If the characteristic is not yet supported, this is `nil`.
     var valueLength: Int? {
@@ -924,7 +975,7 @@ internal extension DeviceProperty {
     
     /// Parses the characteristic from given data.
     ///
-    /// If the given length is 0, the returned characterisitc will be returned with default
+    /// If the given length is 0, the returned characteristic will be returned with default
     /// value (false, 0, etc.).
     ///
     /// - important: This method does not ensure that the length of data is sufficient.
@@ -1798,7 +1849,7 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
     
 }
 
-// MARK: - Helper extenstions - decoding
+// MARK: - Helper extensions - decoding
 
 private extension NumberFormatter {
     
@@ -1833,7 +1884,7 @@ private extension BinaryInteger {
     ///
     /// - parameters:
     ///   - range: The range the value is to be located in.
-    ///   - resolution: The convertion resolution.
+    ///   - resolution: The conversion resolution.
     /// - returns: The value as Float.
     func toDecimal(withRange range: ClosedRange<Decimal>? = nil,
                    withResolution resolution: Decimal = 1.0) -> Decimal {
@@ -1845,7 +1896,7 @@ private extension BinaryInteger {
     ///
     /// - parameters:
     ///   - range: The range the value is to be located in.
-    ///   - resolution: The convertion resolution.
+    ///   - resolution: The conversion resolution.
     ///   - unknownValue: The unknown value.
     /// - returns: The value as Float, or `nil` if it matches the unknown value.
     func toDecimal<T: FixedWidthInteger>(withRange range: ClosedRange<Decimal>? = nil,
@@ -1866,11 +1917,11 @@ private extension BinaryInteger {
     
 }
 
-// MARK: - Helper extenstions - encoding
+// MARK: - Helper extensions - encoding
 
 private extension Bool {
     
-    /// Returns the value as 1-octed Data.
+    /// Returns the value as 1-octet Data.
     ///
     /// - returns: The Data representation of Bool.
     func toData() -> Data {
@@ -1953,7 +2004,7 @@ private extension Decimal {
     /// - parameters:
     ///   - numberOfBytes: Resulting number of bytes.
     ///   - range: The range the value is to be located in.
-    ///   - resolution: The convertion resolution.
+    ///   - resolution: The conversion resolution.
     /// - returns: The Data.
     func toData(ofLength numberOfBytes: Int,
                 withRange range: ClosedRange<Decimal>? = nil,
@@ -1973,7 +2024,7 @@ private extension Optional where Wrapped == Decimal {
     /// - parameters:
     ///   - numberOfBytes: Resulting number of bytes.
     ///   - range: The range the value is to be located in.
-    ///   - resolution: The convertion resolution.
+    ///   - resolution: The conversion resolution.
     ///   - unknownValue: The unknown value.
     /// - returns: The Data.
     func toData(ofLength numberOfBytes: Int,
@@ -1995,7 +2046,7 @@ private extension Optional where Wrapped == ValidDecimal {
     /// - parameters:
     ///   - numberOfBytes: Resulting number of bytes.
     ///   - range: The range the value is to be located in.
-    ///   - resolution: The convertion resolution.
+    ///   - resolution: The conversion resolution.
     ///   - invalidValue: The invalid value.
     ///   - unknownValue: The unknown value.
     /// - returns: The Data.

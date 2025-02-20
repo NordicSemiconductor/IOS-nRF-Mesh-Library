@@ -30,6 +30,11 @@
 
 import Foundation
 
+/// The Light LC Occupancy Mode Set Unacknowledged is an unacknowledged message used to
+/// set the Light LC Occupancy Mode state of an Element.
+///
+/// Light LC Occupancy Mode is a binary state that determines if a controller transitions
+/// from a standby state when an occupancy sensor reports occupancy. 
 public struct LightLCOccupancyModeSetUnacknowledged: StaticUnacknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8297
     
@@ -43,7 +48,7 @@ public struct LightLCOccupancyModeSetUnacknowledged: StaticUnacknowledgedMeshMes
     
     /// Creates the Light LC Occupancy Mode Set Unacknowledged message.
     ///
-    /// - parameter mode: The present value of the Light LC Occupancy Mode state.
+    /// - parameter mode: The target value of the Light LC Occupancy Mode state.
     public init(_ mode: Bool) {
         self.occupancyMode = mode
     }

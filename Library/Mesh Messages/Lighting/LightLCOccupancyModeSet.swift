@@ -30,6 +30,14 @@
 
 import Foundation
 
+/// The Light LC Occupancy Mode Set is an acknowledged message used to set the
+/// Light LC Occupancy Mode state of an Element.
+///
+/// Light LC Occupancy Mode is a binary state that determines if a controller transitions
+/// from a standby state when an occupancy sensor reports occupancy.
+///
+/// The response to the Light LC Occupancy Mode Set message is a ``LightLCOccupancyModeStatus``
+/// message.
 public struct LightLCOccupancyModeSet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8296
     public static let responseType: StaticMeshResponse.Type = LightLCOccupancyModeStatus.self
@@ -44,7 +52,7 @@ public struct LightLCOccupancyModeSet: StaticAcknowledgedMeshMessage {
     
     /// Creates the Light LC Occupancy Mode Set Unacknowledged message.
     ///
-    /// - parameter mode: The present value of the Light LC Occupancy Mode state.
+    /// - parameter mode: The target value of the Light LC Occupancy Mode state.
     public init(_ mode: Bool) {
         self.occupancyMode = mode
     }

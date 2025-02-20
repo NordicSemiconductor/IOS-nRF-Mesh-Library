@@ -30,6 +30,10 @@
 
 import Foundation
 
+/// Light CTL Set is an acknowledged message used to set the Light CTL Lightness state,
+/// Light CTL Temperature state, and the Light CTL Delta UV state of an Element.
+///
+/// The response to the Light CTL Set message is a ``LightCTLStatus`` message.
 public struct LightCTLSet: StaticAcknowledgedMeshMessage, TransactionMessage, TransitionMessage {
     public static let opCode: UInt32 = 0x825E
     public static let responseType: StaticMeshResponse.Type = LightCTLStatus.self
@@ -45,8 +49,19 @@ public struct LightCTLSet: StaticAcknowledgedMeshMessage, TransactionMessage, Tr
     }
     
     /// The target value of the Light CTL Lightness state.
+    ///
+    /// The Light CTL Lightness state represents the light output of an Element
+    /// that is relative to the maximum possible light output of the Element.
+    ///
+    /// The values for the lightness state are defined in the following table:
+    /// - 0x0000 - light is not emitted by the element.
+    /// - 0x0001 - 0xFFFE - The light lightness of a light emitted by the element.
+    /// - 0xFFFF - the highest lightness of a light emitted by the element.
     public let lightness: UInt16
     /// The target value of the Light CTL Temperature state.
+    ///
+    /// The Light CTL Temperature state determines the color temperature of
+    /// tunable white light emitted by an Element.
     ///
     /// Valid values are in range 0x0320-0x4320 (800-20000K).
     public let temperature: UInt16

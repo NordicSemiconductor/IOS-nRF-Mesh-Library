@@ -30,6 +30,14 @@
 
 import Foundation
 
+/// The Light CTL Temperature Set is an acknowledged message used to set the
+/// Light CTL Temperature state and the Light CTL Delta UV state of an Element.
+///
+/// The Light CTL Temperature state determines the color temperature of
+/// tunable white light emitted by an Element, in Kelvin. 
+///
+/// The response to the Light CTL Temperature Set message is a
+/// ``LightCTLTemperatureStatus`` message.
 public struct LightCTLTemperatureSet: StaticAcknowledgedMeshMessage, TransactionMessage, TransitionMessage {
     public static let opCode: UInt32 = 0x8264
     public static let responseType: StaticMeshResponse.Type = LightCTLTemperatureStatus.self

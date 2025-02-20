@@ -30,6 +30,30 @@
 
 import Foundation
 
+/// Light LC Property Get is an acknowledged message used to get the Light LC Property
+/// state of an Element.
+///
+/// The property can be one of:
+/// * ``DeviceProperty/lightControlAmbientLuxLevelOn``
+/// * ``DeviceProperty/lightControlAmbientLuxLevelProlong``
+/// * ``DeviceProperty/lightControlAmbientLuxLevelStandby``
+/// * ``DeviceProperty/lightControlLightnessOn``
+/// * ``DeviceProperty/lightControlLightnessProlong``
+/// * ``DeviceProperty/lightControlLightnessStandby``
+/// * ``DeviceProperty/lightControlRegulatorAccuracy``
+/// * ``DeviceProperty/lightControlRegulatorKid``
+/// * ``DeviceProperty/lightControlRegulatorKiu``
+/// * ``DeviceProperty/lightControlRegulatorKpd``
+/// * ``DeviceProperty/lightControlRegulatorKpu``
+/// * ``DeviceProperty/lightControlTimeFade``
+/// * ``DeviceProperty/lightControlTimeFadeOn``
+/// * ``DeviceProperty/lightControlTimeFadeStandbyAuto``
+/// * ``DeviceProperty/lightControlTimeFadeStandbyManual``
+/// * ``DeviceProperty/lightControlTimeOccupancyDelay``
+/// * ``DeviceProperty/lightControlTimeProlong``
+/// * ``DeviceProperty/lightControlTimeRunOn`` 
+///
+/// The response to the Light LC Property Get message is a ``LightLCPropertyStatus`` message.
 public struct LightLCPropertyGet: StaticAcknowledgedMeshMessage, SensorPropertyMessage {
     public static let opCode: UInt32 = 0x829D
     public static let responseType: StaticMeshResponse.Type = LightLCPropertyStatus.self
@@ -40,6 +64,29 @@ public struct LightLCPropertyGet: StaticAcknowledgedMeshMessage, SensorPropertyM
         return Data() + property.id
     }
     
+    /// Creates the Light LC Property Get message.
+    ///
+    /// The property can be one of:
+    /// * ``DeviceProperty/lightControlAmbientLuxLevelOn``
+    /// * ``DeviceProperty/lightControlAmbientLuxLevelProlong``
+    /// * ``DeviceProperty/lightControlAmbientLuxLevelStandby``
+    /// * ``DeviceProperty/lightControlLightnessOn``
+    /// * ``DeviceProperty/lightControlLightnessProlong``
+    /// * ``DeviceProperty/lightControlLightnessStandby``
+    /// * ``DeviceProperty/lightControlRegulatorAccuracy``
+    /// * ``DeviceProperty/lightControlRegulatorKid``
+    /// * ``DeviceProperty/lightControlRegulatorKiu``
+    /// * ``DeviceProperty/lightControlRegulatorKpd``
+    /// * ``DeviceProperty/lightControlRegulatorKpu``
+    /// * ``DeviceProperty/lightControlTimeFade``
+    /// * ``DeviceProperty/lightControlTimeFadeOn``
+    /// * ``DeviceProperty/lightControlTimeFadeStandbyAuto``
+    /// * ``DeviceProperty/lightControlTimeFadeStandbyManual``
+    /// * ``DeviceProperty/lightControlTimeOccupancyDelay``
+    /// * ``DeviceProperty/lightControlTimeProlong``
+    /// * ``DeviceProperty/lightControlTimeRunOn``
+    ///
+    /// - parameter property: The Light LC Property to get.
     public init(_ property: DeviceProperty) {
         self.property = property
     }
