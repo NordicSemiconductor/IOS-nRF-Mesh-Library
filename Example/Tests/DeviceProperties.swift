@@ -145,7 +145,7 @@ class DeviceProperties: XCTestCase {
             (Data([0x01, 0x00]), 0.01,  Data([0x01, 0x00])),     // basic
             (Data([0xD2, 0x04]), 12.34, Data([0xD2, 0x04])),    // middle
             (Data([0x10, 0x27]), 100.0, Data([0x10, 0x27])),   // max
-            (Data([0x11, 0x27]), 100.0, Data([0x10, 0x27])),  // trucated
+            (Data([0x11, 0x27]), 100.0, Data([0x10, 0x27])),  // truncated
             (Data([0xFF, 0xFF]), nil,   Data([0xFF, 0xFF])), // unknown
         ]
         
@@ -170,7 +170,7 @@ class DeviceProperties: XCTestCase {
             (Data([0x01, 0x00]), Decimal(string:    "0.01"), Data([0x01, 0x00])),     // basic
             (Data([0xD2, 0x04]), Decimal(string:   "12.34"), Data([0xD2, 0x04])),    // middle
             (Data([0xFF, 0x7F]), Decimal(string:  "327.67"), Data([0xFF, 0x7F])),   // max
-            (Data([0xD0, 0x8A]), Decimal(string: "-273.15"), Data([0x4D, 0x95])),  // trucated
+            (Data([0xD0, 0x8A]), Decimal(string: "-273.15"), Data([0x4D, 0x95])),  // truncated
             (Data([0x00, 0x80]), nil,                        Data([0x00, 0x80])), // unknown
         ]
         
@@ -190,7 +190,7 @@ class DeviceProperties: XCTestCase {
     }
     
     func testPressure() throws {
-        // Presure values are in Pascals. Data is encoded in hPa.
+        // Pressure values are in Pascals. Data is encoded in hPa.
         let samples: [(Data, Decimal, Data)] = [
             (Data([0x00, 0x00, 0x00, 0x00]), Decimal(string:         "0.0" /* Pa */)!, Data([0x00, 0x00, 0x00, 0x00])),     // zero
             (Data([0x01, 0x00, 0x00, 0x00]), Decimal(string:         "0.1" /* Pa */)!, Data([0x01, 0x00, 0x00, 0x00])),    // min
@@ -470,7 +470,7 @@ class DeviceProperties: XCTestCase {
         // Test encoding.
         
         // 3.3 V will be rounded down to nearest value with resolution 1/64 V, that is: 1/64 * 211 = 3.296875 V.
-        // The interval of 30 seconds is roudned down to nearest value that can be encoded as 1.1^(N-46),
+        // The interval of 30 seconds is roundned down to nearest value that can be encoded as 1.1^(N-46),
         // that is: 1.1^(99-64) = 28.102(...) seconds. 99 is 0x63 in hexadecimal.
         // Value 100 (0x64) would give 30.912(...) seconds, which is greater than 30 seconds.
         let characteristic: DevicePropertyCharacteristic = .averageVoltage(3.3, sensingDuration: .interval(30))
@@ -516,10 +516,11 @@ class DeviceProperties: XCTestCase {
         XCTAssertEqual(sensingDuration, .rawValue(0x95))
         
         // Test comparison.
-        let trueValue: DevicePropertyCharacteristic = .eventStatistics(1234,
-                                                                       averageEventDuration: 10,
-                                                                       timeElapsedSinceLastEvent: .rawValue(0x58),
-                                                                       sensingDuration: .rawValue(0x95))
+        let trueValue: DevicePropertyCharacteristic =
+            .eventStatistics(1234,
+                             averageEventDuration: 10,
+                             timeElapsedSinceLastEvent: .rawValue(0x58),
+                             sensingDuration: .rawValue(0x95))
         XCTAssertEqual(trueValue, result)
     }
 
