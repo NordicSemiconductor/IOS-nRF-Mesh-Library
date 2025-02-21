@@ -87,6 +87,15 @@ class AppKeysViewController: UITableViewController, Editable {
         }
     }
     
+    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
+        let keyIndex = MeshNetworkManager.instance.meshNetwork?.nextAvailableApplicationKeyIndex
+        guard let _ = keyIndex else {
+            presentAlert(title: "No Key Index available", message: "A limit of 4096 keys has been reached.")
+            return false
+        }
+        return true
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "networkKeys" {
             let target = segue.destination as! NetworkKeysViewController
