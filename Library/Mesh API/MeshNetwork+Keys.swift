@@ -34,30 +34,36 @@ public extension MeshNetwork {
     
     /// Next available Key Index that can be assigned to a new Application Key.
     ///
-    /// - note: This method does not look for gaps in key indexes. It returns the
-    ///         next available Key Index after the last Key Index used.
+    /// - note: This method searches for any available key index that is not used,
+    ///         looking for gaps in the key indexes. If there are no gaps, the
+    ///         next available key index will be the first one after the last one.
     var nextAvailableApplicationKeyIndex: KeyIndex? {
         if applicationKeys.isEmpty {
             return 0
         }
-        guard let lastAppKey = applicationKeys.last, (lastAppKey.index + 1).isValidKeyIndex else {
-            return nil
+        for index: KeyIndex in 1..<4056 {
+            if applicationKeys[index] == nil {
+                return index
+            }
         }
-        return lastAppKey.index + 1
+        return nil
     }
     
     /// Next available Key Index that can be assigned to a new Network Key.
     ///
-    /// - note: This method does not look for gaps in key indexes. It returns the
-    ///         next available Key Index after the last Key Index used.
+    /// - note: This method searches for any available key index that is not used,
+    ///         looking for gaps in the key indexes. If there are no gaps, the
+    ///         next available key index will be the first one after the last one.         
     var nextAvailableNetworkKeyIndex: KeyIndex? {
         if networkKeys.isEmpty {
             return 0
         }
-        guard let lastNetKey = networkKeys.last, (lastNetKey.index + 1).isValidKeyIndex else {
-            return nil
+        for index: KeyIndex in 1..<4056 {
+            if networkKeys[index] == nil {
+                return index
+            }
         }
-        return lastNetKey.index + 1
+        return nil
     }
     
     /// Adds a new Application Key and binds it to the first Network Key.
