@@ -86,72 +86,108 @@ public enum DeviceProperty: Sendable {
     case inputVoltageStatistics
     /// The Light LC Ambient LuxLevel On is a state representing the Ambient LuxLevel
     /// level that determines if the controller transitions from the Light Control Standby state.
+    ///
+    /// The property value is ``DevicePropertyCharacteristic/illuminance(_:)``.
     case lightControlAmbientLuxLevelOn
     /// The Light LC Ambient LuxLevel Prolong is a state representing the required
     /// Ambient LuxLevel level in the Prolong state.
+    ///
+    /// The property value is ``DevicePropertyCharacteristic/illuminance(_:)``.
     case lightControlAmbientLuxLevelProlong
     /// The Light LC Ambient LuxLevel Standby is a state representing the required
     /// Ambient LuxLevel level in the Standby state.
+    ///
+    /// The property value is ``DevicePropertyCharacteristic/illuminance(_:)``.
     case lightControlAmbientLuxLevelStandby
     /// The Light LC Lightness On is a lightness state that determines the perceptive
     /// light lightness at the Light LC State Machine Run state.
+    ///
+    /// The property value is ``DevicePropertyCharacteristic/perceivedLightness(_:)``.
     case lightControlLightnessOn
     /// The Light LC Lightness Prolong is a lightness state that determines the light
     /// lightness at the Light LC State Machine Prolong state.
+    ///
+    /// The property value is ``DevicePropertyCharacteristic/perceivedLightness(_:)``.
     case lightControlLightnessProlong
     /// The Light LC Lightness Standby is a lightness state that determines the
     /// light lightness at the Light LC State Machine Standby state.
+    ///
+    /// The property value is ``DevicePropertyCharacteristic/perceivedLightness(_:)``.
     case lightControlLightnessStandby
     /// The Light LC Regulator Accuracy is a state representing the percentage
     /// accuracy of the Light LC PI Feedback Regulator.
+    ///
+    /// The property value is ``DevicePropertyCharacteristic/percentage8(_:)``.
     case lightControlRegulatorAccuracy
     /// The Light LC Regulator Kid is a float32 state representing the integral coefficient
     /// that determines the integral part of the equation defining the output of the
     /// Light LC PI Feedback Regulator, when Light LC Ambient LuxLevel is greater
     /// than or equal to the value of the LuxLevel Out state.
+    ///
+    /// The property value is ``DevicePropertyCharacteristic/coefficient(_:)``.
     case lightControlRegulatorKid
     /// The Light LC Regulator Kiu is a float32 state representing the integral coefficient
     /// that determines the integral part of the equation defining the output of the
     /// Light LC PI Feedback Regulator, when Light LC Ambient LuxLevel is less than
     /// LuxLevel Out.
+    ///
+    /// The property value is ``DevicePropertyCharacteristic/coefficient(_:)``.
     case lightControlRegulatorKiu
     /// The Light LC Regulator Kpd is a `float32` state representing the proportional
     /// coefficient that determines the proportional part of the equation defining the
     /// output of the Light LC PI Feedback Regulator, when Light LC Ambient LuxLevel
     /// is greater than or equal to the value of the LuxLevel Out state.
+    ///
+    /// The property value is ``DevicePropertyCharacteristic/coefficient(_:)``.
     case lightControlRegulatorKpd
     /// The Light LC Regulator Kpu is a `float32` state representing the proportional
     /// coefficient that determines the proportional part of the equation defining the
     /// output of the Light LC PI Feedback Regulator, when Light LC Ambient LuxLevel
     /// is less than the value of the LuxLevel Out state.
+    ///
+    /// The property value is ``DevicePropertyCharacteristic/coefficient(_:)``.
     case lightControlRegulatorKpu
     /// The Light LC Time Fade is a timing state that determines the time the controlled
     /// lights fade from the level determined by the Light LC Lightness On state to the
-    /// level determined by the Light Lightness Prolong state
+    /// level determined by the Light Lightness Prolong state.
+    ///
+    /// The property value is ``DevicePropertyCharacteristic/timeMillisecond24(_:)``.
     case lightControlTimeFade
     /// The Light LC Time Fade On is a timing state that determines the time the controlled
     /// lights fade to the level determined by the Light LC Lightness On state.
+    ///
+    /// The property value is ``DevicePropertyCharacteristic/timeMillisecond24(_:)``.
     case lightControlTimeFadeOn
     /// The Light LC Time Fade Standby Auto is a timing state that determines the time
     /// the controlled lights fade from the level determined by the
     /// Light LC Lightness Prolong state to the level determined by the
     /// Light LC Lightness Standby state when the transition is automatic.
+    ///
+    /// The property value is ``DevicePropertyCharacteristic/timeMillisecond24(_:)``.
     case lightControlTimeFadeStandbyAuto
     /// The Light LC Time Fade Standby Manual is a timing state that determines the time
     /// the controlled lights take to fade to the level determined by the
     /// Light LC Lightness Standby state when the transition is triggered by a change in the
     /// Light LC Light OnOff state.
+    ///
+    /// The property value is ``DevicePropertyCharacteristic/timeMillisecond24(_:)``.
     case lightControlTimeFadeStandbyManual
     /// The Light LC Time Occupancy Delay is a timing state that determines the delay for
     /// changing the Light LC Occupancy state upon receiving a Sensor Status message
-    /// from an occupancy sensor
+    /// from an occupancy sensor.
+    ///
+    /// The property value is ``DevicePropertyCharacteristic/timeMillisecond24(_:)``.
     case lightControlTimeOccupancyDelay
     /// The Light LC Time Prolong is a timing state that determines the time the controlled
     /// lights stay at the level determined by the Light LC Lightness Prolong state.
+    ///
+    /// The property value is ``DevicePropertyCharacteristic/timeMillisecond24(_:)``.
     case lightControlTimeProlong
     /// The Light LC Time Run On is a timing state that determines the time the controlled
     /// lights stay at the level determined by the Light LC Lightness On state since the
     /// occupancy input stopped detecting active occupancy information.
+    ///
+    /// The property value is ``DevicePropertyCharacteristic/timeMillisecond24(_:)``.
     case lightControlTimeRunOn
     case lumenMaintenanceFactor
     case luminousEfficacy
