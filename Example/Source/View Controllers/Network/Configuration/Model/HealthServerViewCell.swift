@@ -96,8 +96,11 @@ class HealthServerViewCell: ModelViewCell, UITextFieldDelegate {
     }
     
     override func startRefreshing() -> Bool {
-        readAttentionTimerDuration()
-        return true
+        if !model.boundApplicationKeys.isEmpty {
+            readAttentionTimerDuration()
+            return true
+        }
+        return false
     }
     
     override func supports(_ messageType: any MeshMessage.Type) -> Bool {
