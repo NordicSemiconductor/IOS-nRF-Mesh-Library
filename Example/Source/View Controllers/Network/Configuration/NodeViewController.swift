@@ -48,24 +48,36 @@ class NodeViewController: ProgressViewController, SupportsNodeIdentification {
     @IBOutlet weak var identifyAction: UIBarButtonItem!
     
     @IBAction func identifyPressed(_ sender: UIBarButtonItem) {
-        guard let node = node,
-              let _ = node.companyIdentifier else {
-            self.presentAlert(title: "Unknown Node", message: "Before identifying, tap the Node to obtain its Composition Data.")
+        guard let node = node else {
             return
         }
-        guard let healthServerModel = node.models(withSigModelId: .healthServerModelId).first,
-              !healthServerModel.boundApplicationKeys.isEmpty else {
-            self.presentAlert(title: "Identify", message: "Attention timer requires the Health Server model to be bound to at least one Application Key.\n\nWould you like to configure \(node.name ?? "the Node") automatically?") { _ in
-                Task { [weak self] in
-                    await self?.identify(node: node) ?? false
+        func action() {
+            Task { [weak self] in
+                do {
+                    try await self?.identify(node: node)
+                } catch {
+                    self?.presentAlert(title: "Error", message: error.localizedDescription)
                 }
             }
+        }
+        do {
+            guard try canIdentify(node: node) else {
+                let configure = UIAlertAction(title: "Configure", style: .default) { _ in
+                    action()
+                }
+                presentAlert(title: "Identify",
+                             message: "Health Server model requires configuration." +
+                                      "\n\nWould you like to configure \(node.name ?? "the Node") automatically?",
+                             cancelable: true,
+                             option: configure)
+                return
+            }
+        } catch {
+            presentAlert(title: "Error", message: error.localizedDescription)
             return
         }
         
-        Task { [weak self] in
-            await self?.identify(node: node) ?? false
-        }
+        action()
     }
     
     
