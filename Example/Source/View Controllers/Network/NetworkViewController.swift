@@ -181,26 +181,42 @@ class NetworkViewController: UITableViewController, UISearchBarDelegate, Support
             }
             
             let node = self.filteredSections[indexPath.section].nodes[indexPath.row]
-            guard let _ = node.companyIdentifier else {
-                self.presentAlert(title: "Unknown Node", message: "Before identifying, tap the Node to obtain its Composition Data.")
+            func action() {
+                Task { [weak self] in
+                    do {
+                        try await self?.identify(node: node)
+                        DispatchQueue.main.async {
+                            completionHandler(true)
+                        }
+                    } catch {
+                        DispatchQueue.main.async {
+                            self?.presentAlert(title: "Error", message: error.localizedDescription)
+                            completionHandler(false)
+                        }
+                    }
+                }
+            }
+            do {
+                guard try self.canIdentify(node: node) else {
+                    let configure = UIAlertAction(title: "Configure", style: .default) { _ in
+                        action()
+                    }
+                    self.presentAlert(title: "Identify",
+                                      message: "Health Server model requires configuration." +
+                                               "\n\nWould you like to configure \(node.name ?? "the Node") automatically?",
+                                      cancelable: true,
+                                      option: configure) { _ in
+                        completionHandler(false)
+                    }
+                    return
+                }
+            } catch {
+                self.presentAlert(title: "Error", message: error.localizedDescription)
                 completionHandler(false)
                 return
             }
-            guard let healthServerModel = node.models(withSigModelId: .healthServerModelId).first,
-                  !healthServerModel.boundApplicationKeys.isEmpty else {
-                self.presentAlert(title: "Identify", message: "Attention timer requires the Health Server model to be bound to at least one Application Key.\n\nWould you like to configure \(node.name ?? "the Node") automatically?") { _ in
-                    Task { [weak self] in
-                        let success = await self?.identify(node: node) ?? false
-                        completionHandler(success)
-                    }
-                }
-                return
-            }
             
-            Task { [weak self] in
-                let success = await self?.identify(node: node) ?? false
-                completionHandler(success)
-            }
+            action()
         }
         action.backgroundColor = .systemYellow
         return UISwipeActionsConfiguration(actions: [action])
