@@ -66,7 +66,7 @@ protocol SupportsNodeIdentification {
     /// - throws: A ``NodeIdentificationError`` if the Node is not ready and cannot be configured.
     func canIdentify(node: Node) throws -> Bool
     
-    /// Sends ``HealthAttentionSetUnacknowledged`` message to the Health Server model
+    /// Sends `HealthAttentionSetUnacknowledged` message to the Health Server model
     /// of the Node to make it blink for 3 seconds.
     ///
     /// If not ready, this method will also create a new Application Key with Key Index 4095 and bind it

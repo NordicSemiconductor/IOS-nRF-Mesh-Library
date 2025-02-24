@@ -43,28 +43,28 @@ Use it to create, load or import a Bluetooth mesh network and send messages.
 
 - ``send(_:from:to:withTtl:using:)-8i087``
 - ``send(_:from:to:withTtl:using:)-49tfj``
-- ``send(_:from:to:withTtl:)-91pzj``
-- ``send(_:from:to:withTtl:)-4xk1o``
-- ``send(_:from:to:withTtl:)-9do0t``
-- ``send(_:from:to:withTtl:)-7iwpf``
-- ``send(_:to:withTtl:)-j3dt``
-- ``send(_:to:withTtl:)-7jr6s``
-- ``send(_:to:withTtl:)-9r5wo``
-- ``send(_:to:withTtl:)-44cky``
+- ``send(_:from:to:withTtl:using:)-4mctq``
+- ``send(_:from:to:withTtl:using:)-65l1j``
+- ``send(_:from:to:withTtl:using:)-82q0x``
+- ``send(_:from:to:withTtl:using:)-49dnw``
+- ``send(_:to:withTtl:using:)-3e4v4``
+- ``send(_:to:withTtl:using:)-9mtag``
+- ``send(_:to:withTtl:using:)-9j4y6``
+- ``send(_:to:withTtl:using:)-41rs``
 - ``sendToLocalNode(_:)``
 
 ### Sending Messages (callbacks)
 
 - ``send(_:from:to:withTtl:using:completion:)-2804g``
 - ``send(_:from:to:withTtl:using:completion:)-3suux``
-- ``send(_:from:to:withTtl:completion:)-ryms``
-- ``send(_:from:to:withTtl:completion:)-1u8lz``
-- ``send(_:from:to:withTtl:completion:)-36und``
-- ``send(_:from:to:withTtl:completion:)-5t3gz``
-- ``send(_:to:withTtl:completion:)-6gowt``
-- ``send(_:to:withTtl:completion:)-83jpy``
-- ``send(_:to:withTtl:completion:)-3jw0o``
-- ``send(_:to:withTtl:completion:)-6l1j2``
+- ``send(_:from:to:withTtl:using:completion:)-6mp7w``
+- ``send(_:from:to:withTtl:using:completion:)-3sgzf``
+- ``send(_:from:to:withTtl:using:completion:)-8ochy``
+- ``send(_:from:to:withTtl:using:completion:)-2jkzb``
+- ``send(_:to:withTtl:using:completion:)-9r4ob``
+- ``send(_:to:withTtl:using:completion:)-49f44``
+- ``send(_:to:withTtl:using:completion:)-5t28f``
+- ``send(_:to:withTtl:using:completion:)-5434x``
 - ``sendToLocalNode(_:completion:)``
 - ``cancel(_:)``
 
