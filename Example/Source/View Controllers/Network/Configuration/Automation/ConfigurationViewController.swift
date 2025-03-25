@@ -154,7 +154,7 @@ class ConfigurationViewController: UIViewController,
                 if originalModel.supportsApplicationKeyBinding,
                    let targetModel = targetElement.model(withModelId: originalModel.modelId) {
                     let boundApplicationKeys = meshNetwork.applicationKeys
-                        .filter { originalModel.isBoundTo($0) }
+                        .filter { $0.isBound(to: originalModel) }
                     boundApplicationKeys.forEach { applicationKey in
                         tasks.append(.bind(applicationKey, to: targetModel))
                     }
@@ -257,7 +257,7 @@ class ConfigurationViewController: UIViewController,
         // When all the keys are sent, start binding them to Models.
         models.forEach { model in
             applicationKeys.forEach { applicationKey in
-                if !model.isBoundTo(applicationKey) {
+                if !applicationKey.isBound(to: model) {
                     tasks.append(.bind(applicationKey, to: model))
                 }
             }

@@ -41,7 +41,7 @@ public extension Model {
     /// In that case use ``Model/isBoundTo(_:)`` instead.
     var boundApplicationKeys: [ApplicationKey] {
         return parentElement?.parentNode?.applicationKeys
-            .filter { isBoundTo($0) } ?? []
+            .filter { $0.isBound(to: self) } ?? []
     }
     
     /// Whether the given Application Key is bound to this Model.
@@ -51,6 +51,7 @@ public extension Model {
     /// - parameter applicationKey: The key to check.
     /// - returns: `True` if the key is bound to this Model,
     ///            otherwise `false`.
+    @available(*, deprecated, message: "Use applicationKey.isBound(to: model) instead.")
     func isBoundTo(_ applicationKey: ApplicationKey) -> Bool {
         return bind.contains(applicationKey.index)
     }
@@ -61,6 +62,18 @@ public extension Model {
     /// - since: 4.0.0 
     var supportsApplicationKeyBinding: Bool {
         return !requiresDeviceKey
+    }
+    
+}
+
+public extension ApplicationKey {
+    
+    /// Returns whether the Application Key is bound to the given Model.
+    ///
+    /// - parameter model: The Model to check.
+    /// - returns: `True`, if the Application Key is bound to the Model.
+    func isBound(to model: Model) -> Bool {
+        return model.bind.contains(index)
     }
     
 }
