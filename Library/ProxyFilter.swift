@@ -160,6 +160,26 @@ public enum ProxyFilterSetup {
     case exclusionList(addresses: Set<Address>)
 }
 
+/// A class representing an unknown Node connected as a GATT Proxy Node.
+///
+/// An Unknown Node is a Node from which a message Proxy Configuration has been received,
+/// but the mesh network has no information about it.
+///
+/// The Unknown Node has fixed security level set to ``Security/insecure``,
+/// a single empty Element and only one ``NetworkKey``, the one used to encrypt
+/// the Proxy Configuration message. All other properties are unknown.
+///
+/// - note: It is not possible to request its Composition Data, as
+///         the Device Key is not known.
+public class UnknownNode: Node {
+    
+    internal convenience init(from pdu: NetworkPdu, in meshNetwork: MeshNetwork) {
+        self.init(unicastAddress: pdu.source, networkKey: pdu.networkKey)
+        self.meshNetwork = meshNetwork
+    }
+    
+}
+
 /// The Proxy Filter class allows modification of the proxy filter on the
 /// connected Proxy Node.
 ///
@@ -216,8 +236,8 @@ public class ProxyFilter {
     
     /// The connected Proxy Node.
     ///
-    /// This is `nil` if no GATT Proxy Node is connected, or the connected Node is
-    /// not in the local mesh configuration database.
+    /// This is `nil` if no GATT Proxy Node is connected, or ``UnknownNode`` if the
+    /// connected Node is not in the local mesh configuration database.
     public private(set) var proxy: Node?
     
     // MARK: - Implementation
@@ -405,10 +425,14 @@ internal protocol ProxyFilterEventHandler: AnyObject {
     /// the list size received, the method will try to clear the remote
     /// filter and send all the addresses again.
     ///
+    /// If a Node with a Unicast Address of the received ``FilterStatus`` message
+    ///  does not exist in the local database, the method will return an ``UnknownNode``.
+    ///
     /// - parameters:
     ///   - message: The message received.
-    ///   - proxy: The connected Proxy Node, or `nil` if the Node is unknown.
-    func handle(_ message: ProxyConfigurationMessage, sentFrom proxy: Node?)
+    ///   - proxy: The connected Proxy ``Node``, or ``UnknownNode`` if the Node
+    ///            does not exist in the local mesh network configuration.
+    func handle(_ message: ProxyConfigurationMessage, sentFrom proxy: Node)
 }
 
 extension ProxyFilter: ProxyFilterEventHandler {
@@ -459,7 +483,7 @@ extension ProxyFilter: ProxyFilterEventHandler {
         }
     }
     
-    func handle(_ message: ProxyConfigurationMessage, sentFrom proxy: Node?) {
+    func handle(_ message: ProxyConfigurationMessage, sentFrom proxy: Node) {
         guard let manager = manager else { return }
         
         switch message {
