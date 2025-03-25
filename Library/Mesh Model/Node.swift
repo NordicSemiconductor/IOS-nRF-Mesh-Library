@@ -273,6 +273,21 @@ public class Node: Codable {
         }
     }
     
+    /// A constructor for an Unknown Node.
+    ///
+    /// An Unknown Node is a Node that has been discovered in the network
+    /// but has not been added to the mesh network yet.
+    internal init(unicastAddress: Address, networkKey: NetworkKey) {
+        self.uuid = UUID()
+        self.name = nil
+        self.primaryUnicastAddress = unicastAddress
+        self.deviceKey = nil
+        self.security = .insecure
+        self.netKeys  = [NodeKey(index: networkKey.index, updated: false)]
+        self.appKeys  = []
+        self.elements = [Element(location: .unknown)]
+    }
+    
     /// Initializes the Provisioner's Node.
     ///
     /// The Provisioner's node has the same name and node UUID as the Provisioner.

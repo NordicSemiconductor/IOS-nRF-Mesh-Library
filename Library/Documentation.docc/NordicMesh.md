@@ -732,6 +732,7 @@ Proxy Server, a proxy filter can be used.
 - ``ProxyFilerType``
 - ``ProxyFilterDelegate``
 - ``ProxyFilterSetup``
+- ``UnknownNode``
 
 ### Proxy Filter Configuration Message Types
 

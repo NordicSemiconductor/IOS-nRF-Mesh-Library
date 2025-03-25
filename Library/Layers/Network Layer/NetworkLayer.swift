@@ -421,7 +421,7 @@ private extension NetworkLayer {
            let message = MessageType.init(parameters: controlMessage.upperTransportPdu) {
             logger?.i(.proxy, "\(message) received from: \(proxyPdu.source.hex) to: \(proxyPdu.destination.hex)")
             // Look for the proxy Node.
-            let proxyNode = meshNetwork.node(withAddress: proxyPdu.source)
+            let proxyNode = meshNetwork.node(withAddress: proxyPdu.source) ?? UnknownNode(from: proxyPdu, in: meshNetwork)
             networkManager.proxy?.handle(message, sentFrom: proxyNode)
         } else {
             logger?.w(.proxy, "Unsupported proxy configuration message (opcode: \(controlMessage.opCode))")
