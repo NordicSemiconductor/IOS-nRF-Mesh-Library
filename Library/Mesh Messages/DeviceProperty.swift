@@ -232,6 +232,7 @@ public enum DeviceProperty: Sendable {
     case relativeRuntimeInAnInputCurrentRange
     case relativeRuntimeInAnInputVoltageRange
     case shortCircuitEventStatistics
+    /// This property represents the time that has elapsed since the sensor last detected any activity.
     case timeSinceMotionSensed
     case timeSincePresenceDetected
     case totalDeviceEnergyUse
@@ -907,7 +908,6 @@ internal extension DeviceProperty {
              .presentOutputCurrent,
              .presentDeviceOperatingTemperature,
              .precisePresentAmbientTemperature,
-             .timeSinceMotionSensed,
              .timeSincePresenceDetected,
              .luminaireNominalMaximumACMainsVoltage,
              .luminaireNominalMinimumACMainsVoltage,
@@ -949,6 +949,7 @@ internal extension DeviceProperty {
              .luminaireNominalInputPower,
              .luminairePowerAtMinimumDimLevel,
              .luminaireTimeOfManufacture,
+             .timeSinceMotionSensed,
              .presentAmbientLightLevel,
              .presentDeviceInputPower,
              .presentIlluminance,
@@ -1101,8 +1102,7 @@ internal extension DeviceProperty {
             guard length == valueLength else { return .count16(nil) }
             let count: UInt16 = data.read(fromOffset: offset)
             return .count16(count.withUnknownValue(0xFFFF))
-        case .timeSinceMotionSensed,
-             .timeSincePresenceDetected:
+        case .timeSincePresenceDetected:
             guard length == valueLength else { return .timeSecond16(nil) }
             let value: UInt16 = data.read(fromOffset: offset)
             return .timeSecond16(value.withUnknownValue(0xFFFF))
@@ -1205,7 +1205,8 @@ internal extension DeviceProperty {
              .lightControlTimeFadeStandbyManual,
              .lightControlTimeOccupancyDelay,
              .lightControlTimeProlong,
-             .lightControlTimeRunOn:
+             .lightControlTimeRunOn,
+             .timeSinceMotionSensed:
             guard length == valueLength else { return .timeMillisecond24(nil) }
             let value: UInt32 = data.readUInt24(fromOffset: offset)
             return .timeMillisecond24(value.withUnknownValue(0xFFFFFF))
