@@ -39,8 +39,8 @@ public extension Group {
         let scenes =
             // Get all Models subscribed to this Group.
             meshNetwork?.models(subscribedTo: self)
-            // That are bound to the given Application Key.
-            .filter { $0.isBoundTo(applicationKey) }
+            // That have the given Application Key bound.
+            .filter { applicationKey.isBound(to: $0) }
             // Filter for Scene Server models only.
             .filter { $0.modelIdentifier == .sceneServerModelId && $0.isBluetoothSIGAssigned }
             // Get all Scenes stored in Scene Registers of parent Nodes.

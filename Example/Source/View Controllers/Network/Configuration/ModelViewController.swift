@@ -557,7 +557,7 @@ class ModelViewController: ProgressViewController {
                     $0.elements.filter({ $0.contains(modelBoundTo: applicationKey)})
                 }
                 let compatibleModels = elementsWithCompatibleModels.flatMap {
-                    $0.models.filter({ $0.isBoundTo(applicationKey) })
+                    $0.models.filter { applicationKey.isBound(to: $0) }
                 }
                 let boundKeyUsedByOtherNodes = compatibleModels.contains {
                     $0.publish?.publicationAddress.address == thisElement.unicastAddress &&

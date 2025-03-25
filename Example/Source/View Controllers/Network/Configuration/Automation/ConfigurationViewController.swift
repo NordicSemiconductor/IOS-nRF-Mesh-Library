@@ -301,7 +301,7 @@ class ConfigurationViewController: UIViewController,
         // For each selected Model...
         models.forEach { model in
             // ...check if it is bound to that Application Key.
-            if !model.isBoundTo(applicationKey) {
+            if !applicationKey.isBound(to: model) {
                 // If not, bind it.
                 tasks.append(.bind(applicationKey, to: model))
             }

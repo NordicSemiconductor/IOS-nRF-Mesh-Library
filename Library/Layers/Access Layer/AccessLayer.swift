@@ -419,7 +419,7 @@ private extension AccessLayer {
                         if(accessPdu.destination.address == Address.allNodes && element.isPrimary) ||
                            accessPdu.destination.address == element.unicastAddress ||
                            model.isSubscribed(to: accessPdu.destination) {
-                            if model.isBoundTo(keySet.applicationKey) {
+                            if keySet.applicationKey.isBound(to: model) {
                                 if let response = delegate.model(model, didReceiveMessage: message,
                                                                  sentFrom: accessPdu.source,
                                                                  to: accessPdu.destination,

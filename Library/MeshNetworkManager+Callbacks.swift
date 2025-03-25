@@ -197,8 +197,8 @@ public extension MeshNetworkManager {
         }
         // If the Application Key is given, check if it is bound to the Model.
         if let applicationKey = applicationKey {
-            guard model.isBoundTo(applicationKey) else {
-                print("Error: Model is not bound to the Application Key")
+            guard applicationKey.isBound(to: model) else {
+                print("Error: Application Key is not bound to the Model")
                 throw AccessError.invalidKey
             }
         } else {
@@ -318,8 +318,8 @@ public extension MeshNetworkManager {
         }
         // If the Application Key is given, check if it is bound to the Model.
         if let applicationKey = applicationKey {
-            guard model.isBoundTo(applicationKey) else {
-                print("Error: Model is not bound to the Application Key")
+            guard applicationKey.isBound(to: model) else {
+                print("Error: Application Key is not bound to the Model")
                 throw AccessError.invalidKey
             }
         } else {
