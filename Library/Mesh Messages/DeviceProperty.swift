@@ -968,6 +968,8 @@ internal extension DeviceProperty {
              .lightControlRegulatorKiu,
              .lightControlRegulatorKpd,
              .lightControlRegulatorKpu,
+             .lightSourceOnTimeResettable,
+             .lightSourceOnTimeNotResettable,
              .sensorGain:
             return 4
             
@@ -1241,6 +1243,14 @@ internal extension DeviceProperty {
             guard value != UInt32(0xFFFFFF) else { return .apparentPower(nil) }
             guard value != UInt32(0xFFFFFE) else { return .apparentPower(.invalid) }
             return .apparentPower(.valid(Decimal(sign: .plus, exponent: -1, significand: Decimal(value))))
+            
+        // UInt32 -> UInt32?
+        case .lightSourceOnTimeResettable,
+             .lightSourceOnTimeNotResettable:
+            guard length == valueLength else { return .timeSecond32(nil) }
+            let value: UInt32 = data.read(fromOffset: offset)
+            guard value != UInt32(0xFFFFFFFF) else { return .timeSecond32(nil) }
+            return .timeSecond32(value)
 
         // UInt32 -> ValidDecimal?
         case .preciseTotalDeviceEnergyUse,
