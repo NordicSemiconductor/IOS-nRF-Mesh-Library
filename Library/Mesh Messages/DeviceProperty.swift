@@ -33,7 +33,7 @@ import Foundation
 // MARK: - DeviceProperty
 
 /// Enumeration of Device Properties specified in
-/// [Mesh Device Properties 2](https://www.bluetooth.com/specifications/specs/mesh-device-properties-2/).
+/// [Mesh Device Properties](https://www.bluetooth.com/specifications/specs/device-properties/).
 ///
 /// Each property has a corresponding ``DevicePropertyCharacteristic``.
 ///
@@ -617,12 +617,12 @@ public enum DeviceProperty: Sendable {
         case .presentAmbientCarbonDioxideConcentration: return 0x0077
         case .presentAmbientVolatileOrganicCompoundsConcentration: return 0x0078
         case .presentAmbientNoise: return 0x0079
-     // case these are undefined in Mesh Device Properties v2 = 0x007A
-     // case these are undefined in Mesh Device Properties v2 = 0x007B
-     // case these are undefined in Mesh Device Properties v2 = 0x007C
-     // case these are undefined in Mesh Device Properties v2 = 0x007D
-     // case these are undefined in Mesh Device Properties v2 = 0x007E
-     // case these are undefined in Mesh Device Properties v2 = 0x007F
+     // case these are undefined in Mesh Device Properties = 0x007A
+     // case these are undefined in Mesh Device Properties = 0x007B
+     // case these are undefined in Mesh Device Properties = 0x007C
+     // case these are undefined in Mesh Device Properties = 0x007D
+     // case these are undefined in Mesh Device Properties = 0x007E
+     // case these are undefined in Mesh Device Properties = 0x007F
         case .activeEnergyLoadside: return 0x0080
         case .activePowerLoadside: return 0x0081
         case .airPressure: return 0x0082
