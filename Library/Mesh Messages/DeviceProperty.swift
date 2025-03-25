@@ -234,6 +234,7 @@ public enum DeviceProperty: Sendable {
     case shortCircuitEventStatistics
     /// This property represents the time that has elapsed since the sensor last detected any activity.
     case timeSinceMotionSensed
+    /// This property represents the time that has elapsed since the sensor last detected presence.
     case timeSincePresenceDetected
     case totalDeviceEnergyUse
     case totalDeviceOffOnCycles
