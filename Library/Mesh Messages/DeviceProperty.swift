@@ -232,7 +232,9 @@ public enum DeviceProperty: Sendable {
     case relativeRuntimeInAnInputCurrentRange
     case relativeRuntimeInAnInputVoltageRange
     case shortCircuitEventStatistics
+    /// This property represents the time that has elapsed since the sensor last detected any activity.
     case timeSinceMotionSensed
+    /// This property represents the time that has elapsed since the sensor last detected presence.
     case timeSincePresenceDetected
     case totalDeviceEnergyUse
     case totalDeviceOffOnCycles
@@ -907,7 +909,6 @@ internal extension DeviceProperty {
              .presentOutputCurrent,
              .presentDeviceOperatingTemperature,
              .precisePresentAmbientTemperature,
-             .timeSinceMotionSensed,
              .timeSincePresenceDetected,
              .luminaireNominalMaximumACMainsVoltage,
              .luminaireNominalMinimumACMainsVoltage,
@@ -949,6 +950,7 @@ internal extension DeviceProperty {
              .luminaireNominalInputPower,
              .luminairePowerAtMinimumDimLevel,
              .luminaireTimeOfManufacture,
+             .timeSinceMotionSensed,
              .presentAmbientLightLevel,
              .presentDeviceInputPower,
              .presentIlluminance,
@@ -966,6 +968,8 @@ internal extension DeviceProperty {
              .lightControlRegulatorKiu,
              .lightControlRegulatorKpd,
              .lightControlRegulatorKpu,
+             .lightSourceOnTimeResettable,
+             .lightSourceOnTimeNotResettable,
              .sensorGain:
             return 4
             
@@ -1101,8 +1105,7 @@ internal extension DeviceProperty {
             guard length == valueLength else { return .count16(nil) }
             let count: UInt16 = data.read(fromOffset: offset)
             return .count16(count.withUnknownValue(0xFFFF))
-        case .timeSinceMotionSensed,
-             .timeSincePresenceDetected:
+        case .timeSincePresenceDetected:
             guard length == valueLength else { return .timeSecond16(nil) }
             let value: UInt16 = data.read(fromOffset: offset)
             return .timeSecond16(value.withUnknownValue(0xFFFF))
@@ -1205,7 +1208,8 @@ internal extension DeviceProperty {
              .lightControlTimeFadeStandbyManual,
              .lightControlTimeOccupancyDelay,
              .lightControlTimeProlong,
-             .lightControlTimeRunOn:
+             .lightControlTimeRunOn,
+             .timeSinceMotionSensed:
             guard length == valueLength else { return .timeMillisecond24(nil) }
             let value: UInt32 = data.readUInt24(fromOffset: offset)
             return .timeMillisecond24(value.withUnknownValue(0xFFFFFF))
@@ -1239,6 +1243,14 @@ internal extension DeviceProperty {
             guard value != UInt32(0xFFFFFF) else { return .apparentPower(nil) }
             guard value != UInt32(0xFFFFFE) else { return .apparentPower(.invalid) }
             return .apparentPower(.valid(Decimal(sign: .plus, exponent: -1, significand: Decimal(value))))
+            
+        // UInt32 -> UInt32?
+        case .lightSourceOnTimeResettable,
+             .lightSourceOnTimeNotResettable:
+            guard length == valueLength else { return .timeSecond32(nil) }
+            let value: UInt32 = data.read(fromOffset: offset)
+            guard value != UInt32(0xFFFFFFFF) else { return .timeSecond32(nil) }
+            return .timeSecond32(value)
 
         // UInt32 -> ValidDecimal?
         case .preciseTotalDeviceEnergyUse,
