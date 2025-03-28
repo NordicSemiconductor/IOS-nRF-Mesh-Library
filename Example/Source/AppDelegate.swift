@@ -182,6 +182,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             Model(sigModelId: .genericOnOffClientModelId, delegate: GenericOnOffClientDelegate()),
             Model(sigModelId: .genericLevelClientModelId, delegate: GenericLevelClientDelegate()),
             Model(sigModelId: .lightLCClientModelId, delegate: LightLCClientDelegate()),
+            // Nordic Pairing Initiator model:
+            Model(vendorModelId: .lePairingInitiator,
+                  companyId: .nordicSemiconductorCompanyId,
+                  delegate: PairingInitiatorDelegate()),
             // A simple vendor model:
             Model(vendorModelId: .simpleOnOffClientModelId,
                   companyId: .nordicSemiconductorCompanyId,

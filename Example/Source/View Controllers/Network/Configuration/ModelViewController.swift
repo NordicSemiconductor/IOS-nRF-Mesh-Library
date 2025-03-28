@@ -81,7 +81,7 @@ class ModelViewController: ProgressViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        title = model.name ?? "Model"
+        title = model.modelName
         
         // Details section is always visible.
         sections.append(.details)
@@ -89,10 +89,12 @@ class ModelViewController: ProgressViewController {
         if model.supportsApplicationKeyBinding {
             sections.append(.appKeyBinding)
         }
-        if model.supportsModelPublication ?? true {
+        let isLePairingModel = model.companyIdentifier == .nordicSemiconductorCompanyId &&
+            model.modelIdentifier == .lePairingResponder || model.modelIdentifier == .lePairingInitiator
+        if model.supportsModelPublication ?? !isLePairingModel {
             sections.append(.publication)
         }
-        if model.supportsModelSubscriptions ?? true {
+        if model.supportsModelSubscriptions ?? !isLePairingModel {
             sections.append(.subscriptions)
         }
         if model.isSensorServer {
@@ -134,6 +136,8 @@ class ModelViewController: ProgressViewController {
                            forCellReuseIdentifier: UInt16.genericPowerOnOffSetupServerModelId.hex)
         tableView.register(UINib(nibName: "LightLC", bundle: nil),
                            forCellReuseIdentifier: UInt16.lightLCServerModelId.hex)
+        tableView.register(UINib(nibName: "PairingResponder", bundle: nil),
+                           forCellReuseIdentifier: "pairingInitiator")
         tableView.register(UINib(nibName: "VendorModel", bundle: nil),
                            forCellReuseIdentifier: "vendor")
     }
@@ -327,7 +331,9 @@ class ModelViewController: ProgressViewController {
             fallthrough
         case .custom:
             // A custom cell for the Model.
-            let identifier = model.isBluetoothSIGAssigned ? model.modelIdentifier.hex : "vendor"
+            let identifier = model.isBluetoothSIGAssigned ? model.modelIdentifier.hex : 
+                             model.companyIdentifier == .nordicSemiconductorCompanyId && model.modelIdentifier == .lePairingResponder ? "pairingInitiator" :
+                             "vendor"
             let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as! ModelViewCell
             cell.delegate = self
             cell.model    = model
@@ -1100,7 +1106,8 @@ private extension Model {
 private extension Model {
     
     var hasCustomUI: Bool {
-        return !isBluetoothSIGAssigned   // Vendor Models.
+        return !isBluetoothSIGAssigned // Vendor Models.
+            && !(companyIdentifier == .nordicSemiconductorCompanyId && modelIdentifier == .lePairingInitiator) // Skip LE Pairing Initiator
             || modelIdentifier == .genericOnOffServerModelId
             || modelIdentifier == .genericPowerOnOffServerModelId
             || modelIdentifier == .genericPowerOnOffSetupServerModelId
