@@ -107,8 +107,7 @@ class VendorModelViewCell: ModelViewCell, UITextFieldDelegate {
                 return
             }
         }
-        guard let opCode = UInt8(opCodeField.text!, radix: 16), opCode <= 0x3F,
-              !Data(hex: parametersField.text!).isEmpty else {
+        guard let opCode = UInt8(opCodeField.text!, radix: 16), opCode <= 0x3F else {
             sendButton.isEnabled = false
             return
         }

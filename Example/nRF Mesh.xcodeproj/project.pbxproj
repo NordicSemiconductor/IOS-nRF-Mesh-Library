@@ -175,6 +175,11 @@
 		F03414872B91373E009DD792 /* LightLCLightOnOffGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03414862B91373E009DD792 /* LightLCLightOnOffGroupCell.swift */; };
 		F0464DAD2D5F79D200AE3684 /* UITableViewCell+Disabled.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0464DAB2D5F79D200AE3684 /* UITableViewCell+Disabled.swift */; };
 		F0464DAE2D5F79D200AE3684 /* UIViewController+Identify.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0464DAC2D5F79D200AE3684 /* UIViewController+Identify.swift */; };
+		F0587F6F2D96C5AA0091CDF4 /* PairingResponder.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0587F6E2D96C5AA0091CDF4 /* PairingResponder.xib */; };
+		F0587F712D96C63A0091CDF4 /* PairingResponderViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0587F702D96C63A0091CDF4 /* PairingResponderViewCell.swift */; };
+		F0587F732D96EC6B0091CDF4 /* PairingInitiatorDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0587F722D96EC6B0091CDF4 /* PairingInitiatorDelegate.swift */; };
+		F0587F772D96ECB90091CDF4 /* PairingRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0587F762D96ECB90091CDF4 /* PairingRequest.swift */; };
+		F0587F792D96EE0F0091CDF4 /* PairingResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0587F782D96EE0F0091CDF4 /* PairingResponse.swift */; };
 		F063C01A29C2774300A445A9 /* SelectKeysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F063C01929C2774300A445A9 /* SelectKeysViewController.swift */; };
 		F063C01D29C27EAB00A445A9 /* IntroViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F063C01C29C27EAB00A445A9 /* IntroViewController.swift */; };
 		F085C9FB29C496AB00C2DF89 /* SelectModelsForBindingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F085C9FA29C496AB00C2DF89 /* SelectModelsForBindingViewController.swift */; };
@@ -388,6 +393,11 @@
 		F03414862B91373E009DD792 /* LightLCLightOnOffGroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCLightOnOffGroupCell.swift; sourceTree = "<group>"; };
 		F0464DAB2D5F79D200AE3684 /* UITableViewCell+Disabled.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableViewCell+Disabled.swift"; sourceTree = "<group>"; };
 		F0464DAC2D5F79D200AE3684 /* UIViewController+Identify.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Identify.swift"; sourceTree = "<group>"; };
+		F0587F6E2D96C5AA0091CDF4 /* PairingResponder.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PairingResponder.xib; sourceTree = "<group>"; };
+		F0587F702D96C63A0091CDF4 /* PairingResponderViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingResponderViewCell.swift; sourceTree = "<group>"; };
+		F0587F722D96EC6B0091CDF4 /* PairingInitiatorDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingInitiatorDelegate.swift; sourceTree = "<group>"; };
+		F0587F762D96ECB90091CDF4 /* PairingRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingRequest.swift; sourceTree = "<group>"; };
+		F0587F782D96EE0F0091CDF4 /* PairingResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingResponse.swift; sourceTree = "<group>"; };
 		F063C01929C2774300A445A9 /* SelectKeysViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectKeysViewController.swift; sourceTree = "<group>"; };
 		F063C01C29C27EAB00A445A9 /* IntroViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroViewController.swift; sourceTree = "<group>"; };
 		F085C9FA29C496AB00C2DF89 /* SelectModelsForBindingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectModelsForBindingViewController.swift; sourceTree = "<group>"; };
@@ -520,6 +530,7 @@
 				A7B526A6277B210000F5C60D /* GenericPowerOnOffSetup.xib */,
 				52A9C1C42313D7D80036792A /* GenericLevel.xib */,
 				5217D2E4250F90D8004FDE79 /* GenericDefaultTransitionTime.xib */,
+				F0587F6E2D96C5AA0091CDF4 /* PairingResponder.xib */,
 				5231404C230AC4680074325A /* VendorModel.xib */,
 			);
 			path = Model;
@@ -532,6 +543,7 @@
 				5231403E2301761C0074325A /* ConfigurationServerViewCell.swift */,
 				52A9C17B230EB9490036792A /* GenericOnOffViewCell.swift */,
 				A7A59BD6277225E70045A8ED /* GenericPowerOnOffViewCell.swift */,
+				F0587F702D96C63A0091CDF4 /* PairingResponderViewCell.swift */,
 				A7B526A5277B210000F5C60D /* GenericPowerOnOffSetupViewCell.swift */,
 				52A9C1C32313D7D80036792A /* GenericLevelViewCell.swift */,
 				5217D2E3250F90D8004FDE79 /* GenericDefaultTransitionTimeViewCell.swift */,
@@ -767,6 +779,7 @@
 		52DF5D8D22968F7C00C297C1 /* Mesh Network */ = {
 			isa = PBXGroup;
 			children = (
+				F0587F742D96EC8E0091CDF4 /* LE Pairing */,
 				5288C20B2371A8E000321ED3 /* Simple OnOff */,
 				52DF5D8E229691BD00C297C1 /* NetworkConnection.swift */,
 				5211EAD4250777E100089FF2 /* SceneServerDelegate.swift */,
@@ -909,6 +922,24 @@
 				F57EEAABA13E16EBDF1CADFD /* Pods_nRF_Mesh_Tests.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F0587F742D96EC8E0091CDF4 /* LE Pairing */ = {
+			isa = PBXGroup;
+			children = (
+				F0587F752D96ECA40091CDF4 /* Messages */,
+				F0587F722D96EC6B0091CDF4 /* PairingInitiatorDelegate.swift */,
+			);
+			path = "LE Pairing";
+			sourceTree = "<group>";
+		};
+		F0587F752D96ECA40091CDF4 /* Messages */ = {
+			isa = PBXGroup;
+			children = (
+				F0587F762D96ECB90091CDF4 /* PairingRequest.swift */,
+				F0587F782D96EE0F0091CDF4 /* PairingResponse.swift */,
+			);
+			path = Messages;
 			sourceTree = "<group>";
 		};
 		F063C01B29C27E8500A445A9 /* Automation */ = {
@@ -1070,6 +1101,7 @@
 				52CD0A5E2330C04700A9A181 /* Network.storyboard in Resources */,
 				A7A59BD5277225A70045A8ED /* GenericPowerOnOff.xib in Resources */,
 				52E54CDB2343878B00478F05 /* Control.storyboard in Resources */,
+				F0587F6F2D96C5AA0091CDF4 /* PairingResponder.xib in Resources */,
 				3089BCA02099CA4900E30192 /* LaunchScreen.storyboard in Resources */,
 				52CD0A5B2330BF4800A9A181 /* Proxy.storyboard in Resources */,
 				607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */,
@@ -1238,6 +1270,7 @@
 				5231401622F460380074325A /* PublicationCell.swift in Sources */,
 				52E54CE32344978300478F05 /* GenericLevelServerDelegate.swift in Sources */,
 				5215600929FBFD230048B2D2 /* WizardViewController.swift in Sources */,
+				F0587F712D96C63A0091CDF4 /* PairingResponderViewCell.swift in Sources */,
 				528AB9F8228D847C000BE9DC /* NetworkViewController.swift in Sources */,
 				523F778722CCDE250030EA6A /* SetPublicationViewController.swift in Sources */,
 				52CD0A622330DCFF00A9A181 /* CustomAddressCell.swift in Sources */,
@@ -1268,6 +1301,7 @@
 				523F776822C615CE0030EA6A /* NodeAppKeysViewController.swift in Sources */,
 				523F777922CB57190030EA6A /* ModelViewController.swift in Sources */,
 				522AFFE022C2376C00521EDC /* ElementViewController.swift in Sources */,
+				F0587F732D96EC6B0091CDF4 /* PairingInitiatorDelegate.swift in Sources */,
 				5288C20E2371A91900321ED3 /* SimpleOnOffSet.swift in Sources */,
 				523F779722CE2BF60030EA6A /* SetPublicationDestinationsViewController.swift in Sources */,
 				52E54CD023437D3D00478F05 /* ModelControlCell.swift in Sources */,
@@ -1320,6 +1354,7 @@
 				52518B3322E0B43200A1FD1E /* GroupCell.swift in Sources */,
 				529B7570223FF1AE008F1CE7 /* SettingsViewController.swift in Sources */,
 				5292F8A1250137DC00EA0F2A /* NodeScenesViewController.swift in Sources */,
+				F0587F772D96ECB90091CDF4 /* PairingRequest.swift in Sources */,
 				526021F62343660200E88F06 /* ControlViewController.swift in Sources */,
 				5245737B2500E10800CF8500 /* ScenesViewController.swift in Sources */,
 				F085C9FB29C496AB00C2DF89 /* SelectModelsForBindingViewController.swift in Sources */,
@@ -1338,6 +1373,7 @@
 				5288C2062370571100321ED3 /* ProxySelectorViewController.swift in Sources */,
 				F0464DAD2D5F79D200AE3684 /* UITableViewCell+Disabled.swift in Sources */,
 				F0464DAE2D5F79D200AE3684 /* UIViewController+Identify.swift in Sources */,
+				F0587F792D96EE0F0091CDF4 /* PairingResponse.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
