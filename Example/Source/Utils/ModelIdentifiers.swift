@@ -33,7 +33,14 @@ import NordicMesh
 
 extension UInt16 {
     
-    // Supported vendor models
+    /// Nordic Semiconductor Company ID.
+    ///
+    /// The value is registered with Bluetooth SIG.
+    static let nordicSemiconductorCompanyId: UInt16 = 0x0059
+    
+    // Supported vendor models for Nordic Semiconductor Company ID.
+    // See https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/protocols/bt/bt_mesh/overview/reserved_ids.html
+    // for complete list of them.
     static let simpleOnOffServerModelId: UInt16 = 0x0000
     static let simpleOnOffClientModelId: UInt16 = 0x0001
     static let rssiServer: UInt16 = 0x0005
@@ -42,7 +49,17 @@ extension UInt16 {
     static let thingy52Server: UInt16 = 0x0008
     static let thingy52Client: UInt16 = 0x0009
     static let chatClient: UInt16 = 0x000A
-    
-    static let nordicSemiconductorCompanyId: UInt16 = 0x0059
+    static let distanceMeasurementServer: UInt16 = 0x000B
+    static let distanceMeasurementClient: UInt16 = 0x000C
+    /// The LE Pairing Initiator model is a vendor model that can be used to obtain
+    /// a passkey that will authenticate a Bluetooth LE connection over a mesh network
+    /// when it is not possible to use other pairing methods.
+    static let lePairingInitiator: UInt16 = 0x000D
+    /// The LE Pairing Responder model is a vendor model that can be used to hand over
+    /// a passkey that will authenticate a Bluetooth LE connection over a mesh network
+    /// when it is not possible to use other pairing methods.
+    ///
+    /// Read mode in the [Documentation](https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/libraries/bluetooth/mesh/vnd/le_pair_resp.html#bt-mesh-le-pair-resp-readme).
+    static let lePairingResponder: UInt16 = 0x000E
     
 }

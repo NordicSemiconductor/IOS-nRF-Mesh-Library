@@ -39,14 +39,18 @@ extension Model: @retroactive CustomDebugStringConvertible {
     public var modelName: String {
         if let companyIdentifier = companyIdentifier {
             switch (companyIdentifier, modelIdentifier) {
-            case (.nordicSemiconductorCompanyId, .simpleOnOffServerModelId): return "Simple OnOff Server"
-            case (.nordicSemiconductorCompanyId, .simpleOnOffClientModelId): return "Simple OnOff Client"
-            case (.nordicSemiconductorCompanyId, .rssiServer):               return "Rssi Server"
-            case (.nordicSemiconductorCompanyId, .rssiClient):               return "Rssi Client"
-            case (.nordicSemiconductorCompanyId, .rssiUtil):                 return "Rssi Util"
-            case (.nordicSemiconductorCompanyId, .thingy52Server):           return "Thingy52 Server"
-            case (.nordicSemiconductorCompanyId, .thingy52Client):           return "Thingy52 Client"
-            case (.nordicSemiconductorCompanyId, .chatClient):               return "Chat Client"
+            case (.nordicSemiconductorCompanyId, .simpleOnOffServerModelId):  return "Simple OnOff Server"
+            case (.nordicSemiconductorCompanyId, .simpleOnOffClientModelId):  return "Simple OnOff Client"
+            case (.nordicSemiconductorCompanyId, .rssiServer):                return "Rssi Server"
+            case (.nordicSemiconductorCompanyId, .rssiClient):                return "Rssi Client"
+            case (.nordicSemiconductorCompanyId, .rssiUtil):                  return "Rssi Util"
+            case (.nordicSemiconductorCompanyId, .thingy52Server):            return "Thingy52 Server"
+            case (.nordicSemiconductorCompanyId, .thingy52Client):            return "Thingy52 Client"
+            case (.nordicSemiconductorCompanyId, .chatClient):                return "Chat Client"
+            case (.nordicSemiconductorCompanyId, .distanceMeasurementServer): return "Distance Measurement Server"
+            case (.nordicSemiconductorCompanyId, .distanceMeasurementClient): return "Distance Measurement Client"
+            case (.nordicSemiconductorCompanyId, .lePairingInitiator):        return "LE Pairing Initiator"
+            case (.nordicSemiconductorCompanyId, .lePairingResponder):        return "LE Pairing Responder"
             default:
                 return "Vendor Model ID: \(modelIdentifier.asString())"
             }
