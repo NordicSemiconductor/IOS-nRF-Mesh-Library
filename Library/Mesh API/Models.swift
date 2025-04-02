@@ -141,6 +141,14 @@ public extension Model {
         case .lightLCServerModelId: return true
         case .lightLCSetupServerModelId: return true
         case .lightLCClientModelId: return true
+        // BLOB Transfer
+        case .blobTransferServerModelId: return false
+        case .blobTransferClientModelId: return false
+        // Device Firmware Update
+        case .firmwareUpdateServerModelId: return false
+        case .firmwareUpdateClientModelId: return false
+        case .firmwareDistributionServerModelId: return false
+        case .firmwareDistributionClientModelId: return false
         default: return nil
         }
     }
@@ -236,6 +244,14 @@ public extension Model {
         case .lightLCServerModelId: return true
         case .lightLCSetupServerModelId: return true
         case .lightLCClientModelId: return true
+        // BLOB Transfer
+        case .blobTransferServerModelId: return true
+        case .blobTransferClientModelId: return false
+        // Device Firmware Update
+        case .firmwareUpdateServerModelId: return true
+        case .firmwareUpdateClientModelId: return false
+        case .firmwareDistributionServerModelId: return true
+        case .firmwareDistributionClientModelId: return false
         default: return nil
         }
     }
