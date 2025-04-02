@@ -259,6 +259,10 @@ private extension Element {
                             delegate: RemoteProvisioningClientHandler()), at: 6)
         insert(model: Model(sigModelId: .sceneClientModelId,
                             delegate: SceneClientHandler(meshNetwork)), at: 7)
+        insert(model: Model(sigModelId: .firmwareUpdateClientModelId,
+                            delegate: FirmwareUpdateClientHandler()), at: 8)
+        insert(model: Model(sigModelId: .firmwareDistributionClientModelId,
+                            delegate: FirmwareDistributionClientHandler()), at: 9)
     }
     
     /// Removes the models that are or should be supported natively.
