@@ -252,11 +252,11 @@ private extension Element {
         insert(model: Model(sigModelId: .healthClientModelId,
                             delegate: HealthClientHandler()), at: 3)
         insert(model: Model(sigModelId: .privateBeaconClientModelId,
-                            delegate: PrivateBeaconClientHandler(meshNetwork)), at: 4)
+                            delegate: PrivateBeaconClientHandler()), at: 4)
         insert(model: Model(sigModelId: .sarConfigurationClientModelId,
-                            delegate: SarConfigurationClientHandler(meshNetwork)), at: 5)
+                            delegate: SarConfigurationClientHandler()), at: 5)
         insert(model: Model(sigModelId: .remoteProvisioningClientModelId,
-                            delegate: RemoteProvisioningClientHandler(meshNetwork)), at: 6)
+                            delegate: RemoteProvisioningClientHandler()), at: 6)
         insert(model: Model(sigModelId: .sceneClientModelId,
                             delegate: SceneClientHandler(meshNetwork)), at: 7)
     }

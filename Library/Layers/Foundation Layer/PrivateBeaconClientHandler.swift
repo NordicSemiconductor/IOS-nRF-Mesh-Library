@@ -38,19 +38,16 @@ import Foundation
 /// states defined by the Mesh Private Beacon Server model using Mesh Private Beacon
 /// messages.
 internal class PrivateBeaconClientHandler: ModelDelegate {
-    weak var meshNetwork: MeshNetwork!
-    
     let messageTypes: [UInt32 : MeshMessage.Type]
     let isSubscriptionSupported: Bool = false
     let publicationMessageComposer: MessageComposer? = nil
     
-    init(_ meshNetwork: MeshNetwork) {
+    init() {
         let types: [ConfigMessage.Type] = [
             PrivateBeaconStatus.self,
             PrivateGATTProxyStatus.self,
             PrivateNodeIdentityStatus.self
         ]
-        self.meshNetwork = meshNetwork
         self.messageTypes = types.toMap()
     }
     

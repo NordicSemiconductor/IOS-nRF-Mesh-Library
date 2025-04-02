@@ -37,18 +37,15 @@ import Foundation
 /// models. The SAR Configuration Client model may operate on states defined by the SAR Configuration
 /// Server model using SAR Configuration messages.
 internal class SarConfigurationClientHandler: ModelDelegate {
-    weak var meshNetwork: MeshNetwork!
-    
     let messageTypes: [UInt32 : MeshMessage.Type]
     let isSubscriptionSupported: Bool = false
     let publicationMessageComposer: MessageComposer? = nil
     
-    init(_ meshNetwork: MeshNetwork) {
+    init() {
         let types: [ConfigMessage.Type] = [
             SarReceiverStatus.self,
             SarTransmitterStatus.self
         ]
-        self.meshNetwork = meshNetwork
         self.messageTypes = types.toMap()
     }
     

@@ -40,13 +40,11 @@ import Foundation
 /// The access layer security on the Remote Provisioning Client model shall use the
 /// Device Key of the node supporting the Remote Provisioning Server model.
 internal class RemoteProvisioningClientHandler: ModelDelegate {
-    weak var meshNetwork: MeshNetwork!
-    
     let messageTypes: [UInt32 : MeshMessage.Type]
     let isSubscriptionSupported: Bool = false
     let publicationMessageComposer: MessageComposer? = nil
     
-    init(_ meshNetwork: MeshNetwork) {
+    init() {
         let types: [ConfigMessage.Type] = [
             RemoteProvisioningScanStatus.self,
             RemoteProvisioningScanCapabilitiesStatus.self,
@@ -57,7 +55,6 @@ internal class RemoteProvisioningClientHandler: ModelDelegate {
             RemoteProvisioningPDUOutboundReport.self,
             RemoteProvisioningPDUReport.self
         ]
-        self.meshNetwork = meshNetwork
         self.messageTypes = types.toMap()
     }
     
