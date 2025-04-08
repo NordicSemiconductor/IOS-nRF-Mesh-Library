@@ -73,7 +73,7 @@ public struct FirmwareUpdateFirmwareMetadataCheck: StaticAcknowledgedMeshMessage
         }
         imageIndex = parameters[0]
         
-        if (parameters.count > 1) {
+        if parameters.count > 1 {
             metadata = parameters.subdata(in: 1..<parameters.count)
         } else {
             metadata = nil
