@@ -49,6 +49,13 @@ public struct FirmwareId: Sendable, Equatable {
     /// The version information shall be 0-106 bytes long.
     public let version: Data
     
+    /// Returns the Firmware ID as a byte array.
+    ///
+    /// This array can be used to check and obtain updated firmware images using HTTPS.
+    public var bytes: Data {
+        return Data() + companyIdentifier + version
+    }
+    
     public init(companyIdentifier: UInt16, version: Data) {
         self.companyIdentifier = companyIdentifier
         self.version = version
@@ -118,19 +125,19 @@ public enum FirmwareDistributionMessageStatus: UInt8, Sendable {
 /// Firmware Update Server.
 public enum FirmwareUpdatePhase: UInt8, Sendable {
     /// Ready to start a Receive Firmware procedure.
-    case idle = 0x0
+    case idle                  = 0x0
     /// The Transfer BLOB procedure failed.
-    case transferError = 0x1
+    case transferError         = 0x1
     /// The Receive Firmware procedure is being executed.
-    case transferActive = 0x2
+    case transferActive        = 0x2
     /// The Verify Firmware procedure is being executed.
-    case verifyingUpdate = 0x3
+    case verifyingUpdate       = 0x3
     /// The Verify Firmware procedure completed successfully.
     case verificationSucceeded = 0x4
     /// The Verify Firmware procedure failed.
-    case verificationFailed = 0x5
+    case verificationFailed    = 0x5
     /// The Apply New Firmware procedure is being executed.
-    case applyingUpdate = 0x6
+    case applyingUpdate        = 0x6
 }
 
 /// The Retrieved Update Phase field identifies the phase of the firmware update
@@ -140,29 +147,29 @@ public enum FirmwareUpdatePhase: UInt8, Sendable {
 /// the Update Phase state or a value set by the client.
 public enum RetrievedUpdatePhase: UInt8, Sendable {
     /// No firmware transfer is in progress.
-    case idle = 0x0
+    case idle                  = 0x0
     /// Firmware transfer was not completed.
-    case transferError = 0x1
+    case transferError         = 0x1
     /// Firmware transfer is in progress.
-    case transferActive = 0x2
+    case transferActive        = 0x2
     /// Verification of the firmware image is in progress.
-    case verifyingUpdate = 0x3
+    case verifyingUpdate       = 0x3
     /// Firmware image verification succeeded.
     case verificationSucceeded = 0x4
     /// Firmware image verification failed.
-    case verificationFailed = 0x5
+    case verificationFailed    = 0x5
     /// Firmware applying is in progress.
-    case applyingUpdate = 0x6
+    case applyingUpdate        = 0x6
     /// Firmware transfer has been canceled.
-    case transferCanceled = 0x7
+    case transferCanceled      = 0x7
     /// Firmware applying succeeded.
-    case applySuccess = 0x8
+    case applySuccess          = 0x8
     /// Firmware applying failed.
-    case applyFailed = 0x9
+    case applyFailed           = 0x9
     /// Phase of a Node was not yet retrieved.
     ///
     /// This phase should never be reported by a Node.
-    case unknown = 0xA
+    case unknown               = 0xA
 }
 
 /// The Distribution Phase state indicates the phase of a firmware image distribution
@@ -188,27 +195,21 @@ public enum FirmwareDistributionPhase: UInt8, Sendable {
 
 /// The Firmware Update Additional Information state identifies the Node state after
 /// successful application of a verified firmware image.
-public struct FirmwareUpdateAdditionalInformation: OptionSet, Sendable {
-    public let rawValue: UInt8
-
+public enum FirmwareUpdateAdditionalInformation: UInt8, Sendable {
+    /// Node’s Composition Data state will not change.
+    case compositionDataUnchanged                = 0x0
     /// Node’s Composition Data state will change, and Remote Provisioning is not supported.
     ///
     /// The new Composition Data state value is effective after the Node is reprovisioned.
-    static let compositionDataChangedAndRPRUnsupported = FirmwareUpdateAdditionalInformation(rawValue: 0x1)
-
+    case compositionDataChangedAndRPRUnsupported = 0x1
     /// Node’s Composition Data state will change, and Remote Provisioning is supported.
     ///
     /// The Node supports remote provisioning and Composition Data Page 128.
     /// The Composition Data Page 128 contains different information than Composition Data Page 0.
-    static let compositionDataChangedAndRPRSupported = FirmwareUpdateAdditionalInformation(rawValue: 0x2)
-
+    case compositionDataChangedAndRPRSupported   = 0x2
     /// The Node will become unprovisioned after successful application of a verified
     /// firmware image.
-    static let deviceUnprovisioned = FirmwareUpdateAdditionalInformation(rawValue: 0x3)
-    
-    public init(rawValue: UInt8) {
-        self.rawValue = rawValue
-    }
+    case deviceUnprovisioned                     = 0x3
 }
 
 /// The Update Policy state indicates when to apply a new firmware image.
@@ -216,8 +217,119 @@ public enum FirmwareUpdatePolicy: UInt8, Sendable {
     /// The Firmware Distribution Server verifies that firmware image distribution completed
     /// successfully but does not apply the update. The Initiator (the Firmware Distribution Client)
     /// initiates firmware image application.
-    case verifyOnly = 0x00
+    case verifyOnly     = 0x00
     /// The Firmware Distribution Server verifies that firmware image distribution completed
     /// successfully and then applies the firmware update.
     case verifyAndApply = 0x01
+}
+
+// MARK: - CustomDebugStringConvertible
+
+extension FirmwareId: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        return "FirmwareId(companyId: 0x\(companyIdentifier.hex), version: 0x\(version.hex))"
+    }
+    
+}
+
+extension FirmwareUpdateMessageStatus: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .success:                 return "Success"
+        case .insufficientResources:   return "Insufficient Resources"
+        case .wrongPhase:              return "Wrong Phase"
+        case .internalError:           return "Internal Error"
+        case .wrongFirmwareIndex:      return "Wrong Firmware Index"
+        case .metadataCheckFailed:     return "Metadata Check Failed"
+        case .temporarilyUnavailable:  return "Temporarily Unavailable"
+        case .blobTransferBusy:        return "BLOB Transfer Busy"
+        }
+    }
+    
+}
+
+extension FirmwareDistributionMessageStatus: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .success:                 return "Success"
+        case .insufficientResources:   return "Insufficient Resources"
+        case .wrongPhase:              return "Wrong Phase"
+        case .internalError:           return "Internal Error"
+        case .firmwareNotFound:        return "Firmware Not Found"
+        case .invalidAppKeyIndex:      return "Invalid AppKey Index"
+        case .receiversListEmpty:      return "Receivers List Empty"
+        case .busyWithDistribution:    return "Busy With Distribution"
+        case .busyWithUpload:          return "Busy With Upload"
+        case .uriNotSupported:         return "URI Not Supported"
+        case .uriMalformed:            return "URI Malformed"
+        case .uriUnreachable:          return "URI Unreachable"
+        case .newFirmwareNotAvailable: return "New Firmware Not Available"
+        case .suspendFailed:           return "Suspend Failed"
+        }
+    }
+    
+}
+
+extension RetrievedUpdatePhase: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .idle:                  return "Idle"
+        case .transferError:         return "Transfer Error"
+        case .transferActive:        return "Transfer Active"
+        case .verifyingUpdate:       return "Verifying Update"
+        case .verificationSucceeded: return "Verification Succeeded"
+        case .verificationFailed:    return "Verification Failed"
+        case .applyingUpdate:        return "Applying Update"
+        case .transferCanceled:      return "Transfer Canceled"
+        case .applySuccess:          return "Apply Success"
+        case .applyFailed:           return "Apply Failed"
+        case .unknown:               return "Unknown Phase"
+        }
+    }
+    
+}
+
+extension FirmwareDistributionPhase: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .idle:              return "Idle"
+        case .transferActive:    return "Transfer Active"
+        case .transferSuccess:   return "Transfer Success"
+        case .applyingUpdate:    return "Applying Update"
+        case .completed:         return "Completed"
+        case .failed:            return "Failed"
+        case .cancelingUpdate:   return "Canceling Update"
+        case .transferSuspended: return "Transfer Suspended"
+        }
+    }
+    
+}
+
+extension FirmwareUpdateAdditionalInformation: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .compositionDataUnchanged:                return "Composition Data Unchanged"
+        case .compositionDataChangedAndRPRUnsupported: return "Composition Data Changed and Remote Provisioning Unsupported"
+        case .compositionDataChangedAndRPRSupported:   return "Composition Data Changed and Remote Provisioning Supported"
+        case .deviceUnprovisioned:                     return "Device Unprovisioned"
+        }
+    }
+    
+}
+
+extension FirmwareUpdatePolicy: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .verifyOnly:     return "Verify Only"
+        case .verifyAndApply: return "Verify and Apply"
+        }
+    }
+    
 }
