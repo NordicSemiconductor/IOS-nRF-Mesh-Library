@@ -141,6 +141,8 @@ class ModelViewController: ProgressViewController {
                            forCellReuseIdentifier: UInt16.genericPowerOnOffSetupServerModelId.hex)
         tableView.register(UINib(nibName: "LightLC", bundle: nil),
                            forCellReuseIdentifier: UInt16.lightLCServerModelId.hex)
+        tableView.register(UINib(nibName: "FirmwareDistribution", bundle: nil),
+                           forCellReuseIdentifier: UInt16.firmwareDistributionServerModelId.hex)
         tableView.register(UINib(nibName: "PairingResponder", bundle: nil),
                            forCellReuseIdentifier: "pairingInitiator")
         tableView.register(UINib(nibName: "VendorModel", bundle: nil),
@@ -1169,6 +1171,7 @@ private extension Model {
             || modelIdentifier == .genericLevelServerModelId
             || modelIdentifier == .genericDefaultTransitionTimeServerModelId
             || modelIdentifier == .lightLCServerModelId
+            || modelIdentifier == .firmwareDistributionServerModelId
     }
     
 }

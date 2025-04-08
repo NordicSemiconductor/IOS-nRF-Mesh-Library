@@ -188,6 +188,8 @@
 		F085CA0429D1E2B000C2DF89 /* RelatedModelsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F085CA0329D1E2B000C2DF89 /* RelatedModelsViewController.swift */; };
 		F085CA0829D70ACB00C2DF89 /* ConfigurationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F085CA0729D70ACB00C2DF89 /* ConfigurationViewController.swift */; };
 		F096D8442D9FF60100A1A1E4 /* FirmwareInformationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F096D8432D9FF60100A1A1E4 /* FirmwareInformationViewController.swift */; };
+		F096D8462DA5602800A1A1E4 /* FirmwareDistribution.xib in Resources */ = {isa = PBXBuildFile; fileRef = F096D8452DA5602800A1A1E4 /* FirmwareDistribution.xib */; };
+		F096D8482DA5668100A1A1E4 /* FirmwareDistributionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F096D8472DA5668100A1A1E4 /* FirmwareDistributionViewCell.swift */; };
 		F09DE4C729D771F20073969A /* Model+Name.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DE4C629D771F20073969A /* Model+Name.swift */; };
 		F09DE4CA29DC68900073969A /* MulticolorProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DE4C929DC68900073969A /* MulticolorProgressView.swift */; };
 		F09DE4CF29E5A0BF0073969A /* MeshTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DE4CE29E5A0BF0073969A /* MeshTask.swift */; };
@@ -407,6 +409,8 @@
 		F085CA0329D1E2B000C2DF89 /* RelatedModelsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelatedModelsViewController.swift; sourceTree = "<group>"; };
 		F085CA0729D70ACB00C2DF89 /* ConfigurationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationViewController.swift; sourceTree = "<group>"; };
 		F096D8432D9FF60100A1A1E4 /* FirmwareInformationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareInformationViewController.swift; sourceTree = "<group>"; };
+		F096D8452DA5602800A1A1E4 /* FirmwareDistribution.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FirmwareDistribution.xib; sourceTree = "<group>"; };
+		F096D8472DA5668100A1A1E4 /* FirmwareDistributionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareDistributionViewCell.swift; sourceTree = "<group>"; };
 		F09DE4C629D771F20073969A /* Model+Name.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Model+Name.swift"; path = "Utils/Model+Name.swift"; sourceTree = "<group>"; };
 		F09DE4C929DC68900073969A /* MulticolorProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MulticolorProgressView.swift; sourceTree = "<group>"; };
 		F09DE4CE29E5A0BF0073969A /* MeshTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshTask.swift; sourceTree = "<group>"; };
@@ -533,6 +537,7 @@
 				52A9C1C42313D7D80036792A /* GenericLevel.xib */,
 				5217D2E4250F90D8004FDE79 /* GenericDefaultTransitionTime.xib */,
 				F0587F6E2D96C5AA0091CDF4 /* PairingResponder.xib */,
+				F096D8452DA5602800A1A1E4 /* FirmwareDistribution.xib */,
 				5231404C230AC4680074325A /* VendorModel.xib */,
 			);
 			path = Model;
@@ -546,6 +551,7 @@
 				52A9C17B230EB9490036792A /* GenericOnOffViewCell.swift */,
 				A7A59BD6277225E70045A8ED /* GenericPowerOnOffViewCell.swift */,
 				F0587F702D96C63A0091CDF4 /* PairingResponderViewCell.swift */,
+				F096D8472DA5668100A1A1E4 /* FirmwareDistributionViewCell.swift */,
 				A7B526A5277B210000F5C60D /* GenericPowerOnOffSetupViewCell.swift */,
 				52A9C1C32313D7D80036792A /* GenericLevelViewCell.swift */,
 				5217D2E3250F90D8004FDE79 /* GenericDefaultTransitionTimeViewCell.swift */,
@@ -1117,6 +1123,7 @@
 				F0FB18F82B8E90CF00683C3F /* LightLC.xib in Resources */,
 				52A8EA8B24E6A371004C14C7 /* SetHeartbeatPublication.storyboard in Resources */,
 				F0FEE6F72D5374580092B7B7 /* HealthServer.xib in Resources */,
+				F096D8462DA5602800A1A1E4 /* FirmwareDistribution.xib in Resources */,
 				607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */,
 				52835250227887970097B949 /* Settings.storyboard in Resources */,
 			);
@@ -1233,6 +1240,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				52DE3ABA25DA871800268D7D /* SensorClientDelegate.swift in Sources */,
+				F096D8482DA5668100A1A1E4 /* FirmwareDistributionViewCell.swift in Sources */,
 				5275962E2A138D9700B04C6F /* SelectPublicationViewController.swift in Sources */,
 				529B764722522D37008F1CE7 /* UITableView+EmptyView.swift in Sources */,
 				5288153D25125AB600484AF0 /* RootTabBarController.swift in Sources */,
