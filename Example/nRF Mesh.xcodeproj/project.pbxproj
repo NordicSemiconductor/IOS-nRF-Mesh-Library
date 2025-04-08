@@ -187,6 +187,7 @@
 		F085CA0229D1E0B900C2DF89 /* Subscribe.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F085CA0029D1E0B900C2DF89 /* Subscribe.storyboard */; };
 		F085CA0429D1E2B000C2DF89 /* RelatedModelsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F085CA0329D1E2B000C2DF89 /* RelatedModelsViewController.swift */; };
 		F085CA0829D70ACB00C2DF89 /* ConfigurationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F085CA0729D70ACB00C2DF89 /* ConfigurationViewController.swift */; };
+		F096D8442D9FF60100A1A1E4 /* FirmwareInformationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F096D8432D9FF60100A1A1E4 /* FirmwareInformationViewController.swift */; };
 		F09DE4C729D771F20073969A /* Model+Name.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DE4C629D771F20073969A /* Model+Name.swift */; };
 		F09DE4CA29DC68900073969A /* MulticolorProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DE4C929DC68900073969A /* MulticolorProgressView.swift */; };
 		F09DE4CF29E5A0BF0073969A /* MeshTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DE4CE29E5A0BF0073969A /* MeshTask.swift */; };
@@ -405,6 +406,7 @@
 		F085CA0129D1E0B900C2DF89 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Subscribe.storyboard; sourceTree = "<group>"; };
 		F085CA0329D1E2B000C2DF89 /* RelatedModelsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelatedModelsViewController.swift; sourceTree = "<group>"; };
 		F085CA0729D70ACB00C2DF89 /* ConfigurationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationViewController.swift; sourceTree = "<group>"; };
+		F096D8432D9FF60100A1A1E4 /* FirmwareInformationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareInformationViewController.swift; sourceTree = "<group>"; };
 		F09DE4C629D771F20073969A /* Model+Name.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Model+Name.swift"; path = "Utils/Model+Name.swift"; sourceTree = "<group>"; };
 		F09DE4C929DC68900073969A /* MulticolorProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MulticolorProgressView.swift; sourceTree = "<group>"; };
 		F09DE4CE29E5A0BF0073969A /* MeshTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshTask.swift; sourceTree = "<group>"; };
@@ -764,6 +766,7 @@
 				52B7FD6C2525B40300308673 /* NodeSceneRecallViewController.swift */,
 				5292F8A4250237A600EA0F2A /* NodeStoreSceneViewController.swift */,
 				523F777822CB57190030EA6A /* ModelViewController.swift */,
+				F096D8432D9FF60100A1A1E4 /* FirmwareInformationViewController.swift */,
 				F085CA0329D1E2B000C2DF89 /* RelatedModelsViewController.swift */,
 				523F777A22CB86A00030EA6A /* ModelBindAppKeyViewController.swift */,
 				523F778622CCDE250030EA6A /* SetPublicationViewController.swift */,
@@ -1245,6 +1248,7 @@
 				52CD0A602330D71900A9A181 /* AddAddressViewController.swift in Sources */,
 				52835269227B2BAE0097B949 /* ScannerTableViewController.swift in Sources */,
 				528352BC2285B6150097B949 /* OobSelector.swift in Sources */,
+				F096D8442D9FF60100A1A1E4 /* FirmwareInformationViewController.swift in Sources */,
 				52E54CDF23438D2600478F05 /* GenericOnOffServerDelegate.swift in Sources */,
 				5217D2E2250F7639004FDE79 /* GenericDefaultTransitionTimeClientDelegate.swift in Sources */,
 				5288C20823705C8D00321ED3 /* ProxyCell.swift in Sources */,
