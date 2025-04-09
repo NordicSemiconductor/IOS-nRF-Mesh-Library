@@ -59,14 +59,14 @@ public struct FirmwareUpdateStatus: StaticMeshResponse {
     public let imageIndex: UInt8?
     
     public var parameters: Data? {
-        let byte0 = UInt8((status.rawValue << 5) | (updatePhase.rawValue & 0x7))
+        let byte0 = UInt8((status.rawValue & 0x7) | (updatePhase.rawValue << 5))
         if let updateTtl = updateTtl,
            let additionalInformation = additionalInformation,
            let updateTimeoutBase = updateTimeoutBase,
            let blobId = blobId,
            let imageIndex = imageIndex {
             let byte1 = UInt8(updateTtl & 0x7F)
-            let byte2 = UInt8(additionalInformation.rawValue << 3)
+            let byte2 = UInt8(additionalInformation.rawValue & 0x1F)
             return Data([byte0, byte1, byte2]) + updateTimeoutBase + blobId + imageIndex
         } else {
             return Data([byte0])
@@ -120,12 +120,12 @@ public struct FirmwareUpdateStatus: StaticMeshResponse {
             return nil
         }
         let byte0 = parameters[0]
-        guard let status = FirmwareUpdateMessageStatus(rawValue: byte0 >> 5) else {
+        guard let status = FirmwareUpdateMessageStatus(rawValue: byte0 & 0x7) else {
             return nil
         }
         self.status = status
         
-        guard let updatePhase = FirmwareUpdatePhase(rawValue: byte0 & 0x7) else {
+        guard let updatePhase = FirmwareUpdatePhase(rawValue: byte0 >> 5) else {
             return nil
         }
         self.updatePhase = updatePhase
@@ -135,7 +135,7 @@ public struct FirmwareUpdateStatus: StaticMeshResponse {
                 return nil
             }
             self.updateTtl = parameters[1] & 0x7F
-            self.additionalInformation = FirmwareUpdateAdditionalInformation(rawValue: parameters[2] >> 3)
+            self.additionalInformation = FirmwareUpdateAdditionalInformation(rawValue: parameters[2] & 0x1F)
             self.updateTimeoutBase = parameters.read(fromOffset: 3)
             self.blobId = parameters.read(fromOffset: 5)
             self.imageIndex = parameters[13]

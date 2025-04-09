@@ -30,21 +30,24 @@
 
 import Foundation
 
-/// The SAR Configuration Client model is used to support the functionality of configuring the behavior of the
-/// lower transport layer of a node that supports the SAR Configuration Server model.
+/// The Firmware Distribution Client model is used by the Initiator to send the firmware image
+/// and the firmware distribution parameters to the Distributor, and to start the firmware image transfer.
 ///
-/// The SAR Configuration Client model is a root model and a main model that does not extend any other
-/// models. The SAR Configuration Client model may operate on states defined by the SAR Configuration
-/// Server model using SAR Configuration messages.
-internal class SarConfigurationClientHandler: ModelDelegate {
+/// The inputs to the procedures on the Firmware Distribution Client model are chosen by
+/// the higher-layer application.
+internal class FirmwareDistributionClientHandler: ModelDelegate {
     let messageTypes: [UInt32 : MeshMessage.Type]
     let isSubscriptionSupported: Bool = false
     let publicationMessageComposer: MessageComposer? = nil
     
     init() {
-        let types: [ConfigMessage.Type] = [
-            SarReceiverStatus.self,
-            SarTransmitterStatus.self
+        let types: [StaticMeshMessage.Type] = [
+            FirmwareDistributionReceiversStatus.self,
+            FirmwareDistributionReceiversList.self,
+            FirmwareDistributionCapabilitiesStatus.self,
+            FirmwareDistributionStatus.self,
+            FirmwareDistributionUploadStatus.self,
+            FirmwareDistributionFirmwareStatus.self,
         ]
         self.messageTypes = types.toMap()
     }

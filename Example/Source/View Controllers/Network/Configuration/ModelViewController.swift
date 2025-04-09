@@ -41,6 +41,7 @@ private enum Section: String {
     case heartbeatSubscription = "Heartbeat Subscriptions"
     case sensors = "Sensor Values"
     case healthServer = "Attention Timer"
+    case firmwareInformation = "Firmware Information"
     case custom = "Control"
     
     var title: String {
@@ -62,6 +63,7 @@ class ModelViewController: ProgressViewController {
     private var heartbeatSubscriptionStatus: ConfigHeartbeatSubscriptionStatus?
     private var healthFaultStatus: HealthFaultStatus?
     private var healthCurrentStatus: HealthCurrentStatus?
+    private var firmwareUpdateInformationStatus: FirmwareUpdateInformationStatus?
     
     /// Sensor values are defined only for Sensor Server model,
     /// and only when the value has been read.
@@ -103,6 +105,9 @@ class ModelViewController: ProgressViewController {
         if model.isHealthServer {
             sections.append(.healthServer)
         }
+        if model.isFirmwareUpdateServer {
+            sections.append(.firmwareInformation)
+        }
         if model.hasCustomUI {
             sections.append(.custom)
         }
@@ -136,6 +141,8 @@ class ModelViewController: ProgressViewController {
                            forCellReuseIdentifier: UInt16.genericPowerOnOffSetupServerModelId.hex)
         tableView.register(UINib(nibName: "LightLC", bundle: nil),
                            forCellReuseIdentifier: UInt16.lightLCServerModelId.hex)
+        tableView.register(UINib(nibName: "FirmwareDistribution", bundle: nil),
+                           forCellReuseIdentifier: UInt16.firmwareDistributionServerModelId.hex)
         tableView.register(UINib(nibName: "PairingResponder", bundle: nil),
                            forCellReuseIdentifier: "pairingInitiator")
         tableView.register(UINib(nibName: "VendorModel", bundle: nil),
@@ -169,11 +176,23 @@ class ModelViewController: ProgressViewController {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "related" {
+        switch segue.identifier {
+        case "related":
             let destination = segue.destination as! RelatedModelsViewController
             destination.model = model
             return
+        case "firmwareInformation":
+            let destination = segue.destination as! FirmwareInformationViewController
+            let indexPath = sender as! IndexPath
+            destination.model = model
+            destination.index = UInt8(indexPath.row)
+            destination.firmwareInformation = firmwareUpdateInformationStatus?.list[indexPath.row]
+            return
+        default:
+            break
         }
+        
+        // All other segues are pushed on the navigation stack.
         let navigationController = segue.destination as? UINavigationController
         navigationController?.presentationController?.delegate = self
         
@@ -234,6 +253,8 @@ class ModelViewController: ProgressViewController {
             return model.subscriptions.count + 1 // Add Action.
         case .sensors:
             return (sensorValues?.count ?? 0) + 1 // Get Action.
+        case .firmwareInformation:
+            return 1 + (firmwareUpdateInformationStatus?.list.count ?? 0) // Firmware Information entries, Get action.
         case .custom:
             return 1
         case .healthServer:
@@ -462,6 +483,19 @@ class ModelViewController: ProgressViewController {
             let cell = tableView.dequeueReusableCell(withIdentifier: "value", for: indexPath) as! SensorValueCell
             cell.value = sensorValues[indexPath.row]
             return cell
+        case .firmwareInformation:
+            guard let status = firmwareUpdateInformationStatus,
+                  indexPath.row < status.list.count else {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "action", for: indexPath)
+                cell.textLabel?.text = "Get"
+                cell.textLabel?.isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
+                return cell
+            }
+            let cell = tableView.dequeueReusableCell(withIdentifier: "firmwareInformation", for: indexPath)
+            let info = status.list[indexPath.row]
+            cell.textLabel?.text = "Image \(Int(status.firstIndex) + indexPath.row)"
+            cell.detailTextLabel?.text = CompanyIdentifier.name(for: info.currentFirmwareId.companyIdentifier) ?? "Unknown"
+            return cell
         }
     }
     
@@ -485,6 +519,8 @@ class ModelViewController: ProgressViewController {
             return indexPath.row == model.subscriptions.count
         case .sensors:
             return indexPath.row == sensorValues?.count ?? 0
+        case .firmwareInformation:
+            return true
         case .custom, .configurationServer, .healthServer:
             return false
         }
@@ -514,6 +550,12 @@ class ModelViewController: ProgressViewController {
             performSegue(withIdentifier: "subscribe", sender: indexPath)
         case .sensors:
             readSensorValues()
+        case .firmwareInformation:
+            if indexPath.row == firmwareUpdateInformationStatus?.list.count ?? 0 {
+                readFirmwareInformation()
+            } else {
+                performSegue(withIdentifier: "firmwareInformation", sender: indexPath)
+            }
         default:
             break
         }
@@ -804,6 +846,11 @@ private extension ModelViewController {
         send(message, description: "Reading Values...")
     }
     
+    func readFirmwareInformation() {
+        let message = FirmwareUpdateInformationGet(from: 0, limit: 10) // 10???
+        send(message, description: "Reading Firmware Information...")
+    }
+    
     func readNodeIdentityStatus(for networkKey: NetworkKey) {
         send(ConfigNodeIdentityGet(networkKey: networkKey),
              description: "Reading Node Identity status for \(networkKey)...")
@@ -991,6 +1038,12 @@ extension ModelViewController: MeshNetworkDelegate {
                 self.reloadSections(.sensors, with: .automatic)
             }
             
+        case let status as FirmwareUpdateInformationStatus:
+            firmwareUpdateInformationStatus = status
+            done {
+                self.reloadSections(.firmwareInformation, with: .automatic)
+            }
+            
         // Custom UI & Health Server
         default:
             if let status = message as? HealthFaultStatus {
@@ -1101,6 +1154,10 @@ private extension Model {
         return isBluetoothSIGAssigned && modelIdentifier == .healthServerModelId
     }
     
+    var isFirmwareUpdateServer: Bool {
+        return isBluetoothSIGAssigned && modelIdentifier == .firmwareUpdateServerModelId
+    }
+    
 }
 
 private extension Model {
@@ -1114,6 +1171,7 @@ private extension Model {
             || modelIdentifier == .genericLevelServerModelId
             || modelIdentifier == .genericDefaultTransitionTimeServerModelId
             || modelIdentifier == .lightLCServerModelId
+            || modelIdentifier == .firmwareDistributionServerModelId
     }
     
 }

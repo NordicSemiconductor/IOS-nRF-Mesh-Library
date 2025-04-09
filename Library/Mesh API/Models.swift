@@ -141,6 +141,14 @@ public extension Model {
         case .lightLCServerModelId: return true
         case .lightLCSetupServerModelId: return true
         case .lightLCClientModelId: return true
+        // BLOB Transfer
+        case .blobTransferServerModelId: return false
+        case .blobTransferClientModelId: return false
+        // Device Firmware Update
+        case .firmwareUpdateServerModelId: return false
+        case .firmwareUpdateClientModelId: return false
+        case .firmwareDistributionServerModelId: return false
+        case .firmwareDistributionClientModelId: return false
         default: return nil
         }
     }
@@ -236,6 +244,14 @@ public extension Model {
         case .lightLCServerModelId: return true
         case .lightLCSetupServerModelId: return true
         case .lightLCClientModelId: return true
+        // BLOB Transfer
+        case .blobTransferServerModelId: return true
+        case .blobTransferClientModelId: return false
+        // Device Firmware Update
+        case .firmwareUpdateServerModelId: return true
+        case .firmwareUpdateClientModelId: return false
+        case .firmwareDistributionServerModelId: return true
+        case .firmwareDistributionClientModelId: return false
         default: return nil
         }
     }
@@ -502,9 +518,12 @@ public extension Model {
             case .lightLCSetupServerModelId:
                 return model.modelIdentifier == .lightLCServerModelId
             // Device Firmware Update
-            case .firmwareUpdateServer,
-                 .firmwareDistributionServer:
-                return model.modelIdentifier == .blobTransferServer
+            case .firmwareUpdateClientModelId,
+                 .firmwareDistributionClientModelId:
+                return model.modelIdentifier == .blobTransferClientModelId
+            case .firmwareUpdateServerModelId,
+                 .firmwareDistributionServerModelId:
+                return model.modelIdentifier == .blobTransferServerModelId
             default:
                 return false
             }
@@ -515,7 +534,7 @@ public extension Model {
                 // Light LC Server Model extends a Light Lightness Server
                 // Model that cannot be on the same Element.
                 // Search for a Model on an Element with lower Index.
-                let modelWithLightLigthnessServer = node.elements
+                let modelWithLightLightnessServer = node.elements
                     // Filter to Elements with lower Index number.
                     .filter { $0.index < parentElement.index }
                     // Reverse the ordering to look for a first Element with LLS model.
@@ -524,7 +543,7 @@ public extension Model {
                     .first { $0.contains(modelWithSigModelId: .lightLightnessServerModelId) }?
                     // And return that model.
                     .model(withSigModelId: .lightLightnessServerModelId)
-                return model === modelWithLightLigthnessServer
+                return model === modelWithLightLightnessServer
             default:
                 return false
             }
@@ -615,11 +634,11 @@ public extension UInt16 {
     static let lightLCSetupServerModelId: UInt16 = 0x1310
     static let lightLCClientModelId: UInt16 = 0x1311
     // BLOB Transfer
-    static let blobTransferServer: UInt16 = 0x1400
-    static let blobTransferClient: UInt16 = 0x1401
+    static let blobTransferServerModelId: UInt16 = 0x1400
+    static let blobTransferClientModelId: UInt16 = 0x1401
     // Device Firmware Update
-    static let firmwareUpdateServer: UInt16 = 0x1402
-    static let firmwareUpdateClient: UInt16 = 0x1403
-    static let firmwareDistributionServer: UInt16 = 0x1404
-    static let firmwareDistributionClient: UInt16 = 0x1405
+    static let firmwareUpdateServerModelId: UInt16 = 0x1402
+    static let firmwareUpdateClientModelId: UInt16 = 0x1403
+    static let firmwareDistributionServerModelId: UInt16 = 0x1404
+    static let firmwareDistributionClientModelId: UInt16 = 0x1405
 }

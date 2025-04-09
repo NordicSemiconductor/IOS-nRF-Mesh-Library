@@ -119,13 +119,13 @@ public extension Model {
         case .lightLCSetupServerModelId: return "Light LC Setup Server"
         case .lightLCClientModelId: return "Light LC Client"
         // BLOB Transfer
-        case .blobTransferServer: return "BLOB Transfer Server"
-        case .blobTransferClient: return "BLOB Transfer Client"
+        case .blobTransferServerModelId: return "BLOB Transfer Server"
+        case .blobTransferClientModelId: return "BLOB Transfer Client"
         // Device Firmware Update (DFU), added in Mesh Protocol 1.1
-        case .firmwareUpdateServer: return "Firmware Update Server"
-        case .firmwareUpdateClient: return "Firmware Update Client"
-        case .firmwareDistributionServer: return "Firmware Distribution Server"
-        case .firmwareDistributionClient: return "Firmware Distribution Client"
+        case .firmwareUpdateServerModelId: return "Firmware Update Server"
+        case .firmwareUpdateClientModelId: return "Firmware Update Client"
+        case .firmwareDistributionServerModelId: return "Firmware Distribution Server"
+        case .firmwareDistributionClientModelId: return "Firmware Distribution Client"
             
         default: return nil
         }

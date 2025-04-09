@@ -47,10 +47,9 @@ public struct FirmwareUpdateFirmwareMetadataStatus: StaticMeshResponse {
     public let imageIndex: UInt8
     
     public var parameters: Data? {
-        let byte0 = UInt8((status.rawValue << 5) | (additionalInformation.rawValue & 0x1F))
+        let byte0 = UInt8((status.rawValue & 0x7) | (additionalInformation.rawValue << 3))
         return Data([byte0, imageIndex])
     }
-    
     
     /// Creates the Firmware Update Firmware Metadata Status message.
     ///
@@ -92,11 +91,14 @@ public struct FirmwareUpdateFirmwareMetadataStatus: StaticMeshResponse {
         }
         let byte0 = parameters[0]
         
-        guard let status = FirmwareUpdateMessageStatus(rawValue: byte0 >> 5) else {
+        guard let status = FirmwareUpdateMessageStatus(rawValue: byte0 & 0x7) else {
             return nil
         }
         self.status = status
-        self.additionalInformation = FirmwareUpdateAdditionalInformation(rawValue: byte0 & 0x1F)
+        guard let additionalInformation = FirmwareUpdateAdditionalInformation(rawValue: byte0 >> 3) else {
+            return nil
+        }
+        self.additionalInformation = additionalInformation
         self.imageIndex = parameters[1]
     }
 }

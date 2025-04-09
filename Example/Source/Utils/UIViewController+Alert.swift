@@ -36,6 +36,7 @@ extension Selector {
     static let name = #selector(UIViewController.nameOptional(_:))
     static let nameRequired = #selector(UIViewController.nameRequired(_:))
     static let numberRequired = #selector(UIViewController.numberRequired(_:))
+    static let hexRequired = #selector(UIViewController.hexRequired(_:))
     static let unsignedNumberRequired = #selector(UIViewController.unsignedNumberRequired(_:))
     static let validAddressRequired = #selector(UIViewController.validAddressRequired(_:))
     static let unicastAddress = #selector(UIViewController.unicastAddressOptional(_:))
@@ -208,7 +209,7 @@ extension UIViewController {
                         break
                     case .unicastAddress, .groupAddress,
                          .unicastAddressRequired, .groupAddressRequired,
-                         .scene, .sceneRequired:
+                         .scene, .sceneRequired, .hexRequired:
                         textField.autocapitalizationType = .allCharacters
                     case .ttlRequired:
                         textField.keyboardType = .numberPad
@@ -290,6 +291,12 @@ extension UIViewController {
         let alert = getAlert(from: textField)
         let number = UInt(textField.text!)
         alert.setValid(number != nil)
+    }
+    
+    @objc func hexRequired(_ textField: UITextField) {
+        let alert = getAlert(from: textField)
+        let data = Data(hex: textField.text!)
+        alert.setValid(data.count * 2 == textField.text!.count)
     }
     
     @objc func nameOptional(_ textField: UITextField) {

@@ -31,14 +31,19 @@
 import UIKit
 import NordicMesh
 
-class PairingResponderViewCell: ModelViewCell {
+class FirmwareDistributionViewCell: ModelViewCell {
     
     // MARK: - Outlets and Actions
-    @IBOutlet weak var passkeyLabel: UILabel!
+    @IBOutlet weak var maxReceiversListSize: UILabel!
+    @IBOutlet weak var maxFirmwareImagesListSize: UILabel!
+    @IBOutlet weak var maxFirmwareImageSize: UILabel!
+    @IBOutlet weak var maxUploadSpace: UILabel!
+    @IBOutlet weak var remainingUploadSpace: UILabel!
+    @IBOutlet weak var supportedUriSchemes: UILabel!
     
     @IBOutlet weak var readButton: UIButton!
     @IBAction func readTapped(_ sender: UIButton) {
-        readPasskey()
+        readCapabilities()
     }
         
     // MARK: - Implementation
@@ -52,26 +57,32 @@ class PairingResponderViewCell: ModelViewCell {
     
     override func startRefreshing() -> Bool {
         if !model.boundApplicationKeys.isEmpty {
-            readPasskey()
+            readCapabilities()
             return true
         }
         return false
     }
     
     override func supports(_ messageType: MeshMessage.Type) -> Bool {
-        return messageType == PairingResponse.self
+        return messageType == FirmwareDistributionCapabilitiesStatus.self
     }
     
     override func meshNetworkManager(_ manager: MeshNetworkManager,
                                      didReceiveMessage message: MeshMessage,
                                      sentFrom source: Address, to destination: MeshAddress) -> Bool {
         switch message {
-        case let status as PairingResponse:
-            if status.status == 0x00 {
-                // Passkey is 6 digits long.
-                passkeyLabel.text = String(format: "%06d", status.passkey)
+        case let status as FirmwareDistributionCapabilitiesStatus:
+            maxReceiversListSize.text = "\(status.maxReceiversCount)"
+            maxFirmwareImagesListSize.text = "\(status.maxFirmwareImagesListSize)"
+            maxFirmwareImageSize.text = "\(status.maxFirmwareImageSize) bytes"
+            maxUploadSpace.text = "\(status.maxUploadSpace) bytes"
+            remainingUploadSpace.text = "\(status.remainingUploadSpace) bytes"
+            if status.supportedUriSchemes.isEmpty {
+                supportedUriSchemes.text = "None"
             } else {
-                passkeyLabel.text = "Error: \(status.status)"
+                supportedUriSchemes.text = status.supportedUriSchemes
+                    .map { "\($0)" }
+                    .joined(separator: ", ")
             }
             return false
             
@@ -81,9 +92,9 @@ class PairingResponderViewCell: ModelViewCell {
     }
 }
 
-private extension PairingResponderViewCell {
+private extension FirmwareDistributionViewCell {
         
-    func readPasskey() {
+    func readCapabilities() {
         guard !model.boundApplicationKeys.isEmpty else {
             parentViewController?.presentAlert(
                 title: "Bound key required",
@@ -91,6 +102,7 @@ private extension PairingResponderViewCell {
             return
         }
         
-        delegate?.send(PairingRequest(), description: "Reading passkey...")
+        delegate?.send(FirmwareDistributionCapabilitiesGet(), description: "Reading capabilities...")
     }
+    
 }

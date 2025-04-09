@@ -32,9 +32,7 @@
 
 class HealthClientHandler: ModelDelegate {
     var messageTypes: [UInt32 : MeshMessage.Type]
-    
     var isSubscriptionSupported: Bool = false
-    
     var publicationMessageComposer: MessageComposer? = nil
     
     init() {

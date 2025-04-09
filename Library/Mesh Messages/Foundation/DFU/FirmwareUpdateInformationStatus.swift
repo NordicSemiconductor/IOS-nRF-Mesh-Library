@@ -62,7 +62,7 @@ public struct FirmwareUpdateInformationStatus: StaticMeshResponse {
     
     /// The Firmware Information Entry field shall identify the information for a firmware
     /// subsystem on the Node from the Firmware Information List state.
-    public struct FirmwareInformation: Sendable {
+    public struct FirmwareInformation: Sendable, CustomDebugStringConvertible {
         /// Identifies the firmware image on the Node or any subsystem on the Node.
         public let currentFirmwareId: FirmwareId
         /// URI used to retrieve a new firmware image (optional).
@@ -81,6 +81,12 @@ public struct FirmwareUpdateInformationStatus: StaticMeshResponse {
         public init(currentFirmwareId: FirmwareId, updateUri: URL?) {
             self.currentFirmwareId = currentFirmwareId
             self.updateUri = updateUri
+        }
+        
+        public var debugDescription: String {
+            let companyId = "0x\(currentFirmwareId.companyIdentifier.hex)"
+            let versionString = currentFirmwareId.version.isEmpty ? "nil" : "0x\(currentFirmwareId.version.hex)"
+            return "FirmwareInformation(companyId: \(companyId), version: \(versionString), updateUri: \(updateUri?.absoluteString ?? "nil"))"
         }
     }
     

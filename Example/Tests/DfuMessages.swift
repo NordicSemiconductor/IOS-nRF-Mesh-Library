@@ -100,7 +100,7 @@ class FirmwareUpdateMessages: XCTestCase {
     }
     
     func testFirmwareDistributionReceiversList_simple() {
-        let data = Data(hex: "BBAA01AAFFFE4D0501")
+        let data = Data(hex: "BBAA01AAFF7F191501")
         
         let list = FirmwareDistributionReceiversList(parameters: data)
         XCTAssertNotNil(list)
@@ -117,8 +117,26 @@ class FirmwareUpdateMessages: XCTestCase {
         XCTAssertEqual(list?.parameters, data)
     }
     
+    func testFirmwareDistributionReceiversList_simple2() {
+        let data = Data(hex: "BBAA01AAFFBF6C0601")
+
+        let list = FirmwareDistributionReceiversList(parameters: data)
+        XCTAssertNotNil(list)
+        XCTAssertEqual(list?.totalCount, 0xAABB)
+        XCTAssertEqual(list?.firstIndex, 0xAA01)
+        XCTAssertEqual(list?.receivers.count, 1)
+        XCTAssertEqual(list?.receivers[0].address, 0x3FFF)
+        XCTAssertEqual(list?.receivers[0].phase, .applyFailed)
+        XCTAssertEqual(list?.receivers[0].updateStatus, .metadataCheckFailed)
+        XCTAssertEqual(list?.receivers[0].transferStatus, .internalError)
+        XCTAssertEqual(list?.receivers[0].transferProgress, 2)
+        XCTAssertEqual(list?.receivers[0].imageIndex, 1)
+        
+        XCTAssertEqual(list?.parameters, data)
+    }
+    
     func testFirmwareDistributionReceiversList_double() {
-        let data = Data(hex: "0300000001010032FF0102FCC102")
+        let data = Data(hex: "03000000010004C8FF0181FB0402")
         
         let list = FirmwareDistributionReceiversList(parameters: data)
         XCTAssertNotNil(list)
@@ -161,7 +179,7 @@ class FirmwareUpdateMessages: XCTestCase {
             outOf: 22
         )
         
-        XCTAssertEqual(list.parameters, Data(hex: "1600010001010032FF0102FCC102CD5611D00B"))
+        XCTAssertEqual(list.parameters, Data(hex: "16000100010004C8FF0181FB0402CD2BE0410B"))
         
         let list2 = FirmwareDistributionReceiversList(parameters: list.parameters!)
         XCTAssertEqual(list.firstIndex,                    list2?.firstIndex)
@@ -187,4 +205,77 @@ class FirmwareUpdateMessages: XCTestCase {
         XCTAssertEqual(list.receivers[2].imageIndex,       list2?.receivers[2].imageIndex)
     }
     
+    func testFirmwareDistributionStatus() {
+        let status = FirmwareDistributionStatus(
+            report: .busyWithDistribution,
+            andPhase: .transferSuccess,
+            ofDistributingFirmwareWithImageIndex: 0, to: 0x0104,
+            usingKeyIndex: 2, ttl: 7, mode: .pull,
+            updatePolicy: .verifyAndApply, distributionTimeoutBase: 0xFEDC
+        )
+        
+        XCTAssertEqual(status.parameters, Data(hex: "07020401020007DCFE060000"))
+        
+        let status2 = FirmwareDistributionStatus(parameters: status.parameters!)
+        XCTAssertEqual(status.status,              status2?.status)
+        XCTAssertEqual(status.phase,               status2?.phase)
+        XCTAssertEqual(status.multicastAddress,    status2?.multicastAddress)
+        XCTAssertEqual(status.firmwareImageIndex,  status2?.firmwareImageIndex)
+        XCTAssertEqual(status.applicationKeyIndex, status2?.applicationKeyIndex)
+        XCTAssertEqual(status.ttl,                 status2?.ttl)
+        XCTAssertEqual(status.transferMode,        status2?.transferMode)
+        XCTAssertEqual(status.updatePolicy,        status2?.updatePolicy)
+        XCTAssertEqual(status.timeoutBase,         status2?.timeoutBase)
+    }
+    
+    func testFirmwareUpdateStatus() {
+        let status = FirmwareUpdateStatus(
+            status: .blobTransferBusy,
+            updatePhase: .verificationSucceeded,
+            updateTtl: 16,
+            additionalInformation: .compositionDataChangedAndRPRUnsupported,
+            updateTimeoutBase: 0x1234, blobId: 0x0102030405060708, imageIndex: 0
+        )
+        
+        XCTAssertEqual(status.parameters, Data(hex: "8710013412080706050403020100"))
+        
+        let status2 = FirmwareUpdateStatus(parameters: status.parameters!)
+        XCTAssertEqual(status.status,                status2?.status)
+        XCTAssertEqual(status.updatePhase,           status2?.updatePhase)
+        XCTAssertEqual(status.updateTtl,             status2?.updateTtl)
+        XCTAssertEqual(status.additionalInformation, status2?.additionalInformation)
+        XCTAssertEqual(status.updateTimeoutBase,     status2?.updateTimeoutBase)
+        XCTAssertEqual(status.blobId,                status2?.blobId)
+        XCTAssertEqual(status.imageIndex,            status2?.imageIndex)
+    }
+    
+    func testFirmwareDistributionUploadStatus_simple() {
+        let status = FirmwareDistributionUploadStatus(report: .insufficientResources)
+        
+        XCTAssertEqual(status.parameters, Data(hex: "0100"))
+        
+        let status2 = FirmwareDistributionUploadStatus(parameters: status.parameters!)
+        XCTAssertEqual(status.status,     status2?.status)
+        XCTAssertEqual(status.phase,      status2?.phase)
+        XCTAssertEqual(status.firmwareId, status2?.firmwareId)
+        XCTAssertEqual(status.isOob,      status2?.isOob)
+        XCTAssertEqual(status.progress,   status2?.progress)
+    }
+    
+    func testFirmwareDistributionUploadStatus() {
+        let status = FirmwareDistributionUploadStatus(
+            report: .success, andPhase: .transferActive,
+            ofUploadingFirmwareWithId: FirmwareId(companyIdentifier: 0x0059, version: Data(hex: "0100000000000000")),
+            outOfBand: true, progress: 99
+        )
+        
+        XCTAssertEqual(status.parameters, Data(hex: "0001E359000100000000000000"))
+        
+        let status2 = FirmwareDistributionUploadStatus(parameters: status.parameters!)
+        XCTAssertEqual(status.status,     status2?.status)
+        XCTAssertEqual(status.phase,      status2?.phase)
+        XCTAssertEqual(status.firmwareId, status2?.firmwareId)
+        XCTAssertEqual(status.isOob,      status2?.isOob)
+        XCTAssertEqual(status.progress,   status2?.progress)
+    }
 }

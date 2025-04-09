@@ -582,6 +582,8 @@
 		EFD3C6230A83FA0566A5B999A7D62DEB /* LightHSLRangeGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 705CBC4C8E39F184DFE36D7B4C21CAEE /* LightHSLRangeGet.swift */; };
 		F00E9C50D31222543AE9B19E5370CBD1 /* ConfigModelSubscriptionDelete.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B1610E9DBF386DFF2D54C16B23D4BB /* ConfigModelSubscriptionDelete.swift */; };
 		F03221C14277487C45B44500B853F153 /* MeshLoggerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2374BEF6F7AD1CCBEF6030F5318D0193 /* MeshLoggerDelegate.swift */; };
+		F096D8392D9D4E4800A1A1E4 /* FirmwareUpdateClientHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F096D8382D9D4E4800A1A1E4 /* FirmwareUpdateClientHandler.swift */; };
+		F096D83D2D9D545B00A1A1E4 /* FirmwareDistributionClientHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F096D83C2D9D545B00A1A1E4 /* FirmwareDistributionClientHandler.swift */; };
 		F163075ACE251808A19D0A3592D8ECF6 /* ExclusionList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 408E3A0DACC4A253466B6F264786E7F1 /* ExclusionList.swift */; };
 		F18E2F047190BE8FFC13C5A1AC088CCE /* LightCTLDefaultGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 350CAADB6EA9AE41A4A5AAEB92D61B91 /* LightCTLDefaultGet.swift */; };
 		F2400CE91FC7F2EE6D56E1A9BD11C32C /* SchedulerStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72C6F2FA5A2A7F642CB77AE755144833 /* SchedulerStatus.swift */; };
@@ -1252,6 +1254,8 @@
 		EF7A59A30592A19242FA8ACCEB8DC82F /* MessageHandle.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MessageHandle.swift; sourceTree = "<group>"; };
 		EFD43FEA1132D5767B49DBDC170ED7A2 /* ASN1.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ASN1.swift; path = Sources/CryptoSwift/ASN1/ASN1.swift; sourceTree = "<group>"; };
 		EFF1F72A20D70F34F8DBB7FF79174293 /* FirmwareDistributionFirmwareStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FirmwareDistributionFirmwareStatus.swift; sourceTree = "<group>"; };
+		F096D8382D9D4E4800A1A1E4 /* FirmwareUpdateClientHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateClientHandler.swift; sourceTree = "<group>"; };
+		F096D83C2D9D545B00A1A1E4 /* FirmwareDistributionClientHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareDistributionClientHandler.swift; sourceTree = "<group>"; };
 		F0F06D91B8119142EB5057B2AB7997A9 /* MeshConstants.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshConstants.swift; sourceTree = "<group>"; };
 		F1671C8AE617F31572E74512D933CAEB /* ConfigVendorModelAppGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigVendorModelAppGet.swift; sourceTree = "<group>"; };
 		F19AF5745474FB2A0AC0B643B0A76AE6 /* GCM.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = GCM.swift; path = Sources/CryptoSwift/BlockMode/GCM.swift; sourceTree = "<group>"; };
@@ -1540,6 +1544,8 @@
 				A990532FDAD630B99C7897EE6B61FD76 /* HealthClientHandler.swift */,
 				BF907F1FFA20619DC334C82A5D189460 /* HealthServerHandler.swift */,
 				D72E98484E30D203BF281E202DD7A427 /* PrivateBeaconClientHandler.swift */,
+				F096D8382D9D4E4800A1A1E4 /* FirmwareUpdateClientHandler.swift */,
+				F096D83C2D9D545B00A1A1E4 /* FirmwareDistributionClientHandler.swift */,
 				9ABA4CEE904F4B676DE7F073C047F243 /* RemoteProvisioningClientHandler.swift */,
 				9E9DCE001004B87083706145863D5080 /* SarConfigurationClientHandler.swift */,
 				FCA1A2A22552C7A792D2304F9A8A5677 /* SceneClientHandler.swift */,
@@ -2506,7 +2512,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1600;
-				LastUpgradeCheck = 1620;
+				LastUpgradeCheck = 1630;
 			};
 			buildConfigurationList = 4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */;
 			compatibilityVersion = "Xcode 12.0";
@@ -2778,6 +2784,7 @@
 				2ED8FF51759ADD82F191191D8F5E34C3 /* GenericOnPowerUpStatus.swift in Sources */,
 				17AEB388E9327EB800AB700B2CA99DA0 /* GenericPowerDefaultSet.swift in Sources */,
 				8F5753DE3A65D41816A182AF33A65B5F /* GenericPowerDefaultSetUnacknowledged.swift in Sources */,
+				F096D8392D9D4E4800A1A1E4 /* FirmwareUpdateClientHandler.swift in Sources */,
 				F9F0CD207B4FC55B202C458BB5A172DC /* GenericPowerDefaultStatus.swift in Sources */,
 				55568C659DAE863DAEAC905FB7DB23C9 /* GenericPowerDefautGet.swift in Sources */,
 				14E55088224F8015850988E1CC0340DA /* GenericPowerLastGet.swift in Sources */,
@@ -2864,6 +2871,7 @@
 				DCE6D03B8D4ADCC848D68C1BCC0556A9 /* LightLCLightOnOffSetUnacknowledged.swift in Sources */,
 				A16A312A89D8FDDCA4BF2E9D030D7DBF /* LightLCLightOnOffStatus.swift in Sources */,
 				27C32CA83E73DB0120F1EE9AAD619D17 /* LightLCModeGet.swift in Sources */,
+				F096D83D2D9D545B00A1A1E4 /* FirmwareDistributionClientHandler.swift in Sources */,
 				786022FDBA89E29FEFCBB7B08116E8A6 /* LightLCModeSet.swift in Sources */,
 				6939A6441EC26EA033A56804C630180F /* LightLCModeSetUnacknowledged.swift in Sources */,
 				13A8E3C2542BAB890D8AA20B19E610FA /* LightLCModeStatus.swift in Sources */,
