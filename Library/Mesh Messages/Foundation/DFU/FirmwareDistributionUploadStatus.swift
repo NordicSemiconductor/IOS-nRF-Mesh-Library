@@ -61,7 +61,7 @@ public struct FirmwareDistributionUploadStatus: StaticMeshResponse {
            let isOob = isOob,
            let firmwareId = firmwareId {
             // 7 bits for the progress and 1 for Upload Type field.
-            data += UInt8((progress << 1) | (isOob ? 1 : 0))
+            data += UInt8((progress & 0x7F) | (isOob ? 0x80 : 0x00))
             data += firmwareId.companyIdentifier
             data += firmwareId.version
         }
@@ -95,7 +95,7 @@ public struct FirmwareDistributionUploadStatus: StaticMeshResponse {
         report status: FirmwareDistributionMessageStatus,
         andPhase phase: FirmwareDistributionPhase,
         ofUploadingFirmwareWithId firmwareId: FirmwareId,
-        oufOfBand isOob: Bool,
+        outOfBand isOob: Bool,
         progress: UInt8
     ) {
         self.status = status
@@ -119,8 +119,8 @@ public struct FirmwareDistributionUploadStatus: StaticMeshResponse {
         self.phase = phase
         
         if parameters.count >= 5 {
-            self.progress = parameters[2] >> 1
-            self.isOob = parameters[2] & 0x01 == 1
+            self.progress = parameters[2] & 0x7F
+            self.isOob = parameters[2] & 0x80 != 0
             
             let companyIdentifier: UInt16 = parameters.read(fromOffset: 3)
             if parameters.count > 5 {

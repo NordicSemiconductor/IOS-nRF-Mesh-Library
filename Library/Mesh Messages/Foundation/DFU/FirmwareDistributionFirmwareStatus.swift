@@ -39,7 +39,7 @@ import Foundation
 /// * ``FirmwareDistributionFirmwareDelete`` message,
 /// * ``FirmwareDistributionFirmwareDeleteAll`` message.
 public struct FirmwareDistributionFirmwareStatus: StaticMeshResponse {
-    public static let opCode: UInt32 = 0x8326
+    public static let opCode: UInt32 = 0x8327
     
     /// Status for the requesting message.
     public let status: FirmwareDistributionMessageStatus

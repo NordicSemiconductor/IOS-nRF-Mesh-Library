@@ -55,9 +55,9 @@ public struct FirmwareDistributionReceiversList: StaticMeshResponse {
         return receivers.reduce(initial) { data, target in
             // Encoding is specified in Table 5.20 in Mesh DFU Specification.
             let byte0: UInt8 = UInt8(target.address & 0xFF)
-            let byte1: UInt8 = UInt8((target.address >> 7) & 0xFE) | UInt8((target.phase.rawValue >> 3) & 0x01)
-            let byte2: UInt8 = UInt8((target.phase.rawValue << 5) | (target.updateStatus.rawValue << 2) | (target.transferStatus.rawValue >> 2))
-            let byte3: UInt8 = UInt8(target.transferStatus.rawValue << 6) | UInt8((target.transferProgress >> 1) & 0x3F)
+            let byte1: UInt8 = UInt8((target.address >> 8) & 0x7F) | UInt8(target.phase.rawValue << 7)
+            let byte2: UInt8 = UInt8((target.phase.rawValue >> 1) | (target.updateStatus.rawValue << 3) | (target.transferStatus.rawValue << 6))
+            let byte3: UInt8 = UInt8(target.transferStatus.rawValue >> 2) | UInt8((target.transferProgress >> 1) << 2)
             let byte4: UInt8 = target.imageIndex
             return data + Data([byte0, byte1, byte2, byte3, byte4])
         }
@@ -153,20 +153,20 @@ public struct FirmwareDistributionReceiversList: StaticMeshResponse {
         var receivers: [TargetNode] = []
         var offset = 4
         while offset < parameters.count {
-            let address = Address(parameters[offset]) | (Address(parameters[offset + 1] & 0xFE) << 7)
-            let phaseValue = ((parameters[offset + 1] & 0x01) << 3) | ((parameters[offset + 2] & 0xE0) >> 5)
+            let address = Address(parameters[offset]) | (Address(parameters[offset + 1] & 0x7F) << 8)
+            let phaseValue = (parameters[offset + 1] >> 7) | ((parameters[offset + 2] & 0x7) << 1)
             guard let phase = RetrievedUpdatePhase(rawValue: phaseValue) else {
                 return nil
             }
-            let updateStateValue = (parameters[offset + 2] & 0x1C) >> 2
+            let updateStateValue = (parameters[offset + 2] >> 3) & 0x7
             guard let updateStatus = FirmwareUpdateMessageStatus(rawValue: updateStateValue) else {
                 return nil
             }
-            let transferStateValue = ((parameters[offset + 2] & 0x03) << 2) | ((parameters[offset + 3] & 0xC0) >> 6)
+            let transferStateValue = (parameters[offset + 2] >> 6) | ((parameters[offset + 3] & 0x03) << 2)
             guard let transferStatus = BLOBTransferMessageStatus(rawValue: transferStateValue) else {
                 return nil
             }
-            let transferProgress = Int(parameters[offset + 3] & 0x3F) * 2
+            let transferProgress = Int(parameters[offset + 3] >> 2) * 2
             let imageIndex = parameters[offset + 4]
             offset += 5
             

@@ -93,7 +93,7 @@ public struct FirmwareDistributionStatus: StaticMeshResponse {
             data += ttl
             data += timeoutBase
             // This takes 2 + 1 bit, 5 bits are Reserved for Future Use:
-            data += UInt8((mode.rawValue << 6) | (policy.rawValue << 5))
+            data += UInt8(mode.rawValue | (policy.rawValue << 2))
             data += imageIndex
         }
         return data
@@ -175,11 +175,11 @@ public struct FirmwareDistributionStatus: StaticMeshResponse {
             self.ttl = parameters[6]
             self.timeoutBase = parameters.read(fromOffset: 7)
             
-            guard let mode = TransferMode(rawValue: parameters[9] >> 6) else {
+            guard let mode = TransferMode(rawValue: parameters[9] & 0x03) else {
                 return nil
             }
             self.transferMode = mode
-            guard let policy = FirmwareUpdatePolicy(rawValue: (parameters[9] >> 5) & 0x01) else {
+            guard let policy = FirmwareUpdatePolicy(rawValue: (parameters[9] >> 2) & 0x01) else {
                 return nil
             }
             self.updatePolicy = policy

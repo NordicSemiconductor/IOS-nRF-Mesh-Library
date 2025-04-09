@@ -47,7 +47,7 @@ public struct FirmwareUpdateFirmwareMetadataStatus: StaticMeshResponse {
     public let imageIndex: UInt8
     
     public var parameters: Data? {
-        let byte0 = UInt8((status.rawValue << 5) | (additionalInformation.rawValue & 0x1F))
+        let byte0 = UInt8((status.rawValue & 0x7) | (additionalInformation.rawValue << 3))
         return Data([byte0, imageIndex])
     }
     

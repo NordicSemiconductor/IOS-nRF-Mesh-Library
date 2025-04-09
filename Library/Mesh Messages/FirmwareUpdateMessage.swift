@@ -56,6 +56,11 @@ public struct FirmwareId: Sendable, Equatable {
         return Data() + companyIdentifier + version
     }
     
+    public init(companyIdentifier: UInt16) {
+        self.companyIdentifier = companyIdentifier
+        self.version = Data()
+    }
+    
     public init(companyIdentifier: UInt16, version: Data) {
         self.companyIdentifier = companyIdentifier
         self.version = version

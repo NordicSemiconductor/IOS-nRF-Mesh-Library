@@ -45,7 +45,7 @@ internal class FirmwareDistributionClientHandler: ModelDelegate {
             FirmwareDistributionReceiversStatus.self,
             FirmwareDistributionReceiversList.self,
             FirmwareDistributionCapabilitiesStatus.self,
-            FirmwareDistributionStart.self,
+            FirmwareDistributionStatus.self,
             FirmwareDistributionUploadStatus.self,
             FirmwareDistributionFirmwareStatus.self,
         ]
