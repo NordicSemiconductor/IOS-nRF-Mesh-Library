@@ -2073,7 +2073,6 @@
                         </rightBarButtonItems>
                     </navigationItem>
                     <connections>
-                        <outlet property="dfuButton" destination="jaN-eh-9Gt" id="uwS-2Y-786"/>
                         <segue destination="DVn-IC-M3j" kind="show" identifier="configure" id="26w-gP-a1O"/>
                     </connections>
                 </tableViewController>
