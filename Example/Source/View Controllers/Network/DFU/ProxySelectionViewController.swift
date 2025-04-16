@@ -1,0 +1,484 @@
+/*
+* Copyright (c) 2025, Nordic Semiconductor
+* All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without modification,
+* are permitted provided that the following conditions are met:
+*
+* 1. Redistributions of source code must retain the above copyright notice, this
+*    list of conditions and the following disclaimer.
+*
+* 2. Redistributions in binary form must reproduce the above copyright notice, this
+*    list of conditions and the following disclaimer in the documentation and/or
+*    other materials provided with the distribution.
+*
+* 3. Neither the name of the copyright holder nor the names of its contributors may
+*    be used to endorse or promote products derived from this software without
+*    specific prior written permission.
+*
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+* ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+* IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+* INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+* NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+* PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+* WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+* POSSIBILITY OF SUCH DAMAGE.
+*/
+
+import UIKit
+import NordicMesh
+import CoreBluetooth
+
+private let links: [(title: String, url: URL)] = [
+    ("Device Firmware Update", URL(string: "https://docs.nordicsemi.com/bundle/ncs-latest/page/zephyr/connectivity/bluetooth/api/mesh/dfu.html")!),
+    ("DFU over Bluetooth Mesh", URL(string: "https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/protocols/bt/bt_mesh/dfu_over_bt_mesh.html")!),
+    ("Sample: Distributor", URL(string: "https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/samples/bluetooth/mesh/dfu/distributor/README.html")!),
+    ("Device Management and Simple Management Protocol (SMP)", URL(string: "https://docs.nordicsemi.com/bundle/ncs-latest/page/zephyr/services/device_mgmt/index.html")!)
+]
+
+private enum Section {
+    case info
+    case noProxy
+    case proxyInformation
+    case smp
+    case distributor
+    case boundAppKey
+    case capabilities
+    case documentation
+    
+    var rows: Int {
+        switch self {
+        case .info: return 0
+        case .noProxy: return 1
+        case .proxyInformation: return 3
+        case .smp: return 1
+        case .distributor: return 1
+        case .boundAppKey: return 1
+        case .capabilities: return 5
+        case .documentation: return links.count
+        }
+    }
+}
+
+private struct ProxyDetails {
+    let name: String
+    let unicastAddress: Address
+    var isSmpSupported: Bool
+    var distributorServerModel: Model?
+    var applicationKeys: [ApplicationKey]
+    var capabilities: Capabilities?
+    
+    struct Capabilities {
+        let maxReceiversListSize: UInt16
+        let maxFirmwareImagesListSize: UInt16
+        let maxFirmwareImageSize: UInt32
+        let maxUploadSpace: UInt32
+        let remainingUploadSpace: UInt32
+    }
+    
+    init(_ proxy: Node) {
+        self.name = proxy.name ?? "Unknown"
+        self.unicastAddress = proxy.primaryUnicastAddress
+        distributorServerModel = proxy.models(withSigModelId: .firmwareDistributionServerModelId).first
+        self.applicationKeys = distributorServerModel?.boundApplicationKeys ?? []
+        self.isSmpSupported = false
+    }
+    
+    var isSupported: Bool {
+        return capabilities != nil && isSmpSupported
+    }
+}
+
+class ProxySelectionViewController: UITableViewController {
+    // MARK: - Outlets
+    
+    @IBOutlet weak var nextButton: UIBarButtonItem!
+    
+    // MARK: - Properties
+    
+    private var sections: [Section] = []
+    private var proxyDetails: ProxyDetails?
+    
+    // MARK: - Navigation
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let navigationController = segue.destination as? UINavigationController
+        switch segue.identifier {
+        case "bind":
+            let viewController = navigationController?.topViewController as! ModelBindAppKeyViewController
+            viewController.model = proxyDetails?.distributorServerModel
+            viewController.delegate = self
+        default:
+            break
+        }
+    }
+    
+    // MARK: - Table View Controller
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        let proxyFilter = MeshNetworkManager.instance.proxyFilter
+        proxyFilter.delegate = self
+        
+        // Refresh the view with the current proxy filter.
+        proxyFilterUpdated(type: proxyFilter.type, addresses: proxyFilter.addresses)
+    }
+    
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        return sections.count
+    }
+    
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        let section = sections[section]
+        switch section {
+        case .boundAppKey: return (proxyDetails?.applicationKeys.count ?? 0) + 1 // Bind App Key
+        default: return section.rows
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let section = sections[indexPath.section]
+        switch section {
+        case .noProxy:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "changeProxy", for: indexPath)
+            cell.textLabel?.text = "Connect"
+            return cell
+        case .proxyInformation:
+            if indexPath.row == 2 {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "changeProxy", for: indexPath)
+                cell.textLabel?.text = "Change"
+                return cell
+            }
+            let cell = tableView.dequeueReusableCell(withIdentifier: "value", for: indexPath)
+            cell.imageView?.image = nil
+            switch indexPath.row {
+            case 0:
+                cell.textLabel?.text = "Name"
+                cell.detailTextLabel?.text = proxyDetails!.name
+            case 1:
+                cell.textLabel?.text = "Unicast Address"
+                cell.detailTextLabel?.text = "0x\(proxyDetails!.unicastAddress.hex)"
+            default:
+                fatalError("Invalid row")
+            }
+            return cell
+        case .smp:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "value", for: indexPath)
+            cell.imageView?.image = UIImage(systemName: proxyDetails!.isSmpSupported ? "checkmark" : "xmark")
+            cell.imageView?.tintColor = proxyDetails!.isSmpSupported ? .systemGreen : .systemRed
+            cell.textLabel?.text = proxyDetails!.isSmpSupported ? "SMP Service supported" : "SMP Service not supported"
+            cell.detailTextLabel?.text = nil
+            cell.accessoryType = .none
+            return cell
+        case .distributor:
+            let isDistributor = proxyDetails?.distributorServerModel != nil
+            let cell = tableView.dequeueReusableCell(withIdentifier: "value", for: indexPath)
+            cell.imageView?.image = UIImage(systemName: isDistributor ? "checkmark" : "xmark")
+            cell.imageView?.tintColor = isDistributor ? .systemGreen : .systemRed
+            cell.textLabel?.text = "Firmware Distributor Server model \(isDistributor ? "found" : "not found")"
+            cell.detailTextLabel?.text = nil
+            cell.accessoryType = .none
+            return cell
+        case .boundAppKey:
+            if indexPath.row == proxyDetails!.applicationKeys.count {
+                return tableView.dequeueReusableCell(withIdentifier: "bind", for: indexPath)
+            } else {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "key", for: indexPath)
+                let key = proxyDetails!.applicationKeys[indexPath.row]
+                cell.textLabel?.text = key.name
+                cell.detailTextLabel?.text = "Bound to \(key.boundNetworkKey.name)"
+                return cell
+            }
+        case .capabilities:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "value", for: indexPath)
+            cell.imageView?.image = nil
+            switch indexPath.row {
+            case 0:
+                cell.textLabel?.text = "Max receivers list size"
+                if let capabilities = proxyDetails?.capabilities {
+                    cell.detailTextLabel?.text = "\(capabilities.maxReceiversListSize)"
+                } else {
+                    cell.detailTextLabel?.text = "Unknown"
+                }
+            case 1:
+                cell.textLabel?.text = "Max firmware images list size"
+                if let capabilities = proxyDetails?.capabilities {
+                    cell.detailTextLabel?.text = "\(capabilities.maxFirmwareImagesListSize)"
+                } else {
+                    cell.detailTextLabel?.text = "Unknown"
+                }
+            case 2:
+                cell.textLabel?.text = "Max firmware image size"
+                if let capabilities = proxyDetails?.capabilities {
+                    cell.detailTextLabel?.text = "\(capabilities.maxFirmwareImageSize) bytes"
+                } else {
+                    cell.detailTextLabel?.text = "Unknown"
+                }
+            case 3:
+                cell.textLabel?.text = "Max upload space"
+                if let capabilities = proxyDetails?.capabilities {
+                    cell.detailTextLabel?.text = "\(capabilities.maxUploadSpace) bytes"
+                } else {
+                    cell.detailTextLabel?.text = "Unknown"
+                }
+            case 4:
+                cell.textLabel?.text = "Remaining upload space"
+                if let capabilities = proxyDetails?.capabilities {
+                    cell.detailTextLabel?.text = "\(capabilities.remainingUploadSpace) bytes"
+                } else {
+                    cell.detailTextLabel?.text = "Unknown"
+                }
+            default:
+                fatalError("Invalid row")
+            }
+            return cell
+        case .documentation:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "link", for: indexPath)
+            cell.detailTextLabel?.text = nil
+            cell.textLabel?.text = links[indexPath.row].title
+            cell.detailTextLabel?.text = links[indexPath.row].url.absoluteString
+            return cell
+        case .info:
+            fatalError("Info has no views, only footer")
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        let section = sections[section]
+        switch section {
+        case .proxyInformation, .noProxy: return "GATT Proxy"
+        case .smp: return "Device Management"
+        case .distributor: return "Firmware Distributor"
+        case .boundAppKey: return "Bound Application Keys"
+        case .capabilities: return "Capabilities"
+        case .documentation: return "Read More"
+        default: return nil
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+        let section = sections[section]
+        switch section {
+        case .info: return "Active connection to a GATT Proxy node with Firmware Distributor Server model and SMP Service enabled is required."
+        default: return nil
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+        let section = sections[indexPath.section]
+        switch section {
+        case .documentation, .noProxy: return true
+        case .proxyInformation: return indexPath.row == 2
+        case .boundAppKey: return indexPath.row == proxyDetails?.applicationKeys.count ?? 0
+        default: return false
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        let section = sections[indexPath.section]
+        switch section {
+        case .documentation:
+            UIApplication.shared.open(links[indexPath.row].url)
+        default:
+            break
+        }
+    }
+
+}
+
+extension ProxySelectionViewController: BindAppKeyDelegate {
+    
+    func keyBound() {
+        if let model = proxyDetails?.distributorServerModel {
+            proxyDetails?.applicationKeys = model.boundApplicationKeys
+            
+            if proxyDetails?.capabilities == nil {
+                readCapabilities(using: model)
+            }
+        }
+        
+        if let index = self.sections.firstIndex(of: .boundAppKey) {
+            tableView.reloadSections(IndexSet(integer: index), with: .automatic)
+        }
+    }
+    
+}
+
+extension ProxySelectionViewController: ProxyFilterDelegate {
+    
+    func proxyFilterUpdated(type: ProxyFilerType, addresses: Set<Address>) {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            // Reinitialize sections
+            self.sections = [.info]
+            if let proxy = MeshNetworkManager.instance.proxyFilter.proxy {
+                self.sections.append(contentsOf: [.proxyInformation, .smp, .distributor])
+                self.proxyDetails = ProxyDetails(proxy)
+                if let model = proxyDetails?.distributorServerModel {
+                    self.sections.append(contentsOf: [.boundAppKey, .capabilities])
+                    self.readCapabilities(using: model)
+                } else {
+                    self.sections.append(.documentation)
+                }
+                self.verifyProxy()
+            } else {
+                self.sections.append(contentsOf: [.noProxy, .documentation])
+            }
+            self.tableView.reloadData()
+        }
+    }
+    
+}
+
+private extension ProxySelectionViewController {
+    
+    func readCapabilities(using model: Model) {
+        guard model.boundApplicationKeys.count > 0 else {
+            return
+        }
+        Task {
+            do {
+                let response = try await MeshNetworkManager.instance.send(FirmwareDistributionCapabilitiesGet(), to: model)
+                let capabilities = response as! FirmwareDistributionCapabilitiesStatus
+                Task { @MainActor [weak self] in
+                    guard let self = self else { return }
+                    self.proxyDetails?.capabilities = ProxyDetails.Capabilities(
+                        maxReceiversListSize: capabilities.maxReceiversCount,
+                        maxFirmwareImagesListSize: capabilities.maxFirmwareImagesListSize,
+                        maxFirmwareImageSize: capabilities.maxFirmwareImageSize,
+                        maxUploadSpace: capabilities.maxUploadSpace,
+                        remainingUploadSpace: capabilities.remainingUploadSpace
+                    )
+                    self.nextButton.isEnabled = self.proxyDetails?.isSupported ?? false
+                    if let index = self.sections.firstIndex(of: .capabilities) {
+                        self.tableView.reloadSections(IndexSet(integer: index), with: .automatic)
+                    }
+                }
+            } catch {
+                NSLog("Error reading capabilities: %@", error.localizedDescription)
+            }
+        }
+    }
+    
+    func verifyProxy() {
+        if let bearer = MeshNetworkManager.bearer?.proxies.first, bearer.isOpen {
+            Task {
+                do {
+                    let isSmpSupported = try await checkSmpService(ofBearer: bearer)
+                    proxyDetails?.isSmpSupported = isSmpSupported
+                } catch {
+                    print("Error checking SMP service: \(error.localizedDescription)")
+                    proxyDetails?.isSmpSupported = false
+                }
+                Task { @MainActor [weak self] in
+                    guard let self = self else { return }
+                    self.nextButton.isEnabled = self.proxyDetails?.isSupported ?? false
+                    if let index = self.sections.firstIndex(of: .smp) {
+                        self.tableView.reloadSections(IndexSet(integer: index), with: .automatic)
+                    }
+                }
+            }
+        }
+    }
+    
+    enum ConnectionError: LocalizedError {
+        case invalidState(state: CBManagerState)
+        case peripheralNotFound
+        case connectionFailed
+        
+        var errorDescription: String? {
+            switch self {
+            case .invalidState(let state):
+                return "Bluetooth is not powered on. State: \(state)"
+            case .peripheralNotFound:
+                return "Peripheral not found."
+            case .connectionFailed:
+                return "Failed to connect to peripheral."
+            }
+        }
+    }
+    
+    func checkSmpService(ofBearer bearer: GattBearer) async throws -> Bool {
+        class Connection: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
+            public static let SmpServiceUUID        = CBUUID(string: "8D53DC1D-1DB7-4CD3-868B-8A527460AA84")
+            public static let SmpCharacteristicUUID = CBUUID(string: "DA2E7828-FBCE-4E01-AE9E-261174997C48")
+            
+            private let continuation: CheckedContinuation<Bool, Error>
+            private var identifier: UUID
+            private var peripheral: CBPeripheral?
+            
+            init(for bearer: GattBearer, _ continuation: CheckedContinuation<Bool, Error>) {
+                self.continuation = continuation
+                self.identifier = bearer.identifier
+            }
+            
+            func centralManagerDidUpdateState(_ central: CBCentralManager) {
+                if central.state == .poweredOn {
+                    guard let peripheral = central.retrievePeripherals(withIdentifiers: [identifier]).first else {
+                        continuation.resume(throwing: ConnectionError.peripheralNotFound)
+                        return
+                    }
+                    self.peripheral = peripheral
+                    peripheral.delegate = self
+                    central.connect(peripheral)
+                } else {
+                    continuation.resume(throwing: ConnectionError.invalidState(state: central.state))
+                }
+            }
+            
+            func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: (any Error)?) {
+                continuation.resume(throwing: ConnectionError.connectionFailed)
+            }
+            
+            func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
+                peripheral.discoverServices([Connection.SmpServiceUUID])
+            }
+            
+            func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: (any Error)?) {
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                guard let services = peripheral.services,
+                      let service = services.first(where: { $0.uuid == Connection.SmpServiceUUID }) else {
+                    continuation.resume(returning: false)
+                    return
+                }
+                peripheral.discoverCharacteristics([Connection.SmpCharacteristicUUID], for: service)
+            }
+            
+            func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: (any Error)?) {
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                guard let characteristics = service.characteristics,
+                      let characteristic = characteristics.first(where: { $0.uuid == Connection.SmpCharacteristicUUID }) else {
+                    continuation.resume(returning: false)
+                    return
+                }
+                continuation.resume(returning: characteristic.properties.contains(.notify))
+            }
+            
+        }
+        var manager: CBCentralManager!
+        var strongReference: Connection!
+        defer {
+            strongReference = nil
+            manager.delegate = nil
+            manager = nil
+        }
+        return try await withCheckedThrowingContinuation { continuation in
+            strongReference = Connection(for: bearer, continuation)
+            manager = CBCentralManager(delegate: strongReference, queue: nil)
+        }
+    }
+    
+}
+
