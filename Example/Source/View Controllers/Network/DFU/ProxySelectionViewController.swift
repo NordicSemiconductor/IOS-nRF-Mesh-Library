@@ -54,7 +54,7 @@ private enum Section {
         case .info: return 0
         case .noProxy: return 1
         case .proxyInformation: return 3
-        case .smp: return 1
+        case .smp: return 2
         case .distributor: return 1
         case .boundAppKey: return 1
         case .capabilities: return 5
@@ -67,6 +67,7 @@ private struct ProxyDetails {
     let name: String
     let unicastAddress: Address
     var isSmpSupported: Bool
+    var isSmpSecure: Bool
     var distributorServerModel: Model?
     var applicationKeys: [ApplicationKey]
     var capabilities: Capabilities?
@@ -85,6 +86,7 @@ private struct ProxyDetails {
         distributorServerModel = proxy.models(withSigModelId: .firmwareDistributionServerModelId).first
         self.applicationKeys = distributorServerModel?.boundApplicationKeys ?? []
         self.isSmpSupported = false
+        self.isSmpSecure = proxy.contains(modelWithModelId: .lePairingResponder, definedBy: .nordicSemiconductorCompanyId)
     }
     
     var isSupported: Bool {
@@ -136,6 +138,7 @@ class ProxySelectionViewController: UITableViewController {
         let section = sections[section]
         switch section {
         case .boundAppKey: return (proxyDetails?.applicationKeys.count ?? 0) + 1 // Bind App Key
+        case .smp: return proxyDetails?.isSmpSupported == true ? 2 : 1
         default: return section.rows
         }
     }
@@ -155,6 +158,7 @@ class ProxySelectionViewController: UITableViewController {
             }
             let cell = tableView.dequeueReusableCell(withIdentifier: "value", for: indexPath)
             cell.imageView?.image = nil
+            cell.accessoryType = .none
             switch indexPath.row {
             case 0:
                 cell.textLabel?.text = "Name"
@@ -168,11 +172,22 @@ class ProxySelectionViewController: UITableViewController {
             return cell
         case .smp:
             let cell = tableView.dequeueReusableCell(withIdentifier: "value", for: indexPath)
-            cell.imageView?.image = UIImage(systemName: proxyDetails!.isSmpSupported ? "checkmark" : "xmark")
-            cell.imageView?.tintColor = proxyDetails!.isSmpSupported ? .systemGreen : .systemRed
-            cell.textLabel?.text = proxyDetails!.isSmpSupported ? "SMP Service supported" : "SMP Service not supported"
-            cell.detailTextLabel?.text = nil
-            cell.accessoryType = .none
+            switch indexPath.row {
+            case 0:
+                cell.imageView?.image = UIImage(systemName: proxyDetails!.isSmpSupported ? "checkmark" : "xmark")
+                cell.imageView?.tintColor = proxyDetails!.isSmpSupported ? .systemGreen : .systemRed
+                cell.textLabel?.text = proxyDetails!.isSmpSupported ? "SMP Service supported" : "SMP Service not supported"
+                cell.detailTextLabel?.text = nil
+                cell.accessoryType = .none
+            case 1:
+                cell.imageView?.image = UIImage(systemName: proxyDetails!.isSmpSecure ? "checkmark" : "exclamationmark.triangle")
+                cell.imageView?.tintColor = proxyDetails!.isSmpSecure ? .systemGreen : .systemOrange
+                cell.textLabel?.text = proxyDetails!.isSmpSecure ? "Secured using LE Pairing Responder model" : "Insecure access"
+                cell.detailTextLabel?.text = nil
+                cell.accessoryType = proxyDetails!.isSmpSecure ? .none : .detailButton
+            default:
+                fatalError("Invalid row")
+            }
             return cell
         case .distributor:
             let isDistributor = proxyDetails?.distributorServerModel != nil
@@ -196,6 +211,7 @@ class ProxySelectionViewController: UITableViewController {
         case .capabilities:
             let cell = tableView.dequeueReusableCell(withIdentifier: "value", for: indexPath)
             cell.imageView?.image = nil
+            cell.accessoryType = .none
             switch indexPath.row {
             case 0:
                 cell.textLabel?.text = "Max receivers list size"
@@ -266,6 +282,16 @@ class ProxySelectionViewController: UITableViewController {
         case .info: return "Active connection to a GATT Proxy node with Firmware Distributor Server model and SMP Service enabled is required."
         default: return nil
         }
+    }
+    
+    override func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
+        let readMoreAction = UIAlertAction(title: "Read Mode", style: .default) { _ in
+            UIApplication.shared.open(URL(string: "https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/samples/bluetooth/mesh/dfu/distributor/README.html#smp_over_bluetooth_authentication")!)
+        }
+        presentAlert(title: "Warning",
+                     message: "Although the SMP Service has been discovered on the device, the node does not contain LE Pairing Responder model from Nordic Semiconductor. This may indicate, that the service is not protected and allows insecure access to the device management subsystem.\n\nConsider enabling Bluetooth authentication.",
+                     option: readMoreAction,
+        )
     }
     
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
