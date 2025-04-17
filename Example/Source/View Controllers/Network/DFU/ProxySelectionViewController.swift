@@ -111,6 +111,7 @@ class ProxySelectionViewController: UITableViewController {
     
     private var sections: [Section] = []
     private var proxyDetails: ProxyDetails?
+    private var selectedAppKey: ApplicationKey?
     
     // MARK: - Navigation
     
@@ -227,6 +228,7 @@ class ProxySelectionViewController: UITableViewController {
                 let key = proxyDetails!.applicationKeys[indexPath.row]
                 cell.textLabel?.text = key.name
                 cell.detailTextLabel?.text = "Bound to \(key.boundNetworkKey.name)"
+                cell.accessoryType = key == selectedAppKey ? .checkmark : .none
                 return cell
             }
         case .capabilities:
@@ -301,6 +303,7 @@ class ProxySelectionViewController: UITableViewController {
         let section = sections[section]
         switch section {
         case .info: return "Active connection to a GATT Proxy node with Firmware Distributor Server model and SMP Service enabled is required."
+        case .boundAppKey: return "Selected Application Key will be used for Firmware Distribution."
         default: return nil
         }
     }
@@ -318,9 +321,8 @@ class ProxySelectionViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         let section = sections[indexPath.section]
         switch section {
-        case .documentation, .noProxy: return true
+        case .documentation, .noProxy, .boundAppKey: return true
         case .proxyInformation: return indexPath.row == 2
-        case .boundAppKey: return indexPath.row == proxyDetails?.applicationKeys.count ?? 0
         default: return false
         }
     }
@@ -330,6 +332,15 @@ class ProxySelectionViewController: UITableViewController {
         
         let section = sections[indexPath.section]
         switch section {
+        case .boundAppKey:
+            guard indexPath.row < proxyDetails!.applicationKeys.count else {
+                // A segue to bond app key was clicked.
+                return
+            }
+            selectedAppKey = proxyDetails!.applicationKeys[indexPath.row]
+            if let index = sections.firstIndex(of: .boundAppKey) {
+                tableView.reloadSections(IndexSet(integer: index), with: .automatic)
+            }
         case .documentation:
             UIApplication.shared.open(links[indexPath.row].url)
         default:
@@ -361,8 +372,11 @@ extension ProxySelectionViewController: BindAppKeyDelegate, GattBearerDelegate {
         if let model = proxyDetails?.distributorServerModel {
             proxyDetails?.applicationKeys = model.boundApplicationKeys
             
+            if selectedAppKey == nil {
+                selectedAppKey = model.boundApplicationKeys.first
+            }
             if proxyDetails?.capabilities == nil {
-                readCapabilities(using: model)
+                readCapabilities(using: model, using: selectedAppKey!)
             }
         }
         
@@ -382,16 +396,20 @@ extension ProxySelectionViewController: ProxyFilterDelegate {
             self.sections = [.info]
             if let proxy = MeshNetworkManager.instance.proxyFilter.proxy, !addresses.isEmpty {
                 self.proxyDetails = ProxyDetails(proxy)
+                self.selectedAppKey = proxyDetails?.distributorServerModel?.boundApplicationKeys.first
                 self.sections.append(contentsOf: [.proxyInformation, .smp, .distributor])
                 if let model = proxyDetails?.distributorServerModel {
                     self.sections.append(contentsOf: [.boundAppKey, .capabilities])
-                    self.readCapabilities(using: model)
+                    if let applicationKey = self.selectedAppKey {
+                        self.readCapabilities(using: model, using: applicationKey)
+                    }
                 } else {
                     self.sections.append(.documentation)
                 }
                 self.verifyProxy()
             } else {
                 self.proxyDetails = nil
+                self.selectedAppKey = nil
                 self.sections.append(contentsOf: [.noProxy, .documentation])
             }
             self.tableView.reloadData()
@@ -402,13 +420,10 @@ extension ProxySelectionViewController: ProxyFilterDelegate {
 
 private extension ProxySelectionViewController {
     
-    func readCapabilities(using model: Model) {
-        guard model.boundApplicationKeys.count > 0 else {
-            return
-        }
+    func readCapabilities(using model: Model, using applicationKey: ApplicationKey) {
         Task {
             do {
-                let response = try await MeshNetworkManager.instance.send(FirmwareDistributionCapabilitiesGet(), to: model)
+                let response = try await MeshNetworkManager.instance.send(FirmwareDistributionCapabilitiesGet(), to: model, using: applicationKey)
                 let capabilities = response as! FirmwareDistributionCapabilitiesStatus
                 Task { @MainActor [weak self] in
                     guard let self = self else { return }

@@ -256,7 +256,7 @@
                                     </subviews>
                                 </tableViewCellContentView>
                             </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="key" textLabel="aA8-bC-bre" detailTextLabel="uyz-x2-WL5" imageView="yWS-1F-qzm" style="IBUITableViewCellStyleSubtitle" id="XnF-Qq-CAj">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="key" textLabel="aA8-bC-bre" detailTextLabel="uyz-x2-WL5" imageView="yWS-1F-qzm" style="IBUITableViewCellStyleSubtitle" id="XnF-Qq-CAj">
                                 <rect key="frame" x="0.0" y="267.5" width="414" height="55.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="XnF-Qq-CAj" id="iWl-Dd-57b">
@@ -394,7 +394,7 @@
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="6fF-u3-H9V"/>
-        <segue reference="fp1-x6-zyx"/>
+        <segue reference="ioE-bI-obV"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="0.0" green="0.46666666670000001" blue="0.7843137255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
     <resources>
