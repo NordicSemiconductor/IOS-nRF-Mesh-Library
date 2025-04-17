@@ -51,7 +51,7 @@ public struct FirmwareDistributionUploadStatus: StaticMeshResponse {
     public let isOob: Bool?
     /// The Firmware ID of the new firmware image that is being uploaded or was
     /// uploaded to the Firmware Distribution Server.
-    public  let firmwareId: FirmwareId?
+    public let firmwareId: FirmwareId?
     
     public var parameters: Data? {
         var data = Data([status.rawValue, phase.rawValue])
