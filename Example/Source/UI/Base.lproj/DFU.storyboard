@@ -291,15 +291,89 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Firmware Distributor" id="OUE-mb-xTx">
-                        <barButtonItem key="rightBarButtonItem" enabled="NO" title="Next" id="AvC-eB-EQi"/>
+                        <barButtonItem key="backBarButtonItem" title="Select Distributor" id="vZK-Mh-fZm"/>
+                        <barButtonItem key="rightBarButtonItem" enabled="NO" title="Next" id="AvC-eB-EQi">
+                            <connections>
+                                <action selector="nextTapped:" destination="4nR-2l-Xhz" id="Ev9-jG-y2s"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="nextButton" destination="AvC-eB-EQi" id="fpc-eb-vm2"/>
+                        <segue destination="rCC-pi-r2L" kind="show" identifier="continue" id="ioE-bI-obV"/>
+                        <segue destination="Qf6-kl-oiX" kind="show" identifier="pair" id="Nat-Zb-4Mh"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6Od-uP-h9L" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="4013" y="-7203"/>
+        </scene>
+        <!--Firmware-->
+        <scene sceneID="yz6-Gg-veO">
+            <objects>
+                <viewController id="Qf6-kl-oiX" customClass="PasskeyViewController" customModule="nRF_Mesh" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="F5R-rj-cV7">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" alpha="0.0" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="123456" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mgP-3E-n1l">
+                                <rect key="frame" x="0.0" y="458" width="414" height="120"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="120" id="Gkf-7z-nEb"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="46"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="Ing-pB-GQ6"/>
+                        <color key="backgroundColor" systemColor="systemGroupedBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="Ing-pB-GQ6" firstAttribute="trailing" secondItem="mgP-3E-n1l" secondAttribute="trailing" id="DLJ-tj-3Kz"/>
+                            <constraint firstItem="Ing-pB-GQ6" firstAttribute="bottom" secondItem="mgP-3E-n1l" secondAttribute="bottom" constant="250" id="jrV-Oy-3FI"/>
+                            <constraint firstItem="mgP-3E-n1l" firstAttribute="leading" secondItem="Ing-pB-GQ6" secondAttribute="leading" id="ziA-u4-dkG"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Firmware" id="BKv-Th-hWV">
+                        <barButtonItem key="backBarButtonItem" title="Select Distributor" id="FGy-7b-jM7"/>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="passkeyLabel" destination="mgP-3E-n1l" id="fZM-hE-RSy"/>
+                        <segue destination="rCC-pi-r2L" kind="show" identifier="continue" animates="NO" id="fp1-x6-zyx"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="lQi-Fx-no2" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4898.5507246376819" y="-6749.3303571428569"/>
+        </scene>
+        <!--Firmware-->
+        <scene sceneID="4Oi-0s-s6g">
+            <objects>
+                <tableViewController id="rCC-pi-r2L" customClass="FirmwareSelectionViewController" customModule="nRF_Mesh" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" id="bMc-P0-kwA">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="egt-je-exP">
+                                <rect key="frame" x="0.0" y="38" width="414" height="43.5"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="egt-je-exP" id="0l8-iq-JHI">
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="rCC-pi-r2L" id="T60-Il-i2M"/>
+                            <outlet property="delegate" destination="rCC-pi-r2L" id="Cnl-TN-nbK"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Firmware" id="AJH-8Y-P49"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="T6M-0R-bfh" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="5770" y="-7203"/>
         </scene>
         <!--SelectProxy-->
         <scene sceneID="s2y-98-RUf">
@@ -307,7 +381,7 @@
                 <viewControllerPlaceholder storyboardName="SelectProxy" id="OLv-gT-CzP" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="faB-VW-ks6" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4879" y="-7273"/>
+            <point key="canvasLocation" x="3924" y="-6736"/>
         </scene>
         <!--BindAppKey-->
         <scene sceneID="Qyz-d3-Pla">
@@ -315,11 +389,12 @@
                 <viewControllerPlaceholder storyboardName="BindAppKey" id="Qk2-No-Sio" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="PU8-7g-gpE" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4881" y="-7203"/>
+            <point key="canvasLocation" x="4149" y="-6736"/>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="6fF-u3-H9V"/>
+        <segue reference="fp1-x6-zyx"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="0.0" green="0.46666666670000001" blue="0.7843137255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
     <resources>

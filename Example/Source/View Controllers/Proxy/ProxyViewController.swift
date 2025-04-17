@@ -177,7 +177,7 @@ extension ProxyViewController: BearerDelegate {
     
     func bearerDidOpen(_ bearer: Bearer) {
         addButton.isEnabled = true
-        tableView.reloadRows(at: [.status, .action, .control], with: .automatic)
+        tableView.reloadData()
     }
     
     func bearer(_ bearer: Bearer, didClose error: Error?) {

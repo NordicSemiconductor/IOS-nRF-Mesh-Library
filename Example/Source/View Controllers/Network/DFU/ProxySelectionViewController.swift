@@ -98,6 +98,14 @@ class ProxySelectionViewController: UITableViewController {
     // MARK: - Outlets
     
     @IBOutlet weak var nextButton: UIBarButtonItem!
+    @IBAction func nextTapped(_ sender: UIBarButtonItem) {
+        guard let proxyDetails = proxyDetails, proxyDetails.isSupported else { return }
+        if proxyDetails.isSmpSecure {
+            performSegue(withIdentifier: "pair", sender: nil)
+        } else {
+            performSegue(withIdentifier: "continue", sender: nil)
+        }
+    }
     
     // MARK: - Properties
     
@@ -107,11 +115,23 @@ class ProxySelectionViewController: UITableViewController {
     // MARK: - Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        switch segue.identifier {
+        case "pair":
+            let viewController = segue.destination as! PasskeyViewController
+            viewController.node = proxyDetails!.distributorServerModel!.parentElement!.parentNode
+            viewController.bearer = MeshNetworkManager.bearer.proxies.first { $0.isOpen }
+        case "continue":
+            let destination = segue.destination as! FirmwareSelectionViewController
+            destination.node = proxyDetails!.distributorServerModel!.parentElement!.parentNode
+            destination.bearer = MeshNetworkManager.bearer.proxies.first { $0.isOpen }
+        default:
+            break
+        }
         let navigationController = segue.destination as? UINavigationController
         switch segue.identifier {
         case "bind":
             let viewController = navigationController?.topViewController as! ModelBindAppKeyViewController
-            viewController.model = proxyDetails?.distributorServerModel
+            viewController.model = proxyDetails!.distributorServerModel
             viewController.delegate = self
         default:
             break
@@ -123,6 +143,7 @@ class ProxySelectionViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        MeshNetworkManager.bearer.delegate = self
         let proxyFilter = MeshNetworkManager.instance.proxyFilter
         proxyFilter.delegate = self
         
@@ -318,7 +339,23 @@ class ProxySelectionViewController: UITableViewController {
 
 }
 
-extension ProxySelectionViewController: BindAppKeyDelegate {
+extension ProxySelectionViewController: BindAppKeyDelegate, GattBearerDelegate {
+    
+    func bearerDidOpen(_ bearer: any NordicMesh.Bearer) {
+        // Do nothing, we're waiting for the proxy filter to update.
+    }
+    
+    func bearer(_ bearer: any Bearer, didClose error: (any Error)?) {
+        nextButton.isEnabled = false
+        // Make sure the ProxyFilter is not busy.
+        MeshNetworkManager.instance.proxyFilter.proxyDidDisconnect()
+        // The bearer has closed. Attempt to send a message
+        // will fail, but the Proxy Filter will receive .bearerClosed
+        // error, upon which it will clear the filter list and notify
+        // the delegate.
+        MeshNetworkManager.instance.proxyFilter.clear()
+    }
+    
     
     func keyBound() {
         if let model = proxyDetails?.distributorServerModel {
@@ -339,13 +376,13 @@ extension ProxySelectionViewController: BindAppKeyDelegate {
 extension ProxySelectionViewController: ProxyFilterDelegate {
     
     func proxyFilterUpdated(type: ProxyFilerType, addresses: Set<Address>) {
+        // Reinitialize sections if Proxy filter is set.
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
-            // Reinitialize sections
             self.sections = [.info]
-            if let proxy = MeshNetworkManager.instance.proxyFilter.proxy {
-                self.sections.append(contentsOf: [.proxyInformation, .smp, .distributor])
+            if let proxy = MeshNetworkManager.instance.proxyFilter.proxy, !addresses.isEmpty {
                 self.proxyDetails = ProxyDetails(proxy)
+                self.sections.append(contentsOf: [.proxyInformation, .smp, .distributor])
                 if let model = proxyDetails?.distributorServerModel {
                     self.sections.append(contentsOf: [.boundAppKey, .capabilities])
                     self.readCapabilities(using: model)
@@ -354,6 +391,7 @@ extension ProxySelectionViewController: ProxyFilterDelegate {
                 }
                 self.verifyProxy()
             } else {
+                self.proxyDetails = nil
                 self.sections.append(contentsOf: [.noProxy, .documentation])
             }
             self.tableView.reloadData()
@@ -393,13 +431,12 @@ private extension ProxySelectionViewController {
     }
     
     func verifyProxy() {
-        if let bearer = MeshNetworkManager.bearer?.proxies.first, bearer.isOpen {
+        if let bearer = MeshNetworkManager.bearer?.proxies.first(where: { $0.isOpen }) {
             Task {
                 do {
                     let isSmpSupported = try await checkSmpService(ofBearer: bearer)
                     proxyDetails?.isSmpSupported = isSmpSupported
                 } catch {
-                    print("Error checking SMP service: \(error.localizedDescription)")
                     proxyDetails?.isSmpSupported = false
                 }
                 Task { @MainActor [weak self] in
