@@ -122,6 +122,33 @@ public struct FirmwareDistributionStart: StaticAcknowledgedMeshMessage {
         self.multicastAddress = multicastAddress
     }
     
+    /// Creates the Firmware Distribution Start message from the given
+    /// ``FirmwareDistributionStatus`` message.
+    ///
+    /// Use this initializer to resume suspended firmware distribution.
+    public init?(resume status: FirmwareDistributionStatus) {
+        guard status.phase == .transferSuspended else {
+            return nil
+        }
+        guard let applicationKeyIndex = status.applicationKeyIndex,
+              let ttl = status.ttl,
+              let timeoutBase = status.timeoutBase,
+              let transferMode = status.transferMode,
+              let updatePolicy = status.updatePolicy,
+              let firmwareImageIndex = status.firmwareImageIndex,
+              let multicastAddress = status.multicastAddress else {
+            return nil
+        }
+        self.applicationKeyIndex = applicationKeyIndex
+        self.ttl = ttl
+        self.timeoutBase = timeoutBase
+        self.transferMode = transferMode
+        self.updatePolicy = updatePolicy
+        self.firmwareImageIndex = firmwareImageIndex
+        // This can be a Label UUID or a Group Address.
+        self.multicastAddress = MeshAddress(multicastAddress)
+    }
+    
     public init?(parameters: Data) {
         guard parameters.count == 10 || parameters.count == 24 else {
             return nil

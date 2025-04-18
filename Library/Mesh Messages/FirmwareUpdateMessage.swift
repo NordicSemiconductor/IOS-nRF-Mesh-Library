@@ -196,6 +196,47 @@ public enum FirmwareDistributionPhase: UInt8, Sendable {
     case cancelingUpdate   = 0x06
     /// The Transfer BLOB procedure is suspended.
     case transferSuspended = 0x07
+    
+    /// A flag indicating whether the firmware distribution can be canceled.
+    ///
+    /// Send ``FirmwareDistributionCancel`` message to cancel the firmware distribution.
+    public var isCancellable: Bool {
+        // Firmware Distribution can be cancelled in any state.
+        return true
+    }
+    
+    /// A flag indicating whether the firmware distribution can be suspended.
+    ///
+    /// Send ``FirmwareDistributionSuspend`` message to suspend the firmware distribution.
+    public var isSuspendable: Bool {
+        // When a Firmware Distribution Server receives a Firmware Distribution Suspend
+        // message, and the Distribution Phase state of the server is NOT
+        // - Transfer Active or
+        // - Transfer Suspended,
+        // the server shall respond with a Firmware Distribution Status message
+        // with the Status field set to Wrong Phase.
+        return self == .transferActive || self == .transferSuspended
+    }
+        
+    
+    /// A flag indicating whether the new firmware can be applied to the Target Nodes.
+    ///
+    /// Send ``FirmwareDistributionApply`` message to apply the new firmware.
+    ///
+    /// - note: Firmware can be automatically applied using ``FirmwareUpdatePolicy/verifyAndApply``
+    public var canApply: Bool {
+        // When a Firmware Distribution Server receives a Firmware Distribution Apply
+        // message, and the Distribution Phase state of the server is
+        // - Idle,
+        // - Canceling Update,
+        // - Transfer Active,
+        // - Transfer Suspended,
+        // - Failed,
+        // the server shall respond with a Firmware Distribution Status message with
+        // the Status field set to Wrong Phase.
+        return self != .idle && self != .cancelingUpdate && self != .transferActive
+            && self != .transferSuspended && self != .failed
+    }
 }
 
 /// The Firmware Update Additional Information state identifies the Node state after
