@@ -422,6 +422,11 @@ extension ProxySelectionViewController: ProxyFilterDelegate {
 
 private extension UITableViewCell {
     
+    /// Sets a checked or xmark accessory.
+    ///
+    /// The cells with identifier "status" have accessory set to `.checkmark` in the Storyboard.
+    /// This property sets a custom `accessoryView` with "xmark" image when `checked` is set to false.
+    /// Setting it to true removes the accessory view making the default accessory visible.
     var checked: Bool {
         get {
             return accessoryView != nil
