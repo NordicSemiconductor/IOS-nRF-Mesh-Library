@@ -38,23 +38,21 @@ struct UpdatedFirmwareInformation: Codable {
         let firmware: Firmware
      
         struct Firmware: Codable {
-            let firmwareId: String
+            let firmwareIdString: String
             let dfuChainSize: Int
             let firmwareImageFileSize: Int
             
-            var companyIdentifier: UInt16 {
-                return UInt16(firmwareId.prefix(4), radix: 16) ?? 0
-            }
-            
-            var version: Data {
-                return Data(hex: String(firmwareId.dropFirst(4)))
+            /// The firmware ID of the firmware image.
+            var firmwareId: FirmwareId? {
+                let data = Data(hex: firmwareIdString)
+                return FirmwareId(data: data)
             }
             
             // MARK: - Codable
             
             /// Coding keys used to export / import Application Keys.
             enum CodingKeys: String, CodingKey {
-                case firmwareId = "firmware_id"
+                case firmwareIdString = "firmware_id"
                 case dfuChainSize = "dfu_chain_size"
                 case firmwareImageFileSize = "firmware_image_file_size"
             }
@@ -125,7 +123,7 @@ class FirmwareInformationViewController: ProgressViewController {
                 if firmwareInformation.currentFirmwareId.version.isEmpty {
                     cell.detailTextLabel?.text = "N/A"
                 } else {
-                    cell.detailTextLabel?.text = "0x\(firmwareInformation.currentFirmwareId.version.hex)"
+                    cell.detailTextLabel?.text = firmwareInformation.currentFirmwareId.versionString
                 }
             default:
                 fatalError("Invalid index")
@@ -147,14 +145,14 @@ class FirmwareInformationViewController: ProgressViewController {
             case 0:
                 let cell = tableView.dequeueReusableCell(withIdentifier: "value", for: indexPath)
                 cell.textLabel?.text = "Company"
-                cell.detailTextLabel?.text = CompanyIdentifier.name(for: updatedFirmwareInformation!.manifest.firmware.companyIdentifier) ?? "Unknown"
+                let companyIdentifier = updatedFirmwareInformation?.manifest.firmware.firmwareId?.companyIdentifier
+                cell.detailTextLabel?.text = companyIdentifier.map { CompanyIdentifier.name(for: $0) } ?? "Unknown"
                 return cell
             case 1:
                 let cell = tableView.dequeueReusableCell(withIdentifier: "value", for: indexPath)
                 cell.textLabel?.text = "Version"
-                if let version = updatedFirmwareInformation?.manifest.firmware.version,
-                   !version.isEmpty {
-                    cell.detailTextLabel?.text = "0x\(version.hex)"
+                if let version = updatedFirmwareInformation?.manifest.firmware.firmwareId?.versionString {
+                    cell.detailTextLabel?.text = version
                 } else {
                     cell.detailTextLabel?.text = "N/A"
                 }

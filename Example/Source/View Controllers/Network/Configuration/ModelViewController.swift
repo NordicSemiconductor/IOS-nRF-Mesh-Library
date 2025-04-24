@@ -494,7 +494,11 @@ class ModelViewController: ProgressViewController {
             let cell = tableView.dequeueReusableCell(withIdentifier: "firmwareInformation", for: indexPath)
             let info = status.list[indexPath.row]
             cell.textLabel?.text = "Image \(Int(status.firstIndex) + indexPath.row)"
-            cell.detailTextLabel?.text = CompanyIdentifier.name(for: info.currentFirmwareId.companyIdentifier) ?? "Unknown"
+            let version = info.currentFirmwareId.versionString ?? "Unknown version"
+            let entryCompanyIdentifier = info.currentFirmwareId.companyIdentifier
+            let nodeCompanyIdentifier = model.parentElement?.parentNode?.companyIdentifier
+            let company = entryCompanyIdentifier == nodeCompanyIdentifier ? "" : " (\(CompanyIdentifier.name(for: entryCompanyIdentifier) ?? "Unknown manufacturer"))"
+            cell.detailTextLabel?.text = "Version: \(version)\(company)"
             return cell
         }
     }
