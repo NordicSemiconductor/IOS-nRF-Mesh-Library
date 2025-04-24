@@ -66,9 +66,77 @@ public struct FirmwareId: Sendable, Equatable {
         self.version = version
     }
     
+    public init?(data: Data) {
+        guard data.count >= 2 else {
+            return nil
+        }
+        companyIdentifier = data.read(fromOffset: 0)
+        version = data.subdata(in: 2..<data.count)
+    }
+    
+    /// Returns the version string in the format `major.minor.revision+build`.
+    ///
+    /// If the `version` is 1, 2, 4 or 8 bytes long it is interpreted as: `UInt8, UInt8, UInt16, UInt32`.
+    ///
+    /// If `version` is empty, `nil` is returned.
+    public var versionString: String? {
+        guard version.count > 0 else {
+            return nil
+        }
+        var major: UInt8 = 0
+        var minor: UInt8 = 0
+        var revision: UInt16 = 0
+        var build: UInt32 = 0
+        switch version.count {
+        case 8:
+            build = version.read(fromOffset: 4)
+            fallthrough
+        case 4:
+            revision = version.read(fromOffset: 2)
+            fallthrough
+        case 2:
+            minor = version[1]
+            fallthrough
+        case 1:
+            major = version[0]
+            // Hide the build number if it is 0. I'm sure someone will complain.
+            if build == 0 {
+                return "\(major).\(minor).\(revision)"
+            }
+            return "\(major).\(minor).\(revision)+\(build)"
+        default:
+            return "0x\(version.hex)"
+        }
+    }
+    
     public static func == (lhs: FirmwareId, rhs: FirmwareId) -> Bool {
         return lhs.companyIdentifier == rhs.companyIdentifier &&
                lhs.version == rhs.version
+    }
+}
+
+/// The Firmware Information entry identifies the information for a firmware
+/// subsystem on the Node from the Firmware Information List state.
+public struct FirmwareInformation: Sendable {
+    /// Identifies the firmware image on the Node or any subsystem on the Node.
+    public let currentFirmwareId: FirmwareId
+    /// URI used to retrieve a new firmware image (optional).
+    ///
+    /// The Update URI state indicates the location of the new firmware archive file.
+    ///
+    /// The Update URI state is either a URI, or empty. If the Update URI
+    /// state is not empty, then it shall be formatted as the URI data type is defined in CSS
+    /// and shall use the `https` scheme.
+    public let updateUri: URL?
+    
+    /// Creates a new Firmware Information Entry.
+    ///
+    /// - parameters:
+    ///  - currentFirmwareId: Identifies the firmware image on the Node or any subsystem on the Node.
+    ///  - updateUri: URI used to retrieve a new firmware image (optional).
+    public init(currentFirmwareId: FirmwareId, updateUri: URL?) {
+        self.currentFirmwareId = currentFirmwareId
+        self.updateUri = updateUri
     }
 }
 
@@ -143,6 +211,17 @@ public enum FirmwareUpdatePhase: UInt8, Sendable {
     case verificationFailed    = 0x5
     /// The Apply New Firmware procedure is being executed.
     case applyingUpdate        = 0x6
+    
+    /// A flag indicating whether the firmware update can be started.
+    public var canStart: Bool {
+        // When a Firmware Update Server receives a Firmware Update Start message,
+        // and the Update Phase state is:
+        // - Idle,
+        // - Transfer Error,
+        // - Verification Failed,
+        // and the message is successfully processed, then the server shall begin update.
+        return self == .idle || self == .transferError || self == .verificationFailed
+    }
 }
 
 /// The Retrieved Update Phase field identifies the phase of the firmware update
@@ -275,6 +354,16 @@ extension FirmwareId: CustomDebugStringConvertible {
     
     public var debugDescription: String {
         return "FirmwareId(companyId: 0x\(companyIdentifier.hex), version: 0x\(version.hex))"
+    }
+    
+}
+
+extension FirmwareInformation: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        let companyId = "0x\(currentFirmwareId.companyIdentifier.hex)"
+        let versionString = currentFirmwareId.version.isEmpty ? "nil" : "0x\(currentFirmwareId.version.hex)"
+        return "FirmwareInformation(companyId: \(companyId), version: \(versionString), updateUri: \(updateUri?.absoluteString ?? "nil"))"
     }
     
 }

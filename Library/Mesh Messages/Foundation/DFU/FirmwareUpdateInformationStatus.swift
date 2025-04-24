@@ -60,36 +60,6 @@ public struct FirmwareUpdateInformationStatus: StaticMeshResponse {
         }
     }
     
-    /// The Firmware Information Entry field shall identify the information for a firmware
-    /// subsystem on the Node from the Firmware Information List state.
-    public struct FirmwareInformation: Sendable, CustomDebugStringConvertible {
-        /// Identifies the firmware image on the Node or any subsystem on the Node.
-        public let currentFirmwareId: FirmwareId
-        /// URI used to retrieve a new firmware image (optional).
-        ///
-        /// The Update URI state indicates the location of the new firmware archive file.
-        /// The Update URI state shall be either a URI, or it shall be empty. If the Update URI
-        /// state is not empty, then it shall be formatted as the URI data type is defined in CSS
-        /// and shall use the `https` scheme.
-        public let updateUri: URL?
-        
-        /// Creates a new Firmware Information Entry.
-        ///
-        /// - parameters:
-        ///  - currentFirmwareId: Identifies the firmware image on the Node or any subsystem on the Node.
-        ///  - updateUri: URI used to retrieve a new firmware image (optional).
-        public init(currentFirmwareId: FirmwareId, updateUri: URL?) {
-            self.currentFirmwareId = currentFirmwareId
-            self.updateUri = updateUri
-        }
-        
-        public var debugDescription: String {
-            let companyId = "0x\(currentFirmwareId.companyIdentifier.hex)"
-            let versionString = currentFirmwareId.version.isEmpty ? "nil" : "0x\(currentFirmwareId.version.hex)"
-            return "FirmwareInformation(companyId: \(companyId), version: \(versionString), updateUri: \(updateUri?.absoluteString ?? "nil"))"
-        }
-    }
-    
     /// Creates a Firmware Update Information Status message with given parameters.
     ///
     /// This initiator returns the given list of receivers. User is responsible for

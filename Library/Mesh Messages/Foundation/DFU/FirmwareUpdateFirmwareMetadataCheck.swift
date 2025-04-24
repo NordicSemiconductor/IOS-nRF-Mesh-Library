@@ -56,13 +56,12 @@ public struct FirmwareUpdateFirmwareMetadataCheck: StaticAcknowledgedMeshMessage
         return Data([imageIndex]) + metadata
     }
     
-    
     /// Creates the Firmware Update Firmware Metadata Check message.
     ///
     /// - parameters:
     ///   - imageIndex: Index of the firmware image in the Firmware Information List state to check.
     ///   - metadata: Optional vendor-specific metadata of the incoming Firmware.
-    public init(imageIndex: UInt8, metadata: Data?) {
+    public init(imageIndex: UInt8, metadata: Data? = nil) {
         self.imageIndex = imageIndex
         self.metadata = metadata
     }

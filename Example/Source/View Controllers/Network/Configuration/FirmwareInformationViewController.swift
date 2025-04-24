@@ -72,7 +72,7 @@ class FirmwareInformationViewController: ProgressViewController {
     
     var model: Model!
     var index: UInt8!
-    var firmwareInformation: FirmwareUpdateInformationStatus.FirmwareInformation!
+    var firmwareInformation: FirmwareInformation!
     
     private var metadataCheckStatus: FirmwareUpdateFirmwareMetadataStatus?
     private var updatedFirmwareInformation: UpdatedFirmwareInformation?
