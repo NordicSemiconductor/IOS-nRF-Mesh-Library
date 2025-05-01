@@ -38,6 +38,8 @@ import Foundation
 ///
 /// The Firmware ID is used by the Firmware Distribution Server to query new firmware image
 /// based on the current Firmware ID. If should identify the device type and firmware version.
+/// - seeAlso: For Zephyr and nRF Connect SDK implementation see
+/// [Firmware images documentation](https://docs.nordicsemi.com/bundle/ncs-latest/page/zephyr/connectivity/bluetooth/api/mesh/dfu.html#firmware_images).
 public struct FirmwareId: Sendable, Equatable {
     /// The 16-bit Company Identifier (CID) assigned by the Bluetooth SIG.
     ///
@@ -47,6 +49,9 @@ public struct FirmwareId: Sendable, Equatable {
     /// Vendor-specific information describing the firmware binary package.
     ///
     /// The version information shall be 0-106 bytes long.
+    ///
+    /// Use ``versionString`` to get a human readable version string if the version is
+    /// following Zephyr build versioning scheme (`UInt8, UInt8, UInt16, UInt32`).
     public let version: Data
     
     /// Returns the Firmware ID as a byte array.
@@ -74,11 +79,13 @@ public struct FirmwareId: Sendable, Equatable {
         version = data.subdata(in: 2..<data.count)
     }
     
-    /// Returns the version string in the format `major.minor.revision+build`.
+    /// Returns the version string in the format `major.minor.revision+build`,
+    /// skipping the build number if it is 0.
     ///
     /// If the `version` is 1, 2, 4 or 8 bytes long it is interpreted as: `UInt8, UInt8, UInt16, UInt32`.
     ///
-    /// If `version` is empty, `nil` is returned.
+    /// If `version` is empty, `nil` is returned. If the number of bytes is
+    /// different than 1, 2, 4 or 8, the `version` is returned as a hex string with "0x" prefix.
     public var versionString: String? {
         guard version.count > 0 else {
             return nil
@@ -362,7 +369,7 @@ extension FirmwareInformation: CustomDebugStringConvertible {
     
     public var debugDescription: String {
         let companyId = "0x\(currentFirmwareId.companyIdentifier.hex)"
-        let versionString = currentFirmwareId.version.isEmpty ? "nil" : "0x\(currentFirmwareId.version.hex)"
+        let versionString = currentFirmwareId.versionString ?? (currentFirmwareId.version.isEmpty ? "nil" : "0x\(currentFirmwareId.version.hex)")
         return "FirmwareInformation(companyId: \(companyId), version: \(versionString), updateUri: \(updateUri?.absoluteString ?? "nil"))"
     }
     

@@ -31,35 +31,6 @@
 import UIKit
 import NordicMesh
 
-struct UpdatedFirmwareInformation: Codable {
-    let manifest: Manifest
-
-    struct Manifest: Codable {
-        let firmware: Firmware
-     
-        struct Firmware: Codable {
-            let firmwareIdString: String
-            let dfuChainSize: Int
-            let firmwareImageFileSize: Int
-            
-            /// The firmware ID of the firmware image.
-            var firmwareId: FirmwareId? {
-                let data = Data(hex: firmwareIdString)
-                return FirmwareId(data: data)
-            }
-            
-            // MARK: - Codable
-            
-            /// Coding keys used to export / import Application Keys.
-            enum CodingKeys: String, CodingKey {
-                case firmwareIdString = "firmware_id"
-                case dfuChainSize = "dfu_chain_size"
-                case firmwareImageFileSize = "firmware_image_file_size"
-            }
-        }
-    }
-}
-
 class FirmwareInformationViewController: ProgressViewController {
     
     // MARK: - Outlets
@@ -218,13 +189,14 @@ private extension FirmwareInformationViewController {
         guard updatedFirmwareInformation == nil else { return }
         let firmwareId = firmwareInformation.currentFirmwareId.bytes
         guard let url = firmwareInformation.updateUri?
-            .appendingPathComponent("check?cfwid=\(firmwareId.hex)") else {
+            .appending(endpoint: "check", queryItems: [URLQueryItem(name: "cfwid", value: firmwareId.hex)]) else {
             return
         }
-        let urlRequest = URLRequest(url: url)
-        
         activityIndicator.startAnimating()
-        URLSession.shared.dataTask(with: urlRequest) { [weak self] data, response, error in
+        
+        let urlRequest = URLRequest(url: url)
+        let session = URLSession(configuration: .default, delegate: IgnoreCertificateDelegate(), delegateQueue: nil)
+        session.dataTask(with: urlRequest) { [weak self] data, response, error in
             guard let self = self else { return }
             DispatchQueue.main.async {
                 self.activityIndicator.stopAnimating()
@@ -276,13 +248,14 @@ private extension FirmwareInformationViewController {
         guard updatedFirmwareInformation != nil else { return }
         let firmwareId = firmwareInformation.currentFirmwareId.bytes
         guard let url = firmwareInformation.updateUri?
-            .appendingPathComponent("get?cfwid=\(firmwareId.hex)") else {
+            .appending(endpoint: "get", queryItems: [URLQueryItem(name: "cfwid", value: firmwareId.hex)]) else {
             return
         }
-        let urlRequest = URLRequest(url: url)
-        
         activityIndicator.startAnimating()
-        URLSession.shared.downloadTask(with: urlRequest) { [weak self] url, response, error in
+        
+        let urlRequest = URLRequest(url: url)
+        let session = URLSession(configuration: .default, delegate: IgnoreCertificateDelegate(), delegateQueue: nil)
+        session.downloadTask(with: urlRequest) { [weak self] url, response, error in
             guard let self = self else { return }
             DispatchQueue.main.async {
                 self.activityIndicator.stopAnimating()
@@ -292,7 +265,12 @@ private extension FirmwareInformationViewController {
                              message: "Fetching file failed with error: \(error.localizedDescription).")
                 return
             }
-            guard let status = response as? HTTPURLResponse, status.statusCode == 200,
+            guard let status = response as? HTTPURLResponse else {
+                presentAlert(title: "Error",
+                             message: "Unexpected response received: \(String(describing: response))")
+                return
+            }
+            guard (200..<299).contains(status.statusCode),
                   let url = url else {
                 presentAlert(title: "Error", message: "File could not be downloaded.")
                 return
@@ -345,12 +323,12 @@ private extension FirmwareInformationViewController {
                         if status.status == .success {
                             var ai: String
                             switch status.additionalInformation {
-                            case .deviceUnprovisioned:                     ai = "Device will be unprovisioned."
+                            case .deviceUnprovisioned:                     ai = "device will be unprovisioned and will need to be provisioned again."
                             case .compositionDataUnchanged:                ai = "Composition data will not change."
                             case .compositionDataChangedAndRPRSupported:   ai = "Composition data will change and Remote Provisioning will be supported."
                             case .compositionDataChangedAndRPRUnsupported: ai = "Composition data will change.\nRemote Provisioning will not be supported."
                             }
-                            self?.presentAlert(title: "Success", message: "Firmware is compatible.\n\n\(ai)")
+                            self?.presentAlert(title: "Success", message: "Firmware is compatible.\n\nAfter a successful update the \(ai)")
                         } else {
                             self?.presentAlert(title: "\(status.status)", message: "Firmware compatibility check failed.")
                         }

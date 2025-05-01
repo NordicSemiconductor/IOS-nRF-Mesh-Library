@@ -185,6 +185,8 @@
 		F0587F732D96EC6B0091CDF4 /* PairingInitiatorDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0587F722D96EC6B0091CDF4 /* PairingInitiatorDelegate.swift */; };
 		F0587F772D96ECB90091CDF4 /* PairingRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0587F762D96ECB90091CDF4 /* PairingRequest.swift */; };
 		F0587F792D96EE0F0091CDF4 /* PairingResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0587F782D96EE0F0091CDF4 /* PairingResponse.swift */; };
+		F058A63A2DBFA17C00E9E914 /* IgnoreCertificateDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F058A6392DBFA16900E9E914 /* IgnoreCertificateDelegate.swift */; };
+		F058A63D2DC023EB00E9E914 /* UpdatedFirmwareInformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = F058A63C2DC023E000E9E914 /* UpdatedFirmwareInformation.swift */; };
 		F063C01A29C2774300A445A9 /* SelectKeysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F063C01929C2774300A445A9 /* SelectKeysViewController.swift */; };
 		F063C01D29C27EAB00A445A9 /* IntroViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F063C01C29C27EAB00A445A9 /* IntroViewController.swift */; };
 		F085C9FB29C496AB00C2DF89 /* SelectModelsForBindingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F085C9FA29C496AB00C2DF89 /* SelectModelsForBindingViewController.swift */; };
@@ -415,6 +417,8 @@
 		F0587F722D96EC6B0091CDF4 /* PairingInitiatorDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingInitiatorDelegate.swift; sourceTree = "<group>"; };
 		F0587F762D96ECB90091CDF4 /* PairingRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingRequest.swift; sourceTree = "<group>"; };
 		F0587F782D96EE0F0091CDF4 /* PairingResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingResponse.swift; sourceTree = "<group>"; };
+		F058A6392DBFA16900E9E914 /* IgnoreCertificateDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IgnoreCertificateDelegate.swift; sourceTree = "<group>"; };
+		F058A63C2DC023E000E9E914 /* UpdatedFirmwareInformation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatedFirmwareInformation.swift; sourceTree = "<group>"; };
 		F063C01929C2774300A445A9 /* SelectKeysViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectKeysViewController.swift; sourceTree = "<group>"; };
 		F063C01C29C27EAB00A445A9 /* IntroViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroViewController.swift; sourceTree = "<group>"; };
 		F085C9FA29C496AB00C2DF89 /* SelectModelsForBindingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectModelsForBindingViewController.swift; sourceTree = "<group>"; };
@@ -739,6 +743,7 @@
 		529B757322410784008F1CE7 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				F058A6392DBFA16900E9E914 /* IgnoreCertificateDelegate.swift */,
 				529B7574224107A5008F1CE7 /* AppInfo.swift */,
 				529EC8D92A309C640056BB48 /* CompanyIdentifier.swift */,
 				F09DE4C629D771F20073969A /* Model+Name.swift */,
@@ -975,6 +980,14 @@
 			path = Messages;
 			sourceTree = "<group>";
 		};
+		F058A63B2DC023CF00E9E914 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				F058A63C2DC023E000E9E914 /* UpdatedFirmwareInformation.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		F063C01B29C27E8500A445A9 /* Automation */ = {
 			isa = PBXGroup;
 			children = (
@@ -1027,6 +1040,7 @@
 		F0DFB0072DA6CF4400B209FD /* DFU */ = {
 			isa = PBXGroup;
 			children = (
+				F058A63B2DC023CF00E9E914 /* Model */,
 				F0DFB0062DA6CF4400B209FD /* FirmwareUpdateController.swift */,
 				F044AE5F2DAD203B006D6674 /* ProxySelectionViewController.swift */,
 				F0B67D7F2DAFCE7B00B1A69D /* PasskeyViewController.swift */,
@@ -1086,7 +1100,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 0830;
-				LastUpgradeCheck = 1620;
+				LastUpgradeCheck = 1630;
 				ORGANIZATIONNAME = CocoaPods;
 				TargetAttributes = {
 					607FACCF1AFB9204008FA782 = {
@@ -1289,6 +1303,7 @@
 				F096D8482DA5668100A1A1E4 /* FirmwareDistributionViewCell.swift in Sources */,
 				5275962E2A138D9700B04C6F /* SelectPublicationViewController.swift in Sources */,
 				529B764722522D37008F1CE7 /* UITableView+EmptyView.swift in Sources */,
+				F058A63A2DBFA17C00E9E914 /* IgnoreCertificateDelegate.swift in Sources */,
 				5288153D25125AB600484AF0 /* RootTabBarController.swift in Sources */,
 				52CD0A55232FC11700A9A181 /* AddressCell.swift in Sources */,
 				52313FEE22EAFB090074325A /* SubscribeViewController.swift in Sources */,
@@ -1307,6 +1322,7 @@
 				5217D2E2250F7639004FDE79 /* GenericDefaultTransitionTimeClientDelegate.swift in Sources */,
 				5288C20823705C8D00321ED3 /* ProxyCell.swift in Sources */,
 				52BC6F4824507A5400EBEEA4 /* DisconnectCell.swift in Sources */,
+				F058A63D2DC023EB00E9E914 /* UpdatedFirmwareInformation.swift in Sources */,
 				523F777B22CB86A00030EA6A /* ModelBindAppKeyViewController.swift in Sources */,
 				52DF5D8F229691BD00C297C1 /* NetworkConnection.swift in Sources */,
 				52547F27232A3F470002AA7B /* EditRangesViewController.swift in Sources */,
@@ -1644,6 +1660,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = P3R8YQEV4L;
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -1668,6 +1685,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "";
 				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 			};
@@ -1706,6 +1724,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = P3R8YQEV4L;
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -1739,7 +1758,6 @@
 				CODE_SIGN_ENTITLEMENTS = "nRF Mesh.entitlements";
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = P3R8YQEV4L;
 				ENABLE_BITCODE = NO;
 				ENABLE_DEBUG_DYLIB = YES;
 				INFOPLIST_FILE = Source/Info.plist;
@@ -1774,7 +1792,6 @@
 				CODE_SIGN_ENTITLEMENTS = "nRF Mesh.entitlements";
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = P3R8YQEV4L;
 				ENABLE_BITCODE = NO;
 				ENABLE_DEBUG_DYLIB = YES;
 				INFOPLIST_FILE = Source/Info.plist;
@@ -1804,7 +1821,6 @@
 			baseConfigurationReference = 3440420687768FA73DB8A905 /* Pods-nRF Mesh Tests.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
-				DEVELOPMENT_TEAM = P3R8YQEV4L;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SDKROOT)/System/Library/Frameworks",
@@ -1837,7 +1853,6 @@
 			baseConfigurationReference = 4A1A469C2CCA6F730EFD3B60 /* Pods-nRF Mesh Tests.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
-				DEVELOPMENT_TEAM = P3R8YQEV4L;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SDKROOT)/System/Library/Frameworks",

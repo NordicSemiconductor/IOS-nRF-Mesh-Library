@@ -124,10 +124,12 @@ class ProxySelectionViewController: UITableViewController {
             let viewController = segue.destination as! PasskeyViewController
             viewController.node = proxyDetails!.distributorServerModel!.parentElement!.parentNode
             viewController.bearer = MeshNetworkManager.bearer.proxies.first { $0.isOpen }
+            viewController.applicationKey = selectedAppKey
         case "continue":
             let destination = segue.destination as! FirmwareSelectionViewController
             destination.node = proxyDetails!.distributorServerModel!.parentElement!.parentNode
             destination.bearer = MeshNetworkManager.bearer.proxies.first { $0.isOpen }
+            destination.applicationKey = selectedAppKey
         default:
             break
         }
@@ -224,9 +226,15 @@ class ProxySelectionViewController: UITableViewController {
                 return cell
             }
         case .status:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "value", for: indexPath)
+            let cell = tableView.dequeueReusableCell(withIdentifier: "valueStatus", for: indexPath)
             cell.textLabel?.text = "Phase"
             cell.detailTextLabel?.text = proxyDetails?.phase?.debugDescription ?? "Unknown"
+            switch proxyDetails?.phase {
+            case .idle, .failed, .completed:
+                cell.checked = true
+            default:
+                cell.checked = false
+            }
             return cell
         case .capabilities:
             let cell = tableView.dequeueReusableCell(withIdentifier: "value", for: indexPath)

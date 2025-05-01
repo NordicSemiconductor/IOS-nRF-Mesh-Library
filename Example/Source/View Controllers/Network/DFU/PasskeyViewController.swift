@@ -37,6 +37,7 @@ class PasskeyViewController: UIViewController {
     
     var node: Node!
     var bearer: GattBearer!
+    var applicationKey: ApplicationKey!
     
     // MARK: - Outlets
     
@@ -71,6 +72,7 @@ class PasskeyViewController: UIViewController {
         let destination = segue.destination as! FirmwareSelectionViewController
         destination.node = node
         destination.bearer = bearer
+        destination.applicationKey = applicationKey
     }
 
 }
