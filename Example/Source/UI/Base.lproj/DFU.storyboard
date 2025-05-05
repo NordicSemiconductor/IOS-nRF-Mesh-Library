@@ -567,8 +567,11 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Target Nodes" id="AJH-8Y-P49">
-                        <barButtonItem key="rightBarButtonItem" title="Next" id="5KQ-Xe-4ZK"/>
+                        <barButtonItem key="rightBarButtonItem" enabled="NO" title="Next" id="5KQ-Xe-4ZK"/>
                     </navigationItem>
+                    <connections>
+                        <outlet property="nextButton" destination="5KQ-Xe-4ZK" id="C98-Iz-AXN"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="T6M-0R-bfh" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>

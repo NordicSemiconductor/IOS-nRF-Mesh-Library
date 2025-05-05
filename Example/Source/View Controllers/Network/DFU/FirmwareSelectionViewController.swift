@@ -164,12 +164,21 @@ private struct FirmwareEntry {
     let firmware: FirmwareInformation
     var status: Status = .unselected
     var availableUpdate: UpdatedFirmwareInformation?
+    
+    var isSelected: Bool {
+        switch status {
+        case .selected:
+            return true
+        default:
+            return false
+        }
+    }
 }
 
 private enum Status: Equatable {
     case unselected
     case checkingMetadata
-    case supported(additionalInformation: FirmwareUpdateAdditionalInformation)
+    case selected(additionalInformation: FirmwareUpdateAdditionalInformation)
     case notSupported
     case error(message: String)
 }
@@ -185,6 +194,10 @@ class FirmwareSelectionViewController: UITableViewController {
     private var file: UpdatePackage?
     /// List of available targets.
     private var targets: [Target] = []
+    
+    // MARK: - Outlets
+    
+    @IBOutlet weak var nextButton: UIBarButtonItem!
     
     // MARK: - View Controller
     
@@ -233,17 +246,18 @@ class FirmwareSelectionViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
         case IndexPath.firmwareSection: return "Firmware"
-        case IndexPath.firstTargetSection: return "Available Target Nodes"
+        //case IndexPath.firstTargetSection: return "Available Target Nodes"
         default: return nil
         }
     }
     
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         switch section {
-        case IndexPath.infoSection: return "Select a ZIP file generated when building the new firmware."
+        case IndexPath.infoSection:
+            return "Select a ZIP file generated when building the new firmware. " +
+                   "The file can also be downloaded automatically by tapping a target node that provide a URI to an online resource with the latest version."
         case IndexPath.firmwareSection:
-            return "Firmware updates can also be downloaded automatically from nodes that provide a URI. " +
-                   "If an update is available, a button will appear below.\n\n" +
+            return "\n\nAVAILABLE TARGET NODES\n\n" +
                    "Tap a node to view its firmware details. " +
                    "Tap an image to check firmware compatibility and select it for the update."
         case tableView.numberOfSections - 1:
@@ -356,7 +370,7 @@ class FirmwareSelectionViewController: UITableViewController {
                     let indicator = UIActivityIndicatorView(style: .medium)
                     indicator.startAnimating()
                     cell.accessoryView = indicator
-                case .supported:
+                case .selected:
                     cell.accessoryType = .checkmark
                     cell.tintColor = .dynamicColor(light: .nordicLake, dark: .nordicBlue)
                     cell.accessoryView = nil
@@ -394,7 +408,7 @@ class FirmwareSelectionViewController: UITableViewController {
                 case .unselected:
                     // Allow selecting the image only if the Firmware ID is different.
                     return entry.firmware.currentFirmwareId != file?.metadata.firmwareId
-                case .supported:
+                case .selected:
                     // Allow to unselect.
                     return true
                 default:
@@ -501,18 +515,21 @@ class FirmwareSelectionViewController: UITableViewController {
                         do {
                             let result = try await checkCompatibility(of: imageIndex, on: targets[indexPath.targetSection].node, with: metadata)
                             let additionalInformation = try result.get()
-                            status = .supported(additionalInformation: additionalInformation)
+                            status = .selected(additionalInformation: additionalInformation)
                         } catch {
                             status = .error(message: error.localizedDescription)
                         }
                         Task { @MainActor [indexPath, status, weak self] in
-                            self?.targets[indexPath.targetSection].entries[indexPath.row - 1]?.status = status
-                            self?.tableView.reloadRows(at: [indexPath], with: .automatic)
+                            guard let self else { return }
+                            self.targets[indexPath.targetSection].entries[indexPath.row - 1]?.status = status
+                            self.updateNextButtonState()
+                            self.tableView.reloadRows(at: [indexPath], with: .automatic)
                         }
                     }
-                case .supported:
+                case .selected:
                     targets[indexPath.targetSection].entries[indexPath.row - 1]?.status = .unselected
                     tableView.reloadRows(at: [indexPath], with: .automatic)
+                    updateNextButtonState()
                 default:
                     break
                 }
@@ -528,6 +545,17 @@ class FirmwareSelectionViewController: UITableViewController {
             presentAlert(title: "Firmware Information", message: "The ZIP file must contain binaries together with the 'manifest.json' and 'ble_mesh_metadata.json' files.")
         default:
             break
+        }
+    }
+    
+    private func updateNextButtonState() {
+        nextButton.isEnabled = self.targets.contains { target in
+            switch target.entries {
+            case .ready(entries: let entries):
+                return entries.contains { $0.isSelected }
+            default:
+                return false
+            }
         }
     }
 
