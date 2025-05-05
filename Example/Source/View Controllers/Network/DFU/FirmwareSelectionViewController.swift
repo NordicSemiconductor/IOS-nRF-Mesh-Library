@@ -32,80 +32,18 @@ import UIKit
 import NordicMesh
 import iOSMcuManagerLibrary
 
-// Useful links:
-// https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/protocols/bt/bt_mesh/dfu_over_bt_mesh.html
-// Source code for DFU Metadata:
-// https://github.com/nrfconnect/sdk-zephyr/blob/main/include/zephyr/bluetooth/mesh/dfu_metadata.h
-private struct Metadata: Codable {
-    
-    struct Version: Codable, CustomStringConvertible {
-        let major: UInt8
-        let minor: UInt8
-        let revision: UInt16
-        let build: UInt32
-        
-        enum CodingKeys: String, CodingKey {
-            case major
-            case minor
-            case revision
-            case build = "build_number"
-        }
-        
-        var description: String {
-            if build > 0 {
-                return "\(major).\(minor).\(revision)+\(build)"
-            } else {
-                return "\(major).\(minor).\(revision)"
-            }
-        }
-    }
-    
-    let signVersion: Version
-    let binarySize: UInt32 // 24 bit
-    let coreType: UInt8
-    let compositionDataHash: UInt32
-    let metadataString: String
-    let firmwareIdString: String
-    
-    var metadata: Data {
-        return Data(hex: metadataString)
-    }
-    var firmwareId: FirmwareId? {
-        let data = Data(hex: firmwareIdString)
-        return FirmwareId(data: data)
-    }
-    
-    enum CodingKeys: String, CodingKey {
-        case signVersion = "sign_version"
-        case binarySize = "binary_size"
-        case coreType = "core_type"
-        case compositionDataHash = "composition_hash"
-        case metadataString = "encoded_metadata"
-        case firmwareIdString = "firmware_id"
-    }
-    
-    static func decode(from url: URL) throws -> Metadata {
-        let data = try Data(contentsOf: url)
-        let decoder = JSONDecoder()
-        let metadata = try decoder.decode(Metadata.self, from: data)
-        return metadata
-    }
-}
-
-private struct UpdatePackage {
-    /// File name.
-    let name: String
-    /// Mesh DFU Metadata of the selected firmware.
-    let metadata: Metadata
-    /// MCU Manager Manifest of the selected firmware.
-    let manifest: McuMgrManifest
-    /// Firmware images.
-    let images: [ImageManager.Image]
-}
-
 private struct Target {
     let node: Node
     var entries: FirmwareEntries
+    
+    var firstReceiver: FirmwareDistributionReceiversAdd.Receiver? {
+        guard let address = node.models(withSigModelId: .firmwareUpdateServerModelId).first?.parentElement?.unicastAddress,
+              case .ready(let entries) = entries else {
+            return nil
+        }
+        let selectedIndex = entries.first { $0.isSelected }?.index
+        return selectedIndex.map { .init(address: address, imageIndex: $0 ) }
+    }
 }
 
 private enum FirmwareEntries {
@@ -161,6 +99,7 @@ private enum FirmwareEntries {
 }
 
 private struct FirmwareEntry {
+    let index: UInt8
     let firmware: FirmwareInformation
     var status: Status = .unselected
     var availableUpdate: UpdatedFirmwareInformation?
@@ -261,7 +200,7 @@ class FirmwareSelectionViewController: UITableViewController {
                    "Tap a node to view its firmware details. " +
                    "Tap an image to check firmware compatibility and select it for the update."
         case tableView.numberOfSections - 1:
-            return "The list contains nodes with Firmware Update Server and BLOB Transfer Server models."
+            return "Note: The list contains nodes with Firmware Update Server and BLOB Transfer Server models."
         default: return nil
         }
     }
@@ -458,9 +397,9 @@ class FirmwareSelectionViewController: UITableViewController {
                     var result: FirmwareEntries
                     do {
                         let images = try await downloadFirmwareInformation(from: targets[indexPath.targetSection].node)
-                        let entries = try await images.asyncMap { [weak self] image in
+                        let entries = try await images.asyncMapEnumerated { [weak self] index, image in
                             let updatedFirmwareInformation = try await self?.checkForUpdates(image)
-                            return FirmwareEntry(firmware: image, availableUpdate: updatedFirmwareInformation)
+                            return FirmwareEntry(index: UInt8(index), firmware: image, availableUpdate: updatedFirmwareInformation)
                         }
                         result = .ready(entries: entries)
                     } catch {
@@ -804,11 +743,11 @@ private extension IndexPath {
 
 private extension Array {
     
-    func asyncMap<U>(_ transform: @escaping (Element) async throws -> U) async rethrows -> [U] {
+    func asyncMapEnumerated<U>(_ transform: @escaping (Int, Element) async throws -> U) async rethrows -> [U] {
         try await withThrowingTaskGroup(of: (Int, U).self) { group in
             for (index, element) in enumerated() {
                 group.addTask {
-                    let result = try await transform(element)
+                    let result = try await transform(index, element)
                     return (index, result)
                 }
             }

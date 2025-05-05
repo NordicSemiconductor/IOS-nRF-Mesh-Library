@@ -187,6 +187,7 @@
 		F0587F792D96EE0F0091CDF4 /* PairingResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0587F782D96EE0F0091CDF4 /* PairingResponse.swift */; };
 		F058A63A2DBFA17C00E9E914 /* IgnoreCertificateDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F058A6392DBFA16900E9E914 /* IgnoreCertificateDelegate.swift */; };
 		F058A63D2DC023EB00E9E914 /* UpdatedFirmwareInformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = F058A63C2DC023E000E9E914 /* UpdatedFirmwareInformation.swift */; };
+		F058A6412DC9036400E9E914 /* UpdatePackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F058A6402DC9035B00E9E914 /* UpdatePackage.swift */; };
 		F063C01A29C2774300A445A9 /* SelectKeysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F063C01929C2774300A445A9 /* SelectKeysViewController.swift */; };
 		F063C01D29C27EAB00A445A9 /* IntroViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F063C01C29C27EAB00A445A9 /* IntroViewController.swift */; };
 		F085C9FB29C496AB00C2DF89 /* SelectModelsForBindingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F085C9FA29C496AB00C2DF89 /* SelectModelsForBindingViewController.swift */; };
@@ -419,6 +420,7 @@
 		F0587F782D96EE0F0091CDF4 /* PairingResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingResponse.swift; sourceTree = "<group>"; };
 		F058A6392DBFA16900E9E914 /* IgnoreCertificateDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IgnoreCertificateDelegate.swift; sourceTree = "<group>"; };
 		F058A63C2DC023E000E9E914 /* UpdatedFirmwareInformation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatedFirmwareInformation.swift; sourceTree = "<group>"; };
+		F058A6402DC9035B00E9E914 /* UpdatePackage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatePackage.swift; sourceTree = "<group>"; };
 		F063C01929C2774300A445A9 /* SelectKeysViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectKeysViewController.swift; sourceTree = "<group>"; };
 		F063C01C29C27EAB00A445A9 /* IntroViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroViewController.swift; sourceTree = "<group>"; };
 		F085C9FA29C496AB00C2DF89 /* SelectModelsForBindingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectModelsForBindingViewController.swift; sourceTree = "<group>"; };
@@ -983,6 +985,7 @@
 		F058A63B2DC023CF00E9E914 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				F058A6402DC9035B00E9E914 /* UpdatePackage.swift */,
 				F058A63C2DC023E000E9E914 /* UpdatedFirmwareInformation.swift */,
 			);
 			path = Model;
@@ -1443,6 +1446,7 @@
 				52518B3122E0B18400A1FD1E /* GroupsViewController.swift in Sources */,
 				F0B67D822DB0F0D700B1A69D /* FirmwareSelectionViewController.swift in Sources */,
 				52A8EA9424EE6D18004C14C7 /* HeartbeatSubscriptionPeriodCell.swift in Sources */,
+				F058A6412DC9036400E9E914 /* UpdatePackage.swift in Sources */,
 				5283528222806D7C0097B949 /* NetworkKeySelectionViewController.swift in Sources */,
 				522AFFDE22BBBC6400521EDC /* NodeFeaturesCell.swift in Sources */,
 				523F776E22C63EAD0030EA6A /* NodeAddAppKeyViewController.swift in Sources */,
