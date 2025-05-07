@@ -48,6 +48,12 @@ public struct FirmwareDistributionReceiversGet: StaticAcknowledgedMeshMessage {
         return Data() + firstIndex + entriesLimit
     }
     
+    /// Creates the Firmware Distribution Receivers Get message.
+    ///
+    /// - parameters:
+    ///  - firstIndex: Index of the first requested entry from the Distribution Receivers List state.
+    ///  - entriesLimit: Maximum number of entries that the server includes in a Firmware Distribution
+    ///                  Receivers List message. The value of the Entries Limit field shall be greater than 0.
     public init(from firstIndex: UInt16, limit entriesLimit: UInt16) {
         self.firstIndex = firstIndex
         self.entriesLimit = entriesLimit
