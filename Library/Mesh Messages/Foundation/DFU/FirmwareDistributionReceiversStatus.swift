@@ -59,7 +59,7 @@ public struct FirmwareDistributionReceiversStatus: StaticMeshResponse {
     }
     
     public init?(parameters: Data) {
-        guard parameters.count != 3 else {
+        guard parameters.count == 3 else {
             return nil
         }
         guard let status = FirmwareDistributionMessageStatus(rawValue: parameters[0]) else {
