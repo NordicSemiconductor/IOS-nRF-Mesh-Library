@@ -172,7 +172,7 @@
                                     </subviews>
                                 </tableViewCellContentView>
                             </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" accessoryType="checkmark" indentationWidth="10" reuseIdentifier="valueStatus" textLabel="Fnx-8D-2iu" detailTextLabel="AkP-hv-Mcx" style="IBUITableViewCellStyleValue1" id="pBg-jW-nZK">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" accessoryType="checkmark" indentationWidth="10" reuseIdentifier="status" textLabel="Fnx-8D-2iu" detailTextLabel="AkP-hv-Mcx" style="IBUITableViewCellStyleValue1" id="pBg-jW-nZK">
                                 <rect key="frame" x="0.0" y="81.5" width="414" height="43.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="pBg-jW-nZK" id="WJp-zw-bbh">
@@ -233,8 +233,8 @@
                                     <segue destination="OLv-gT-CzP" kind="presentation" id="6fF-u3-H9V"/>
                                 </connections>
                             </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="changeProxy" textLabel="5Et-SF-prN" style="IBUITableViewCellStyleDefault" id="O8H-zY-XcG">
-                                <rect key="frame" x="0.0" y="212" width="414" height="43.5"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="action" textLabel="5Et-SF-prN" style="IBUITableViewCellStyleDefault" id="O8H-zY-XcG">
+                                <rect key="frame" x="0.0" y="168.5" width="414" height="43.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="O8H-zY-XcG" id="8dS-la-a0B">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
