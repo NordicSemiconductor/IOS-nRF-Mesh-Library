@@ -319,7 +319,7 @@ class ConfigurationViewController: UIViewController,
     private var inProgress: Bool = true
     private var current: Int = -1
     
-    /// The timer firest every second and refreshes the time and remaining time.
+    /// The timer fires every second and refreshes the time and remaining time.
     private var timer: Timer!
     /// The timestamp when the configuration has started.
     private var startDate: Date!
