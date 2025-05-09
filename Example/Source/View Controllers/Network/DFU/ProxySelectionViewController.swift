@@ -138,15 +138,31 @@ class ProxySelectionViewController: UITableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         switch segue.identifier {
         case "pair":
-            let viewController = segue.destination as! PasskeyViewController
-            viewController.node = proxyDetails!.distributorServerModel!.parentElement!.parentNode
-            viewController.bearer = MeshNetworkManager.bearer.proxies.first { $0.isOpen }
-            viewController.applicationKey = selectedAppKey
+            let destination = segue.destination as! PasskeyViewController
+            destination.node = proxyDetails!.distributorServerModel!.parentElement!.parentNode
+            destination.bearer = MeshNetworkManager.bearer.proxies.first { $0.isOpen }
+            destination.applicationKey = selectedAppKey
+            destination.maxReceiversListSize = proxyDetails?.capabilities?.maxReceiversListSize
+            if let maxUploadSpace = proxyDetails?.capabilities?.remainingUploadSpace,
+               let maxImageSize = proxyDetails?.capabilities?.maxFirmwareImageSize {
+                destination.availableSpace = min(maxUploadSpace, maxImageSize)
+            } else {
+                // This should never happen.
+                destination.availableSpace = 0
+            }
         case "continue":
             let destination = segue.destination as! FirmwareSelectionViewController
             destination.node = proxyDetails!.distributorServerModel!.parentElement!.parentNode
             destination.bearer = MeshNetworkManager.bearer.proxies.first { $0.isOpen }
             destination.applicationKey = selectedAppKey
+            destination.maxReceiversListSize = proxyDetails?.capabilities?.maxReceiversListSize
+            if let maxUploadSpace = proxyDetails?.capabilities?.remainingUploadSpace,
+               let maxImageSize = proxyDetails?.capabilities?.maxFirmwareImageSize {
+                destination.availableSpace = min(maxUploadSpace, maxImageSize)
+            } else {
+                // This should never happen.
+                destination.availableSpace = 0
+            }
         default:
             break
         }

@@ -187,6 +187,7 @@
 		F0587F792D96EE0F0091CDF4 /* PairingResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0587F782D96EE0F0091CDF4 /* PairingResponse.swift */; };
 		F058A63A2DBFA17C00E9E914 /* IgnoreCertificateDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F058A6392DBFA16900E9E914 /* IgnoreCertificateDelegate.swift */; };
 		F058A63D2DC023EB00E9E914 /* UpdatedFirmwareInformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = F058A63C2DC023E000E9E914 /* UpdatedFirmwareInformation.swift */; };
+		F058A63F2DC8E34100E9E914 /* DFUViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F058A63E2DC8E34100E9E914 /* DFUViewController.swift */; };
 		F058A6412DC9036400E9E914 /* UpdatePackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F058A6402DC9035B00E9E914 /* UpdatePackage.swift */; };
 		F063C01A29C2774300A445A9 /* SelectKeysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F063C01929C2774300A445A9 /* SelectKeysViewController.swift */; };
 		F063C01D29C27EAB00A445A9 /* IntroViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F063C01C29C27EAB00A445A9 /* IntroViewController.swift */; };
@@ -210,6 +211,9 @@
 		F0DAF5BC2D3A6186000874EA /* DfuMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0DAF5BB2D3A617C000874EA /* DfuMessages.swift */; };
 		F0DFB0082DA6CF4400B209FD /* FirmwareUpdateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0DFB0062DA6CF4400B209FD /* FirmwareUpdateController.swift */; };
 		F0E6D64D29F2A4D2004B1C26 /* SchedulerMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E6D64B29F2A4A9004B1C26 /* SchedulerMessages.swift */; };
+		F0F0D9CD2DCA0E92009FDE6B /* DFUParametersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F0D9CC2DCA0E92009FDE6B /* DFUParametersViewController.swift */; };
+		F0F0D9D02DCCAE32009FDE6B /* TimeoutViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F0D9CF2DCCAE32009FDE6B /* TimeoutViewCell.swift */; };
+		F0F0D9D22DCCB345009FDE6B /* SegmentedContriolViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F0D9D12DCCB345009FDE6B /* SegmentedContriolViewCell.swift */; };
 		F0FB18F72B8E90CF00683C3F /* LightLCViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0FB18F52B8E90CF00683C3F /* LightLCViewCell.swift */; };
 		F0FB18F82B8E90CF00683C3F /* LightLC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0FB18F62B8E90CF00683C3F /* LightLC.xib */; };
 		F0FB18FA2B8E919C00683C3F /* LightLCClientDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0FB18F92B8E919C00683C3F /* LightLCClientDelegate.swift */; };
@@ -420,6 +424,7 @@
 		F0587F782D96EE0F0091CDF4 /* PairingResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingResponse.swift; sourceTree = "<group>"; };
 		F058A6392DBFA16900E9E914 /* IgnoreCertificateDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IgnoreCertificateDelegate.swift; sourceTree = "<group>"; };
 		F058A63C2DC023E000E9E914 /* UpdatedFirmwareInformation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatedFirmwareInformation.swift; sourceTree = "<group>"; };
+		F058A63E2DC8E34100E9E914 /* DFUViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DFUViewController.swift; sourceTree = "<group>"; };
 		F058A6402DC9035B00E9E914 /* UpdatePackage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatePackage.swift; sourceTree = "<group>"; };
 		F063C01929C2774300A445A9 /* SelectKeysViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectKeysViewController.swift; sourceTree = "<group>"; };
 		F063C01C29C27EAB00A445A9 /* IntroViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroViewController.swift; sourceTree = "<group>"; };
@@ -444,6 +449,9 @@
 		F0DAF5BB2D3A617C000874EA /* DfuMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DfuMessages.swift; sourceTree = "<group>"; };
 		F0DFB0062DA6CF4400B209FD /* FirmwareUpdateController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateController.swift; sourceTree = "<group>"; };
 		F0E6D64B29F2A4A9004B1C26 /* SchedulerMessages.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SchedulerMessages.swift; sourceTree = "<group>"; };
+		F0F0D9CC2DCA0E92009FDE6B /* DFUParametersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DFUParametersViewController.swift; sourceTree = "<group>"; };
+		F0F0D9CF2DCCAE32009FDE6B /* TimeoutViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeoutViewCell.swift; sourceTree = "<group>"; };
+		F0F0D9D12DCCB345009FDE6B /* SegmentedContriolViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedContriolViewCell.swift; sourceTree = "<group>"; };
 		F0FB18F52B8E90CF00683C3F /* LightLCViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCViewCell.swift; sourceTree = "<group>"; };
 		F0FB18F62B8E90CF00683C3F /* LightLC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LightLC.xib; sourceTree = "<group>"; };
 		F0FB18F92B8E919C00683C3F /* LightLCClientDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCClientDelegate.swift; sourceTree = "<group>"; };
@@ -1043,13 +1051,25 @@
 		F0DFB0072DA6CF4400B209FD /* DFU */ = {
 			isa = PBXGroup;
 			children = (
+				F0F0D9CE2DCCAE0F009FDE6B /* Cells */,
 				F058A63B2DC023CF00E9E914 /* Model */,
 				F0DFB0062DA6CF4400B209FD /* FirmwareUpdateController.swift */,
 				F044AE5F2DAD203B006D6674 /* ProxySelectionViewController.swift */,
 				F0B67D7F2DAFCE7B00B1A69D /* PasskeyViewController.swift */,
 				F0B67D812DB0F0D700B1A69D /* FirmwareSelectionViewController.swift */,
+				F058A63E2DC8E34100E9E914 /* DFUViewController.swift */,
+				F0F0D9CC2DCA0E92009FDE6B /* DFUParametersViewController.swift */,
 			);
 			path = DFU;
+			sourceTree = "<group>";
+		};
+		F0F0D9CE2DCCAE0F009FDE6B /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				F0F0D9CF2DCCAE32009FDE6B /* TimeoutViewCell.swift */,
+				F0F0D9D12DCCB345009FDE6B /* SegmentedContriolViewCell.swift */,
+			);
+			path = Cells;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1312,6 +1332,7 @@
 				52313FEE22EAFB090074325A /* SubscribeViewController.swift in Sources */,
 				5212152B23152A450059FB3D /* SectionView.swift in Sources */,
 				5212152F231554190059FB3D /* ProgressCollectionViewController.swift in Sources */,
+				F0F0D9D22DCCB345009FDE6B /* SegmentedContriolViewCell.swift in Sources */,
 				523F776A22C621F50030EA6A /* NodeAddNetworkKeyViewController.swift in Sources */,
 				52E54CE12344974B00478F05 /* GenericLevelClientDelegate.swift in Sources */,
 				5292F8A9250654C600EA0F2A /* SceneSetupServerGroupCell.swift in Sources */,
@@ -1368,6 +1389,7 @@
 				527596322A138F0600B04C6F /* SelectModelsForPublicationViewController.swift in Sources */,
 				A7A59BD92773218C0045A8ED /* GenericPowerOnOffClientDelegate.swift in Sources */,
 				523F776622C609D90030EA6A /* NodeNetworkKeysViewController.swift in Sources */,
+				F0F0D9D02DCCAE32009FDE6B /* TimeoutViewCell.swift in Sources */,
 				5211EAD5250777E100089FF2 /* SceneServerDelegate.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 				523F776C22C6324A0030EA6A /* ProgressViewController.swift in Sources */,
@@ -1392,6 +1414,7 @@
 				521215292315290F0059FB3D /* GroupControlViewController.swift in Sources */,
 				52A8EA8824E6946D004C14C7 /* HeartbeatPublicationCell.swift in Sources */,
 				52F6AD7622BA612900F0D7DF /* UIViewController+Toast.swift in Sources */,
+				F0F0D9CD2DCA0E92009FDE6B /* DFUParametersViewController.swift in Sources */,
 				5217D2E5250F90D8004FDE79 /* GenericDefaultTransitionTimeViewCell.swift in Sources */,
 				528445C924EEA765002168A1 /* HeartbeatSubscriptionCell.swift in Sources */,
 				5231403F2301761C0074325A /* ConfigurationServerViewCell.swift in Sources */,
@@ -1432,6 +1455,7 @@
 				529EC8DA2A309C640056BB48 /* CompanyIdentifier.swift in Sources */,
 				5267FDCD2A02937E00ECD38B /* CustomConfigCell.swift in Sources */,
 				52518B3322E0B43200A1FD1E /* GroupCell.swift in Sources */,
+				F058A63F2DC8E34100E9E914 /* DFUViewController.swift in Sources */,
 				529B7570223FF1AE008F1CE7 /* SettingsViewController.swift in Sources */,
 				5292F8A1250137DC00EA0F2A /* NodeScenesViewController.swift in Sources */,
 				F0587F772D96ECB90091CDF4 /* PairingRequest.swift in Sources */,

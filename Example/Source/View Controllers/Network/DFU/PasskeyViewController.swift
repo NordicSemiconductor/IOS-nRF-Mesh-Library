@@ -38,6 +38,8 @@ class PasskeyViewController: UIViewController {
     var node: Node!
     var bearer: GattBearer!
     var applicationKey: ApplicationKey!
+    var maxReceiversListSize: UInt16!
+    var availableSpace: UInt32!
     
     // MARK: - Outlets
     
@@ -73,6 +75,8 @@ class PasskeyViewController: UIViewController {
         destination.node = node
         destination.bearer = bearer
         destination.applicationKey = applicationKey
+        destination.maxReceiversListSize = maxReceiversListSize
+        destination.availableSpace = availableSpace
     }
 
 }

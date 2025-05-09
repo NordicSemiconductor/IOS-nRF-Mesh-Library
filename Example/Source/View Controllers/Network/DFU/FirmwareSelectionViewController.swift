@@ -36,7 +36,7 @@ private struct Target {
     let node: Node
     var entries: FirmwareEntries
     
-    var firstReceiver: FirmwareDistributionReceiversAdd.Receiver? {
+    var selectedReceiver: FirmwareDistributionReceiversAdd.Receiver? {
         guard let address = node.models(withSigModelId: .firmwareUpdateServerModelId).first?.parentElement?.unicastAddress,
               case .ready(let entries) = entries else {
             return nil
@@ -128,6 +128,8 @@ class FirmwareSelectionViewController: UITableViewController {
     var node: Node!
     var bearer: GattBearer!
     var applicationKey: ApplicationKey!
+    var maxReceiversListSize: UInt16!
+    var availableSpace: UInt32!
     
     /// Parsed content of the selected file.
     private var file: UpdatePackage?
@@ -176,6 +178,20 @@ class FirmwareSelectionViewController: UITableViewController {
         navigationController?.viewControllers.removeAll { $0 is PasskeyViewController }
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        switch segue.identifier {
+        case "next":
+            let destination = segue.destination as! DFUParametersViewController
+            destination.distributor = node
+            destination.bearer = bearer
+            destination.applicationKey = applicationKey
+            destination.receivers = targets.selectedReceivers
+            destination.updatePackage = file
+        default:
+            break
+        }
+    }
+    
     // MARK: - Table View Data Source
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -196,7 +212,8 @@ class FirmwareSelectionViewController: UITableViewController {
             return "Select a ZIP file generated when building the new firmware. " +
                    "The file can also be downloaded automatically by tapping a target node that provide a URI to an online resource with the latest version."
         case IndexPath.firmwareSection:
-            return "\n\nAVAILABLE TARGET NODES\n\n" +
+            return "Maximum available space is \(availableSpace!) bytes.\n\n\n" +
+                   "AVAILABLE TARGET NODES\n\n" +
                    "Tap a node to view its firmware details. " +
                    "Tap an image to check firmware compatibility and select it for the update."
         case tableView.numberOfSections - 1:
@@ -230,10 +247,13 @@ class FirmwareSelectionViewController: UITableViewController {
             //   - Metadata
             // - Select File button
             guard let images = file?.images, indexPath.row <= images.count + 3 else {
-                return tableView.dequeueReusableCell(withIdentifier: "selectFile", for: indexPath)
+                let cell = tableView.dequeueReusableCell(withIdentifier: "selectFile", for: indexPath)
+                cell.textLabel?.text = file == nil ? "Select File" : "Change file"
+                return cell
             }
             let cell = tableView.dequeueReusableCell(withIdentifier: "value", for: indexPath)
             cell.imageView?.image = nil
+            cell.accessoryView = nil
             switch indexPath.row {
             case 0:
                 cell.textLabel?.text = "File Name"
@@ -243,6 +263,13 @@ class FirmwareSelectionViewController: UITableViewController {
                 cell.textLabel?.text = image.content.description
                 cell.detailTextLabel?.text = "\(image.data.count) bytes"
                 cell.imageView?.image = UIImage(systemName: "arrow.turn.down.right")
+                // Add X symbol if the image size is larger than available space.
+                // The "Next" button will be disabled in this case.
+                if image.data.count > availableSpace {
+                    let x = UIImageView(image: UIImage(systemName: "xmark"))
+                    x.tintColor = .systemRed
+                    cell.accessoryView = x
+                }
             case images.count + 1:
                 cell.textLabel?.text = "Company"
                 let companyIdentifier = file?.metadata.firmwareId?.companyIdentifier
@@ -446,6 +473,10 @@ class FirmwareSelectionViewController: UITableViewController {
                         presentAlert(title: "File not provided", message: "Before selecting an image, provide a firmware file. The image must be checked for compatibility with the embedded metadata.")
                         return
                     }
+                    guard targets.selectedReceivers.count < maxReceiversListSize else {
+                        presentAlert(title: "Limit reached", message: "The distributor can update a maximum of \(maxReceiversListSize!) targets in a single operation.")
+                        return
+                    }
                     targets[indexPath.targetSection].entries[indexPath.row - 1]?.status = .checkingMetadata
                     tableView.reloadRows(at: [indexPath], with: .automatic)
                     Task {
@@ -488,14 +519,8 @@ class FirmwareSelectionViewController: UITableViewController {
     }
     
     private func updateNextButtonState() {
-        nextButton.isEnabled = self.targets.contains { target in
-            switch target.entries {
-            case .ready(entries: let entries):
-                return entries.contains { $0.isSelected }
-            default:
-                return false
-            }
-        }
+        nextButton.isEnabled = !targets.selectedReceivers.isEmpty &&
+                               file?.images.first?.data.count ?? Int.max <= availableSpace
     }
 
 }
@@ -514,7 +539,7 @@ extension FirmwareSelectionViewController: UIDocumentPickerDelegate {
             file = try Self.extractImageFromZipFile(from: url, named: name)
         } catch {
             file = nil
-            showToast("Selected file is no valid.", delay: .shortDelay)
+            showToast("Selected file is not valid. \(error.localizedDescription)", delay: .shortDelay)
         }
         tableView.reloadData()
     }
@@ -762,4 +787,12 @@ private extension Array {
         }
     }
     
+}
+
+private extension Array where Element == Target {
+    
+    var selectedReceivers: [FirmwareDistributionReceiversAdd.Receiver] {
+        return compactMap { target in target.selectedReceiver }
+    }
+                
 }

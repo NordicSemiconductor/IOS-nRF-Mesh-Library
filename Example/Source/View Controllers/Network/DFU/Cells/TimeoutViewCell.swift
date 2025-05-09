@@ -1,0 +1,84 @@
+/*
+* Copyright (c) 2025, Nordic Semiconductor
+* All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without modification,
+* are permitted provided that the following conditions are met:
+*
+* 1. Redistributions of source code must retain the above copyright notice, this
+*    list of conditions and the following disclaimer.
+*
+* 2. Redistributions in binary form must reproduce the above copyright notice, this
+*    list of conditions and the following disclaimer in the documentation and/or
+*    other materials provided with the distribution.
+*
+* 3. Neither the name of the copyright holder nor the names of its contributors may
+*    be used to endorse or promote products derived from this software without
+*    specific prior written permission.
+*
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+* ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+* IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+* INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+* NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+* PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+* WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+* POSSIBILITY OF SUCH DAMAGE.
+*/
+
+import UIKit
+
+class TimeoutViewCell: UITableViewCell {
+    
+    protocol Delegate: AnyObject {
+        func timeoutBase(didChange timeout: UInt16)
+    }
+    
+    private let formatter = DateComponentsFormatter()
+    private let allowedValues: [UInt16] = [0, 1, 2, 3, 4, 10, 16, 22, 28, 58, 118, 178, 238, 298, 358, 718, 1078, 1438, 1798, 8638, UInt16.max]
+    
+    // MARK: - Properties
+    
+    weak var delegate: Delegate?
+    
+    var ttl: UInt8 = 0 {
+        didSet {
+            updateValue()
+        }
+    }
+    var timeoutBase: UInt16 = 0
+    
+    // MARK: - Outlets
+    
+    @IBOutlet weak var slider: UISlider!
+    @IBAction func sliderDidChange(_ sender: UISlider) {
+        let timeoutBase = allowedValues[Int(slider.value)]
+        delegate?.timeoutBase(didChange: timeoutBase)
+        updateValue()
+    }
+    @IBOutlet weak var value: UILabel!
+    
+    // MARK: - Implementation
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        
+        slider.minimumValue = 0
+        slider.maximumValue = Float(allowedValues.count - 1)
+        
+        formatter.allowedUnits = [.day, .hour, .minute, .second, .nanosecond]
+        formatter.unitsStyle = .short
+        
+        slider.value = Float(allowedValues.firstIndex { $0 == timeoutBase } ?? 0)
+        updateValue()
+    }
+    
+    private func updateValue() {
+        let timeoutBase = TimeInterval(allowedValues[Int(slider.value)])
+        let timeout: TimeInterval = 10 * (timeoutBase + 2) + 0.1 * TimeInterval(ttl)
+        value.text = formatter.string(from: timeout)!
+    }
+
+}
