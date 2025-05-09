@@ -384,7 +384,7 @@ class ProxySelectionViewController: UITableViewController {
         }
         presentAlert(title: "Warning",
                      message: "Although the SMP Service has been discovered on the device, the node does not contain LE Pairing Responder model from Nordic Semiconductor. This may indicate, that the service is not protected and allows insecure access to the device management subsystem.\n\nConsider enabling Bluetooth authentication.",
-                     option: readMoreAction,
+                     option: readMoreAction
         )
     }
     
@@ -403,6 +403,8 @@ class ProxySelectionViewController: UITableViewController {
         
         let section = sections[indexPath.section]
         switch section {
+        case .noProxy, .proxyInformation:
+            performSegue(withIdentifier: "connect", sender: self)
         case .boundAppKey:
             guard indexPath.row < proxyDetails!.applicationKeys.count else {
                 performSegue(withIdentifier: "bind", sender: self)
