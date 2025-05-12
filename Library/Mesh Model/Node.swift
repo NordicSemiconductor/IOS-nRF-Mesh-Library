@@ -953,7 +953,7 @@ extension Node.NodeKey: CustomDebugStringConvertible {
     
 }
 
-extension Node: Equatable {
+extension Node: Equatable, Hashable {
     
     public static func == (lhs: Node, rhs: Node) -> Bool {
         return lhs.uuid == rhs.uuid
@@ -962,6 +962,10 @@ extension Node: Equatable {
             && lhs.isExcluded == rhs.isExcluded
             && lhs.name == rhs.name
             && lhs.defaultTTL == rhs.defaultTTL
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(uuid)
     }
     
 }
