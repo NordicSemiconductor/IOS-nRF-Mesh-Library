@@ -213,7 +213,7 @@
                                     </subviews>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <segue destination="OLv-gT-CzP" kind="presentation" id="6fF-u3-H9V"/>
+                                    <segue destination="OLv-gT-CzP" kind="presentation" identifier="connect" id="6fF-u3-H9V"/>
                                 </connections>
                             </tableViewCell>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="action" textLabel="5Et-SF-prN" style="IBUITableViewCellStyleDefault" id="O8H-zY-XcG">
@@ -571,7 +571,7 @@
             </objects>
             <point key="canvasLocation" x="5770" y="-7203"/>
         </scene>
-        <!--Configuration-->
+        <!--Firmware Distribution-->
         <scene sceneID="XYP-1w-cyX">
             <objects>
                 <tableViewController id="NZo-eS-Gx7" customClass="DFUParametersViewController" customModule="nRF_Mesh" customModuleProvider="target" sceneMemberID="viewController">
@@ -741,10 +741,10 @@
                             <outlet property="delegate" destination="NZo-eS-Gx7" id="1qk-ZQ-dFl"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Configuration" id="hdU-yv-5Bt">
+                    <navigationItem key="navigationItem" title="Firmware Distribution" id="hdU-yv-5Bt">
                         <barButtonItem key="rightBarButtonItem" title="Start" id="ha5-RR-zpn">
                             <connections>
-                                <segue destination="bHv-7G-so9" kind="show" identifier="start" id="Xvi-Pe-B7S"/>
+                                <segue destination="X5O-uD-dpS" kind="show" identifier="start" id="uZX-Ur-SxW"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -753,50 +753,15 @@
             </objects>
             <point key="canvasLocation" x="6650.7246376811599" y="-7203.3482142857138"/>
         </scene>
-        <!--Firmware Update-->
-        <scene sceneID="FBk-7c-Fm9">
+        <!--Configuration-->
+        <scene sceneID="HaW-HO-h42">
             <objects>
-                <tableViewController id="bHv-7G-so9" customClass="DFUViewController" customModule="nRF_Mesh" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" id="xQl-tn-obg">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="value" textLabel="B0C-FX-Cn6" detailTextLabel="fv7-NX-ASY" style="IBUITableViewCellStyleSubtitle" id="oEo-N7-MRN">
-                                <rect key="frame" x="0.0" y="38" width="414" height="55.5"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="oEo-N7-MRN" id="6TO-Gh-usL">
-                                    <rect key="frame" x="0.0" y="0.0" width="414" height="55.5"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="B0C-FX-Cn6">
-                                            <rect key="frame" x="20" y="10" width="33" height="20.5"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                            <nil key="textColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Subtitle" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="fv7-NX-ASY">
-                                            <rect key="frame" x="20" y="31.5" width="44" height="14.5"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                            <color key="textColor" systemColor="secondaryLabelColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                    </subviews>
-                                </tableViewCellContentView>
-                            </tableViewCell>
-                        </prototypes>
-                        <connections>
-                            <outlet property="dataSource" destination="bHv-7G-so9" id="jet-im-Fj3"/>
-                            <outlet property="delegate" destination="bHv-7G-so9" id="fhh-xb-ar0"/>
-                        </connections>
-                    </tableView>
-                    <navigationItem key="navigationItem" title="Firmware Update" id="pgI-Xi-dwe"/>
-                </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="tCf-qU-SxC" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <viewControllerPlaceholder storyboardIdentifier="Configuration" storyboardName="Configuration" id="X5O-uD-dpS" sceneMemberID="viewController">
+                    <navigationItem key="navigationItem" id="YXG-52-sXE"/>
+                </viewControllerPlaceholder>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="GLg-JL-hBG" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="7522" y="-7203"/>
+            <point key="canvasLocation" x="7512" y="-7203"/>
         </scene>
         <!--SelectProxy-->
         <scene sceneID="s2y-98-RUf">
