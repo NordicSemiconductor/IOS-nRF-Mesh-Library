@@ -49,8 +49,16 @@ class NodeAddAppKeyViewController: ProgressViewController {
         guard let selectedIndexPath = selectedIndexPath else {
             return
         }
-        let selectedAppKey = keys[selectedIndexPath.row]
-        addKey(selectedAppKey)
+        switch selectedIndexPath.section {
+        case 0:
+            let selectedAppKey = keys[selectedIndexPath.row]
+            addKey(selectedAppKey)
+        case 1:
+            let selectedAppKey = otherKeys[selectedIndexPath.row]
+            addKey(selectedAppKey.boundNetworkKey)
+        default:
+            break
+        }
     }
     
     // MARK: - Properties
@@ -58,7 +66,11 @@ class NodeAddAppKeyViewController: ProgressViewController {
     var node: Node!
     var delegate: AppKeyDelegate?
     
+    /// Keys that have Network Keys known to the Node.
     private var keys: [ApplicationKey]!
+    /// Keys which bound Network Keys are not known to the Node.
+    private var otherKeys: [ApplicationKey]!
+    /// The index path of the selected key.
     private var selectedIndexPath: IndexPath?
     
     // MARK: - View Controller
@@ -80,10 +92,10 @@ class NodeAddAppKeyViewController: ProgressViewController {
         MeshNetworkManager.instance.delegate = self
         
         let meshNetwork = MeshNetworkManager.instance.meshNetwork!
-        keys = meshNetwork.applicationKeys.notKnownTo(node: node).filter {
-            node.knows(networkKey: $0.boundNetworkKey)
-        }
-        if keys.isEmpty {
+        let availableKeys = meshNetwork.applicationKeys.notKnownTo(node: node)
+        keys = availableKeys.filter { node.knows(networkKey: $0.boundNetworkKey) }
+        otherKeys = availableKeys.filter { !node.knows(networkKey: $0.boundNetworkKey) }
+        if keys.isEmpty && otherKeys.isEmpty {
             tableView.showEmptyView()
         }
         // Initially, no key is checked.
@@ -93,21 +105,54 @@ class NodeAddAppKeyViewController: ProgressViewController {
     // MARK: - Table view data source
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        if keys.isEmpty && otherKeys.isEmpty {
+            return 0
+        }
+        return 1 + (otherKeys.isEmpty ? 0 : 1)
+    }
+    
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        switch section {
+        case 0:  return "Keys bound to known subnets"
+        case 1:  return "Keys bound to other subnets"
+        default: return nil
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+        switch section {
+        case 0 where keys.isEmpty:
+            return "Go to Settings to create a new key."
+        case 1:
+            return "Note: The corresponding bound Network Key will be added to the node automatically."
+        default:
+            return nil
+        }
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return keys.count
+        switch section {
+        case 0: return max(1, keys.count) // At lease "No keys available" message.
+        case 1: return otherKeys.count
+        default: fatalError("Invalid section")
+        }
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let key = keys[indexPath.row]
+        guard indexPath.section == 1 || !keys.isEmpty else {
+            return tableView.dequeueReusableCell(withIdentifier: "empty", for: indexPath)
+        }
+        let key = indexPath.section == 0 ? keys[indexPath.row] : otherKeys[indexPath.row]
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         cell.textLabel?.text = key.name
         cell.detailTextLabel?.text = "Bound to \(key.boundNetworkKey.name)"
         cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
         return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+        return indexPath.section == 1 || !keys.isEmpty
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -125,6 +170,19 @@ class NodeAddAppKeyViewController: ProgressViewController {
 }
 
 private extension NodeAddAppKeyViewController {
+    
+    /// Adds the given Network Key to the target Node.
+    ///
+    /// - parameter networkKey: The Network Key to be added.
+    func addKey(_ networkKey: NetworkKey) {
+        guard let node = node else {
+            return
+        }
+        start("Adding Network Key...") {
+            let message = ConfigNetKeyAdd(networkKey: networkKey)
+            return try MeshNetworkManager.instance.send(message, to: node)
+        }
+    }
     
     /// Adds the given Application Key to the target Node.
     ///
@@ -169,9 +227,19 @@ extension NodeAddAppKeyViewController: MeshNetworkDelegate {
         // Handle the message based on its type.
         switch message {
             
+        case let status as ConfigNetKeyStatus:
+            guard status.isSuccess else {
+                done {
+                    self.presentAlert(title: "Error", message: status.message)
+                }
+                break
+            }
+            let selectedKey = otherKeys[selectedIndexPath!.row]
+            addKey(selectedKey)
+            
         case let status as ConfigAppKeyStatus:
             done {
-                if status.status == .success {
+                if status.isSuccess {
                     self.dismiss(animated: true)
                     self.delegate?.keyAdded()
                 } else {
