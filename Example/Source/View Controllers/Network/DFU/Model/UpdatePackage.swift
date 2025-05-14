@@ -35,6 +35,7 @@ import iOSMcuManagerLibrary
 // https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/protocols/bt/bt_mesh/dfu_over_bt_mesh.html
 // Source code for DFU Metadata:
 // https://github.com/nrfconnect/sdk-zephyr/blob/main/include/zephyr/bluetooth/mesh/dfu_metadata.h
+// TODO: When multi-image DFU will be supported, the format will change.
 public struct Metadata: Codable {
     
     public struct Version: Codable, CustomStringConvertible {
@@ -60,9 +61,9 @@ public struct Metadata: Codable {
     }
     
     public let signVersion: Version
-    public let binarySize: UInt32 // 24 bit
+    public let binarySize: Int // 24 bit
     public let coreType: UInt8
-    public let compositionDataHash: UInt32
+    public let compositionDataHash: Int
     public let metadataString: String
     public let firmwareIdString: String
     

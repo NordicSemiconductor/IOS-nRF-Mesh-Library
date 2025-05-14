@@ -34,11 +34,11 @@ import Foundation
 /// A base class for operations that can be enqueued in the automation task list.
 enum MeshTask {
     case config(ConfigTask)
-    case mesh(ApplicationTask)
+    case other(ApplicationTask)
     
     var title: String {
         switch self {
-        case .mesh(let task):
+        case .other(let task):
             return task.title
         case .config(let task):
             return task.title
@@ -47,7 +47,7 @@ enum MeshTask {
     
     var icon: UIImage {
         switch self {
-        case .mesh(let task):
+        case .other(let task):
             return task.icon
         case .config(let task):
             return task.icon

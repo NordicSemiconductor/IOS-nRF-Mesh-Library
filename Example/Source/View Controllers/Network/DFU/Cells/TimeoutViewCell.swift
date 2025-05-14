@@ -67,6 +67,7 @@ class TimeoutViewCell: UITableViewCell {
         
         slider.minimumValue = 0
         slider.maximumValue = Float(allowedValues.count - 1)
+        slider.value = 10.0 // 10 min
         
         formatter.allowedUnits = [.day, .hour, .minute, .second, .nanosecond]
         formatter.unitsStyle = .short

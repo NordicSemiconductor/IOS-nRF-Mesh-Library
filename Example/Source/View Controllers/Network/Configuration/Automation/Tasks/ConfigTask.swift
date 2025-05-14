@@ -30,7 +30,7 @@
 
 import NordicMesh
 
-enum MeshTask: HasTitleAndIcon {
+enum ConfigTask {
     case getCompositionData(page: UInt8, from: Node)
     case getDefaultTtl(from: Node)
     case setDefaultTtl(_ ttl: UInt8, on: Node)

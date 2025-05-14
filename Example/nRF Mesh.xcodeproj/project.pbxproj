@@ -200,7 +200,7 @@
 		F096D8482DA5668100A1A1E4 /* FirmwareDistributionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F096D8472DA5668100A1A1E4 /* FirmwareDistributionViewCell.swift */; };
 		F09DE4C729D771F20073969A /* Model+Name.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DE4C629D771F20073969A /* Model+Name.swift */; };
 		F09DE4CA29DC68900073969A /* MulticolorProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DE4C929DC68900073969A /* MulticolorProgressView.swift */; };
-		F09DE4CF29E5A0BF0073969A /* MeshTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DE4CE29E5A0BF0073969A /* MeshTask.swift */; };
+		F09DE4CF29E5A0BF0073969A /* ConfigTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DE4CE29E5A0BF0073969A /* ConfigTask.swift */; };
 		F09DE4D129E5A2180073969A /* MeshTaskStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DE4D029E5A2180073969A /* MeshTaskStatus.swift */; };
 		F09DE4D329E99A360073969A /* SelectGroupsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DE4D229E99A360073969A /* SelectGroupsViewController.swift */; };
 		F09DE4D729EEBEAD0073969A /* SelectModelsForSubscriptionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DE4D629EEBEAD0073969A /* SelectModelsForSubscriptionViewController.swift */; };
@@ -214,6 +214,10 @@
 		F0F0D9D02DCCAE32009FDE6B /* TimeoutViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F0D9CF2DCCAE32009FDE6B /* TimeoutViewCell.swift */; };
 		F0F0D9D22DCCB345009FDE6B /* SegmentedContriolViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F0D9D12DCCB345009FDE6B /* SegmentedContriolViewCell.swift */; };
 		F0F0D9D52DCE3C68009FDE6B /* Configuration.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F0F0D9D32DCE3C68009FDE6B /* Configuration.storyboard */; };
+		F0F0D9D92DD34661009FDE6B /* MeshTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F0D9D82DD3461C009FDE6B /* MeshTask.swift */; };
+		F0F0D9DB2DD3607E009FDE6B /* Receiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F0D9DA2DD3607A009FDE6B /* Receiver.swift */; };
+		F0F0D9DD2DD3718C009FDE6B /* ApplicationTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F0D9DC2DD37189009FDE6B /* ApplicationTask.swift */; };
+		F0F0D9DF2DD38751009FDE6B /* Array+Chunk.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F0D9DE2DD38747009FDE6B /* Array+Chunk.swift */; };
 		F0FB18F72B8E90CF00683C3F /* LightLCViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0FB18F52B8E90CF00683C3F /* LightLCViewCell.swift */; };
 		F0FB18F82B8E90CF00683C3F /* LightLC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0FB18F62B8E90CF00683C3F /* LightLC.xib */; };
 		F0FB18FA2B8E919C00683C3F /* LightLCClientDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0FB18F92B8E919C00683C3F /* LightLCClientDelegate.swift */; };
@@ -437,7 +441,7 @@
 		F096D8472DA5668100A1A1E4 /* FirmwareDistributionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareDistributionViewCell.swift; sourceTree = "<group>"; };
 		F09DE4C629D771F20073969A /* Model+Name.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Model+Name.swift"; path = "Utils/Model+Name.swift"; sourceTree = "<group>"; };
 		F09DE4C929DC68900073969A /* MulticolorProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MulticolorProgressView.swift; sourceTree = "<group>"; };
-		F09DE4CE29E5A0BF0073969A /* MeshTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshTask.swift; sourceTree = "<group>"; };
+		F09DE4CE29E5A0BF0073969A /* ConfigTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigTask.swift; sourceTree = "<group>"; };
 		F09DE4D029E5A2180073969A /* MeshTaskStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshTaskStatus.swift; sourceTree = "<group>"; };
 		F09DE4D229E99A360073969A /* SelectGroupsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectGroupsViewController.swift; sourceTree = "<group>"; };
 		F09DE4D629EEBEAD0073969A /* SelectModelsForSubscriptionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectModelsForSubscriptionViewController.swift; sourceTree = "<group>"; };
@@ -452,6 +456,10 @@
 		F0F0D9CF2DCCAE32009FDE6B /* TimeoutViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeoutViewCell.swift; sourceTree = "<group>"; };
 		F0F0D9D12DCCB345009FDE6B /* SegmentedContriolViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedContriolViewCell.swift; sourceTree = "<group>"; };
 		F0F0D9D42DCE3C68009FDE6B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Configuration.storyboard; sourceTree = "<group>"; };
+		F0F0D9D82DD3461C009FDE6B /* MeshTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshTask.swift; sourceTree = "<group>"; };
+		F0F0D9DA2DD3607A009FDE6B /* Receiver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Receiver.swift; sourceTree = "<group>"; };
+		F0F0D9DC2DD37189009FDE6B /* ApplicationTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationTask.swift; sourceTree = "<group>"; };
+		F0F0D9DE2DD38747009FDE6B /* Array+Chunk.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Chunk.swift"; sourceTree = "<group>"; };
 		F0FB18F52B8E90CF00683C3F /* LightLCViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCViewCell.swift; sourceTree = "<group>"; };
 		F0FB18F62B8E90CF00683C3F /* LightLC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LightLC.xib; sourceTree = "<group>"; };
 		F0FB18F92B8E919C00683C3F /* LightLCClientDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCClientDelegate.swift; sourceTree = "<group>"; };
@@ -754,6 +762,7 @@
 		529B757322410784008F1CE7 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				F0F0D9DE2DD38747009FDE6B /* Array+Chunk.swift */,
 				F058A6392DBFA16900E9E914 /* IgnoreCertificateDelegate.swift */,
 				529B7574224107A5008F1CE7 /* AppInfo.swift */,
 				529EC8D92A309C640056BB48 /* CompanyIdentifier.swift */,
@@ -994,6 +1003,7 @@
 		F058A63B2DC023CF00E9E914 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				F0F0D9DA2DD3607A009FDE6B /* Receiver.swift */,
 				F058A6402DC9035B00E9E914 /* UpdatePackage.swift */,
 				F058A63C2DC023E000E9E914 /* UpdatedFirmwareInformation.swift */,
 			);
@@ -1025,7 +1035,9 @@
 		F09DE4CD29E5A0A50073969A /* Tasks */ = {
 			isa = PBXGroup;
 			children = (
-				F09DE4CE29E5A0BF0073969A /* MeshTask.swift */,
+				F0F0D9D82DD3461C009FDE6B /* MeshTask.swift */,
+				F09DE4CE29E5A0BF0073969A /* ConfigTask.swift */,
+				F0F0D9DC2DD37189009FDE6B /* ApplicationTask.swift */,
 				F09DE4D029E5A2180073969A /* MeshTaskStatus.swift */,
 			);
 			path = Tasks;
@@ -1353,6 +1365,7 @@
 				52547F27232A3F470002AA7B /* EditRangesViewController.swift in Sources */,
 				52B7FD6D2525B40300308673 /* NodeSceneRecallViewController.swift in Sources */,
 				F09DE4D129E5A2180073969A /* MeshTaskStatus.swift in Sources */,
+				F0F0D9DF2DD38751009FDE6B /* Array+Chunk.swift in Sources */,
 				521215312316C36B0059FB3D /* GenericLevelGroupCell.swift in Sources */,
 				F044AE602DAD203B006D6674 /* ProxySelectionViewController.swift in Sources */,
 				52E54CDD23438B2E00478F05 /* GenericOnOffClientDelegate.swift in Sources */,
@@ -1375,6 +1388,7 @@
 				523F778722CCDE250030EA6A /* SetPublicationViewController.swift in Sources */,
 				52CD0A622330DCFF00A9A181 /* CustomAddressCell.swift in Sources */,
 				52A8EA8F24EBF099004C14C7 /* SetHeartbeatPublicationDestinationsViewController.swift in Sources */,
+				F0F0D9D92DD34661009FDE6B /* MeshTask.swift in Sources */,
 				5288C2122371B16500321ED3 /* SimpleOnOffSetUnacknowledged.swift in Sources */,
 				52547F29232A3F470002AA7B /* FabView.swift in Sources */,
 				F09DE4D729EEBEAD0073969A /* SelectModelsForSubscriptionViewController.swift in Sources */,
@@ -1383,6 +1397,7 @@
 				52E54CD62343875400478F05 /* GenericLevelClientCell.swift in Sources */,
 				529B76492252499E008F1CE7 /* UIColor+Nordic.swift in Sources */,
 				52547EF92317ECA70002AA7B /* DialogSegue.swift in Sources */,
+				F0F0D9DB2DD3607E009FDE6B /* Receiver.swift in Sources */,
 				525242E0225CBFEC0044CECB /* RangeObject+String.swift in Sources */,
 				529B7575224107A5008F1CE7 /* AppInfo.swift in Sources */,
 				F0FB18FA2B8E919C00683C3F /* LightLCClientDelegate.swift in Sources */,
@@ -1419,6 +1434,7 @@
 				5217D2E5250F90D8004FDE79 /* GenericDefaultTransitionTimeViewCell.swift in Sources */,
 				528445C924EEA765002168A1 /* HeartbeatSubscriptionCell.swift in Sources */,
 				5231403F2301761C0074325A /* ConfigurationServerViewCell.swift in Sources */,
+				F0F0D9DD2DD3718C009FDE6B /* ApplicationTask.swift in Sources */,
 				52A8EA9624EE704A004C14C7 /* SetHeartbeatSubscriptionViewController.swift in Sources */,
 				52547EFB231800F30002AA7B /* GroupTargetModelsViewController.swift in Sources */,
 				5217D2E0250F522A004FDE79 /* GenericDefaultTransitionTimeServerDelegate.swift in Sources */,
@@ -1427,7 +1443,7 @@
 				52547F24232A3F470002AA7B /* RangeCell.swift in Sources */,
 				5231404D230AC4680074325A /* VendorModelViewCell.swift in Sources */,
 				529B758622428A45008F1CE7 /* UIViewController+Alert.swift in Sources */,
-				F09DE4CF29E5A0BF0073969A /* MeshTask.swift in Sources */,
+				F09DE4CF29E5A0BF0073969A /* ConfigTask.swift in Sources */,
 				529B7572223FFC39008F1CE7 /* AppKeysViewController.swift in Sources */,
 				52E54CD22343871E00478F05 /* GenericOnOffClientCell.swift in Sources */,
 				520A7D6724F3E05A00BF370A /* RightActionCell.swift in Sources */,

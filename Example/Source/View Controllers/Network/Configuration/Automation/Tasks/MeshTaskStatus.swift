@@ -42,11 +42,11 @@ enum MeshTaskStatus {
         return .failed(error.localizedDescription)
     }
     
-    static func resultOf(_ status: ConfigStatusMessage) -> MeshTaskStatus {
+    static func resultOf(_ status: StatusMessage) -> MeshTaskStatus {
         if status.isSuccess {
             return .success
         }
-        return .failed("\(status.status)")
+        return .failed("\(status.message)")
     }
 }
 
@@ -85,6 +85,21 @@ extension MeshTaskStatus: CustomStringConvertible {
             return .nordicFall
         case .failed:
             return .nordicRed
+        }
+    }
+    
+}
+
+extension Array where Element == MeshTaskStatus {
+    
+    var hasAnyFailed: Bool {
+        return contains { status in
+            switch status {
+            case .failed, .cancelled:
+                return true
+            default:
+                return false
+            }
         }
     }
     

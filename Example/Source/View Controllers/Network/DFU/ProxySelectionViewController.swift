@@ -76,7 +76,6 @@ private struct ProxyDetails {
     var phase: FirmwareDistributionPhase?
     var capabilities: Capabilities?
     var storedFirmwareImagesListSize: UInt16?
-    var storedReceiversListSize: UInt16?
     
     struct Capabilities {
         let maxReceiversListSize: UInt16
@@ -103,7 +102,6 @@ private struct ProxyDetails {
         let occupiedSlots = storedFirmwareImagesListSize ?? 0
         return isSmpSupported &&
                phase == .idle &&
-               storedReceiversListSize == 0 &&
                capabilities.maxFirmwareImageSize > 0 &&
                capabilities.maxUploadSpace > 0 &&
                capabilities.remainingUploadSpace > 0 &&
@@ -278,10 +276,9 @@ class ProxySelectionViewController: UITableViewController {
             if indexPath.row == 5 {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "action", for: indexPath)
                 cell.textLabel?.text = "Free Space"
-                if let storedSlots = proxyDetails?.storedFirmwareImagesListSize,
-                   let storedReceivers = proxyDetails?.storedReceiversListSize {
-                    cell.isUserInteractionEnabled = storedSlots > 0 || storedReceivers > 0
-                    cell.textLabel?.isEnabled = storedSlots > 0 || storedReceivers > 0
+                if let storedSlots = proxyDetails?.storedFirmwareImagesListSize {
+                    cell.isUserInteractionEnabled = storedSlots > 0
+                    cell.textLabel?.isEnabled = storedSlots > 0
                 } else {
                     cell.isUserInteractionEnabled = false
                     cell.textLabel?.isEnabled = false
@@ -291,12 +288,11 @@ class ProxySelectionViewController: UITableViewController {
             let cell = tableView.dequeueReusableCell(withIdentifier: "status", for: indexPath)
             switch indexPath.row {
             case 0:
-                cell.textLabel?.text = "Available Receivers"
+                cell.textLabel?.text = "Max Receiver List Size"
                 if let proxyDetails = proxyDetails,
-                   let storedReceivers = proxyDetails.storedReceiversListSize,
                    let maxReceivers = proxyDetails.capabilities?.maxReceiversListSize {
-                    cell.detailTextLabel?.text = "\(maxReceivers - storedReceivers) / \(maxReceivers)"
-                    cell.checked = storedReceivers == 0 && maxReceivers > 0
+                    cell.detailTextLabel?.text = "\(maxReceivers)"
+                    cell.checked = maxReceivers > 0
                 } else {
                     cell.detailTextLabel?.text = "Unknown"
                     cell.checked = false
@@ -427,18 +423,12 @@ class ProxySelectionViewController: UITableViewController {
                     // when the list of slots is lower than the maximum value.
                     // In that case user would click Free Space button twice.
                     if proxyDetails?.storedFirmwareImagesListSize != 0 &&
-                      (proxyDetails?.storedFirmwareImagesListSize == proxyDetails?.capabilities?.maxFirmwareImagesListSize ||
-                       proxyDetails?.storedReceiversListSize == 0) {
+                       proxyDetails?.storedFirmwareImagesListSize == proxyDetails?.capabilities?.maxFirmwareImagesListSize {
                         let slots = try await deleteStoredFirmwareImages(from: distributorServerModel, using: selectedAppKey)
                         proxyDetails?.storedFirmwareImagesListSize = slots
                         
                         let capabilities = try await readCapabilities(from: distributorServerModel, using: selectedAppKey)
                         proxyDetails?.capabilities = capabilities
-                    }
-                    // Always clear the list of Receivers (Target Nodes) (if not already 0).
-                    if proxyDetails?.storedReceiversListSize != 0 {
-                        let receivers = try await deleteStoredReceivers(from: distributorServerModel, using: selectedAppKey)
-                        proxyDetails?.storedReceiversListSize = receivers
                     }
                     Task { @MainActor in
                         nextButton.isEnabled = proxyDetails?.isSupported ?? false
@@ -558,13 +548,11 @@ private extension ProxySelectionViewController {
             do {
                 let phase = try await self.readDistributionPhase(from: model, using: applicationKey)
                 let capabilities = try await self.readCapabilities(from: model, using: applicationKey)
-                let receivers = try await self.readReceiversListSize(from: model, using: applicationKey)
                 let slots = try await self.readFirmwareImagesListSize(from: model, using: applicationKey)
                 Task { @MainActor [weak self] in
                     guard let self = self else { return }
                     self.proxyDetails?.phase = phase
                     self.proxyDetails?.capabilities = capabilities
-                    self.proxyDetails?.storedReceiversListSize = receivers
                     self.proxyDetails?.storedFirmwareImagesListSize = slots
                     
                     if let statusIndex = self.sections.firstIndex(of: .status),
@@ -599,22 +587,6 @@ private extension ProxySelectionViewController {
     
     enum FirmwareSlotError: LocalizedError {
         case error(status: FirmwareDistributionMessageStatus)
-    }
-    
-    func readReceiversListSize(from model: Model, using applicationKey: ApplicationKey) async throws -> UInt16 {
-        // We need to read slots one by one.
-        let response = try await MeshNetworkManager.instance.send(FirmwareDistributionReceiversGet(from: 0, limit: 1), to: model, using: applicationKey)
-        let status = response as! FirmwareDistributionReceiversList
-        return status.totalCount
-    }
-    
-    func deleteStoredReceivers(from model: Model, using applicationKey: ApplicationKey) async throws -> UInt16 {
-        let response = try await MeshNetworkManager.instance.send(FirmwareDistributionReceiversDeleteAll(), to: model, using: applicationKey)
-        let status = response as! FirmwareDistributionReceiversStatus
-        guard status.status == .success else {
-            throw FirmwareSlotError.error(status: status.status)
-        }
-        return status.totalCount
     }
     
     func readFirmwareImagesListSize(from model: Model, using applicationKey: ApplicationKey) async throws -> UInt16 {

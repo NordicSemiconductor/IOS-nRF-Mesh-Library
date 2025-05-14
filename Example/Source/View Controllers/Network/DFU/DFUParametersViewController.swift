@@ -45,7 +45,7 @@ class DFUParametersViewController: UITableViewController {
     }
     var bearer: GattBearer!
     var applicationKey: ApplicationKey!
-    var receivers: [FirmwareDistributionReceiversAdd.Receiver]!
+    var receivers: [Receiver]!
     var updatePackage: UpdatePackage!
     
     private var ttl: UInt8 = 0
@@ -67,44 +67,14 @@ class DFUParametersViewController: UITableViewController {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "start" {
+        if segue.identifier == "next" {
             let destination = segue.destination as! ConfigurationViewController
-            
-            let meshNetwork = MeshNetworkManager.instance.meshNetwork!
-            
-            // NOTE:
-            // Before starting the DFU we need to bind the selected Application Key
-            // to the BLOB Transfer Server models and Firmware Update Server models.
-            // The Firmware Update Server models have already been bound to the
-            // key on the previous screen, where there user was using it to check
-            // metadata compatibility, so below we list only BLOB Transfer Server models.
-            // Moreover, if a multicast distribution was selected, both Firmware Update Server
-            // and BLOB Transfer Server models must be subscribed to the selected group.
-            // However, as those models are related, it is enough to subscribe the
-            // BLOB Transfer Server models, which we have already listed.
-            
-            // List BLOB Transfer Server models that are on the
-            // same Element as the Firmware Update Server model.
-            let models = receivers
-                // Convert Receivers to Nodes
-                .compactMap { receiver in meshNetwork.node(withAddress: receiver.address) }
-                // Look for Firmware Update Server models.
-                .flatMap { node in node.models(withSigModelId: .firmwareUpdateServerModelId) }
-                // ...and list their Elements.
-                .map { firmwareUpdateServerModel in firmwareUpdateServerModel.parentElement! }
-                // List BLOB Transfer Server models on those Elements.
-                .flatMap { element in
-                    element.models.filter {
-                        $0.isBluetoothSIGAssigned && $0.modelIdentifier == .blobTransferServerModelId
-                    }
-                }
-            
-            // Bind all found BLOB Transfer Server models to the selected Application Key.
-            destination.bind(applicationKeys: [applicationKey], to: models)
-            // If a Multicast destination is selected, subscribe to it.
-            if let selectedGroup = selectedGroup {
-                destination.subscribe(models: models, to: [selectedGroup])
-            }
+            destination.update(receivers: receivers, with: updatePackage,
+                               withTransferMode: transferMode, policy: updatePolicy,
+                               ttl: ttl, timeoutBase: timeoutBase,
+                               multicast: selectedGroup,
+                               andApplicationKey: applicationKey,
+                               on: distributor, over: bearer)
         }
     }
 

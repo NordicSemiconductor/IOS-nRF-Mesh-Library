@@ -203,7 +203,7 @@ private extension FirmwareInformationViewController {
             }
             if let error = error {
                 presentAlert(title: "Error",
-                             message: "Fetching firmware information failed with error: \(error.localizedDescription).")
+                             message: "Fetching firmware information failed with error:\n\(error.localizedDescription)")
                 return
             }
             guard let status = response as? HTTPURLResponse else {
@@ -262,7 +262,7 @@ private extension FirmwareInformationViewController {
             }
             if let error = error {
                 presentAlert(title: "Error",
-                             message: "Fetching file failed with error: \(error.localizedDescription).")
+                             message: "Fetching file failed with error:\n\(error.localizedDescription)")
                 return
             }
             guard let status = response as? HTTPURLResponse else {

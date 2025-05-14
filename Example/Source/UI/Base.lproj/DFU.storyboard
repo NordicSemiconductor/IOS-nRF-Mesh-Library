@@ -403,7 +403,7 @@
                                     </subviews>
                                 </tableViewCellContentView>
                             </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="value" textLabel="w1h-tq-QWR" detailTextLabel="0et-dz-mBq" style="IBUITableViewCellStyleValue1" id="zca-fC-XSC">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="40" reuseIdentifier="value" textLabel="w1h-tq-QWR" detailTextLabel="0et-dz-mBq" style="IBUITableViewCellStyleValue1" id="zca-fC-XSC">
                                 <rect key="frame" x="0.0" y="81.5" width="414" height="43.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="zca-fC-XSC" id="HF0-lZ-FU3">
@@ -742,9 +742,9 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Firmware Distribution" id="hdU-yv-5Bt">
-                        <barButtonItem key="rightBarButtonItem" title="Start" id="ha5-RR-zpn">
+                        <barButtonItem key="rightBarButtonItem" title="Next" id="ha5-RR-zpn">
                             <connections>
-                                <segue destination="X5O-uD-dpS" kind="show" identifier="start" id="uZX-Ur-SxW"/>
+                                <segue destination="X5O-uD-dpS" kind="show" identifier="next" id="uZX-Ur-SxW"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>

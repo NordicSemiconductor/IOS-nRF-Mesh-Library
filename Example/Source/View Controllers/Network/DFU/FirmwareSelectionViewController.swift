@@ -36,7 +36,7 @@ private struct Target {
     let node: Node
     var entries: FirmwareEntries
     
-    var selectedReceiver: FirmwareDistributionReceiversAdd.Receiver? {
+    var selectedReceiver: Receiver? {
         guard let address = node.models(withSigModelId: .firmwareUpdateServerModelId).first?.parentElement?.unicastAddress,
               case .ready(let entries) = entries else {
             return nil
@@ -270,6 +270,7 @@ class FirmwareSelectionViewController: UITableViewController {
                     x.tintColor = .systemRed
                     cell.accessoryView = x
                 }
+            // TODO: Currently we support only one image, with one FirmwareID and one Metadata. This will change in the future.
             case images.count + 1:
                 cell.textLabel?.text = "Company"
                 let companyIdentifier = file?.metadata.firmwareId?.companyIdentifier
@@ -586,6 +587,9 @@ private extension FirmwareSelectionViewController {
             throw McuMgrPackage.Error.manifestFileNotFound
         }
         let metadata = try Metadata.decode(from: metadataURL)
+        guard metadata.binarySize == images.first?.data.count else {
+            throw McuMgrPackage.Error.notAValidDocument
+        }
         return UpdatePackage(name: name, metadata: metadata, manifest: manifest, images: images)
     }
     
@@ -667,36 +671,36 @@ private extension FirmwareSelectionViewController {
             return nil
         }
         
-        let urlRequest = URLRequest(url: url)
-        let session = URLSession(configuration: .default, delegate: IgnoreCertificateDelegate(), delegateQueue: nil)
-        let (data, response) = try await session.data(for: urlRequest)
-        guard let status = response as? HTTPURLResponse else {
-            NSLog("Unexpected response: \(String(describing: response))")
-            // Return nil, as if no firmware update was available.
-            // This will allow setting the file manually.
-            return nil
-        }
-        guard 404 != status.statusCode else {
-            // Success - no update available.
-            return nil
-        }
-        guard (200..<299).contains(status.statusCode) else {
-            // Latest firmware already present.
-            NSLog("Server returned error code: %i", status.statusCode)
-            return nil
-        }
-        // The response format is specified in the Mesh DFU specification.
-        // It should be a JSON file similar to the following one:
-        // {
-        //   "manifest": {
-        //     "firmware": {
-        //       "firmware_id": "010246573A312E332E35",
-        //       "dfu_chain_size": 2,
-        //       "firmware_image_file_size": 196160
-        //     }
-        //   }
-        // }
         do {
+            let urlRequest = URLRequest(url: url)
+            let session = URLSession(configuration: .default, delegate: IgnoreCertificateDelegate(), delegateQueue: nil)
+            let (data, response) = try await session.data(for: urlRequest)
+            guard let status = response as? HTTPURLResponse else {
+                NSLog("Unexpected response: \(String(describing: response))")
+                // Return nil, as if no firmware update was available.
+                // This will allow setting the file manually.
+                return nil
+            }
+            guard 404 != status.statusCode else {
+                // Success - no update available.
+                return nil
+            }
+            guard (200..<299).contains(status.statusCode) else {
+                // Latest firmware already present.
+                NSLog("Server returned error code: %i", status.statusCode)
+                return nil
+            }
+            // The response format is specified in the Mesh DFU specification.
+            // It should be a JSON file similar to the following one:
+            // {
+            //   "manifest": {
+            //     "firmware": {
+            //       "firmware_id": "010246573A312E332E35",
+            //       "dfu_chain_size": 2,
+            //       "firmware_image_file_size": 196160
+            //     }
+            //   }
+            // }
             return try JSONDecoder().decode(UpdatedFirmwareInformation.self, from: data)
         } catch {
             NSLog("Failed to decode firmware information: %@", error.localizedDescription)
@@ -791,7 +795,7 @@ private extension Array {
 
 private extension Array where Element == Target {
     
-    var selectedReceivers: [FirmwareDistributionReceiversAdd.Receiver] {
+    var selectedReceivers: [Receiver] {
         return compactMap { target in target.selectedReceiver }
     }
                 
