@@ -355,6 +355,25 @@ public enum FirmwareUpdatePolicy: UInt8, Sendable {
     case verifyAndApply = 0x01
 }
 
+// MARK: - Message types
+
+public protocol FirmwareDistributionStatusMessage: StatusMessage {
+    /// Status for the requesting message.
+    var status: FirmwareDistributionMessageStatus { get }
+}
+
+public extension FirmwareDistributionStatusMessage {
+    
+    var isSuccess: Bool {
+        return status == .success
+    }
+    
+    var message: String {
+        return "\(status)"
+    }
+    
+}
+
 // MARK: - CustomDebugStringConvertible
 
 extension FirmwareId: CustomDebugStringConvertible {

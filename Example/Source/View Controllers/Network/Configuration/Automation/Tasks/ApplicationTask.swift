@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2025, Nordic Semiconductor
+* Copyright (c) 2023, Nordic Semiconductor
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -28,43 +28,48 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
-import Foundation
+import NordicMesh
 
-/// The Firmware Distribution Receivers Status message is an unacknowledged message sent by
-/// a Firmware Distribution Server to report the size of the Distribution Receivers List state.
-///
-///A Firmware Distribution Receivers Status message is sent as a response to
-///a ``FirmwareDistributionReceiversAdd`` message or
-///a ``FirmwareDistributionReceiversDeleteAll`` message.
-public struct FirmwareDistributionReceiversStatus: StaticMeshResponse, FirmwareDistributionStatusMessage {
-    public static let opCode: UInt32 = 0x8313
+enum ApplicationTask {
+    case clearDfuReceivers(from: Model)
+    case addDfuReceivers(_ receivers: [Receiver], to: Model)
     
-    public let status: FirmwareDistributionMessageStatus
-    /// The number of entries in the Distribution Receivers List state.
-    public let totalCount: UInt16
-    
-    public var parameters: Data? {
-        return Data([status.rawValue]) + totalCount
+    var title: String {
+        switch self {
+        case .clearDfuReceivers(from: let model):
+            return "Clear List of Receivers from \(model)"
+        case .addDfuReceivers(let receivers, to: let model):
+            if receivers.count == 1 {
+                return "Add Receiver to \(model)"
+            }
+            return "Add \(receivers.count) Receivers to \(model)"
+        }
     }
     
-    /// Creates the Firmware Distribution Receivers Status message.
-    ///
-    /// - parameters:
-    ///  - status: Status for the requesting message.
-    ///  - totalCount: The number of entries in the Distribution Receivers List state.
-    public init(status: FirmwareDistributionMessageStatus, totalCount: UInt16) {
-        self.status = status
-        self.totalCount = totalCount
+    var icon: UIImage {
+        switch self {
+        case .clearDfuReceivers, .addDfuReceivers:
+            return #imageLiteral(resourceName: "ic_dfu")
+        }
     }
     
-    public init?(parameters: Data) {
-        guard parameters.count == 3 else {
-            return nil
+    var message: AcknowledgedMeshMessage {
+        switch self {
+        case .clearDfuReceivers(from: _):
+            return FirmwareDistributionReceiversDeleteAll()
+        case .addDfuReceivers(let receivers, to: _):
+            let dfuReceivers = receivers.map { receiver in
+                return FirmwareDistributionReceiversAdd.Receiver(address: receiver.address, imageIndex: receiver.imageIndex)
+            }
+            return FirmwareDistributionReceiversAdd(receivers: dfuReceivers)
         }
-        guard let status = FirmwareDistributionMessageStatus(rawValue: parameters[0]) else {
-            return nil
+    }
+    
+    var target: Model {
+        switch self {
+        case .clearDfuReceivers(from: let model),
+             .addDfuReceivers(_, to: let model):
+            return model
         }
-        self.status = status
-        self.totalCount = parameters.read(fromOffset: 1)
     }
 }
