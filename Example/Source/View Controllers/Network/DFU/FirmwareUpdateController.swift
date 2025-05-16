@@ -75,22 +75,9 @@ class FirmwareUpdateController: UIViewController {
         )
         content.showEmptyView()
         
-        makeBlue(dfuOverSmpButton, enabled: true)
-        makeBlue(dfuOverBlobButton, enabled: false)
-        makeBlue(dfuOverHttpsButton, enabled: false)
-    }
-    
-}
-
-private extension FirmwareUpdateController {
-    
-    func makeBlue(_ button: UIButton, enabled: Bool) {
-        button.setTitleColor(.white, for: .normal)
-        button.setTitleColor(.almostWhite, for: .highlighted)
-        button.backgroundColor = enabled ? .dynamicColor(light: .nordicLake, dark: .nordicBlue) : .dynamicColor(light: .nordicLightGray, dark: .nordicDarkGray)
-        button.isEnabled = enabled
-        button.layer.cornerRadius = 4
-        button.layer.masksToBounds = true
+        dfuOverSmpButton.makeBlue(enabled: true)
+        dfuOverBlobButton.makeBlue(enabled: false)
+        dfuOverHttpsButton.makeBlue(enabled: false)
     }
     
 }

@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="H71-0C-Q4X">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -49,11 +50,12 @@
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                             </view>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="oAZ-cx-5Gc">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="oAZ-cx-5Gc">
                                 <rect key="frame" x="0.0" y="197" width="414" height="699"/>
+                                <color key="backgroundColor" red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="task" textLabel="cB3-fi-bLH" detailTextLabel="X21-Ce-mVj" style="IBUITableViewCellStyleSubtitle" id="PUZ-G7-hSe">
-                                        <rect key="frame" x="0.0" y="50" width="414" height="55.5"/>
+                                        <rect key="frame" x="0.0" y="55.5" width="414" height="55.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="PUZ-G7-hSe" id="Geu-vL-wGg">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="55.5"/>
@@ -114,23 +116,35 @@
                                 <action selector="cancelTapped:" destination="H71-0C-Q4X" id="xcY-ro-atq"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" enabled="NO" systemItem="done" id="6yD-Ua-sow">
+                        <barButtonItem key="rightBarButtonItem" enabled="NO" title="Done" id="6yD-Ua-sow">
                             <connections>
                                 <action selector="doneTapped:" destination="H71-0C-Q4X" id="Xya-B3-q7Q"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="doneButton" destination="6yD-Ua-sow" id="vgL-hf-RY5"/>
                         <outlet property="progress" destination="CoU-ib-8MC" id="YOV-Mj-FfZ"/>
                         <outlet property="remainingTime" destination="YDf-pN-CWf" id="oo8-Mw-kCS"/>
                         <outlet property="statusView" destination="p8K-BF-eMI" id="If1-Vb-k4e"/>
                         <outlet property="tableView" destination="oAZ-cx-5Gc" id="pHf-PP-xSi"/>
                         <outlet property="time" destination="qoV-NQ-7wm" id="ngF-RS-CqJ"/>
+                        <segue destination="jOK-Fq-ruf" kind="show" identifier="start" id="Beg-Eu-hwx"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="eYf-2P-0Km" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="6900" y="-4931"/>
+        </scene>
+        <!--DFU-->
+        <scene sceneID="oVH-W0-236">
+            <objects>
+                <viewControllerPlaceholder storyboardName="DFU" referencedIdentifier="DFU" id="jOK-Fq-ruf" sceneMemberID="viewController">
+                    <navigationItem key="navigationItem" id="Tgu-Mz-gAG"/>
+                </viewControllerPlaceholder>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="TDR-si-PZ2" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="7665" y="-4931"/>
         </scene>
     </scenes>
     <color key="tintColor" red="0.0" green="0.46666666670000001" blue="0.7843137255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

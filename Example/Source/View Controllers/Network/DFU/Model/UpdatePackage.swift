@@ -64,11 +64,11 @@ public struct Metadata: Codable {
     public let binarySize: Int // 24 bit
     public let coreType: UInt8
     public let compositionDataHash: Int
-    public let metadataString: String
+    public let metadataString: String?
     public let firmwareIdString: String
     
-    public var metadata: Data {
-        return Data(hex: metadataString)
+    public var metadata: Data? {
+        return metadataString.map { Data(hex: $0) }
     }
     public var firmwareId: FirmwareId? {
         let data = Data(hex: firmwareIdString)

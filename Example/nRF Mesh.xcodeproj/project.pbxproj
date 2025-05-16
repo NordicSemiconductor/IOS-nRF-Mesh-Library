@@ -173,6 +173,12 @@
 		F03414832B912F95009DD792 /* LightLCModeGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03414822B912F95009DD792 /* LightLCModeGroupCell.swift */; };
 		F03414852B9131BA009DD792 /* LightLCOccupancyModeGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03414842B9131BA009DD792 /* LightLCOccupancyModeGroupCell.swift */; };
 		F03414872B91373E009DD792 /* LightLCLightOnOffGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03414862B91373E009DD792 /* LightLCLightOnOffGroupCell.swift */; };
+		F0389F3C2DD5D39E00068D75 /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0389F3B2DD5D39100068D75 /* CircularProgressView.swift */; };
+		F0389F3E2DD5D6B000068D75 /* DFUViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0389F3D2DD5D6B000068D75 /* DFUViewController.swift */; };
+		F0389F402DD5EDF000068D75 /* NodeProgressViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0389F3F2DD5EDE900068D75 /* NodeProgressViewCell.swift */; };
+		F0389F442DD5F96700068D75 /* DFUParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0389F432DD5F95F00068D75 /* DFUParameters.swift */; };
+		F0389F462DD61DE600068D75 /* UIButton+Filled.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0389F452DD61DD900068D75 /* UIButton+Filled.swift */; };
+		F0389F482DD6724300068D75 /* UploadProgressViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0389F472DD6722D00068D75 /* UploadProgressViewCell.swift */; };
 		F044AE5E2DA949AC006D6674 /* DFU.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F044AE5C2DA949AC006D6674 /* DFU.storyboard */; };
 		F044AE602DAD203B006D6674 /* ProxySelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F044AE5F2DAD203B006D6674 /* ProxySelectionViewController.swift */; };
 		F044AE652DAE884E006D6674 /* BindAppKey.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F044AE632DAE884E006D6674 /* BindAppKey.storyboard */; };
@@ -414,6 +420,12 @@
 		F03414822B912F95009DD792 /* LightLCModeGroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCModeGroupCell.swift; sourceTree = "<group>"; };
 		F03414842B9131BA009DD792 /* LightLCOccupancyModeGroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCOccupancyModeGroupCell.swift; sourceTree = "<group>"; };
 		F03414862B91373E009DD792 /* LightLCLightOnOffGroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCLightOnOffGroupCell.swift; sourceTree = "<group>"; };
+		F0389F3B2DD5D39100068D75 /* CircularProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
+		F0389F3D2DD5D6B000068D75 /* DFUViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DFUViewController.swift; sourceTree = "<group>"; };
+		F0389F3F2DD5EDE900068D75 /* NodeProgressViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeProgressViewCell.swift; sourceTree = "<group>"; };
+		F0389F432DD5F95F00068D75 /* DFUParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DFUParameters.swift; sourceTree = "<group>"; };
+		F0389F452DD61DD900068D75 /* UIButton+Filled.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+Filled.swift"; sourceTree = "<group>"; };
+		F0389F472DD6722D00068D75 /* UploadProgressViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadProgressViewCell.swift; sourceTree = "<group>"; };
 		F044AE5D2DA949AC006D6674 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/DFU.storyboard; sourceTree = "<group>"; };
 		F044AE5F2DAD203B006D6674 /* ProxySelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxySelectionViewController.swift; sourceTree = "<group>"; };
 		F044AE642DAE884E006D6674 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/BindAppKey.storyboard; sourceTree = "<group>"; };
@@ -762,6 +774,8 @@
 		529B757322410784008F1CE7 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				F0389F452DD61DD900068D75 /* UIButton+Filled.swift */,
+				F0389F3B2DD5D39100068D75 /* CircularProgressView.swift */,
 				F0F0D9DE2DD38747009FDE6B /* Array+Chunk.swift */,
 				F058A6392DBFA16900E9E914 /* IgnoreCertificateDelegate.swift */,
 				529B7574224107A5008F1CE7 /* AppInfo.swift */,
@@ -1003,6 +1017,7 @@
 		F058A63B2DC023CF00E9E914 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				F0389F432DD5F95F00068D75 /* DFUParameters.swift */,
 				F0F0D9DA2DD3607A009FDE6B /* Receiver.swift */,
 				F058A6402DC9035B00E9E914 /* UpdatePackage.swift */,
 				F058A63C2DC023E000E9E914 /* UpdatedFirmwareInformation.swift */,
@@ -1071,6 +1086,7 @@
 				F0B67D7F2DAFCE7B00B1A69D /* PasskeyViewController.swift */,
 				F0B67D812DB0F0D700B1A69D /* FirmwareSelectionViewController.swift */,
 				F0F0D9CC2DCA0E92009FDE6B /* DFUParametersViewController.swift */,
+				F0389F3D2DD5D6B000068D75 /* DFUViewController.swift */,
 			);
 			path = DFU;
 			sourceTree = "<group>";
@@ -1078,6 +1094,8 @@
 		F0F0D9CE2DCCAE0F009FDE6B /* Cells */ = {
 			isa = PBXGroup;
 			children = (
+				F0389F3F2DD5EDE900068D75 /* NodeProgressViewCell.swift */,
+				F0389F472DD6722D00068D75 /* UploadProgressViewCell.swift */,
 				F0F0D9CF2DCCAE32009FDE6B /* TimeoutViewCell.swift */,
 				F0F0D9D12DCCB345009FDE6B /* SegmentedContriolViewCell.swift */,
 			);
@@ -1363,6 +1381,7 @@
 				523F777B22CB86A00030EA6A /* ModelBindAppKeyViewController.swift in Sources */,
 				52DF5D8F229691BD00C297C1 /* NetworkConnection.swift in Sources */,
 				52547F27232A3F470002AA7B /* EditRangesViewController.swift in Sources */,
+				F0389F3C2DD5D39E00068D75 /* CircularProgressView.swift in Sources */,
 				52B7FD6D2525B40300308673 /* NodeSceneRecallViewController.swift in Sources */,
 				F09DE4D129E5A2180073969A /* MeshTaskStatus.swift in Sources */,
 				F0F0D9DF2DD38751009FDE6B /* Array+Chunk.swift in Sources */,
@@ -1385,6 +1404,7 @@
 				5215600929FBFD230048B2D2 /* WizardViewController.swift in Sources */,
 				F0587F712D96C63A0091CDF4 /* PairingResponderViewCell.swift in Sources */,
 				528AB9F8228D847C000BE9DC /* NetworkViewController.swift in Sources */,
+				F0389F402DD5EDF000068D75 /* NodeProgressViewCell.swift in Sources */,
 				523F778722CCDE250030EA6A /* SetPublicationViewController.swift in Sources */,
 				52CD0A622330DCFF00A9A181 /* CustomAddressCell.swift in Sources */,
 				52A8EA8F24EBF099004C14C7 /* SetHeartbeatPublicationDestinationsViewController.swift in Sources */,
@@ -1392,6 +1412,7 @@
 				5288C2122371B16500321ED3 /* SimpleOnOffSetUnacknowledged.swift in Sources */,
 				52547F29232A3F470002AA7B /* FabView.swift in Sources */,
 				F09DE4D729EEBEAD0073969A /* SelectModelsForSubscriptionViewController.swift in Sources */,
+				F0389F482DD6724300068D75 /* UploadProgressViewCell.swift in Sources */,
 				52A9C17D230EB9490036792A /* GenericOnOffViewCell.swift in Sources */,
 				5292F8A5250237A600EA0F2A /* NodeStoreSceneViewController.swift in Sources */,
 				52E54CD62343875400478F05 /* GenericLevelClientCell.swift in Sources */,
@@ -1431,6 +1452,7 @@
 				52A8EA8824E6946D004C14C7 /* HeartbeatPublicationCell.swift in Sources */,
 				52F6AD7622BA612900F0D7DF /* UIViewController+Toast.swift in Sources */,
 				F0F0D9CD2DCA0E92009FDE6B /* DFUParametersViewController.swift in Sources */,
+				F0389F3E2DD5D6B000068D75 /* DFUViewController.swift in Sources */,
 				5217D2E5250F90D8004FDE79 /* GenericDefaultTransitionTimeViewCell.swift in Sources */,
 				528445C924EEA765002168A1 /* HeartbeatSubscriptionCell.swift in Sources */,
 				5231403F2301761C0074325A /* ConfigurationServerViewCell.swift in Sources */,
@@ -1441,6 +1463,7 @@
 				F09DE4C729D771F20073969A /* Model+Name.swift in Sources */,
 				52E54CD42343874000478F05 /* GenericOnOffServerCell.swift in Sources */,
 				52547F24232A3F470002AA7B /* RangeCell.swift in Sources */,
+				F0389F462DD61DE600068D75 /* UIButton+Filled.swift in Sources */,
 				5231404D230AC4680074325A /* VendorModelViewCell.swift in Sources */,
 				529B758622428A45008F1CE7 /* UIViewController+Alert.swift in Sources */,
 				F09DE4CF29E5A0BF0073969A /* ConfigTask.swift in Sources */,
@@ -1481,6 +1504,7 @@
 				52A9C1C52313D7D80036792A /* GenericLevelViewCell.swift in Sources */,
 				5288C20A2371A89900321ED3 /* SimpleOnOffClientDelegate.swift in Sources */,
 				529B759C2243BA10008F1CE7 /* NetworkKeysViewController.swift in Sources */,
+				F0389F442DD5F96700068D75 /* DFUParameters.swift in Sources */,
 				521599D525E91F9300F602FA /* SensorValueCell.swift in Sources */,
 				F03414832B912F95009DD792 /* LightLCModeGroupCell.swift in Sources */,
 				52518B3122E0B18400A1FD1E /* GroupsViewController.swift in Sources */,

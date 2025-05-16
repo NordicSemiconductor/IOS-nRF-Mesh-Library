@@ -43,8 +43,13 @@ class ConfigurationViewController: UIViewController,
     
     @IBOutlet weak var remainingTime: UILabel!
     @IBOutlet weak var time: UILabel!
+    @IBOutlet weak var doneButton: UIBarButtonItem!
     @IBAction func doneTapped(_ sender: UIBarButtonItem) {
-        navigationController?.dismiss(animated: true)
+        if isDfu {
+            performSegue(withIdentifier: "start", sender: nil)
+        } else {
+            navigationController?.dismiss(animated: true)
+        }
     }
     @IBAction func cancelTapped(_ sender: UIBarButtonItem) {
         if let handler = handler {
@@ -324,20 +329,12 @@ class ConfigurationViewController: UIViewController,
     /// - parameters:
     ///  - receivers: The receivers to update.
     ///  - updatePackage: The update package to use.
-    ///  - transferMode: The transfer mode to use.
-    ///  - policy: The firmware update policy to use.
-    ///  - ttl: The TTL value to use.
-    ///  - timeoutBase: The timeout base to use.
-    ///  - multicast: Optional multicast Group. If `nil`, messages will be sent
-    ///               to the Unicast Address of the receiver.
-    ///  - applicationKey: The Application Key to use for update messages.
+    ///  - parameters: DFU parameters.
     ///  - distributor: The distributor Node.
     ///  - bearer: A direct bearer to the Distributor Node. This is required to upload the update package
     ///            over SMP protocol.
     func update(receivers: [Receiver], with updatePackage: UpdatePackage,
-                withTransferMode transferMode: TransferMode, policy: FirmwareUpdatePolicy,
-                ttl: UInt8, timeoutBase: UInt16, multicast: Group?,
-                andApplicationKey applicationKey: ApplicationKey,
+                parameters: DFUParameters,
                 on distributor: Node, over bearer: GattBearer) {
         // The Distributor Node must have the Firmware Distribution Server Model.
         guard let meshNetwork = MeshNetworkManager.instance.meshNetwork,
@@ -374,16 +371,17 @@ class ConfigurationViewController: UIViewController,
             }
         
         // Bind all found BLOB Transfer Server models to the selected Application Key.
-        bind(applicationKeys: [applicationKey], to: models)
+        bind(applicationKeys: [parameters.applicationKey], to: models)
+        
         // If a Multicast destination is selected, subscribe to it.
-        if let group = multicast {
+        if let group = parameters.selectedGroup {
             subscribe(models: models, to: [group])
         }
         
-        // Let's start by adding Receivers. The number of receivers
-        // is limited to 10 per message. The maximum number is also ensured by the
-        // previous screen, which didn't allow selecting more than Distributor's limit.
-        // As Back button is enabled, and the user can go back to modify the list of
+        // Finally, add Receivers. The number of receivers is limited to 10 per message.
+        // The maximum number is also ensured by the previous screen, which didn't allow
+        // selecting more than Distributor's limit.
+        // As the Back button is enabled and the user can go back to modify the list of
         // Receivers, we need to clear the list of receivers first.
         tasks.append(.other(.clearDfuReceivers(from: firmwareDistributorServerModel)))
         let chunks = receivers.chunked(by: 10)
@@ -391,10 +389,17 @@ class ConfigurationViewController: UIViewController,
             tasks.append(.other(.addDfuReceivers(receivers, to: firmwareDistributorServerModel)))
         }
         
-        // Hide Cancel button and replace it with Back.
+        // In case of DFU, the Configuration screen is not a final destination.
+        // Hide the Cancel button and replace it with Back.
         navigationItem.leftItemsSupplementBackButton = true
         navigationItem.leftBarButtonItem = nil
-        navigationItem.rightBarButtonItem?.title = "Next"
+        self.doneButton.title = "Next"
+        self.isDfu = true
+        self.distributor = distributor
+        self.bearer = bearer
+        self.receivers = receivers
+        self.updatePackage = updatePackage
+        self.parameters = parameters
     }
     
     // MARK: - Private properties
@@ -410,12 +415,20 @@ class ConfigurationViewController: UIViewController,
     /// The timestamp when the configuration has started.
     private var startDate: Date!
     
+    // MARK: - Private properties for DFU
+    private var isDfu: Bool = false
+    private var distributor: Node?
+    private var bearer: GattBearer?
+    private var receivers: [Receiver]?
+    private var updatePackage: UpdatePackage?
+    private var parameters: DFUParameters?
+    
     // MARK: - View Controller
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Make the dialog modal (non-dismissable).
+        // Make the dialog modal (non-dismissible).
         navigationController?.presentationController?.delegate = self
         
         tableView.delegate = self
@@ -430,6 +443,16 @@ class ConfigurationViewController: UIViewController,
         return !inProgress
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let destination = segue.destination as? DFUViewController {
+            destination.distributor = distributor
+            destination.bearer = bearer
+            destination.receivers = receivers
+            destination.updatePackage = updatePackage
+            destination.parameters = parameters
+        }
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         navigationItem.rightBarButtonItem?.isEnabled = tasks.isEmpty
         navigationItem.leftBarButtonItem?.isEnabled = !tasks.isEmpty
@@ -439,7 +462,7 @@ class ConfigurationViewController: UIViewController,
         remainingTime.isHidden = tasks.isEmpty
         
         if tasks.isEmpty {
-            statusView.text = "The node is already configured."
+            statusView.text = "No configuration required."
         }
     }
     
@@ -474,7 +497,6 @@ class ConfigurationViewController: UIViewController,
             MeshNetworkManager.instance.delegate = self
             executeNext()
         }
-        
     }
     
 }
@@ -510,6 +532,12 @@ extension ConfigurationViewController: UITableViewDelegate, UITableViewDataSourc
             cell.accessoryView = nil
         }
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        // This is important for the top-most header to be invisible.
+        // Returning 0 is ignored.
+        return .leastNonzeroMagnitude
     }
     
 }
@@ -601,6 +629,9 @@ private extension ConfigurationViewController {
     
     func reload(taskAt index: Int, with status: MeshTaskStatus) {
         DispatchQueue.main.async {
+            guard index < self.tasks.count else {
+                return
+            }
             self.statusView.text = self.tasks[index].title
             self.statuses[index] = status
             self.tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .automatic)

@@ -280,7 +280,7 @@ class FirmwareSelectionViewController: UITableViewController {
                 cell.detailTextLabel?.text = file?.metadata.signVersion.description ?? "Unknown"
             case images.count + 3:
                 cell.textLabel?.text = "Metadata"
-                cell.detailTextLabel?.text = file.map { "0x\($0.metadata.metadataString.capitalized)" } ?? "None"
+                cell.detailTextLabel?.text = file?.metadata.metadataString.map { "0x\($0.capitalized)" } ?? "None"
             default:
                 fatalError("Invalid row")
             }
@@ -455,9 +455,17 @@ class FirmwareSelectionViewController: UITableViewController {
                             do {
                                 let package = try await self.downloadFirmware(entry.firmware)
                                 Task { @MainActor [package, weak self] in
-                                    self?.targets[indexPath.targetSection].entries[indexPath.row - 1]?.status = .unselected
+                                    // It may happen, that the downloaded image has different metadata than what we got during "check".
+                                    // To avoid downloading the image in a loop, we need to update the metadata.
+                                    self?.targets[indexPath.targetSection].entries[indexPath.row - 1]?.availableUpdate?.manifest.firmware.firmwareIdString = package.metadata.firmwareIdString
+                                    // Clear all selections, as we have a new image.
+                                    self?.targets.clearSelections()
+                                    // Update the file information.
                                     self?.file = package
-                                    self?.tableView.reloadData()
+                                    self?.tableView.beginUpdates()
+                                    self?.tableView.reloadSections(IndexSet(integer: 1), with: .automatic)
+                                    self?.tableView.reloadSections(IndexSet(integersIn: 2..<self!.targets.count + 2), with: .none)
+                                    self?.tableView.endUpdates()
                                     self?.tableView(tableView, didSelectRowAt: indexPath)
                                 }
                             } catch {
@@ -494,7 +502,7 @@ class FirmwareSelectionViewController: UITableViewController {
                             guard let self else { return }
                             self.targets[indexPath.targetSection].entries[indexPath.row - 1]?.status = status
                             self.updateNextButtonState()
-                            self.tableView.reloadRows(at: [indexPath], with: .automatic)
+                            self.tableView.reloadRows(at: [indexPath], with: .none)
                         }
                     }
                 case .selected:
@@ -797,6 +805,20 @@ private extension Array where Element == Target {
     
     var selectedReceivers: [Receiver] {
         return compactMap { target in target.selectedReceiver }
+    }
+    
+    mutating func clearSelections() {
+        for index in 0..<count {
+            switch self[index].entries {
+            case .ready(var entries):
+                for i in 0..<entries.count {
+                    entries[i].status = .unselected
+                }
+                self[index].entries = .ready(entries: entries)
+            default:
+                break
+            }
+        }
     }
                 
 }

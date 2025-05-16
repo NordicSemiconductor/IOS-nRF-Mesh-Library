@@ -36,15 +36,15 @@ import NordicMesh
 /// This object is parsed from a JSON returned from an online resource
 /// pointed by a Node in its Firmware Image List state.
 struct UpdatedFirmwareInformation: Codable {
-    let manifest: Manifest
+    var manifest: Manifest
 
     struct Manifest: Codable {
-        let firmware: Firmware
+        var firmware: Firmware
      
         struct Firmware: Codable {
-            let firmwareIdString: String
-            let dfuChainSize: Int
-            let firmwareImageFileSize: Int
+            var firmwareIdString: String
+            var dfuChainSize: Int
+            var firmwareImageFileSize: Int
             
             /// The Firmware ID of the firmware image.
             var firmwareId: FirmwareId? {

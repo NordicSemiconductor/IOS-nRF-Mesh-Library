@@ -30,54 +30,16 @@
 
 import UIKit
 
-class TimeoutViewCell: UITableViewCell {
+extension UIButton {
     
-    protocol Delegate: AnyObject {
-        func timeoutBase(didChange timeout: UInt16)
+    func makeBlue(enabled: Bool = true) {
+        setTitleColor(.white, for: .normal)
+        setTitleColor(.almostWhite, for: .highlighted)
+        backgroundColor = enabled ? .dynamicColor(light: .nordicLake, dark: .nordicBlue) : .dynamicColor(light: .nordicLightGray, dark: .nordicDarkGray)
+        isEnabled = enabled
+        layer.cornerRadius = 4
+        layer.masksToBounds = true
     }
     
-    private let formatter = DateComponentsFormatter()
-    private let allowedValues: [UInt16] = [0, 1, 2, 3, 4, 10, 16, 22, 28, 58, 118, 178, 238, 298, 358, 718, 1078, 1438, 1798, 8638, UInt16.max]
-    
-    // MARK: - Properties
-    
-    weak var delegate: Delegate?
-    
-    var ttl: UInt8 = 0 {
-        didSet {
-            updateValue()
-        }
-    }
-    
-    // MARK: - Outlets
-    
-    @IBOutlet weak var slider: UISlider!
-    @IBAction func sliderDidChange(_ sender: UISlider) {
-        let timeoutBase = allowedValues[Int(slider.value)]
-        delegate?.timeoutBase(didChange: timeoutBase)
-        updateValue()
-    }
-    @IBOutlet weak var value: UILabel!
-    
-    // MARK: - Implementation
-    
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        
-        slider.minimumValue = 0
-        slider.maximumValue = Float(allowedValues.count - 1)
-        slider.value = 10
-        
-        formatter.allowedUnits = [.day, .hour, .minute, .second, .nanosecond]
-        formatter.unitsStyle = .short
-        
-        updateValue()
-    }
-    
-    private func updateValue() {
-        let timeoutBase = TimeInterval(allowedValues[Int(slider.value)])
-        let timeout: TimeInterval = 10 * (timeoutBase + 2) + 0.1 * TimeInterval(ttl)
-        value.text = formatter.string(from: timeout)!
-    }
-
 }
+

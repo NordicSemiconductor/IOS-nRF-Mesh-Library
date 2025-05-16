@@ -49,7 +49,7 @@ class DFUParametersViewController: UITableViewController {
     var updatePackage: UpdatePackage!
     
     private var ttl: UInt8 = 0
-    private var timeoutBase: UInt16 = 0
+    private var timeoutBase: UInt16 = 118
     private var transferMode: TransferMode = .push
     private var updatePolicy: FirmwareUpdatePolicy = .verifyOnly
     private var selectedGroup: Group?
@@ -70,10 +70,12 @@ class DFUParametersViewController: UITableViewController {
         if segue.identifier == "next" {
             let destination = segue.destination as! ConfigurationViewController
             destination.update(receivers: receivers, with: updatePackage,
-                               withTransferMode: transferMode, policy: updatePolicy,
-                               ttl: ttl, timeoutBase: timeoutBase,
-                               multicast: selectedGroup,
-                               andApplicationKey: applicationKey,
+                               parameters: DFUParameters(
+                                    applicationKey: applicationKey,
+                                    ttl: ttl, timeoutBase: timeoutBase,
+                                    transferMode: transferMode, updatePolicy: updatePolicy,
+                                    selectedGroup: selectedGroup
+                               ),
                                on: distributor, over: bearer)
         }
     }
@@ -118,7 +120,6 @@ class DFUParametersViewController: UITableViewController {
             case IndexPath.timeoutRow:
                 let cell = tableView.dequeueReusableCell(withIdentifier: "timeout", for: indexPath) as! TimeoutViewCell
                 cell.ttl = ttl
-                cell.timeoutBase = timeoutBase
                 cell.delegate = self
                 return cell
             case IndexPath.transferModeRow:

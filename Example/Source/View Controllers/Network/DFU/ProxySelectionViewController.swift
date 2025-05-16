@@ -236,7 +236,12 @@ class ProxySelectionViewController: UITableViewController {
             case 1:
                 cell.textLabel?.text = "Access"
                 cell.detailTextLabel?.text = proxyDetails!.isSmpSecure ? "Secure" : "Insecure"
-                cell.checked = proxyDetails!.isSmpSecure
+                if proxyDetails!.isSmpSecure {
+                    cell.checked = true
+                } else {
+                    cell.tintColor = .systemOrange
+                    cell.accessoryView = UIImageView(image: UIImage(systemName: "exclamationmark.triangle"))
+                }
             default:
                 fatalError("Invalid row")
             }
