@@ -80,6 +80,8 @@ class DFUViewController: UIViewController,
     private var uploadSpeed: Float = 0
     private var uploadStartTime: Date?
     
+    private var slotIndex: UInt16?
+    
     // MARK: - View Controller
     
     override func viewDidLoad() {
@@ -124,7 +126,9 @@ class DFUViewController: UIViewController,
             if let text = response?.output,
                let match = text.range(of: #"Index:\s*(\d+)"#, options: .regularExpression),
                let number = Int(String(text[match]).components(separatedBy: ":").last?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "") {
-                print("Extracted index: \(number)")
+                // The slot index is used to identify the image in the Distributor.
+                // Keep it for later use.
+                self?.slotIndex = UInt16(truncatingIfNeeded: number)
                 
                 // Read MCU Manager parameters to get the buffer size and count.
                 // These can be used to speed up the upload.
@@ -132,20 +136,20 @@ class DFUViewController: UIViewController,
                 self?.osManager = DefaultManager(transport: transport)
                 self?.osManager!.logDelegate = self
                 self?.osManager!.params { [weak self] response, error in
+                    // Set the upload parameters based on the response.
                     let config = response.map { params in
                         FirmwareUpgradeConfiguration(
-                            pipelineDepth: params.bufferCount.map { Int($0) - 1 } ?? 0,
-                            byteAlignment: .disabled,
+                            // Note, that number of buffers is decreased by 1.
+                            pipelineDepth: params.bufferCount.map { max(1, Int($0) - 1) } ?? 0,
+                            // Increased buffer size decreases number of bytes used for sending metadata.
                             reassemblyBufferSize: params.bufferSize
                         )
-                    } ?? FirmwareUpgradeConfiguration(
-                            pipelineDepth: 3,
-                            byteAlignment: .disabled
-                         )
+                    } ?? FirmwareUpgradeConfiguration()
                     
                     self?.statusView.text = "Uploading image..."
                     self?.imageManager = ImageManager(transport: transport)
                     self?.imageManager!.logDelegate = self
+                    // Successful upload will call uploadDidFinish() below.
                     _ = self?.imageManager!.upload(images: [image], using: config, delegate: self)
                 }
             } else {
@@ -276,11 +280,43 @@ extension DFUViewController: ImageUploadDelegate {
     
     func uploadDidFinish() {
         uploadProgress = 100
-        statusView.text = "Starting distribution..."
         imageManager?.transport.close()
         imageManager = nil
         osManager = nil
         shellManager = nil
+        
+        Task {
+            do {
+                let response = try await distributor.startDfu(of: slotIndex!, with: parameters)
+                if response.status == .success {
+                    statusView.text = "Distribution started"
+                }
+            } catch {
+                Task { @MainActor in
+                    statusView.text = error.localizedDescription
+                    inProgress = false
+                }
+            }
+        }
+    }
+    
+}
+
+private extension Node {
+    
+    func startDfu(of slotIndex: UInt16, with parameters: DFUParameters) async throws -> FirmwareDistributionStatus {
+        let model = models(withSigModelId: .firmwareDistributionServerModelId).first!
+        let message = FirmwareDistributionStart(
+            firmwareWithImageIndex: slotIndex,
+            to: parameters.selectedGroup?.address,
+            usingKeyIndex: parameters.applicationKey.index,
+            ttl: parameters.ttl,
+            mode: parameters.transferMode,
+            updatePolicy: parameters.updatePolicy,
+            distributionTimeoutBase: parameters.timeoutBase)
+        let response = try await MeshNetworkManager.instance.send(message, to: model) as! FirmwareDistributionStatus
+        print("AAA \(response)")
+        return response
     }
     
 }

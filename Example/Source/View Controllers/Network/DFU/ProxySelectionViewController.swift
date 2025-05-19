@@ -282,8 +282,8 @@ class ProxySelectionViewController: UITableViewController {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "action", for: indexPath)
                 cell.textLabel?.text = "Free Space"
                 if let storedSlots = proxyDetails?.storedFirmwareImagesListSize {
-                    cell.isUserInteractionEnabled = storedSlots > 0
-                    cell.textLabel?.isEnabled = storedSlots > 0
+                    cell.isUserInteractionEnabled = storedSlots > 0 && proxyDetails?.phase == .idle
+                    cell.textLabel?.isEnabled = storedSlots > 0 && proxyDetails?.phase == .idle
                 } else {
                     cell.isUserInteractionEnabled = false
                     cell.textLabel?.isEnabled = false

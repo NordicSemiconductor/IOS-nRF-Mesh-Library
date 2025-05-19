@@ -55,7 +55,6 @@
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="N/A" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fTp-cx-cEY">
                         <rect key="frame" x="60" y="104.5" width="316" height="21"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                        <color key="textColor" systemColor="secondaryLabelColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gEF-KH-es5">
@@ -72,7 +71,6 @@
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="N/A" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ptz-MB-xuC">
                         <rect key="frame" x="60" y="150.5" width="27.5" height="21"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                        <color key="textColor" systemColor="secondaryLabelColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="L1Z-4H-PeF">
@@ -619,7 +617,7 @@
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="DOs-Y9-WvR"/>
             <connections>
-                <outlet property="appKayNameLabel" destination="ptz-MB-xuC" id="SB8-tZ-0Fq"/>
+                <outlet property="appKeyNameLabel" destination="ptz-MB-xuC" id="SB8-tZ-0Fq"/>
                 <outlet property="applyButton" destination="Ipr-aA-eRW" id="xjx-TO-Bh0"/>
                 <outlet property="boundNetKeyLabel" destination="L1Z-4H-PeF" id="7fu-dP-i8d"/>
                 <outlet property="cancelButton" destination="pfN-b4-KSb" id="gDd-hR-XrD"/>
@@ -638,6 +636,7 @@
                 <outlet property="statusLabel" destination="CBm-Df-xHz" id="qfR-ry-ifM"/>
                 <outlet property="supportedUriSchemes" destination="bg4-Vn-gKu" id="Qsh-yG-kCl"/>
                 <outlet property="suspendResumeButton" destination="TpY-bG-kNZ" id="yFh-07-8MI"/>
+                <outlet property="transferMode" destination="G9j-tR-xPu" id="UT3-RW-lvQ"/>
                 <outlet property="updatePolicy" destination="pkn-GM-MkU" id="Zmq-R3-4mN"/>
             </connections>
             <point key="canvasLocation" x="105.79710144927537" y="-102.45535714285714"/>

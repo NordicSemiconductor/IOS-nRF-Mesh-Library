@@ -39,10 +39,11 @@ class FirmwareDistributionViewCell: ModelViewCell {
     @IBOutlet weak var statusLabel: UILabel!
     @IBOutlet weak var phaseLabel: UILabel!
     @IBOutlet weak var multicastAddress: UILabel!
-    @IBOutlet weak var appKayNameLabel: UILabel!
+    @IBOutlet weak var appKeyNameLabel: UILabel!
     @IBOutlet weak var boundNetKeyLabel: UILabel!
     @IBOutlet weak var distributionTtlLabel: UILabel!
     @IBOutlet weak var distributionTimeoutBaseLabel: UILabel!
+    @IBOutlet weak var transferMode: UILabel!
     @IBOutlet weak var updatePolicy: UILabel!
     @IBOutlet weak var imageIndexLabel: UILabel!
     
@@ -118,30 +119,34 @@ class FirmwareDistributionViewCell: ModelViewCell {
             phaseLabel.text = "\(status.phase)"
             if let groupAddress = status.multicastAddress {
                 let meshNetwork = MeshNetworkManager.instance.meshNetwork!
-                if let group = meshNetwork.group(withAddress: MeshAddress(groupAddress)) {
+                if groupAddress == .unassignedAddress {
+                    multicastAddress.text = "Unicast distribution"
+                } else if let group = meshNetwork.group(withAddress: MeshAddress(groupAddress)) {
                     multicastAddress.text = group.name
                 } else {
                     multicastAddress.text = "0x\(groupAddress.hex)"
                 }
                 if let applicationKey = meshNetwork.applicationKeys[status.applicationKeyIndex ?? 0] {
-                    appKayNameLabel.text = applicationKey.name
+                    appKeyNameLabel.text = applicationKey.name
                     boundNetKeyLabel.text = "Bound to \(applicationKey.boundNetworkKey.name)"
                 } else {
-                    appKayNameLabel.text = "Unknown"
+                    appKeyNameLabel.text = "Unknown"
                     boundNetKeyLabel.text = "Bound to Unknown Network Key"
                 }
-                appKayNameLabel.textColor = .label
+                appKeyNameLabel.textColor = .label
                 distributionTtlLabel.text = "\(status.ttl!)"
                 distributionTimeoutBaseLabel.text = "\(status.timeoutBase!)"
+                transferMode.text = "\(status.transferMode!)"
                 updatePolicy.text = "\(status.updatePolicy!)"
                 imageIndexLabel.text = "\(status.firmwareImageIndex!)"
             } else {
                 multicastAddress.text = "N/A"
-                appKayNameLabel.text = "N/A"
-                appKayNameLabel.textColor = .secondaryLabel
+                appKeyNameLabel.text = "N/A"
+                appKeyNameLabel.textColor = .secondaryLabel
                 boundNetKeyLabel.text = ""
                 distributionTtlLabel.text = "N/A"
                 distributionTimeoutBaseLabel.text = "N/A"
+                transferMode.text = "N/A"
                 updatePolicy.text = "N/A"
                 imageIndexLabel.text = "N/A"
             }

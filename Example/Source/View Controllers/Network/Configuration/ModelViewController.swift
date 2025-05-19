@@ -262,7 +262,7 @@ class ModelViewController: ProgressViewController {
         case .firmwareInformation:
             return 1 + (firmwareUpdateInformationStatus?.list.count ?? 0) // Firmware Information entries, Get action.
         case .firmwareSlots:
-            return 1 + (firmwareSlots?.count ?? 0) // Firmware Distribution slots, Get action.
+            return 1 + ((firmwareSlots?.count ?? -1) + 1) // Firmware Distribution slots, Get action, Delete All.
         case .custom:
             return 1
         case .healthServer:
@@ -360,7 +360,7 @@ class ModelViewController: ProgressViewController {
             fallthrough
         case .custom:
             // A custom cell for the Model.
-            let identifier = model.isBluetoothSIGAssigned ? model.modelIdentifier.hex : 
+            let identifier = model.isBluetoothSIGAssigned ? model.modelIdentifier.hex :
                              model.companyIdentifier == .nordicSemiconductorCompanyId && model.modelIdentifier == .lePairingResponder ? "pairingInitiator" :
                              "vendor"
             let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as! ModelViewCell
@@ -513,7 +513,7 @@ class ModelViewController: ProgressViewController {
             guard let slots = firmwareSlots,
                   indexPath.row < slots.count else {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "action", for: indexPath)
-                cell.textLabel?.text = "Get"
+                cell.textLabel?.text = indexPath.row == (firmwareSlots?.count ?? 0) ? "Get" : "Delete All"
                 cell.textLabel?.isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
                 return cell
             }
@@ -553,7 +553,7 @@ class ModelViewController: ProgressViewController {
         case .firmwareInformation:
             return true
         case .firmwareSlots:
-            return indexPath.row == firmwareSlots?.count ?? 0
+            return indexPath.row >= firmwareSlots?.count ?? 0
         case .custom, .configurationServer, .healthServer:
             return false
         }
@@ -590,7 +590,11 @@ class ModelViewController: ProgressViewController {
                 performSegue(withIdentifier: "firmwareInformation", sender: indexPath)
             }
         case .firmwareSlots:
-            readFirmwareDistributionSlot(byIndex: 0)
+            if indexPath.row == firmwareSlots?.count ?? 0 {
+                readFirmwareDistributionSlot(byIndex: 0)
+            } else {
+                deleteAllFirmwareDistributionSlots()
+            }
         default:
             break
         }
@@ -898,6 +902,11 @@ private extension ModelViewController {
         send(message, description: "Reading Firmware Distribution Slots...")
     }
     
+    func deleteAllFirmwareDistributionSlots() {
+        let message = FirmwareDistributionFirmwareDeleteAll()
+        send(message, description: "Deleting Slots...")
+    }
+    
     func deleteFirmwareDistributionSlot(byFirmwareId firmwareId: FirmwareId) {
         let message = FirmwareDistributionFirmwareDelete(firmwareId)
         send(message, description: "Deleting Slot...")
@@ -1117,6 +1126,14 @@ extension ModelViewController: MeshNetworkDelegate {
                 }
                 return
             }
+            // Were all slots removed?
+            if status.entryCount == 0 {
+                done {
+                    self.firmwareSlots = nil
+                    self.reloadSections(.firmwareSlots, with: .automatic)
+                }
+                return
+            }
             // Otherwise, we are reading slots.
             guard let imageIndex = status.imageIndex, imageIndex != 0xFFFF,
                   let firmwareId = status.firmwareId else {
@@ -1124,7 +1141,10 @@ extension ModelViewController: MeshNetworkDelegate {
                 return
             }
             firmwareSlots = firmwareSlots ?? []
-            firmwareSlots?.append(firmwareId)
+            // This check is to avoid duplicates when used clicks Get over and over.
+            if imageIndex == firmwareSlots!.count  {
+                firmwareSlots?.append(firmwareId)
+            }
             if status.entryCount > imageIndex + 1 {
                 reloadSections(.firmwareSlots, with: .automatic)
                 readFirmwareDistributionSlot(byIndex: imageIndex + 1)

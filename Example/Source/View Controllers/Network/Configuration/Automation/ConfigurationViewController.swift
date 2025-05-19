@@ -336,17 +336,23 @@ class ConfigurationViewController: UIViewController,
     func update(receivers: [Receiver], with updatePackage: UpdatePackage,
                 parameters: DFUParameters,
                 on distributor: Node, over bearer: GattBearer) {
-        // The Distributor Node must have the Firmware Distribution Server Model.
+        // The Distributor Node must have the Firmware Distribution Server Model,
+        // Firmware Update Client Model and BLOB Transfer Client Model.
         guard let meshNetwork = MeshNetworkManager.instance.meshNetwork,
               let firmwareDistributorServerModel = distributor
-            .models(withSigModelId: .firmwareDistributionServerModelId)
-            .first else {
+                .models(withSigModelId: .firmwareDistributionServerModelId)
+                .first,
+              let element = firmwareDistributorServerModel.parentElement,
+              let firmwareUpdateClientModel = element.model(withSigModelId: .firmwareUpdateClientModelId),
+              let blobTransferClientModel = element.model(withSigModelId: .blobTransferClientModelId) else {
             return
         }
         
         // Before starting the DFU we need to bind the selected Application Key
-        // to the BLOB Transfer Server models and Firmware Update Server models.
-        // The Firmware Update Server models have already been bound to the
+        // to the BLOB Transfer models and Firmware Update models.
+        bind(applicationKeys: [parameters.applicationKey], to: [firmwareUpdateClientModel, blobTransferClientModel])
+
+        // The Firmware Update Server models on Target Nodes have already been bound to the
         // key on the previous screen, where there user was using it to check
         // metadata compatibility, so below we list only BLOB Transfer Server models.
         // Moreover, if a multicast distribution was selected, both Firmware Update Server
