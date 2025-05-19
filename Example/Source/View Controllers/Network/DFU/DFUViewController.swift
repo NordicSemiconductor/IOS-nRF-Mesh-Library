@@ -78,9 +78,6 @@ class DFUViewController: UIViewController,
     private var imageManager: ImageManager?
     private var uploadProgress = 0
     private var uploadSpeed: Float = 0
-    private var uploadStartTime: Date?
-    
-    private var slotIndex: UInt16?
     
     // MARK: - View Controller
     
@@ -111,51 +108,36 @@ class DFUViewController: UIViewController,
         // by the Distributor.
         let transport = McuMgrBleTransport(bearer.identifier)
         
-        // First, create a new slot for the image.
-        statusView.text = "Creating slot..."
-        shellManager = ShellManager(transport: transport)
-        shellManager!.logDelegate = self
-        shellManager!.execute(command: "mesh models dfu slot add \(image.data.count) \(firmwareId)\(metadata)") { [weak self] response, error in
-            // Returned response has the following format:
-            //
-            //    Adding slot (size: <Size>)
-            //
-            //    Slot added. Index: <Index>
-            //
-            // We need to get the Image Index from the response.
-            if let text = response?.output,
-               let match = text.range(of: #"Index:\s*(\d+)"#, options: .regularExpression),
-               let number = Int(String(text[match]).components(separatedBy: ":").last?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "") {
-                // The slot index is used to identify the image in the Distributor.
-                // Keep it for later use.
-                self?.slotIndex = UInt16(truncatingIfNeeded: number)
+        Task {
+            do {
+                // First, create a new slot for the image.
+                statusView.text = "Creating slot..."
+                let slot = try await createSlot(for: image, with: firmwareId, and: metadata, over: transport)
                 
                 // Read MCU Manager parameters to get the buffer size and count.
-                // These can be used to speed up the upload.
-                self?.statusView.text = "Reading parameters..."
-                self?.osManager = DefaultManager(transport: transport)
-                self?.osManager!.logDelegate = self
-                self?.osManager!.params { [weak self] response, error in
-                    // Set the upload parameters based on the response.
-                    let config = response.map { params in
-                        FirmwareUpgradeConfiguration(
-                            // Note, that number of buffers is decreased by 1.
-                            pipelineDepth: params.bufferCount.map { max(1, Int($0) - 1) } ?? 0,
-                            // Increased buffer size decreases number of bytes used for sending metadata.
-                            reassemblyBufferSize: params.bufferSize
-                        )
-                    } ?? FirmwareUpgradeConfiguration()
-                    
-                    self?.statusView.text = "Uploading image..."
-                    self?.imageManager = ImageManager(transport: transport)
-                    self?.imageManager!.logDelegate = self
-                    // Successful upload will call uploadDidFinish() below.
-                    _ = self?.imageManager!.upload(images: [image], using: config, delegate: self)
+                statusView.text = "Reading parameters..."
+                let config = try await readParameters(over: transport)
+                
+                // Upload the image using Mcu Manager.
+                statusView.text = "Uploading image..."
+                try await uploadImage(image, using: config, over: transport) { [weak self] progress in
+                    self?.uploadProgress = progress.percentage
+                    self?.uploadSpeed = progress.speedBytesPerSecond
+                    self?.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .none)
                 }
-            } else {
-                self?.statusView.text = "Failed to add slot"
-                self?.inProgress = false
-                return
+                
+                // We no longer need the transport.
+                transport.close()
+                
+                // Start the distribution.
+                let response = try await distributor.startDfu(of: slot, with: parameters)
+                if response.status == .success {
+                    statusView.text = "Distribution started"
+                }
+            } catch {
+                transport.close()
+                statusView.text = error.localizedDescription
+                inProgress = false
             }
         }
     }
@@ -222,6 +204,128 @@ extension DFUViewController: UITableViewDataSource, UITableViewDelegate {
 
 }
 
+private extension DFUViewController {
+    
+    enum DFUError: LocalizedError {
+        case invalidResponse(String)
+        case cancelled
+        
+        var localizedDescription: String {
+            switch self {
+            case .invalidResponse(let response):
+                return "Adding slot failed. Invalid response: \(response)"
+            case .cancelled:
+                return "Cancelled"
+            }
+        }
+    }
+    
+    func createSlot(for image: ImageManager.Image, with firmwareId: String, and metadata: String?, over transport: McuMgrTransport) async throws -> UInt16 {
+        let metadata = metadata.map { " \($0)" } ?? ""
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            let shellManager = ShellManager(transport: transport)
+            shellManager.logDelegate = self
+            shellManager.execute(command: "mesh models dfu slot add \(image.data.count) \(firmwareId)\(metadata)") { response, error in
+                // Returned response has the following format:
+                //
+                //    Adding slot (size: <Size>)
+                //
+                //    Slot added. Index: <Index>
+                //
+                // We need to get the Image Index from the response.
+                if let text = response?.output,
+                   let match = text.range(of: #"Index:\s*(\d+)"#, options: .regularExpression),
+                   let number = Int(String(text[match]).components(separatedBy: ":").last?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "") {
+                    // The slot index is used to identify the image in the Distributor.
+                    // Keep it for later use.
+                    let slot = UInt16(truncatingIfNeeded: number)
+                    continuation.resume(returning: slot)
+                } else {
+                    continuation.resume(throwing: DFUError.invalidResponse(response?.output ?? "Empty"))
+                }
+            }
+        }
+    }
+    
+    func readParameters(over transport: McuMgrTransport) async throws -> FirmwareUpgradeConfiguration {
+        return try await withCheckedThrowingContinuation { continuation in
+            let osManager = DefaultManager(transport: transport)
+            osManager.logDelegate = self
+            osManager.params { response, error in
+                // Set the upload parameters based on the response.
+                let config = response.map { params in
+                    FirmwareUpgradeConfiguration(
+                        // Note, that number of buffers is decreased by 1.
+                        pipelineDepth: params.bufferCount.map { max(1, Int($0) - 1) } ?? 0,
+                        // Increased buffer size decreases number of bytes used for sending metadata.
+                        reassemblyBufferSize: params.bufferSize
+                    )
+                } ?? FirmwareUpgradeConfiguration()
+                
+                continuation.resume(returning: config)
+            }
+        }
+    }
+    
+    struct UploadProgress {
+        var percentage: Int
+        var speedBytesPerSecond: Float
+    }
+    
+    func uploadImage(_ image: ImageManager.Image,
+                     using config: FirmwareUpgradeConfiguration,
+                     over transport: McuMgrTransport,
+                     onProgress: @escaping @Sendable (UploadProgress) -> Void) async throws {
+        // Successful upload will call uploadDidFinish() below.
+        class UploadCallback: ImageUploadDelegate {
+            var continuation: CheckedContinuation<Void, Error>!
+            
+            private let onProgress: @Sendable (UploadProgress) -> Void
+            private var uploadStartTime: Date
+            
+            init(onProgress: @escaping @Sendable (UploadProgress) -> Void) {
+                self.onProgress = onProgress
+                self.uploadStartTime = Date()
+            }
+                
+            func uploadProgressDidChange(bytesSent: Int, imageSize: Int, timestamp: Date) {
+                if bytesSent > 0 {
+                    let progress = bytesSent * 100 / imageSize // percentage
+                    let speed = Float(bytesSent) / Float(timestamp.timeIntervalSince(uploadStartTime))
+                    onProgress(UploadProgress(percentage: progress, speedBytesPerSecond: speed))
+                }
+            }
+            
+            func uploadDidFail(with error: any Error) {
+                continuation.resume(throwing: error)
+            }
+            
+            func uploadDidCancel() {
+                continuation.resume(throwing: DFUError.cancelled)
+            }
+            
+            func uploadDidFinish() {
+                continuation.resume()
+            }
+            
+            deinit {
+                print("AAA Deinit")
+            }
+        }
+        
+        // Store the reference to the callback to prevent it from being deallocated.
+        let callback = UploadCallback(onProgress: onProgress)
+        let imageManager = ImageManager(transport: transport)
+        imageManager.logDelegate = self
+        return try await withCheckedThrowingContinuation { continuation in
+            callback.continuation = continuation
+            _ = imageManager.upload(images: [image], using: config, delegate: callback)
+        }
+    }
+    
+}
+
 extension DFUViewController: McuMgrLogDelegate {
     
     func log(_ message: String, ofCategory category: McuMgrLogCategory, atLevel level: McuMgrLogLevel) {
@@ -229,7 +333,7 @@ extension DFUViewController: McuMgrLogDelegate {
     }
     
     func minLogLevel() -> McuMgrLogLevel {
-        return .verbose
+        return .info
     }
     
 }
@@ -254,50 +358,6 @@ extension McuMgrLogCategory {
     
     var log: OSLog {
         return OSLog(subsystem: Bundle.main.bundleIdentifier!, category: rawValue)
-    }
-    
-}
-
-extension DFUViewController: ImageUploadDelegate {
-    
-    func uploadProgressDidChange(bytesSent: Int, imageSize: Int, timestamp: Date) {
-        uploadProgress = bytesSent * 100 / imageSize // percentage
-        uploadStartTime = uploadStartTime ?? timestamp
-        if bytesSent > 0 {
-            uploadSpeed = Float(bytesSent) / Float(timestamp.timeIntervalSince(uploadStartTime!))
-        }
-        tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .none)
-    }
-    
-    func uploadDidFail(with error: any Error) {
-        statusView.text = error.localizedDescription
-        inProgress = false
-    }
-    
-    func uploadDidCancel() {
-        navigationController?.dismiss(animated: true)
-    }
-    
-    func uploadDidFinish() {
-        uploadProgress = 100
-        imageManager?.transport.close()
-        imageManager = nil
-        osManager = nil
-        shellManager = nil
-        
-        Task {
-            do {
-                let response = try await distributor.startDfu(of: slotIndex!, with: parameters)
-                if response.status == .success {
-                    statusView.text = "Distribution started"
-                }
-            } catch {
-                Task { @MainActor in
-                    statusView.text = error.localizedDescription
-                    inProgress = false
-                }
-            }
-        }
     }
     
 }
