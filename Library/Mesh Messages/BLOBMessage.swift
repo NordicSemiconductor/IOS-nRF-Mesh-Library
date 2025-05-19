@@ -67,3 +67,37 @@ public enum TransferMode: UInt8, Sendable {
     /// Pull BLOB Transfer mode.
     case pull             = 0x02
 }
+
+// MARK: - CustomDebugStringConvertible
+
+extension BLOBTransferMessageStatus: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .success:                 return "Success"
+        case .invalidBlockNumber:      return "Invalid Block Number"
+        case .invalidBlockSize:        return "Invalid Block Size"
+        case .invalidChunkSize:        return "Invalid Chunk Size"
+        case .wrongPhase:              return "Wrong Phase"
+        case .invalidParameter:        return "Invalid Parameter"
+        case .wrongBlobId:             return "Wrong BLOB ID"
+        case .blobTooLarge:            return "BLOB Too Large"
+        case .unsupportedTransferMode: return "Unsupported Transfer Mode"
+        case .internalError:           return "Internal Error"
+        case .informationUnavailable:  return "Information Unavailable"
+        }
+    }
+    
+}
+
+extension TransferMode: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .noActiveTransfer: return "No Active Transfer"
+        case .push:             return "Push"
+        case .pull:             return "Pull"
+        }
+    }
+    
+}
