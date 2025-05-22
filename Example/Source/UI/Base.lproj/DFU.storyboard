@@ -332,6 +332,7 @@
                         <segue destination="rCC-pi-r2L" kind="show" identifier="continue" id="ioE-bI-obV"/>
                         <segue destination="Qf6-kl-oiX" kind="show" identifier="pair" id="Nat-Zb-4Mh"/>
                         <segue destination="Qk2-No-Sio" kind="presentation" identifier="bind" id="7Vk-ll-k7I"/>
+                        <segue destination="rrA-Zn-hXP" kind="show" identifier="progress" id="RRr-QO-XbE"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6Od-uP-h9L" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -772,19 +773,19 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Status" textAlignment="justified" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9VA-aT-int">
-                                <rect key="frame" x="16" y="163.5" width="49" height="20.5"/>
+                                <rect key="frame" x="16" y="215.5" width="49" height="20.5"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" systemColor="secondaryLabelColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00:00" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HYE-UL-bgl">
-                                <rect key="frame" x="16" y="196" width="46" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HYE-UL-bgl">
+                                <rect key="frame" x="16" y="248" width="0.0" height="0.0"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" systemColor="secondaryLabelColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="f2H-BY-fzv">
-                                <rect key="frame" x="0.0" y="240" width="414" height="656"/>
+                                <rect key="frame" x="0.0" y="292" width="414" height="604"/>
                                 <color key="backgroundColor" red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="upload" rowHeight="77" id="yms-20-esM" customClass="UploadProgressViewCell" customModule="nRF_Mesh" customModuleProvider="target">
@@ -959,20 +960,20 @@
                                 </prototypes>
                             </tableView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6HX-P8-1zD" userLabel="Separator">
-                                <rect key="frame" x="0.0" y="240" width="414" height="1"/>
+                                <rect key="frame" x="0.0" y="292" width="414" height="1"/>
                                 <color key="backgroundColor" systemColor="separatorColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="1" id="4E3-7I-uUQ"/>
                                 </constraints>
                             </view>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00:00" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Mw6-8S-eQp">
-                                <rect key="frame" x="352" y="196" width="46" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Mw6-8S-eQp">
+                                <rect key="frame" x="398" y="248" width="0.0" height="0.0"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" systemColor="secondaryLabelColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NBV-wi-UFr">
-                                <rect key="frame" x="16" y="188" width="382" height="4"/>
+                                <rect key="frame" x="16" y="240" width="382" height="4"/>
                             </progressView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="gCd-Gd-vaW"/>
@@ -1008,7 +1009,6 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
-                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <connections>
                         <outlet property="progress" destination="NBV-wi-UFr" id="nCN-9I-sO7"/>
                         <outlet property="remainingTime" destination="Mw6-8S-eQp" id="swh-Jd-3Qt"/>
@@ -1019,7 +1019,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="mZ8-L2-u6S" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="8395.652173913044" y="-7203.3482142857138"/>
+            <point key="canvasLocation" x="5770" y="-7963"/>
         </scene>
         <!--SelectProxy-->
         <scene sceneID="s2y-98-RUf">

@@ -318,7 +318,7 @@ public enum FirmwareDistributionPhase: UInt8, Sendable {
     /// needs to be reset to ``.idle`` state using ``FirmwareDistributionCancel``
     /// message before starting a new firmware distribution.
     public var isBusy: Bool {
-        return self != .idle && self != .failed && self != .completed
+        return self != .idle && self != .failed && self != .completed && self != .applyingUpdate
     }
     
     /// A flag indicating whether the firmware distribution can be suspended.

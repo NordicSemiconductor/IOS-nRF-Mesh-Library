@@ -330,11 +330,13 @@ class ConfigurationViewController: UIViewController,
     ///  - receivers: The receivers to update.
     ///  - updatePackage: The update package to use.
     ///  - parameters: DFU parameters.
+    ///  - applicationKey: The Application Key to use.
     ///  - distributor: The distributor Node.
     ///  - bearer: A direct bearer to the Distributor Node. This is required to upload the update package
     ///            over SMP protocol.
     func update(receivers: [Receiver], with updatePackage: UpdatePackage,
                 parameters: DFUParameters,
+                usingApplicationKey applicationKey: ApplicationKey,
                 on distributor: Node, over bearer: GattBearer) {
         // The Distributor Node must have the Firmware Distribution Server Model,
         // Firmware Update Client Model and BLOB Transfer Client Model.
@@ -350,7 +352,7 @@ class ConfigurationViewController: UIViewController,
         
         // Before starting the DFU we need to bind the selected Application Key
         // to the BLOB Transfer models and Firmware Update models.
-        bind(applicationKeys: [parameters.applicationKey], to: [firmwareUpdateClientModel, blobTransferClientModel])
+        bind(applicationKeys: [applicationKey], to: [firmwareUpdateClientModel, blobTransferClientModel])
 
         // The Firmware Update Server models on Target Nodes have already been bound to the
         // key on the previous screen, where there user was using it to check
@@ -377,10 +379,11 @@ class ConfigurationViewController: UIViewController,
             }
         
         // Bind all found BLOB Transfer Server models to the selected Application Key.
-        bind(applicationKeys: [parameters.applicationKey], to: models)
+        bind(applicationKeys: [applicationKey], to: models)
         
         // If a Multicast destination is selected, subscribe to it.
-        if let group = parameters.selectedGroup {
+        if let address = parameters.multicastAddress,
+           let group = meshNetwork.group(withAddress: address) {
             subscribe(models: models, to: [group])
         }
         
@@ -406,6 +409,7 @@ class ConfigurationViewController: UIViewController,
         self.receivers = receivers
         self.updatePackage = updatePackage
         self.parameters = parameters
+        self.applicationKey = applicationKey
     }
     
     // MARK: - Private properties
@@ -422,12 +426,14 @@ class ConfigurationViewController: UIViewController,
     private var startDate: Date!
     
     // MARK: - Private properties for DFU
+    
     private var isDfu: Bool = false
     private var distributor: Node?
     private var bearer: GattBearer?
     private var receivers: [Receiver]?
     private var updatePackage: UpdatePackage?
     private var parameters: DFUParameters?
+    private var applicationKey: ApplicationKey?
     
     // MARK: - View Controller
     
@@ -456,6 +462,7 @@ class ConfigurationViewController: UIViewController,
             destination.receivers = receivers
             destination.updatePackage = updatePackage
             destination.parameters = parameters
+            destination.applicationKey = applicationKey
         }
     }
     

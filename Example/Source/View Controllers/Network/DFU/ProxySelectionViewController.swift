@@ -73,6 +73,7 @@ private struct ProxyDetails {
     var isSmpSecure: Bool
     var distributorServerModel: Model?
     var applicationKeys: [ApplicationKey]
+    var parameters: DFUParameters?
     var phase: FirmwareDistributionPhase?
     var capabilities: Capabilities?
     var storedFirmwareImagesListSize: UInt16?
@@ -99,16 +100,23 @@ private struct ProxyDetails {
         guard let capabilities = capabilities else {
             return false
         }
+        /// Whether distribution is in progress.
+        let updateInProgress = phase == .transferActive || phase == .transferSuccess || phase == .transferSuspended
+        /// Number of used slots.
         let occupiedSlots = storedFirmwareImagesListSize ?? 0
-        return isSmpSupported &&
-               phase == .idle &&
-               capabilities.maxFirmwareImageSize > 0 &&
-               capabilities.maxUploadSpace > 0 &&
-               capabilities.remainingUploadSpace > 0 &&
-               (
-                    capabilities.remainingUploadSpace == capabilities.maxUploadSpace ||
-                    capabilities.maxFirmwareImagesListSize > occupiedSlots
-               )
+        /// Whether the Distributor is idle and can start new Firmware Update
+        ///
+        /// Note, that for that we need SMP support, available slots, etc..
+        let idle = phase == .idle &&
+                   isSmpSupported &&
+                   capabilities.maxFirmwareImageSize > 0 &&
+                   capabilities.maxUploadSpace > 0 &&
+                   capabilities.remainingUploadSpace > 0 &&
+                   (
+                        capabilities.remainingUploadSpace == capabilities.maxUploadSpace ||
+                        capabilities.maxFirmwareImagesListSize > occupiedSlots
+                   )
+        return updateInProgress || idle
     }
 }
 
@@ -118,6 +126,14 @@ class ProxySelectionViewController: UITableViewController {
     @IBOutlet weak var nextButton: UIBarButtonItem!
     @IBAction func nextTapped(_ sender: UIBarButtonItem) {
         guard let proxyDetails = proxyDetails, proxyDetails.isSupported else { return }
+        // Can we go directly to the Firmware Update screen to see progress?
+        if let _ = proxyDetails.capabilities,
+           proxyDetails.phase == .transferActive || proxyDetails.phase == .transferSuccess || proxyDetails.phase == .transferSuspended {
+            performSegue(withIdentifier: "progress", sender: nil)
+            return
+        }
+        // If the SMP Service is secured using LE Pairing Responder model,
+        // we need to pair with the device before proceeding.
         if proxyDetails.isSmpSecure {
             performSegue(withIdentifier: "pair", sender: nil)
         } else {
@@ -161,6 +177,13 @@ class ProxySelectionViewController: UITableViewController {
                 // This should never happen.
                 destination.availableSpace = 0
             }
+        case "progress":
+            let destination = segue.destination as! DFUViewController
+            destination.distributor = proxyDetails!.distributorServerModel!.parentElement!.parentNode
+            destination.bearer = MeshNetworkManager.bearer.proxies.first { $0.isOpen }
+            destination.applicationKey = selectedAppKey
+            destination.parameters = proxyDetails!.parameters
+            destination.estimatedFirmwareSize = Int(proxyDetails!.capabilities!.maxUploadSpace) - Int(proxyDetails!.capabilities!.remainingUploadSpace)
         default:
             break
         }
@@ -271,7 +294,7 @@ class ProxySelectionViewController: UITableViewController {
             cell.textLabel?.text = "Phase"
             cell.detailTextLabel?.text = proxyDetails?.phase?.debugDescription ?? "Unknown"
             switch proxyDetails?.phase {
-            case .idle, .failed, .completed:
+            case .idle, .failed, .completed, .transferActive, .transferSuccess, .transferSuspended, .applyingUpdate:
                 cell.checked = true
             default:
                 cell.checked = false
@@ -308,7 +331,9 @@ class ProxySelectionViewController: UITableViewController {
                    let storedSlots = proxyDetails.storedFirmwareImagesListSize,
                    let maxSlots = proxyDetails.capabilities?.maxFirmwareImagesListSize {
                     cell.detailTextLabel?.text = "\(maxSlots - storedSlots) / \(maxSlots)"
-                    cell.checked = storedSlots < maxSlots
+                    let hasAvailableSlots = storedSlots < maxSlots
+                    let canResume = proxyDetails.phase == .transferActive || proxyDetails.phase == .transferSuccess || proxyDetails.phase == .transferSuspended
+                    cell.checked = hasAvailableSlots || canResume
                 } else {
                     cell.detailTextLabel?.text = "Unknown"
                     cell.checked = false
@@ -422,7 +447,7 @@ class ProxySelectionViewController: UITableViewController {
             }
             Task {
                 do {
-                    if proxyDetails?.phase == .completed || proxyDetails?.phase == .failed {
+                    if proxyDetails?.phase == .completed || proxyDetails?.phase == .failed || proxyDetails?.phase == .applyingUpdate {
                         let phase = try await cancelDistribution(from: distributorServerModel, using: selectedAppKey)
                         proxyDetails?.phase = phase
                         if let index = sections.firstIndex(of: .status) {
@@ -442,11 +467,9 @@ class ProxySelectionViewController: UITableViewController {
                         let capabilities = try await readCapabilities(from: distributorServerModel, using: selectedAppKey)
                         proxyDetails?.capabilities = capabilities
                     }
-                    Task { @MainActor in
-                        nextButton.isEnabled = proxyDetails?.isSupported ?? false
-                        if let index = sections.firstIndex(of: .capabilities) {
-                            tableView.reloadSections(IndexSet(integer: index), with: .automatic)
-                        }
+                    nextButton.isEnabled = proxyDetails?.isSupported ?? false
+                    if let index = sections.firstIndex(of: .capabilities) {
+                        tableView.reloadSections(IndexSet(integer: index), with: .automatic)
                     }
                 } catch {
                     NSLog("Error while deleting all slots: \(error)")
@@ -558,11 +581,21 @@ private extension ProxySelectionViewController {
     func readDistributorState(from model: Model, using applicationKey: ApplicationKey) {
         Task {
             do {
-                let phase = try await readDistributionPhase(from: model, using: applicationKey)
+                let status = try await readDistributionStatus(from: model, using: applicationKey)
                 let capabilities = try await readCapabilities(from: model, using: applicationKey)
                 let slots = try await readFirmwareImagesListSize(from: model, using: applicationKey)
                 
-                proxyDetails?.phase = phase
+                proxyDetails?.phase = status.phase
+                if let ttl = status.ttl, let timeoutBase = status.timeoutBase,
+                let transferMode = status.transferMode, let updatePolicy = status.updatePolicy {
+                    proxyDetails?.parameters = DFUParameters(
+                        ttl: ttl, timeoutBase: timeoutBase,
+                        transferMode: transferMode, updatePolicy: updatePolicy,
+                        multicastAddress: status.multicastAddress.map { MeshAddress($0) }
+                    )
+                } else {
+                    proxyDetails?.parameters = nil
+                }
                 proxyDetails?.capabilities = capabilities
                 proxyDetails?.storedFirmwareImagesListSize = slots
                 
@@ -577,10 +610,9 @@ private extension ProxySelectionViewController {
         }
     }
     
-    func readDistributionPhase(from model: Model, using applicationKey: ApplicationKey) async throws -> FirmwareDistributionPhase {
+    func readDistributionStatus(from model: Model, using applicationKey: ApplicationKey) async throws -> FirmwareDistributionStatus {
         let response = try await MeshNetworkManager.instance.send(FirmwareDistributionGet(), to: model, using: applicationKey)
-        let status = response as! FirmwareDistributionStatus
-        return status.phase
+        return response as! FirmwareDistributionStatus
     }
     
     func cancelDistribution(from model: Model, using applicationKey: ApplicationKey) async throws -> FirmwareDistributionPhase {

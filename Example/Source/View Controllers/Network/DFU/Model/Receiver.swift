@@ -30,8 +30,37 @@
 
 import NordicMesh
 
+/// Represents a receiver in the firmware update process.
 struct Receiver {
+    
+    /// The status of the firmware update process.
+    enum Status {
+        /// The receiver is idle and not currently updating.
+        case idle
+        /// The receiver is currently distributing the firmware update.
+        case distribution(progress: Int, speedBytesPerSecond: Float)
+        /// The receiver is in `verificationSucceeded` state.
+        case verified
+        /// The receiver is in `applyingUpdate` or `applySuccess` state.
+        case applied
+        /// The receiver is in `verificationFailed`, `applyFailed` or `transferCanceled` state.
+        case failure
+        
+        var progress: Int {
+            switch self {
+            case .idle: return -1
+            case .distribution(let progress, _): return progress
+            case .verified: return 100
+            case .applied: return 100
+            case .failure: return 0
+            }
+        }
+    }
+    
+    /// The Unicast Address of the Element with the Firmware Update Server model on the Receiver.
     let address: Address
+    /// The index of the image being updated.
     let imageIndex: UInt8
+    /// The status of the receiver.
+    var status: Status = .idle
 }
-

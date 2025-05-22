@@ -31,10 +31,9 @@
 import NordicMesh
 
 struct DFUParameters {
-    let applicationKey: ApplicationKey
     let ttl: UInt8
     let timeoutBase: UInt16
     let transferMode: TransferMode
     let updatePolicy: FirmwareUpdatePolicy
-    let selectedGroup: Group?
+    let multicastAddress: MeshAddress?
 }

@@ -43,9 +43,9 @@ class UploadProgressViewCell: UITableViewCell {
         didSet {
             if let progress = progress {
                 progressIndicator?.progress = progress
-                progressIndicator?.isHidden = progress == 1.0
-                throughoutLabel?.isHidden = progress == 1.0 || progress == 0
-                accessoryType = progress == 1.0 ? .checkmark : .none
+                progressIndicator?.isHidden = progress >= 1.0
+                throughoutLabel?.isHidden = progress >= 1.0 || progress <= 0
+                accessoryType = progress >= 1.0 ? .checkmark : .none
             } else {
                 progressIndicator?.isHidden = false
                 throughoutLabel?.isHidden = false

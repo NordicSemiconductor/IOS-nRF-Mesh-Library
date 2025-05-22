@@ -71,11 +71,11 @@ class DFUParametersViewController: UITableViewController {
             let destination = segue.destination as! ConfigurationViewController
             destination.update(receivers: receivers, with: updatePackage,
                                parameters: DFUParameters(
-                                    applicationKey: applicationKey,
                                     ttl: ttl, timeoutBase: timeoutBase,
                                     transferMode: transferMode, updatePolicy: updatePolicy,
-                                    selectedGroup: selectedGroup
+                                    multicastAddress: selectedGroup?.address
                                ),
+                               usingApplicationKey: applicationKey,
                                on: distributor, over: bearer)
         }
     }
