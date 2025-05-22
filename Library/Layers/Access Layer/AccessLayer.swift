@@ -323,7 +323,7 @@ internal class AccessLayer {
     /// - parameter handle: The message handle.
     func cancel(_ handle: MessageHandle) {
         guard let networkManager = networkManager else { return }
-        logger?.i(.access, "Cancelling messages with op code: \(handle.opCode), sent from: \(handle.source.hex) to: \(handle.destination.hex)")
+        logger?.i(.access, "Cancelling messages with opcode: \(handle.opCode.hex), sent from: \(handle.source.hex) to: \(handle.destination.hex)")
         mutex.sync {
             if let index = reliableMessageContexts.firstIndex(where: {
                                $0.request.opCode == handle.opCode &&

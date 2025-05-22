@@ -32,29 +32,56 @@ import UIKit
 
 class NodeProgressViewCell: NodeViewCell {
     
+    // MARK: - Outlets
+    
     @IBOutlet weak var progressIndicator: CircularProgressView!
     @IBOutlet weak var throughoutLabel: UILabel!
-    @IBOutlet weak var applyButton: UIButton!
-    @IBAction func applyTapped(_ sender: UIButton) {
-        
-    }
     
-    var percentage: Int = 0 {
+    // MARK: - Properties
+    
+    var progress: Float? {
         didSet {
-            progressIndicator?.percentage = percentage
-            progressIndicator?.isHidden = percentage == 100
-            throughoutLabel?.isHidden = percentage == 100 || percentage == 0
-            applyButton?.isHidden = percentage < 100
+            guard !failure && !success else {
+                return
+            }
+            if let progress = progress {
+                progressIndicator?.progress = progress
+                progressIndicator?.isHidden = progress == 1.0
+                throughoutLabel?.isHidden = progress == 1.0 || progress == 0
+            } else {
+                progressIndicator?.isHidden = true
+                throughoutLabel?.isHidden = true
+            }
         }
     }
     
-    var speedBytesPerSecond: Float = 0 {
+    var speedBytesPerSecond: Float? {
         didSet {
-            throughoutLabel?.text = String(format: "%.1f kB/s", speedBytesPerSecond / 1024)
+            if let speedBytesPerSecond = speedBytesPerSecond {
+                throughoutLabel?.text = String(format: "%.2f kB/s", speedBytesPerSecond / 1024)
+            }
         }
     }
     
-    override func awakeFromNib() {
-        applyButton.makeBlue()
+    var failure: Bool = false {
+        didSet {
+            if failure {
+                progressIndicator?.isHidden = true
+                throughoutLabel?.isHidden = true
+                accessoryView = UIImageView(image: UIImage(named: "xmark"))
+                tintColor = .systemRed
+            }
+        }
+    }
+    
+    var success: Bool = false {
+        didSet {
+            if success && !failure {
+                progressIndicator?.isHidden = true
+                throughoutLabel?.isHidden = true
+                accessoryType = .checkmark
+                accessoryView = nil
+            }
+        }
     }
 }

@@ -213,6 +213,8 @@
 		F0B67D7E2DAF925000B1A69D /* SelectProxy.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F0B67D7C2DAF925000B1A69D /* SelectProxy.storyboard */; };
 		F0B67D802DAFCE7B00B1A69D /* PasskeyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0B67D7F2DAFCE7B00B1A69D /* PasskeyViewController.swift */; };
 		F0B67D822DB0F0D700B1A69D /* FirmwareSelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0B67D812DB0F0D700B1A69D /* FirmwareSelectionViewController.swift */; };
+		F0D8C3692DDC7F01003E3E29 /* FirmwareUpdate.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0D8C3682DDC7F01003E3E29 /* FirmwareUpdate.xib */; };
+		F0D8C36B2DDC81B1003E3E29 /* FirmwareUpdateViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D8C36A2DDC81B1003E3E29 /* FirmwareUpdateViewCell.swift */; };
 		F0DAF5BC2D3A6186000874EA /* DfuMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0DAF5BB2D3A617C000874EA /* DfuMessages.swift */; };
 		F0DFB0082DA6CF4400B209FD /* FirmwareUpdateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0DFB0062DA6CF4400B209FD /* FirmwareUpdateController.swift */; };
 		F0E6D64D29F2A4D2004B1C26 /* SchedulerMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E6D64B29F2A4A9004B1C26 /* SchedulerMessages.swift */; };
@@ -461,6 +463,8 @@
 		F0B67D7D2DAF925000B1A69D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/SelectProxy.storyboard; sourceTree = "<group>"; };
 		F0B67D7F2DAFCE7B00B1A69D /* PasskeyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasskeyViewController.swift; sourceTree = "<group>"; };
 		F0B67D812DB0F0D700B1A69D /* FirmwareSelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareSelectionViewController.swift; sourceTree = "<group>"; };
+		F0D8C3682DDC7F01003E3E29 /* FirmwareUpdate.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FirmwareUpdate.xib; sourceTree = "<group>"; };
+		F0D8C36A2DDC81B1003E3E29 /* FirmwareUpdateViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateViewCell.swift; sourceTree = "<group>"; };
 		F0DAF5BB2D3A617C000874EA /* DfuMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DfuMessages.swift; sourceTree = "<group>"; };
 		F0DFB0062DA6CF4400B209FD /* FirmwareUpdateController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateController.swift; sourceTree = "<group>"; };
 		F0E6D64B29F2A4A9004B1C26 /* SchedulerMessages.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SchedulerMessages.swift; sourceTree = "<group>"; };
@@ -596,6 +600,7 @@
 				5217D2E4250F90D8004FDE79 /* GenericDefaultTransitionTime.xib */,
 				F0587F6E2D96C5AA0091CDF4 /* PairingResponder.xib */,
 				F096D8452DA5602800A1A1E4 /* FirmwareDistribution.xib */,
+				F0D8C3682DDC7F01003E3E29 /* FirmwareUpdate.xib */,
 				5231404C230AC4680074325A /* VendorModel.xib */,
 			);
 			path = Model;
@@ -610,6 +615,7 @@
 				A7A59BD6277225E70045A8ED /* GenericPowerOnOffViewCell.swift */,
 				F0587F702D96C63A0091CDF4 /* PairingResponderViewCell.swift */,
 				F096D8472DA5668100A1A1E4 /* FirmwareDistributionViewCell.swift */,
+				F0D8C36A2DDC81B1003E3E29 /* FirmwareUpdateViewCell.swift */,
 				A7B526A5277B210000F5C60D /* GenericPowerOnOffSetupViewCell.swift */,
 				52A9C1C32313D7D80036792A /* GenericLevelViewCell.swift */,
 				5217D2E3250F90D8004FDE79 /* GenericDefaultTransitionTimeViewCell.swift */,
@@ -1208,6 +1214,7 @@
 				5217D2E6250F90D8004FDE79 /* GenericDefaultTransitionTime.xib in Resources */,
 				52A8EA9224ED35F4004C14C7 /* SetHeartbeatSubscription.storyboard in Resources */,
 				52CD0A582330BDE600A9A181 /* Groups.storyboard in Resources */,
+				F0D8C3692DDC7F01003E3E29 /* FirmwareUpdate.xib in Resources */,
 				523F778D22CCEA910030EA6A /* SetPublication.storyboard in Resources */,
 				52A9C17E230EB9490036792A /* GenericOnOff.xib in Resources */,
 				52CD0A5E2330C04700A9A181 /* Network.storyboard in Resources */,
@@ -1355,6 +1362,7 @@
 			files = (
 				52DE3ABA25DA871800268D7D /* SensorClientDelegate.swift in Sources */,
 				F096D8482DA5668100A1A1E4 /* FirmwareDistributionViewCell.swift in Sources */,
+				F0D8C36B2DDC81B1003E3E29 /* FirmwareUpdateViewCell.swift in Sources */,
 				5275962E2A138D9700B04C6F /* SelectPublicationViewController.swift in Sources */,
 				529B764722522D37008F1CE7 /* UITableView+EmptyView.swift in Sources */,
 				F058A63A2DBFA17C00E9E914 /* IgnoreCertificateDelegate.swift in Sources */,

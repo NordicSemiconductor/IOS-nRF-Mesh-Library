@@ -446,44 +446,70 @@ class FirmwareSelectionViewController: UITableViewController {
                 let entry = entries[indexPath.row - 1]
                 switch entry.status {
                 case .unselected:
+                    let download = { [weak self] in
+                        guard let self else { return }
+                        do {
+                            let package = try await self.downloadFirmware(entry.firmware)
+                            // It may happen, that the downloaded image has different metadata than what we got during "check".
+                            // To avoid downloading the image in a loop, we need to update the metadata.
+                            self.targets[indexPath.targetSection].entries[indexPath.row - 1]?.availableUpdate?.manifest.firmware.firmwareIdString = package.metadata.firmwareIdString
+                            // Clear all selections, as we have a new image.
+                            self.targets.clearSelections()
+                            self.nextButton.isEnabled = false
+                            // Update the file information.
+                            self.file = package
+                            self.tableView.beginUpdates()
+                            self.tableView.reloadSections(IndexSet(integer: 1), with: .automatic)
+                            self.tableView.reloadSections(IndexSet(integersIn: 2..<self.targets.count + 2), with: .none)
+                            self.tableView.endUpdates()
+                            self.tableView(tableView, didSelectRowAt: indexPath)
+                        } catch {
+                            self.targets[indexPath.targetSection].entries[indexPath.row - 1]?.status = .unselected
+                            self.presentAlert(title: "Error",
+                                               message: "Downloading file failed.\n\n\(error.localizedDescription)")
+                        }
+                    }
+                    
+                    // Does the Image provide a URI to a new version?
                     if let updateInformation = entry.availableUpdate,
-                       let newFirmwareId = updateInformation.manifest.firmware.firmwareId,
-                       file?.metadata.firmwareId != newFirmwareId {
+                       let newFirmwareId = updateInformation.manifest.firmware.firmwareId {
                         targets[indexPath.targetSection].entries[indexPath.row - 1]?.status = .checkingMetadata
                         tableView.reloadRows(at: [indexPath], with: .automatic)
-                        Task {
-                            do {
-                                let package = try await self.downloadFirmware(entry.firmware)
-                                Task { @MainActor [package, weak self] in
-                                    // It may happen, that the downloaded image has different metadata than what we got during "check".
-                                    // To avoid downloading the image in a loop, we need to update the metadata.
-                                    self?.targets[indexPath.targetSection].entries[indexPath.row - 1]?.availableUpdate?.manifest.firmware.firmwareIdString = package.metadata.firmwareIdString
-                                    // Clear all selections, as we have a new image.
-                                    self?.targets.clearSelections()
-                                    // Update the file information.
-                                    self?.file = package
-                                    self?.tableView.beginUpdates()
-                                    self?.tableView.reloadSections(IndexSet(integer: 1), with: .automatic)
-                                    self?.tableView.reloadSections(IndexSet(integersIn: 2..<self!.targets.count + 2), with: .none)
-                                    self?.tableView.endUpdates()
+                        
+                        // Check if the provided firmwareId is different than the one we already have.
+                        if let selectedFirmwareId = file?.metadata.firmwareId {
+                            if selectedFirmwareId != newFirmwareId {
+                                let downloadAction = UIAlertAction(title: "Override", style: .destructive) { _ in
+                                    Task {
+                                        await download()
+                                    }
+                                }
+                                presentAlert(title: "Override selected firmware?",
+                                             message: "This image provides a URI to a new firmware version.\n\nDo you want to try to download it and replace the selected one?",
+                                             cancelable: true,
+                                             option: downloadAction) { [weak self] _ in
                                     self?.tableView(tableView, didSelectRowAt: indexPath)
                                 }
-                            } catch {
-                                Task { @MainActor [weak self] in
-                                    self?.targets[indexPath.targetSection].entries[indexPath.row - 1]?.status = .unselected
-                                    self?.presentAlert(title: "Error",
-                                                       message: "Downloading file failed.\n\n\(error.localizedDescription)")
-                                }
+                                return
                             }
+                        } else {
+                            // No file was selected, so we can safely download the new version.
+                            Task {
+                                await download()
+                            }
+                            return
                         }
-                        return
                     }
+                    fallthrough
+                case .checkingMetadata:
                     guard let metadata = file?.metadata.metadata else {
-                        presentAlert(title: "File not provided", message: "Before selecting an image, provide a firmware file. The image must be checked for compatibility with the embedded metadata.")
+                        presentAlert(title: "File not provided",
+                                     message: "Before selecting an image, provide a firmware file. The image must be checked for compatibility with the embedded metadata.")
                         return
                     }
                     guard targets.selectedReceivers.count < maxReceiversListSize else {
-                        presentAlert(title: "Limit reached", message: "The distributor can update a maximum of \(maxReceiversListSize!) targets in a single operation.")
+                        presentAlert(title: "Limit reached",
+                                     message: "The distributor can update a maximum of \(maxReceiversListSize!) targets in a single operation.")
                         return
                     }
                     targets[indexPath.targetSection].entries[indexPath.row - 1]?.status = .checkingMetadata
@@ -539,18 +565,24 @@ class FirmwareSelectionViewController: UITableViewController {
 extension FirmwareSelectionViewController: UIDocumentPickerDelegate {
     
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt url: [URL]) {
-        
         do {
             guard let url = url.first else {
                 throw McuMgrPackage.Error.notAValidDocument
             }
             let name = url.lastPathComponent
             file = try Self.extractImageFromZipFile(from: url, named: name)
+            
+            // Clear all selections, as we have a new image.
+            targets.clearSelections()
+            nextButton.isEnabled = false
         } catch {
             file = nil
             showToast("Selected file is not valid. \(error.localizedDescription)", delay: .shortDelay)
         }
-        tableView.reloadData()
+        tableView.beginUpdates()
+        tableView.reloadSections(IndexSet(integer: IndexPath.firmwareSection), with: .automatic)
+        tableView.reloadSections(IndexSet(integersIn: IndexPath.firstTargetSection..<targets.count + IndexPath.firstTargetSection), with: .none)
+        tableView.endUpdates()
     }
     
 }

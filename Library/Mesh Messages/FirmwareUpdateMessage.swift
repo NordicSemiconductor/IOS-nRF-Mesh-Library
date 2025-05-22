@@ -219,6 +219,16 @@ public enum FirmwareUpdatePhase: UInt8, Sendable {
     /// The Apply New Firmware procedure is being executed.
     case applyingUpdate        = 0x6
     
+    /// A flag indicating whether the firmware update can be canceled.
+    ///
+    /// Send ``FirmwareUpdateCancel`` message to cancel the firmware update.
+    ///
+    /// Cancelling update deletes any stored information about the update on a Firmware Update Server.
+    public var isCancellable: Bool {
+        // Firmware Update can be cancelled in any state.
+        return true
+    }
+    
     /// A flag indicating whether the firmware update can be started.
     public var canStart: Bool {
         // When a Firmware Update Server receives a Firmware Update Start message,
@@ -228,6 +238,17 @@ public enum FirmwareUpdatePhase: UInt8, Sendable {
         // - Verification Failed,
         // and the message is successfully processed, then the server shall begin update.
         return self == .idle || self == .transferError || self == .verificationFailed
+    }
+    
+    /// A flag indicating whether the firmware update can be applied.
+    public var canApply: Bool {
+        // When the Firmware Update Server receives a Firmware Update Apply message,
+        // and the Update Phase state is not either:
+        // - Verification Succeeded or
+        // - Applying Update,
+        // the server shall respond with a Firmware Update Status message with
+        // the Status field set to Wrong Phase.
+        return self == .verificationSucceeded || self == .applyingUpdate
     }
 }
 
@@ -289,6 +310,15 @@ public enum FirmwareDistributionPhase: UInt8, Sendable {
     public var isCancellable: Bool {
         // Firmware Distribution can be cancelled in any state.
         return true
+    }
+    
+    /// A flag indicating whether the firmware distribution is not in progress.
+    ///
+    /// When the Distributor is in ``.completed`` or ``.failed`` state, the Distributor
+    /// needs to be reset to ``.idle`` state using ``FirmwareDistributionCancel``
+    /// message before starting a new firmware distribution.
+    public var isBusy: Bool {
+        return self != .idle && self != .failed && self != .completed
     }
     
     /// A flag indicating whether the firmware distribution can be suspended.
@@ -466,6 +496,22 @@ extension FirmwareDistributionPhase: CustomDebugStringConvertible {
         case .failed:            return "Failed"
         case .cancelingUpdate:   return "Canceling Update"
         case .transferSuspended: return "Transfer Suspended"
+        }
+    }
+    
+}
+
+extension FirmwareUpdatePhase: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .idle:                  return "Idle"
+        case .transferError:         return "Transfer Error"
+        case .transferActive:        return "Transfer Active"
+        case .verifyingUpdate:       return "Verifying Update"
+        case .verificationSucceeded: return "Verification Succeeded"
+        case .verificationFailed:    return "Verification Failed"
+        case .applyingUpdate:        return "Applying Update"
         }
     }
     

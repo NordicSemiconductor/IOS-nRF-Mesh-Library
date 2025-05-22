@@ -282,8 +282,8 @@ class ProxySelectionViewController: UITableViewController {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "action", for: indexPath)
                 cell.textLabel?.text = "Free Space"
                 if let storedSlots = proxyDetails?.storedFirmwareImagesListSize {
-                    cell.isUserInteractionEnabled = storedSlots > 0 && proxyDetails?.phase == .idle
-                    cell.textLabel?.isEnabled = storedSlots > 0 && proxyDetails?.phase == .idle
+                    cell.isUserInteractionEnabled = storedSlots > 0 && proxyDetails?.phase?.isBusy == false
+                    cell.textLabel?.isEnabled = storedSlots > 0 && proxyDetails?.phase?.isBusy == false
                 } else {
                     cell.isUserInteractionEnabled = false
                     cell.textLabel?.isEnabled = false
@@ -422,6 +422,13 @@ class ProxySelectionViewController: UITableViewController {
             }
             Task {
                 do {
+                    if proxyDetails?.phase == .completed || proxyDetails?.phase == .failed {
+                        let phase = try await cancelDistribution(from: distributorServerModel, using: selectedAppKey)
+                        proxyDetails?.phase = phase
+                        if let index = sections.firstIndex(of: .status) {
+                            tableView.reloadSections(IndexSet(integer: index), with: .automatic)
+                        }
+                    }
                     // Clear the list of slots if the maximum number of slots is reached,
                     // or if the list of Receivers is empty. The last condition allows
                     // clearing the list of Receivers and the list of slots in 2 steps
@@ -551,21 +558,19 @@ private extension ProxySelectionViewController {
     func readDistributorState(from model: Model, using applicationKey: ApplicationKey) {
         Task {
             do {
-                let phase = try await self.readDistributionPhase(from: model, using: applicationKey)
-                let capabilities = try await self.readCapabilities(from: model, using: applicationKey)
-                let slots = try await self.readFirmwareImagesListSize(from: model, using: applicationKey)
-                Task { @MainActor [weak self] in
-                    guard let self = self else { return }
-                    self.proxyDetails?.phase = phase
-                    self.proxyDetails?.capabilities = capabilities
-                    self.proxyDetails?.storedFirmwareImagesListSize = slots
-                    
-                    if let statusIndex = self.sections.firstIndex(of: .status),
-                       let capabilitiesIndex = self.sections.firstIndex(of: .capabilities) {
-                        self.tableView.reloadSections(IndexSet(arrayLiteral: statusIndex, capabilitiesIndex), with: .automatic)
-                    }
-                    self.nextButton.isEnabled = self.proxyDetails?.isSupported ?? false
+                let phase = try await readDistributionPhase(from: model, using: applicationKey)
+                let capabilities = try await readCapabilities(from: model, using: applicationKey)
+                let slots = try await readFirmwareImagesListSize(from: model, using: applicationKey)
+                
+                proxyDetails?.phase = phase
+                proxyDetails?.capabilities = capabilities
+                proxyDetails?.storedFirmwareImagesListSize = slots
+                
+                if let statusIndex = sections.firstIndex(of: .status),
+                   let capabilitiesIndex = sections.firstIndex(of: .capabilities) {
+                    tableView.reloadSections(IndexSet(arrayLiteral: statusIndex, capabilitiesIndex), with: .automatic)
                 }
+                nextButton.isEnabled = proxyDetails?.isSupported ?? false
             } catch {
                 NSLog("Error while reading distributor state: \(error)")
             }
@@ -574,6 +579,12 @@ private extension ProxySelectionViewController {
     
     func readDistributionPhase(from model: Model, using applicationKey: ApplicationKey) async throws -> FirmwareDistributionPhase {
         let response = try await MeshNetworkManager.instance.send(FirmwareDistributionGet(), to: model, using: applicationKey)
+        let status = response as! FirmwareDistributionStatus
+        return status.phase
+    }
+    
+    func cancelDistribution(from model: Model, using applicationKey: ApplicationKey) async throws -> FirmwareDistributionPhase {
+        let response = try await MeshNetworkManager.instance.send(FirmwareDistributionCancel(), to: model, using: applicationKey)
         let status = response as! FirmwareDistributionStatus
         return status.phase
     }
@@ -628,12 +639,9 @@ private extension ProxySelectionViewController {
                 } catch {
                     proxyDetails?.isSmpSupported = false
                 }
-                Task { @MainActor [weak self] in
-                    guard let self = self else { return }
-                    self.nextButton.isEnabled = self.proxyDetails?.isSupported ?? false
-                    if let index = self.sections.firstIndex(of: .smp) {
-                        self.tableView.reloadSections(IndexSet(integer: index), with: .automatic)
-                    }
+                nextButton.isEnabled = proxyDetails?.isSupported ?? false
+                if let index = sections.firstIndex(of: .smp) {
+                    tableView.reloadSections(IndexSet(integer: index), with: .automatic)
                 }
             }
         }

@@ -35,7 +35,7 @@ class CircularProgressView: UIView {
 
     // MARK: - Inspectable Properties
 
-    @IBInspectable var percentage: Int = 0 {
+    @IBInspectable var progress: Float = 0.0 {
         didSet {
             setNeedsDisplay()
         }
@@ -79,7 +79,7 @@ class CircularProgressView: UIView {
         let center = CGPoint(x: rect.midX, y: rect.midY)
         let radius = min(rect.width, rect.height) / 2 - lineWidth / 2
         let startAngle = -CGFloat.pi / 2
-        let endAngle = startAngle + (CGFloat(percentage) / 100.0) * 2 * CGFloat.pi
+        let endAngle = startAngle + CGFloat(progress) * 2 * CGFloat.pi
 
         // Draw track
         context.setLineWidth(lineWidth)

@@ -107,14 +107,14 @@ class ModelViewController: ProgressViewController {
         if model.isHealthServer {
             sections.append(.healthServer)
         }
-        if model.isFirmwareUpdateServer {
-            sections.append(.firmwareInformation)
-        }
         if model.hasCustomUI {
             sections.append(.custom)
         }
+        // These should be after Custom UI.
+        if model.isFirmwareUpdateServer {
+            sections.append(.firmwareInformation)
+        }
         if model.isFirmwareDistributionServer {
-            // This one should be after Custom UI.
             sections.append(.firmwareSlots)
         }
         if model.isConfigurationServer {
@@ -149,6 +149,8 @@ class ModelViewController: ProgressViewController {
                            forCellReuseIdentifier: UInt16.lightLCServerModelId.hex)
         tableView.register(UINib(nibName: "FirmwareDistribution", bundle: nil),
                            forCellReuseIdentifier: UInt16.firmwareDistributionServerModelId.hex)
+        tableView.register(UINib(nibName: "FirmwareUpdate", bundle: nil),
+                           forCellReuseIdentifier: UInt16.firmwareUpdateServerModelId.hex)
         tableView.register(UINib(nibName: "PairingResponder", bundle: nil),
                            forCellReuseIdentifier: "pairingInitiator")
         tableView.register(UINib(nibName: "VendorModel", bundle: nil),
@@ -1122,6 +1124,10 @@ extension ModelViewController: MeshNetworkDelegate {
             if let removedFirmwareId = status.firmwareId, status.imageIndex == nil {
                 done {
                     self.firmwareSlots?.removeAll { firmwareId in firmwareId == removedFirmwareId }
+                    if self.firmwareSlots?.isEmpty ?? true {
+                        // This will hide the Delete All button.
+                        self.firmwareSlots = nil
+                    }
                     self.reloadSections(.firmwareSlots, with: .automatic)
                 }
                 return
@@ -1286,6 +1292,7 @@ private extension Model {
             || modelIdentifier == .genericDefaultTransitionTimeServerModelId
             || modelIdentifier == .lightLCServerModelId
             || modelIdentifier == .firmwareDistributionServerModelId
+            || modelIdentifier == .firmwareUpdateServerModelId
     }
     
 }

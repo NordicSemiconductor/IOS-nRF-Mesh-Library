@@ -32,20 +32,33 @@ import UIKit
 
 class UploadProgressViewCell: UITableViewCell {
     
+    // MARK: - Outlets
+    
     @IBOutlet weak var progressIndicator: CircularProgressView!
     @IBOutlet weak var throughoutLabel: UILabel!
     
-    var percentage: Int = 0 {
+    // MARK: - Properties
+    
+    var progress: Float? {
         didSet {
-            progressIndicator?.percentage = percentage
-            progressIndicator?.isHidden = percentage == 100
-            throughoutLabel?.isHidden = percentage == 100 || percentage == 0
+            if let progress = progress {
+                progressIndicator?.progress = progress
+                progressIndicator?.isHidden = progress == 1.0
+                throughoutLabel?.isHidden = progress == 1.0 || progress == 0
+                accessoryType = progress == 1.0 ? .checkmark : .none
+            } else {
+                progressIndicator?.isHidden = false
+                throughoutLabel?.isHidden = false
+                accessoryType = .none
+            }
         }
     }
     
-    var speedBytesPerSecond: Float = 0 {
+    var speedBytesPerSecond: Float? {
         didSet {
-            throughoutLabel?.text = String(format: "%.1f kB/s", speedBytesPerSecond / 1024)
+            if let speedBytesPerSecond = speedBytesPerSecond {
+                throughoutLabel?.text = String(format: "%.1f kB/s", speedBytesPerSecond / 1024)
+            }
         }
     }
     
