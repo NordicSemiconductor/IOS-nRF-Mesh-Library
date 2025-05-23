@@ -219,15 +219,45 @@ extension NodeFeatureState: CustomDebugStringConvertible {
 extension NodeFeaturesState: CustomDebugStringConvertible {
     
     public var debugDescription: String {
-        return """
-        Relay Feature:     \(relay?.debugDescription ?? "Unknown")
-        Proxy Feature:     \(proxy?.debugDescription ?? "Unknown")
-        Friend Feature:    \(friend?.debugDescription ?? "Unknown")
-        Low Power Feature: \(lowPower?.debugDescription ?? "Unknown")
-        """
+        var components: [String] = []
+        
+        if relay != .notSupported {
+            let state = relay.map { ": \($0)" } ?? ""
+            components.append("Relay\(state)")
+        }
+        if proxy != .notSupported {
+            let state = proxy.map { ": \($0)" } ?? ""
+            components.append("Proxy\(state)")
+        }
+        if friend != .notSupported {
+            let state = friend.map { ": \($0)" } ?? ""
+            components.append("Friend\(state)")
+        }
+        if lowPower != .notSupported {
+            let state = lowPower.map { ": \($0)" } ?? ""
+            components.append("Low Power\(state)")
+        }
+        
+        if components.isEmpty {
+            return "Empty"
+        } else {
+            return "[\(components.joined(separator: ", "))]"
+        }
     }
-    
 }
+
+//extension NodeFeaturesState: CustomDebugStringConvertible {
+//    
+//    public var debugDescription: String {
+//        return """
+//        Relay Feature:     \(relay?.debugDescription ?? "Unknown")
+//        Proxy Feature:     \(proxy?.debugDescription ?? "Unknown")
+//        Friend Feature:    \(friend?.debugDescription ?? "Unknown")
+//        Low Power Feature: \(lowPower?.debugDescription ?? "Unknown")
+//        """
+//    }
+//    
+//}
 
 internal extension Array where Element == NodeFeature {
     
