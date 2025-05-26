@@ -64,7 +64,7 @@ internal class NetworkLayer {
     ///              stored Network Key may be invalid. Therefore, it may be, that the
     ///              key with this index is no longer stored on the connected Node
     ///              and the Proxy Configuration messages will not work.
-    private var proxyNetworkKey: NetworkKey?
+    internal var proxyNetworkKey: NetworkKey?
     
     init(_ networkManager: NetworkManager) {
         self.networkManager = networkManager
