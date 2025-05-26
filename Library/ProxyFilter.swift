@@ -366,6 +366,11 @@ public extension ProxyFilter {
     func proxyDidDisconnect() {
         newNetworkCreated()
         
+        // Clear the Proxy Network Key. This way we make sure the
+        // Network Layer will handle the new incoming Secure Network beacon
+        // propertly, even if it belongs to a non-primary network.
+        manager?.networkManager?.networkLayer.proxyNetworkKey = nil
+        
         // Notify the delegate.
         delegateQueue.async { [delegate] in
             delegate?.proxyFilterUpdated(type: .acceptList, addresses: [])
