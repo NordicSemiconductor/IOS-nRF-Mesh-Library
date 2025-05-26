@@ -119,12 +119,16 @@ private extension PasskeyViewController {
                     }
                     return
                 }
-                let task = Task.detached { @MainActor [weak self] in
-                        try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
-                        UIView.animate(withDuration: 0.5) {
-                            self?.passkeyLabel.alpha = 1.0
-                        }
-                        self?.passkeyLabel.text = String(format: "%06d", response.passkey)
+                let task = Task { [weak self, response] in
+                    try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+                    guard let self = self else { return }
+                    UIView.animate(withDuration: 0.5) {
+                        self.passkeyLabel.alpha = 1.0
+                    }
+                    self.passkeyLabel.text = String(format: "%06d", response.passkey)
+                    
+                    UIPasteboard.general.string = "\(response.passkey)"
+                    self.showToast("Passkey copied to Clipboard.\nPaste it or type it into the Pairing dialog.", delay: .shortDelay)
                 }
                 guard let bearer = bearer else {
                     throw ConnectionError.peripheralNotFound
@@ -135,14 +139,10 @@ private extension PasskeyViewController {
                     task.cancel()
                     throw error
                 }
-                Task { @MainActor in
-                    performSegue(withIdentifier: "continue", sender: nil)
-                }
+                performSegue(withIdentifier: "continue", sender: nil)
             } catch {
-                Task { @MainActor in
-                    UIView.animate(withDuration: 0.5) {
-                        self.passkeyLabel.alpha = 0.0
-                    }
+                UIView.animate(withDuration: 0.5) {
+                    self.passkeyLabel.alpha = 0.0
                 }
                 presentAlert(title: "Error",
                              message: error.localizedDescription) { [weak self] _ in

@@ -433,14 +433,12 @@ class FirmwareSelectionViewController: UITableViewController {
                     } catch {
                         result = .error(message: error.localizedDescription)
                     }
-                    Task { @MainActor [indexPath, result, weak self] in
-                        self?.targets[indexPath.targetSection].entries = result
+                    targets[indexPath.targetSection].entries = result
                         
-                        self?.tableView.beginUpdates()
-                        self?.tableView.reloadRows(at: [IndexPath(row: 0, section: indexPath.section)], with: .none)
-                        self?.tableView.insertRows(at: (1...result.count).map { IndexPath(row: $0, section: indexPath.section) }, with: .fade)
-                        self?.tableView.endUpdates()
-                    }
+                    tableView.beginUpdates()
+                    tableView.reloadRows(at: [IndexPath(row: 0, section: indexPath.section)], with: .none)
+                    tableView.insertRows(at: (1...result.count).map { IndexPath(row: $0, section: indexPath.section) }, with: .fade)
+                    tableView.endUpdates()
                 }
             case .ready(let entries):
                 let entry = entries[indexPath.row - 1]
@@ -524,12 +522,9 @@ class FirmwareSelectionViewController: UITableViewController {
                         } catch {
                             status = .error(message: error.localizedDescription)
                         }
-                        Task { @MainActor [indexPath, status, weak self] in
-                            guard let self else { return }
-                            self.targets[indexPath.targetSection].entries[indexPath.row - 1]?.status = status
-                            self.updateNextButtonState()
-                            self.tableView.reloadRows(at: [indexPath], with: .none)
-                        }
+                        targets[indexPath.targetSection].entries[indexPath.row - 1]?.status = status
+                        updateNextButtonState()
+                        tableView.reloadRows(at: [indexPath], with: .none)
                     }
                 case .selected:
                     targets[indexPath.targetSection].entries[indexPath.row - 1]?.status = .unselected
