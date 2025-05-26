@@ -135,6 +135,7 @@ class FirmwareSelectionViewController: UITableViewController {
     private var file: UpdatePackage?
     /// List of available targets.
     private var targets: [Target] = []
+    private var canDistributorBeUpdated: Bool = false
     
     // MARK: - Outlets
     
@@ -149,13 +150,14 @@ class FirmwareSelectionViewController: UITableViewController {
         tableView.sectionHeaderHeight = 4
         
         if let meshNetwork = MeshNetworkManager.instance.meshNetwork {
-            // List only nodes that support the firmware update and blob transfer models.
-            // The list may include the Distributor node itself.
             targets = meshNetwork.nodes
+                // List only nodes that support the firmware update and blob transfer models.
                 .filter { node in
                     node.contains(modelWithSigModelId: .firmwareUpdateServerModelId) &&
                     node.contains(modelWithSigModelId: .blobTransferServerModelId)
                 }
+                // Set the initial state to .configured or .configurationRequired,
+                // depending on whether the Application Key is bound to the Firmware Update Server model.
                 .compactMap { node in
                     if let model = node.models(withSigModelId: .firmwareUpdateServerModelId).first {
                         if applicationKey.isBound(to: model) {
@@ -167,6 +169,12 @@ class FirmwareSelectionViewController: UITableViewController {
                         return nil
                     }
                 }
+                // Distributor Node is the last one in the list.
+                .sorted { n1, n2 in n1.node.uuid != node.uuid && n2.node.uuid != node.uuid }
+            
+            // The list may include the Distributor Node itself.
+            // We look for it, as it gets its own header and footer.
+            canDistributorBeUpdated = targets.contains { $0.node.uuid == node.uuid }
         }
     }
     
@@ -201,7 +209,7 @@ class FirmwareSelectionViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
         case IndexPath.firmwareSection: return "Firmware"
-        //case IndexPath.firstTargetSection: return "Available Target Nodes"
+        case targets.count + 1 where canDistributorBeUpdated: return "Distributor"
         default: return nil
         }
     }
@@ -216,8 +224,11 @@ class FirmwareSelectionViewController: UITableViewController {
                    "AVAILABLE TARGET NODES\n\n" +
                    "Tap a node to view its firmware details. " +
                    "Tap an image to check firmware compatibility and select it for the update."
-        case tableView.numberOfSections - 1:
+        case targets.count where canDistributorBeUpdated,
+             targets.count + 1 where !canDistributorBeUpdated:
             return "Note: The list contains nodes with Firmware Update Server and BLOB Transfer Server models."
+        case targets.count + 1 where canDistributorBeUpdated:
+            return "Updating firmware on the distributor is instantaneous. When selected, no other nodes will be updated."
         default: return nil
         }
     }
