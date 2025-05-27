@@ -36,6 +36,15 @@ private struct Target {
     let node: Node
     var entries: FirmwareEntries
     
+    var isSelected: Bool {
+        switch entries {
+        case .ready(let entries):
+            return entries.contains { $0.isSelected }
+        default:
+            return false
+        }
+    }
+    
     var selectedReceiver: Receiver? {
         guard let address = node.models(withSigModelId: .firmwareUpdateServerModelId).first?.parentElement?.unicastAddress,
               case .ready(let entries) = entries else {
@@ -118,7 +127,6 @@ private enum Status: Equatable {
     case unselected
     case checkingMetadata
     case selected(additionalInformation: FirmwareUpdateAdditionalInformation)
-    case notSupported
     case error(message: String)
 }
 
@@ -148,9 +156,11 @@ class FirmwareSelectionViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        tableView.estimatedSectionFooterHeight = 150 // Anything non-zero works?
         tableView.sectionFooterHeight = 0
         tableView.sectionHeaderHeight = 4
-        
+        tableView.register(TargetNodesHeader.self, forHeaderFooterViewReuseIdentifier: TargetNodesHeader.reuseIdentifier)
+
         if let meshNetwork = MeshNetworkManager.instance.meshNetwork {
             targets = meshNetwork.nodes
                 // List only nodes that support the firmware update and blob transfer models.
@@ -231,11 +241,6 @@ class FirmwareSelectionViewController: UITableViewController {
         case IndexPath.infoSection:
             return "Select a ZIP file generated when building the new firmware. " +
                    "The file can also be downloaded automatically by tapping a target node that provide a URI to an online resource with the latest version."
-        case IndexPath.firmwareSection:
-            return "Maximum available space is \(availableSpace!) bytes.\n\n\n" +
-                   "AVAILABLE TARGET NODES\n\n" +
-                   "Tap a node to view its firmware details. " +
-                   "Tap an image to check firmware compatibility and select it for the update."
         case targets.count where canDistributorBeUpdated,
              targets.count + 1 where !canDistributorBeUpdated:
             return "Note: The list contains nodes with Firmware Update Server and BLOB Transfer Server models."
@@ -256,6 +261,21 @@ class FirmwareSelectionViewController: UITableViewController {
         default:
             return 1 + targets[section - IndexPath.firstTargetSection].entries.count // Node + list of images or an error message
         }
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return UITableView.automaticDimension
+    }
+    
+    override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        if section == IndexPath.firmwareSection {
+            let footer = tableView.dequeueReusableHeaderFooterView(withIdentifier: TargetNodesHeader.reuseIdentifier) as! TargetNodesHeader
+            footer.availableSpace = Int(availableSpace!)
+            footer.button.isEnabled = file?.images.first?.data.count ?? Int.max <= availableSpace
+            footer.button.addTarget(self, action: #selector(selectAllTargets), for: .touchUpInside)
+            return footer
+        }
+        return nil
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -364,7 +384,7 @@ class FirmwareSelectionViewController: UITableViewController {
                     cell.accessoryType = .checkmark
                     cell.tintColor = .dynamicColor(light: .nordicLake, dark: .nordicBlue)
                     cell.accessoryView = nil
-                case .notSupported, .error:
+                case .error:
                     cell.accessoryType = .none
                     cell.tintColor = .systemRed
                     cell.accessoryView = UIImageView(image: UIImage(systemName: "xmark"))
@@ -482,8 +502,8 @@ class FirmwareSelectionViewController: UITableViewController {
                             // Update the file information.
                             self.file = package
                             self.tableView.beginUpdates()
-                            self.tableView.reloadSections(IndexSet(integer: 1), with: .automatic)
-                            self.tableView.reloadSections(IndexSet(integersIn: 2..<self.targets.count + 2), with: .none)
+                            self.tableView.reloadSections(IndexSet(integer: IndexPath.firmwareSection), with: .automatic)
+                            self.tableView.reloadSections(IndexSet(integersIn: IndexPath.firstTargetSection..<self.targets.count + IndexPath.firstTargetSection), with: .none)
                             self.tableView.endUpdates()
                             self.tableView(tableView, didSelectRowAt: indexPath)
                         } catch {
@@ -536,7 +556,7 @@ class FirmwareSelectionViewController: UITableViewController {
                         return
                     }
                     targets[indexPath.targetSection].entries[indexPath.row - 1]?.status = .checkingMetadata
-                    tableView.reloadRows(at: [indexPath], with: .automatic)
+                    tableView.reloadRows(at: [indexPath], with: .none)
                     Task {
                         let imageIndex = UInt8(indexPath.row - 1)
                         var status: Status
@@ -555,8 +575,6 @@ class FirmwareSelectionViewController: UITableViewController {
                     targets[indexPath.targetSection].entries[indexPath.row - 1]?.status = .unselected
                     tableView.reloadRows(at: [indexPath], with: .automatic)
                     updateNextButtonState()
-                default:
-                    break
                 }
             case .downloading:
                 break
@@ -607,6 +625,8 @@ extension FirmwareSelectionViewController: UIDocumentPickerDelegate {
     
 }
 
+// MARK: - Implementation
+
 private extension FirmwareSelectionViewController {
     private static let manifestFileName = "manifest.json"
     private static let metadataFileName = "ble_mesh_metadata.json"
@@ -655,6 +675,93 @@ private extension FirmwareSelectionViewController {
         UserDefaults.standard.set(url, forKey: lastFileKey)
         
         return UpdatePackage(name: name, metadata: metadata, manifest: manifest, images: images)
+    }
+    
+    /// This method goes through all targets and selects first image entry that passes the checks.
+    @objc func selectAllTargets() {
+        guard let metadata = file?.metadata.metadata else {
+            return
+        }
+        Task {
+            /// Number of selected receivers. This must be less or equal to `maxReceiversListSize`.
+            var selectedCount = targets.selectedReceivers.count
+            /// Target index.
+            var i = -1
+            
+            // Go through all targets and select first image that passes the checks.
+            for target in targets {
+                i += 1
+                // Abort if the maximum number of selected receivers is reached.
+                guard selectedCount < maxReceiversListSize else {
+                    break
+                }
+                // Skip the Distributor Node.
+                guard target.node.uuid != node.uuid else {
+                    continue
+                }
+                // Skip already selected Nodes.
+                guard !target.isSelected else {
+                    continue
+                }
+                switch target.entries {
+                // Target Nodes will be automatically configured.
+                case .configurationRequired, .configured:
+                    targets[i].entries = .downloading
+                    tableView.reloadRows(at: [IndexPath(row: 0, section: IndexPath.firstTargetSection + i)], with: .none)
+                    do {
+                        let images = try await downloadFirmwareInformation(from: target.node)
+                        let entries = try await images.asyncMapEnumerated { [weak self] index, image in
+                            let updatedFirmwareInformation = try await self?.checkForUpdates(image)
+                            return FirmwareEntry(index: UInt8(index), firmware: image, availableUpdate: updatedFirmwareInformation)
+                        }
+                        targets[i].entries = .ready(entries: entries)
+                    } catch {
+                        targets[i].entries = .error(message: error.localizedDescription)
+                    }
+                    tableView.beginUpdates()
+                    tableView.reloadRows(at: [IndexPath(row: 0, section: IndexPath.firstTargetSection + i)], with: .none)
+                    tableView.insertRows(at: (1...targets[i].entries.count).map { IndexPath(row: $0, section: IndexPath.firstTargetSection + i) }, with: .fade)
+                    tableView.endUpdates()
+                    fallthrough
+                case .ready:
+                    // Note, that we might have ended up here from the previous case (fall through).
+                    // We can't use 'let' in the case statement. Also, the 'entries' can be .error,
+                    // so check it and continue only if entries are ready.
+                    guard case .ready(let entries) = targets[i].entries else {
+                        continue
+                    }
+                    var imageIndex = -1
+                    for entry in entries {
+                        imageIndex += 1
+                        // Skip images that have the same version as the selected one.
+                        if entry.firmware.currentFirmwareId == file?.metadata.firmwareId {
+                            continue
+                        }
+                        /// A flag to indicate if the image was selected.
+                        var selected = false
+                        targets[i].entries[imageIndex]?.status = .checkingMetadata
+                        tableView.reloadRows(at: [IndexPath(row: imageIndex + 1, section: IndexPath.firstTargetSection + i)], with: .none)
+                        do {
+                            let result = try await checkCompatibility(of: entry.index, on: target.node, with: metadata)
+                            let additionalInformation = try result.get()
+                            targets[i].entries[imageIndex]?.status = .selected(additionalInformation: additionalInformation)
+                            selectedCount += 1
+                            selected = true
+                            updateNextButtonState()
+                        } catch {
+                            targets[i].entries[imageIndex]?.status = .error(message: error.localizedDescription)
+                        }
+                        tableView.reloadRows(at: [IndexPath(row: imageIndex + 1, section: IndexPath.firstTargetSection + i)], with: .none)
+                        
+                        // Only one image per Node can be selected.
+                        if selected { break }
+                    }
+                case .error, .downloading:
+                    // Ignore.
+                    continue
+                }
+            }
+        }
     }
     
     enum ConfigurationError: LocalizedError {
@@ -824,6 +931,8 @@ private extension FirmwareSelectionViewController {
     }
 }
 
+// MARK: - Utils
+
 private extension IndexPath {
     static let infoSection = 0
     static let firmwareSection = 1
@@ -877,4 +986,87 @@ private extension Array where Element == Target {
         }
     }
                 
+}
+
+class TargetNodesHeader: UITableViewHeaderFooterView {
+    static let reuseIdentifier = "FirmwareHeaderView"
+        
+    private let spaceLabel: UILabel = {
+        let label = UILabel()
+        label.font = .preferredFont(forTextStyle: .footnote)
+        label.textColor = .secondaryLabel
+        label.numberOfLines = 0
+        return label
+    }()
+    
+    private let titleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "AVAILABLE TARGET NODES"
+        label.font = .preferredFont(forTextStyle: .footnote)
+        label.textColor = .secondaryLabel
+        label.numberOfLines = 0
+        return label
+    }()
+    
+    let button: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Select All", for: .normal)
+        button.isEnabled = false
+        return button
+    }()
+    
+    private let descriptionLabel: UILabel = {
+        let label = UILabel()
+        label.font = .preferredFont(forTextStyle: .footnote)
+        label.textColor = .secondaryLabel
+        label.numberOfLines = 0
+        label.text = """
+        Tap a node to view its firmware details.
+        Tap an image to check firmware compatibility and select it for the update.
+        """
+        return label
+    }()
+    
+    var availableSpace: Int? {
+        didSet {
+            spaceLabel.text = "Maximum available space is \(availableSpace ?? 0) bytes."
+        }
+    }
+
+    // MARK: - Initializer
+    
+    override init(reuseIdentifier: String?) {
+        super.init(reuseIdentifier: reuseIdentifier)
+        setupView()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setupView()
+    }
+
+    // MARK: - View Setup
+    
+    private func setupView() {
+        contentView.backgroundColor = .systemGroupedBackground
+        
+        let titleRow = UIStackView(arrangedSubviews: [titleLabel, button])
+        titleRow.axis = .horizontal
+        titleRow.alignment = .center
+        titleRow.distribution = .equalSpacing
+
+        let mainStack = UIStackView(arrangedSubviews: [spaceLabel, titleRow, descriptionLabel])
+        mainStack.axis = .vertical
+        mainStack.spacing = 16
+        mainStack.translatesAutoresizingMaskIntoConstraints = false
+        
+        contentView.addSubview(mainStack)
+        NSLayoutConstraint.activate([
+            mainStack.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+            mainStack.leadingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.leadingAnchor),
+            mainStack.trailingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.trailingAnchor),
+            mainStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8)
+        ])
+    }
+    
 }
