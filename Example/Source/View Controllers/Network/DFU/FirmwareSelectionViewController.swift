@@ -401,6 +401,8 @@ class FirmwareSelectionViewController: UITableViewController {
                 case .selected:
                     // Allow to unselect.
                     return true
+                case .error:
+                    return entry.availableUpdate != nil && entry.availableUpdate?.manifest.firmware.firmwareId != file?.metadata.firmwareId
                 default:
                     // Disable when not supported, in progress or error.
                     // When error, the device row is clickable.
@@ -466,7 +468,7 @@ class FirmwareSelectionViewController: UITableViewController {
             case .ready(let entries):
                 let entry = entries[indexPath.row - 1]
                 switch entry.status {
-                case .unselected:
+                case .unselected, .error:
                     let download = { [weak self] in
                         guard let self else { return }
                         do {
