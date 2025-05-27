@@ -123,6 +123,8 @@ private enum Status: Equatable {
 }
 
 class FirmwareSelectionViewController: UITableViewController {
+    static private let lastFileKey = "dfu_last_url"
+    
     // MARK: - Properties
     
     var node: Node!
@@ -175,6 +177,16 @@ class FirmwareSelectionViewController: UITableViewController {
             // The list may include the Distributor Node itself.
             // We look for it, as it gets its own header and footer.
             canDistributorBeUpdated = targets.contains { $0.node.uuid == node.uuid }
+        }
+        
+        // To accelerate DFU process, restore the last selected file.
+        if let lastUrl = UserDefaults.standard.url(forKey: Self.lastFileKey) {
+            do {
+                file = try Self.extractImageFromZipFile(from: lastUrl, named: lastUrl.lastPathComponent)
+            } catch {
+                NSLog("Error extracting image from zip file: \(error.localizedDescription)")
+                UserDefaults.standard.removeObject(forKey: Self.lastFileKey)
+            }
         }
     }
     
@@ -636,6 +648,10 @@ private extension FirmwareSelectionViewController {
         guard metadata.binarySize == images.first?.data.count else {
             throw McuMgrPackage.Error.notAValidDocument
         }
+        
+        // Store the last successful URL in UserDefaults.
+        UserDefaults.standard.set(url, forKey: lastFileKey)
+        
         return UpdatePackage(name: name, metadata: metadata, manifest: manifest, images: images)
     }
     
