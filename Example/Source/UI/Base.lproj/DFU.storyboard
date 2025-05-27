@@ -122,6 +122,7 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Firmware Update" id="FCn-y4-fMh">
+                        <barButtonItem key="backBarButtonItem" title="Browse" id="HCp-wQ-rVN"/>
                         <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="5cO-Cc-Sff">
                             <connections>
                                 <action selector="cancelDidTap:" destination="6Xb-ao-PC8" id="e6n-K4-6ur"/>
@@ -133,6 +134,7 @@
                         <outlet property="dfuOverBlobButton" destination="uWz-9g-2An" id="AdX-Sn-XdD"/>
                         <outlet property="dfuOverHttpsButton" destination="Ewt-3f-Pzl" id="8wb-pG-Xuk"/>
                         <outlet property="dfuOverSmpButton" destination="dzC-Ye-dMc" id="7EE-mZ-ocZ"/>
+                        <segue destination="4nR-2l-Xhz" kind="show" identifier="smp" animates="NO" id="RVN-Tl-JSO"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nDl-4O-yd9" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -1040,6 +1042,7 @@
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="ioE-bI-obV"/>
+        <segue reference="RVN-Tl-JSO"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="0.0" green="0.46666666670000001" blue="0.7843137255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
     <resources>
@@ -1049,22 +1052,22 @@
         <image name="info.circle" catalog="system" width="128" height="123"/>
         <image name="mesh-icon" width="48" height="48"/>
         <systemColor name="linkColor">
-            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="secondaryLabelColor">
-            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="separatorColor">
-            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGroupedBackgroundColor">
-            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemRedColor">
-            <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="tintColor">
-            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

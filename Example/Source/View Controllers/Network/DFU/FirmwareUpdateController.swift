@@ -31,6 +31,7 @@
 import UIKit
 
 class FirmwareUpdateController: UIViewController {
+    private let key = "FirmwareUpdateControllerShown"
     
     // MARK: - Outlets
     
@@ -78,6 +79,15 @@ class FirmwareUpdateController: UIViewController {
         dfuOverSmpButton.makeBlue(enabled: true)
         dfuOverBlobButton.makeBlue(enabled: false)
         dfuOverHttpsButton.makeBlue(enabled: false)
+        
+        // To avoid showing the controller every time the app is launched,
+        // we store a flag in UserDefaults.
+        let controllerAlreadyShown = UserDefaults.standard.bool(forKey: key)
+        if controllerAlreadyShown {
+            performSegue(withIdentifier: "smp", sender: nil)
+        } else {
+            UserDefaults.standard.set(true, forKey: key)
+        }
     }
     
 }
