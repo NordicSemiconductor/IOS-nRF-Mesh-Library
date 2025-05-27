@@ -397,9 +397,12 @@ class ProxySelectionViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         let section = sections[section]
         switch section {
-        case .info: return "Active connection to a GATT Proxy node with Firmware Distributor Server model and SMP Service enabled is required."
-        case .smp: return "SMP Service may be secured using LE Pairing Responder model."
-        case .boundAppKey: return "Selected Application Key will be used for Firmware Distribution."
+        case .info: 
+            return "Active connection to a GATT Proxy node with Firmware Distributor Server model and SMP Service enabled is required."
+        case .smp where proxyDetails?.isSmpSupported == true && proxyDetails?.isSmpSecure == false:
+            return "It is recommended to secure the SMP Service using LE Pairing Responder model to prevent unauthorized access."
+        case .boundAppKey: 
+            return "Selected Application Key will be used for Firmware Distribution."
         default: return nil
         }
     }
