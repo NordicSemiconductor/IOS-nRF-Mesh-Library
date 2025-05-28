@@ -166,11 +166,13 @@ private extension PasskeyViewController {
             case .peripheralNotFound:
                 return "Peripheral not found."
             case .connectionFailed:
-                return "Failed to connect to peripheral."
+                return "Connection failed."
             case .smpNotSupported:
                 return "SMP not supported."
             case .pairingFailedBefore:
-                return "Pairing already failed during this connection. Disconnect and try again."
+                return "Pairing failed.\nDisconnect and try again.\n\n" +
+                       "If the Distributor is bonded to another device remove the bond " +
+                       "information from the Distributor before reconnecting to it."
             }
         }
     }
