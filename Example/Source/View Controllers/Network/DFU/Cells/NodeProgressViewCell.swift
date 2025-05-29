@@ -68,7 +68,7 @@ class NodeProgressViewCell: NodeViewCell {
             if failure {
                 progressIndicator?.isHidden = true
                 throughoutLabel?.isHidden = true
-                accessoryView = UIImageView(image: UIImage(named: "xmark"))
+                accessoryView = UIImageView(image: UIImage(systemName: "xmark"))
                 tintColor = .systemRed
             }
         }
