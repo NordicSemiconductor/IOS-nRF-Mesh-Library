@@ -65,7 +65,7 @@ class DFUViewController: UIViewController {
             return
         }
         // If the upload has completed, but Distributor awaits Apply command, send Cancel command.
-        if !inProgress{
+        if !inProgress {
             Task {
                 let status = try await distributor.cancelDistribution()
                 if status.status == .success {
@@ -383,6 +383,12 @@ class DFUViewController: UIViewController {
     private func checkIfCompleted() {
         let allVerified = receivers!.allSatisfy { if case .verified = $0.status { true } else { false } }
         let allApplied = receivers!.allSatisfy { if case .applied = $0.status { true } else { false } }
+        let allFailed = receivers!.allSatisfy { if case .failure = $0.status { true } else { false } }
+        if allFailed {
+            statusView.text = "Distribution failed"
+            inProgress = false
+            navigationItem.leftBarButtonItem?.isEnabled = false
+        }
         if allApplied || allVerified {
             statusView.text = "Completed"
             inProgress = false
