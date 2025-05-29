@@ -54,8 +54,8 @@ class ConfigurationViewController: UIViewController,
     @IBAction func cancelTapped(_ sender: UIBarButtonItem) {
         if let handler = handler {
             // Mark all not started tasks as cancelled.
-            for i in current + 1..<statuses.count {
-                statuses[i] = .cancelled
+            for i in current + 1..<operations.taskCount {
+                operations.updateStatus(at: i, with: .cancelled)
             }
             handler.cancel()
             return
@@ -66,6 +66,8 @@ class ConfigurationViewController: UIViewController,
     // MARK: - Public properties
     
     func configure(node: Node, basedOn originalNode: Node) {
+        var tasks: [MeshTask] = []
+        
         // If the Default TLL was known for the original node, set the same value.
         if let ttl = originalNode.defaultTTL {
             tasks.append(.config(.setDefaultTtl(ttl, on: node)))
@@ -236,26 +238,31 @@ class ConfigurationViewController: UIViewController,
                 tasks.append(.config(.setPublication(newPublication, to: model)))
             }
         }
+        operations.merge(with: tasks, for: node)
     }
     
     func bind(applicationKeys: [ApplicationKey], to models: [Model]) {
+        var tasks: [Node : [MeshTask]] = [:]
+        
         // Missing Application Keys must be sent first.
         var cache: [Node: [ApplicationKey]] = [:]
         
         models.forEach { model in
-            applicationKeys.forEach { applicationKey in
-                if let node = model.parentElement?.parentNode {
+            if let node = model.parentElement?.parentNode {
+                applicationKeys.forEach { applicationKey in
                     // If a new Application Key is found...
-                    if cache[node]?.contains(applicationKey) != true &&
-                        !node.knows(applicationKey: applicationKey) {
+                    if cache[node]?.contains(applicationKey) != true && !node.knows(applicationKey: applicationKey) {
+                        if tasks[node] == nil {
+                            tasks[node] = []
+                        }
                         // ...check whether the device knows the bound Network Key.
                         let networkKey = applicationKey.boundNetworkKey
                         if !node.knows(networkKey: networkKey) {
                             // If not, first send the Network Key.
-                            tasks.append(.config(.sendNetworkKey(networkKey, to: node)))
+                            tasks[node]!.append(.config(.sendNetworkKey(networkKey, to: node)))
                         }
                         // After the bound Network Key is sent, send the App Key.
-                        tasks.append(.config(.sendApplicationKey(applicationKey, to: node)))
+                        tasks[node]!.append(.config(.sendApplicationKey(applicationKey, to: node)))
                         
                         // Add the Application Key to the cache, so that the same Network Key
                         // and Application Key are not sent multiple times to the same Node.
@@ -266,20 +273,36 @@ class ConfigurationViewController: UIViewController,
                         }
                     }
                     if !applicationKey.isBound(to: model) {
-                        tasks.append(.config(.bind(applicationKey, to: model)))
+                        if tasks[node] == nil {
+                            tasks[node] = []
+                        }
+                        tasks[node]!.append(.config(.bind(applicationKey, to: model)))
                     }
                 }
             }
         }
+        tasks.forEach { node, tasks in
+            operations.merge(with: tasks, for: node)
+        }
     }
     
     func subscribe(models: [Model], to groups: [Group]) {
+        var tasks: [Node : [MeshTask]] = [:]
+        
         models.forEach { model in
-            groups.forEach { group in
-                if !model.isSubscribed(to: group) {
-                    tasks.append(.config(.subscribe(model, to: group)))
+            if let node = model.parentElement?.parentNode {
+                groups.forEach { group in
+                    if !model.isSubscribed(to: group) {
+                        if tasks[node] == nil {
+                            tasks[node] = []
+                        }
+                        tasks[node]!.append(.config(.subscribe(model, to: group)))
+                    }
                 }
             }
+        }
+        tasks.forEach { node, tasks in
+            operations.merge(with: tasks, for: node)
         }
     }
     
@@ -289,37 +312,43 @@ class ConfigurationViewController: UIViewController,
             // Abort.
             return
         }
+        var tasks: [Node : [MeshTask]] = [:]
         // Missing Application Keys must be sent first.
         var cache: [Node] = []
         
         // For each selected Model...
         models.forEach { model in
             if let node = model.parentElement?.parentNode {
+                if tasks[node] == nil {
+                    tasks[node] = []
+                }
                 // If a new Application Key is found...
-                if !cache.contains(node) &&
-                    !node.knows(applicationKey: applicationKey) {
+                if !cache.contains(node) && !node.knows(applicationKey: applicationKey) {
                     // ...check whether the device knows the bound Network Key.
                     let networkKey = applicationKey.boundNetworkKey
                     if !node.knows(networkKey: networkKey) {
                         // If not, first send the Network Key.
-                        tasks.append(.config(.sendNetworkKey(networkKey, to: node)))
+                        tasks[node]!.append(.config(.sendNetworkKey(networkKey, to: node)))
                     }
                     // After the bound Network Key is sent, send the App Key.
-                    tasks.append(.config(.sendApplicationKey(applicationKey, to: node)))
+                    tasks[node]!.append(.config(.sendApplicationKey(applicationKey, to: node)))
                     
                     // Add the Application Key to the cache, so that the same Network Key
                     // and Application Key are not sent multiple times to the same Node.
                     cache.append(node)
                 }
+                
+                // ...check if it is bound to that Application Key.
+                if !applicationKey.isBound(to: model) {
+                    // If not, bind it.
+                    tasks[node]!.append(.config(.bind(applicationKey, to: model)))
+                }
+                // and send the Publication.
+                tasks[node]!.append(.config(.setPublication(publish, to: model)))
             }
-            
-            // ...check if it is bound to that Application Key.
-            if !applicationKey.isBound(to: model) {
-                // If not, bind it.
-                tasks.append(.config(.bind(applicationKey, to: model)))
-            }
-            // and send the Publication.
-            tasks.append(.config(.setPublication(publish, to: model)))
+        }
+        tasks.forEach { node, tasks in
+            operations.merge(with: tasks, for: node)
         }
     }
     
@@ -392,11 +421,12 @@ class ConfigurationViewController: UIViewController,
         // selecting more than Distributor's limit.
         // As the Back button is enabled and the user can go back to modify the list of
         // Receivers, we need to clear the list of receivers first.
-        tasks.append(.other(.clearDfuReceivers(from: firmwareDistributorServerModel)))
+        var tasks: [MeshTask] = [.other(.clearDfuReceivers(from: firmwareDistributorServerModel))]
         let chunks = receivers.chunked(by: 10)
         chunks.forEach { receivers in
             tasks.append(.other(.addDfuReceivers(receivers, to: firmwareDistributorServerModel)))
         }
+        operations.merge(with: tasks, for: distributor)
         
         // In case of DFU, the Configuration screen is not a final destination.
         // Hide the Cancel button and replace it with Back.
@@ -414,8 +444,7 @@ class ConfigurationViewController: UIViewController,
     
     // MARK: - Private properties
     
-    private var tasks: [MeshTask] = []
-    private var statuses: [MeshTaskStatus]!
+    private var operations: [(node: Node, tasks: [(task: MeshTask, status: MeshTaskStatus)])] = []
     private var handler: MessageHandle?
     private var inProgress: Bool = true
     private var current: Int = -1
@@ -445,9 +474,6 @@ class ConfigurationViewController: UIViewController,
         
         tableView.delegate = self
         tableView.dataSource = self
-        
-        // Initially, set all statuses to "pending".
-        statuses = tasks.map { _ in .pending }
     }
     
     func presentationControllerShouldDismiss(_ presentationController: UIPresentationController) -> Bool {
@@ -467,14 +493,14 @@ class ConfigurationViewController: UIViewController,
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        navigationItem.rightBarButtonItem?.isEnabled = tasks.isEmpty
-        navigationItem.leftBarButtonItem?.isEnabled = !tasks.isEmpty
-        progress.isHidden = tasks.isEmpty
-        progress.setMax(tasks.count)
-        time.isHidden = tasks.isEmpty
-        remainingTime.isHidden = tasks.isEmpty
+        navigationItem.rightBarButtonItem?.isEnabled = operations.isEmpty
+        navigationItem.leftBarButtonItem?.isEnabled = !operations.isEmpty
+        progress.isHidden = operations.isEmpty
+        progress.setMax(operations.count)
+        time.isHidden = operations.isEmpty
+        remainingTime.isHidden = operations.isEmpty
         
-        if tasks.isEmpty {
+        if operations.isEmpty {
             statusView.text = "No configuration required."
         }
     }
@@ -482,7 +508,8 @@ class ConfigurationViewController: UIViewController,
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        if !tasks.isEmpty {
+        let taskCount = operations.taskCount
+        if taskCount > 0 {
             startDate = Date()
             timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
                 guard let self = self, self.inProgress else {
@@ -498,7 +525,7 @@ class ConfigurationViewController: UIViewController,
                 let seconds = floor(elapsedTime - minutes * 60)
                 
                 let avgTime = elapsedTime / Double(current)
-                let eta = Double(self.tasks.count) * avgTime - elapsedTime
+                let eta = Double(taskCount) * avgTime - elapsedTime
                 let remainingMinutes = floor(eta / 60)
                 let remainingSeconds = floor(eta - remainingMinutes * 60)
                 
@@ -517,18 +544,26 @@ class ConfigurationViewController: UIViewController,
 extension ConfigurationViewController: UITableViewDelegate, UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return operations.count
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return tasks.count
+        return operations[section].tasks.count
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if operations.count > 1 {
+            return operations[section].node.name
+        }
+        return nil
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "task", for: indexPath)
-        cell.textLabel?.text = tasks[indexPath.row].title
-        cell.imageView?.image = tasks[indexPath.row].icon
-        let status = statuses[indexPath.row]
+        let task = operations[indexPath.section].tasks[indexPath.row].task
+        cell.textLabel?.text = task.title
+        cell.imageView?.image = task.icon
+        let status = operations[indexPath.section].tasks[indexPath.row].status
         cell.detailTextLabel?.text = status.description
         cell.detailTextLabel?.textColor = status.color
         if case .inProgress = status {
@@ -548,9 +583,12 @@ extension ConfigurationViewController: UITableViewDelegate, UITableViewDataSourc
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        // This is important for the top-most header to be invisible.
-        // Returning 0 is ignored.
-        return .leastNonzeroMagnitude
+        // Don't display the header if only one Node is being configured.
+        if operations.count <= 1 {
+            // Returning 0 is ignored.
+            return .leastNonzeroMagnitude
+        }
+        return UITableView.automaticDimension
     }
     
 }
@@ -581,7 +619,7 @@ private extension ConfigurationViewController {
         let current = current
         
         // Are we done?
-        if current >= tasks.count || !inProgress {
+        guard let task = operations.task(at: current)?.task, inProgress else {
             inProgress = false
             completed()
             return
@@ -589,9 +627,6 @@ private extension ConfigurationViewController {
         
         // Display the title of the current task.
         reload(taskAt: current, with: .inProgress)
-        
-        // Pop new task and execute.
-        let task = tasks[current]
         
         var skipped: Bool!
         switch task {
@@ -613,7 +648,7 @@ private extension ConfigurationViewController {
             switch meshTask {
             case .clearDfuReceivers, .addDfuReceivers:
                 // If at least one configuration task for DFU task failed, abort.
-                skipped = statuses.hasAnyFailed
+                skipped = operations.hasAnyFailed
             }
             skipped = false
         }
@@ -642,12 +677,13 @@ private extension ConfigurationViewController {
     
     func reload(taskAt index: Int, with status: MeshTaskStatus) {
         DispatchQueue.main.async {
-            guard index < self.tasks.count else {
+            guard let task = self.operations.task(at: index)?.task else {
                 return
             }
-            self.statusView.text = self.tasks[index].title
-            self.statuses[index] = status
-            self.tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
+            self.statusView.text = task.title
+            if let indexPath = self.operations.updateStatus(at: index, with: status) {
+                self.tableView.reloadRows(at: [indexPath], with: .none)
+            }
         }
     }
     

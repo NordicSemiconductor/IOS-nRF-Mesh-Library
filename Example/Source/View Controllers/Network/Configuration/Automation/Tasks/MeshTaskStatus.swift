@@ -90,17 +90,58 @@ extension MeshTaskStatus: CustomStringConvertible {
     
 }
 
-extension Array where Element == MeshTaskStatus {
+extension Array where Element == (node: Node, tasks: [(task: MeshTask, status: MeshTaskStatus)]) {
+    
+    mutating func merge(with tasks: [MeshTask], for node: Node) {
+        if let index = firstIndex(where: { $0.node.uuid == node.uuid }) {
+            self[index].tasks.append(contentsOf: tasks.map { ($0, .pending) })
+        } else {
+            self.append((node: node, tasks: tasks.map { ($0, .pending) }))
+        }
+    }
     
     var hasAnyFailed: Bool {
-        return contains { status in
-            switch status {
-            case .failed, .cancelled:
-                return true
-            default:
-                return false
+        return contains { (node, tasks) in
+            return tasks.contains { task in
+                switch task.status {
+                case .failed, .cancelled:
+                    return true
+                default:
+                    return false
+                }
             }
         }
     }
     
+    var taskCount: Int {
+        return reduce(0) { $0 + $1.tasks.count }
+    }
+    
+    func task(at index: Int) -> (task: MeshTask, status: MeshTaskStatus)? {
+        var currentIndex = 0
+        for (_, tasks) in self {
+            for task in tasks {
+                if currentIndex == index {
+                    return task
+                }
+                currentIndex += 1
+            }
+        }
+        return nil
+    }
+    
+    @discardableResult
+    mutating func updateStatus(at index: Int, with status: MeshTaskStatus) -> IndexPath? {
+        var currentIndex = 0
+        for (nodeIndex, (_, tasks)) in self.enumerated() {
+            for (taskIndex, _) in tasks.enumerated() {
+                if currentIndex == index {
+                    self[nodeIndex].tasks[taskIndex].status = status
+                    return IndexPath(row: taskIndex, section: nodeIndex)
+                }
+                currentIndex += 1
+            }
+        }
+        return nil
+    }
 }
