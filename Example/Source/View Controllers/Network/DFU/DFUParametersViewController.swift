@@ -49,7 +49,7 @@ class DFUParametersViewController: UITableViewController {
     var updatePackage: UpdatePackage!
     
     private var ttl: UInt8 = 0
-    private var timeoutBase: UInt16 = 118
+    private var timeoutBase: UInt16 = 0
     private var transferMode: TransferMode = .push
     private var updatePolicy: FirmwareUpdatePolicy = .verifyOnly
     private var selectedGroup: Group?
@@ -133,7 +133,7 @@ class DFUParametersViewController: UITableViewController {
                 return cell
             case IndexPath.updatePolicyRow:
                 let cell = tableView.dequeueReusableCell(withIdentifier: "option", for: indexPath) as! SegmentedControlViewCell
-                cell.label.text = "Update Policy"
+                cell.label.text = /* Update */ "Policy" // "Update Policy" gets cut on some phones to "Update P...".
                 cell.segmentedControl.tag = tagUpdatePolicy
                 cell.segmentedControl.setTitle("Verify Only", forSegmentAt: 0)
                 cell.segmentedControl.setTitle("Verify and Apply", forSegmentAt: 1)
@@ -194,10 +194,12 @@ class DFUParametersViewController: UITableViewController {
         guard indexPath.section == 0 else { return }
         switch indexPath.row {
         case IndexPath.timeoutRow: // Timeout
-            presentAlert(title: "Timeout",
-                         message: "Timeout is calculated using the following formula:\n\n10000 * (Timeout Base + 2) + 100 * TTL (milliseconds)\n\n" +
-                                  "Timeout Base is a UINT16 value, but for simplicity the range of the slider is limited to a subset of values.\n" +
-                                  "Currently selected Timeout Base is \(timeoutBase).")
+            presentAlert(title: "Client Timeout",
+                         message: "Use the slider to set the Timeout Base parameter, which is used to calculate the " +
+                                  "Client Timeout with the following formula:\n\n" +
+                                  "10000 * (Timeout Base + 2) + 100 * TTL (milliseconds)\n\n" +
+                                  "The Client Timeout is restarted for each procedure.\n\n" +
+                                  "Selected Timeout Base: \(timeoutBase)")
         default:
             break
         }
