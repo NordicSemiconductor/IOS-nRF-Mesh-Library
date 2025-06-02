@@ -4,7 +4,17 @@ This folder contains test firmware for testing DFU over Bluetooth Mesh compiled 
 
 ## Supported devices
 
-The test firmware was compiled for nRF52840 DK and nRF54L15 DK.
+The test firmware was compiled for nRF52840 DK and nRF54L15 DK and was modified with the following KConfig options:
+```
+CONFIG_BT_DEVICE_NAME="Mesh DFU Distributor 54L 0.9" <- advertised name
+CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION="0.9.0+0" <- version
+
+CONFIG_BT_MESH_SUBNET_COUNT=2
+CONFIG_BT_MESH_APP_KEY_COUNT=4
+CONFIG_BT_MESH_MODEL_KEY_COUNT=3
+CONFIG_BT_MESH_LABEL_COUNT=4
+CONFIG_MBEDTLS_HEAP_SIZE=2048
+```
 
 ## Content
 
