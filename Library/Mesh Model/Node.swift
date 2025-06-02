@@ -756,6 +756,14 @@ internal extension Node {
         netKeys = networkKeyIndexes
             .map { Node.NodeKey(index: $0, updated: false) }
             .sorted()
+        // Remove any Application Keys bound to Network Keys which are not in the list.
+        appKeys = appKeys.filter {
+            if let applicationKey = applicationKeys[$0.index] {
+                return networkKeyIndexes.contains(applicationKey.boundNetworkKeyIndex)
+            }
+            // If the Application Key is not known, leave it.
+            return true
+        }
         // If an insecure Node received a Network Key, make sure to lower
         // the minSecurity field of all the keys it .
         if security == .insecure {
