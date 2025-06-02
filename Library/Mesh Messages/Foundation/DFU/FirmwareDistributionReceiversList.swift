@@ -48,7 +48,7 @@ public struct FirmwareDistributionReceiversList: StaticMeshResponse {
     /// and contains at most ``FirmwareDistributionReceiversGet/entriesLimit`` entries.
     ///
     /// The list is empty if no Entries were found within the requested range.
-    public let receivers: [TargetNode]
+    public let receivers: [ReceiverStatus]
     
     public var parameters: Data? {
         let initial = Data() + totalCount + firstIndex
@@ -64,10 +64,10 @@ public struct FirmwareDistributionReceiversList: StaticMeshResponse {
     }
     
     /// A structure of an entry from the Distribution Receivers List state
-    public struct TargetNode: Sendable {
-        /// The unicast address of the Target Node.
+    public struct ReceiverStatus: Sendable, CustomDebugStringConvertible {
+        /// The Unicast Address of the Receiver.
         public let address: Address
-        /// Retrieved Update Phase state of the Target Node.
+        /// Retrieved Update Phase state of the Receiver.
         public let phase: RetrievedUpdatePhase
         /// Status of the last operation with the Firmware Update Server.
         public let updateStatus: FirmwareUpdateMessageStatus
@@ -80,7 +80,7 @@ public struct FirmwareDistributionReceiversList: StaticMeshResponse {
         /// Index of the firmware image on the Firmware Information List state that is being updated.
         public let imageIndex: UInt8
         
-        /// Creates a new Target Node entry.
+        /// Creates a new entry.
         ///
         /// - parameters:
         ///  - address: The unicast address of the Target Node.
@@ -102,6 +102,10 @@ public struct FirmwareDistributionReceiversList: StaticMeshResponse {
             self.transferProgress = (transferProgress / 2) * 2 // Ensure the value is even.
             self.imageIndex = imageIndex
         }
+        
+        public var debugDescription: String {
+            return "Receiver(address: \(address.hex), phase: \(phase), updateStatus: \(updateStatus), transferStatus: \(transferStatus), progress: \(transferProgress), imageIndex: \(imageIndex))"
+        }
     }
     
     /// Creates the Firmware Distribution Receivers List message.
@@ -116,7 +120,7 @@ public struct FirmwareDistributionReceiversList: StaticMeshResponse {
     ///               `totalCount` entries.
     ///  - firstIndex: Index of the first requested entry from the Distribution Receivers List state.
     ///  - totalCount: The total number of receivers in the Distribution Receivers List state.
-    public init(receivers: [TargetNode], from firstIndex: UInt16, outOf totalCount: UInt16) {
+    public init(receivers: [ReceiverStatus], from firstIndex: UInt16, outOf totalCount: UInt16) {
         self.totalCount = totalCount
         self.firstIndex = firstIndex
         self.receivers = receivers
@@ -130,7 +134,7 @@ public struct FirmwareDistributionReceiversList: StaticMeshResponse {
     /// - parameters:
     ///  - request: The received request.
     ///  - receivers: Complete list of receivers in the Distribution Receivers List state.
-    public init(responseTo request: FirmwareDistributionReceiversGet, using receivers: [TargetNode]) {
+    public init(responseTo request: FirmwareDistributionReceiversGet, using receivers: [ReceiverStatus]) {
         self.totalCount = UInt16(receivers.count)
         self.firstIndex = request.firstIndex
         if request.firstIndex < receivers.count {
@@ -150,7 +154,7 @@ public struct FirmwareDistributionReceiversList: StaticMeshResponse {
         self.totalCount = parameters.read(fromOffset: 0)
         self.firstIndex = parameters.read(fromOffset: 2)
         
-        var receivers: [TargetNode] = []
+        var receivers: [ReceiverStatus] = []
         var offset = 4
         while offset < parameters.count {
             let address = Address(parameters[offset]) | (Address(parameters[offset + 1] & 0x7F) << 8)
@@ -170,7 +174,7 @@ public struct FirmwareDistributionReceiversList: StaticMeshResponse {
             let imageIndex = parameters[offset + 4]
             offset += 5
             
-            let receiver = TargetNode(address: address,
+            let receiver = ReceiverStatus(address: address,
                                       phase: phase,
                                       updateStatus: updateStatus,
                                       transferStatus: transferStatus,

@@ -34,7 +34,7 @@ import Foundation
 /// a Firmware Distribution Client to delete a stored firmware image on a Firmware Distribution Server.
 public struct FirmwareDistributionFirmwareDeleteAll: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8326
-    public static let responseType: StaticMeshResponse.Type = FirmwareDistributionStatus.self
+    public static let responseType: StaticMeshResponse.Type = FirmwareDistributionFirmwareStatus.self
     
     public var parameters: Data? {
         return nil

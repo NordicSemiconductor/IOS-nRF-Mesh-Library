@@ -30,6 +30,7 @@
 
 import UIKit
 import NordicMesh
+import iOSMcuManagerLibrary
 
 class ConfigurationViewController: UIViewController,
                                    UIAdaptivePresentationControllerDelegate {
@@ -42,14 +43,19 @@ class ConfigurationViewController: UIViewController,
     
     @IBOutlet weak var remainingTime: UILabel!
     @IBOutlet weak var time: UILabel!
+    @IBOutlet weak var doneButton: UIBarButtonItem!
     @IBAction func doneTapped(_ sender: UIBarButtonItem) {
-        navigationController?.dismiss(animated: true)
+        if isDfu {
+            performSegue(withIdentifier: "start", sender: nil)
+        } else {
+            navigationController?.dismiss(animated: true)
+        }
     }
     @IBAction func cancelTapped(_ sender: UIBarButtonItem) {
         if let handler = handler {
             // Mark all not started tasks as cancelled.
-            for i in current + 1..<statuses.count {
-                statuses[i] = .cancelled
+            for i in current + 1..<operations.taskCount {
+                operations.updateStatus(at: i, with: .cancelled)
             }
             handler.cancel()
             return
@@ -60,46 +66,46 @@ class ConfigurationViewController: UIViewController,
     // MARK: - Public properties
     
     func configure(node: Node, basedOn originalNode: Node) {
-        self.node = node
+        var tasks: [MeshTask] = []
         
         // If the Default TLL was known for the original node, set the same value.
         if let ttl = originalNode.defaultTTL {
-            tasks.append(.setDefaultTtl(ttl))
+            tasks.append(.config(.setDefaultTtl(ttl, on: node)))
         }
         // Do the same for Secure Network beacons, ...
         if let secureNetworkBeacon = originalNode.secureNetworkBeacon {
-            tasks.append(.setBeacon(enabled: secureNetworkBeacon))
+            tasks.append(.config(.setBeacon(enabled: secureNetworkBeacon, on: node)))
         }
         // ...Network Transmit, ...
         if let networkTransmit = originalNode.networkTransmit {
-            tasks.append(.setNetworkTransit(networkTransmit))
+            tasks.append(.config(.setNetworkTransmit(networkTransmit, on: node)))
         }
         // ... and the node features:
         switch originalNode.features?.relay {
         case .enabled:
             if let relayRetransmit = originalNode.relayRetransmit {
-                tasks.append(.setRelay(relayRetransmit))
+                tasks.append(.config(.setRelay(relayRetransmit, on: node)))
             }
         case .notEnabled:
-            tasks.append(.disableRelayFeature)
+            tasks.append(.config(.disableRelayFeature(on: node)))
         default:
             break
         }
         
         switch originalNode.features?.proxy {
         case .enabled:
-            tasks.append(.setGATTProxy(enabled: true))
+            tasks.append(.config(.setGATTProxy(enabled: true, on: node)))
         case .notEnabled:
-            tasks.append(.setGATTProxy(enabled: false))
+            tasks.append(.config(.setGATTProxy(enabled: false, on: node)))
         default:
             break
         }
         
         switch originalNode.features?.friend {
         case .enabled:
-            tasks.append(.setFriend(enabled: true))
+            tasks.append(.config(.setFriend(enabled: true, on: node)))
         case .notEnabled:
-            tasks.append(.setFriend(enabled: false))
+            tasks.append(.config(.setFriend(enabled: false, on: node)))
         default:
             break
         }
@@ -111,39 +117,41 @@ class ConfigurationViewController: UIViewController,
         let meshNetwork = MeshNetworkManager.instance.meshNetwork!
         meshNetwork.networkKeys.knownTo(node: originalNode).forEach { networkKey in
             if !node.knows(networkKey: networkKey) {
-                tasks.append(.sendNetworkKey(networkKey))
+                tasks.append(.config(.sendNetworkKey(networkKey, to: node)))
             }
         }
         meshNetwork.applicationKeys.knownTo(node: originalNode).forEach { applicationKey in
             if !node.knows(applicationKey: applicationKey) {
-                tasks.append(.sendApplicationKey(applicationKey))
+                tasks.append(.config(.sendApplicationKey(applicationKey, to: node)))
             }
         }
         
         // With the Network Keys sent we could set the Node Identity state for each of the
         // subnetworks, but the state of Node Identity for Network Keys is dynamic and not
         // stored in the Configuration Database. Therefore, we skip this configuration.
-    
+        
         // Set Heartbeat Publication. Only the feature-triggered settings will be applied.
         if let publication = originalNode.heartbeatPublication,
            let networkKey = meshNetwork.networkKeys[publication.networkKeyIndex] {
-            tasks.append(.setHeartbeatPublication(
+            tasks.append(.config(.setHeartbeatPublication(
                 // Current periodic publication data are not known. Periodic heartbeats will be disabled.
                 countLog: 0, periodLog: 0,
                 // Set the remaining fields to match the Heartbeat publication of the old node.
                 destination: publication.address, ttl: publication.ttl,
-                networkKey: networkKey, triggerFeatures: publication.features))
+                networkKey: networkKey, triggerFeatures: publication.features,
+                on: node
+            )))
         }
         // Don't set Heartbeat Subscription as the current subscription period of the old Node
         // is not known.
         /*
-        if let subscription = originalNode.heartbeatSubscription {
-            tasks.append(.setHeartbeatSubscription(
-                source: subscription.source, destination: subscription.destination,
-                // The period for Heartbeat subscriptions is not known.
-                periodLog: 0))
-        }
-        */
+         if let subscription = originalNode.heartbeatSubscription {
+         tasks.append(.setHeartbeatSubscription(
+         source: subscription.source, destination: subscription.destination,
+         // The period for Heartbeat subscriptions is not known.
+         periodLog: 0))
+         }
+         */
         
         // Key bindings.
         for i in 0..<min(originalNode.elements.count, node.elements.count) {
@@ -156,7 +164,7 @@ class ConfigurationViewController: UIViewController,
                     let boundApplicationKeys = meshNetwork.applicationKeys
                         .filter { $0.isBound(to: originalModel) }
                     boundApplicationKeys.forEach { applicationKey in
-                        tasks.append(.bind(applicationKey, to: targetModel))
+                        tasks.append(.config(.bind(applicationKey, to: targetModel)))
                     }
                 }
             }
@@ -180,7 +188,7 @@ class ConfigurationViewController: UIViewController,
                                                  ttl: publication.ttl,
                                                  period: publication.period,
                                                  retransmit: publication.retransmit)
-                    tasks.append(.setPublication(newPublication, to: targetModel))
+                    tasks.append(.config(.setPublication(newPublication, to: targetModel)))
                 }
             }
         }
@@ -200,7 +208,7 @@ class ConfigurationViewController: UIViewController,
                     subscribableGroups
                         .filter { group in originalModel.isSubscribed(to: group) }
                         .forEach { group in
-                            tasks.append(.subscribe(targetModel, to: group))
+                            tasks.append(.config(.subscribe(targetModel, to: group)))
                         }
                 }
             }
@@ -227,116 +235,245 @@ class ConfigurationViewController: UIViewController,
                                              ttl: publication.ttl,
                                              period: publication.period,
                                              retransmit: publication.retransmit)
-                tasks.append(.setPublication(newPublication, to: model))
+                tasks.append(.config(.setPublication(newPublication, to: model)))
             }
         }
+        operations.merge(with: tasks, for: node)
     }
     
     func bind(applicationKeys: [ApplicationKey], to models: [Model]) {
-        guard let node = models.first?.parentElement?.parentNode else {
-            return
-        }
-        self.node = node
+        var tasks: [Node : [MeshTask]] = [:]
+        
         // Missing Application Keys must be sent first.
-        var networkKeys: [NetworkKey] = []
-        applicationKeys.forEach { applicationKey in
-            // If a new Application Key is found...
-            if !node.knows(applicationKey: applicationKey) {
-                // ...check whether the device knows the bound Network Key.
-                let networkKey = applicationKey.boundNetworkKey
-                if !networkKeys.contains(networkKey) && !node.knows(networkKey: networkKey) {
-                    // If not, first send the Network Key.
-                    tasks.append(.sendNetworkKey(networkKey))
-                    // Do it only once per Network Key.
-                    networkKeys.append(networkKey)
+        var cache: [Node: [ApplicationKey]] = [:]
+        
+        models.forEach { model in
+            if let node = model.parentElement?.parentNode {
+                applicationKeys.forEach { applicationKey in
+                    // If a new Application Key is found...
+                    if cache[node]?.contains(applicationKey) != true && !node.knows(applicationKey: applicationKey) {
+                        if tasks[node] == nil {
+                            tasks[node] = []
+                        }
+                        // ...check whether the device knows the bound Network Key.
+                        let networkKey = applicationKey.boundNetworkKey
+                        if !node.knows(networkKey: networkKey) {
+                            // If not, first send the Network Key.
+                            tasks[node]!.append(.config(.sendNetworkKey(networkKey, to: node)))
+                        }
+                        // After the bound Network Key is sent, send the App Key.
+                        tasks[node]!.append(.config(.sendApplicationKey(applicationKey, to: node)))
+                        
+                        // Add the Application Key to the cache, so that the same Network Key
+                        // and Application Key are not sent multiple times to the same Node.
+                        if cache[node] == nil {
+                            cache[node] = [applicationKey]
+                        } else {
+                            cache[node]!.append(applicationKey)
+                        }
+                    }
+                    if !applicationKey.isBound(to: model) {
+                        if tasks[node] == nil {
+                            tasks[node] = []
+                        }
+                        tasks[node]!.append(.config(.bind(applicationKey, to: model)))
+                    }
                 }
-                // After the bound Network Key is sent, send the App Key.
-                tasks.append(.sendApplicationKey(applicationKey))
             }
         }
-        // When all the keys are sent, start binding them to Models.
-        models.forEach { model in
-            applicationKeys.forEach { applicationKey in
-                if !applicationKey.isBound(to: model) {
-                    tasks.append(.bind(applicationKey, to: model))
-                }
-            }
+        tasks.forEach { node, tasks in
+            operations.merge(with: tasks, for: node)
         }
     }
     
     func subscribe(models: [Model], to groups: [Group]) {
-        guard let node = models.first?.parentElement?.parentNode else {
-            return
-        }
-        self.node = node
+        var tasks: [Node : [MeshTask]] = [:]
+        
         models.forEach { model in
-            groups.forEach { group in
-                if !model.isSubscribed(to: group) {
-                    tasks.append(.subscribe(model, to: group))
+            if let node = model.parentElement?.parentNode {
+                groups.forEach { group in
+                    if !model.isSubscribed(to: group) {
+                        if tasks[node] == nil {
+                            tasks[node] = []
+                        }
+                        tasks[node]!.append(.config(.subscribe(model, to: group)))
+                    }
                 }
             }
+        }
+        tasks.forEach { node, tasks in
+            operations.merge(with: tasks, for: node)
         }
     }
     
     func set(publication publish: Publish, to models: [Model]) {
-        guard let node = models.first?.parentElement?.parentNode else {
-            return
-        }
         guard let network = MeshNetworkManager.instance.meshNetwork,
               let applicationKey = network.applicationKeys[publish.index] else {
             // Abort.
             return
         }
-        self.node = node
+        var tasks: [Node : [MeshTask]] = [:]
+        // Missing Application Keys must be sent first.
+        var cache: [Node] = []
         
-        // Does the Node know the selected Application Key?
-        if !node.knows(applicationKey: applicationKey) {
-            // At least the Network Key?
-            if !node.knows(networkKeyIndex: applicationKey.boundNetworkKeyIndex),
-               let networkKey = network.networkKeys[applicationKey.boundNetworkKeyIndex] {
-                tasks.append(.sendNetworkKey(networkKey))
-            }
-            tasks.append(.sendApplicationKey(applicationKey))
-        }
         // For each selected Model...
         models.forEach { model in
-            // ...check if it is bound to that Application Key.
-            if !applicationKey.isBound(to: model) {
-                // If not, bind it.
-                tasks.append(.bind(applicationKey, to: model))
+            if let node = model.parentElement?.parentNode {
+                if tasks[node] == nil {
+                    tasks[node] = []
+                }
+                // If a new Application Key is found...
+                if !cache.contains(node) && !node.knows(applicationKey: applicationKey) {
+                    // ...check whether the device knows the bound Network Key.
+                    let networkKey = applicationKey.boundNetworkKey
+                    if !node.knows(networkKey: networkKey) {
+                        // If not, first send the Network Key.
+                        tasks[node]!.append(.config(.sendNetworkKey(networkKey, to: node)))
+                    }
+                    // After the bound Network Key is sent, send the App Key.
+                    tasks[node]!.append(.config(.sendApplicationKey(applicationKey, to: node)))
+                    
+                    // Add the Application Key to the cache, so that the same Network Key
+                    // and Application Key are not sent multiple times to the same Node.
+                    cache.append(node)
+                }
+                
+                // ...check if it is bound to that Application Key.
+                if !applicationKey.isBound(to: model) {
+                    // If not, bind it.
+                    tasks[node]!.append(.config(.bind(applicationKey, to: model)))
+                }
+                // and send the Publication.
+                tasks[node]!.append(.config(.setPublication(publish, to: model)))
             }
-            // and send the Publication.
-            tasks.append(.setPublication(publish, to: model))
         }
+        tasks.forEach { node, tasks in
+            operations.merge(with: tasks, for: node)
+        }
+    }
+    
+    /// Creates operations necessary to update the firmware on the given receivers.
+    ///
+    /// - note: See [documentation](https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/protocols/bt/bt_mesh/dfu_over_bt_mesh.html).
+    /// - parameters:
+    ///  - receivers: The receivers to update.
+    ///  - updatePackage: The update package to use.
+    ///  - parameters: DFU parameters.
+    ///  - applicationKey: The Application Key to use.
+    ///  - distributor: The distributor Node.
+    ///  - bearer: A direct bearer to the Distributor Node. This is required to upload the update package
+    ///            over SMP protocol.
+    func update(receivers: [Receiver], with updatePackage: UpdatePackage,
+                parameters: DFUParameters,
+                usingApplicationKey applicationKey: ApplicationKey,
+                on distributor: Node, over bearer: GattBearer) {
+        // The Distributor Node must have the Firmware Distribution Server Model,
+        // Firmware Update Client Model and BLOB Transfer Client Model.
+        guard let meshNetwork = MeshNetworkManager.instance.meshNetwork,
+              let firmwareDistributorServerModel = distributor
+                .models(withSigModelId: .firmwareDistributionServerModelId)
+                .first,
+              let element = firmwareDistributorServerModel.parentElement,
+              let firmwareUpdateClientModel = element.model(withSigModelId: .firmwareUpdateClientModelId),
+              let blobTransferClientModel = element.model(withSigModelId: .blobTransferClientModelId) else {
+            return
+        }
+        
+        // Before starting the DFU we need to bind the selected Application Key
+        // to the BLOB Transfer models and Firmware Update models.
+        bind(applicationKeys: [applicationKey], to: [firmwareUpdateClientModel, blobTransferClientModel])
+
+        // The Firmware Update Server models on Target Nodes have already been bound to the
+        // key on the previous screen, where there user was using it to check
+        // metadata compatibility, so below we list only BLOB Transfer Server models.
+        // Moreover, if a multicast distribution was selected, both Firmware Update Server
+        // and BLOB Transfer Server models must be subscribed to the selected group.
+        // However, as those models are related, it is enough to subscribe the
+        // BLOB Transfer Server models, which we have already listed.
+        
+        // List BLOB Transfer Server models that are on the
+        // same Element as the Firmware Update Server model.
+        let models = receivers
+            // Convert Receivers to Nodes
+            .compactMap { receiver in meshNetwork.node(withAddress: receiver.address) }
+            // Look for Firmware Update Server models.
+            .flatMap { node in node.models(withSigModelId: .firmwareUpdateServerModelId) }
+            // ...and list their Elements.
+            .map { firmwareUpdateServerModel in firmwareUpdateServerModel.parentElement! }
+            // List BLOB Transfer Server models on those Elements.
+            .flatMap { element in
+                element.models.filter {
+                    $0.isBluetoothSIGAssigned && $0.modelIdentifier == .blobTransferServerModelId
+                }
+            }
+        
+        // Bind all found BLOB Transfer Server models to the selected Application Key.
+        bind(applicationKeys: [applicationKey], to: models)
+        
+        // If a Multicast destination is selected, subscribe to it.
+        if let address = parameters.multicastAddress,
+           let group = meshNetwork.group(withAddress: address) {
+            subscribe(models: models, to: [group])
+        }
+        
+        // Finally, add Receivers. The number of receivers is limited to 10 per message.
+        // The maximum number is also ensured by the previous screen, which didn't allow
+        // selecting more than Distributor's limit.
+        // As the Back button is enabled and the user can go back to modify the list of
+        // Receivers, we need to clear the list of receivers first.
+        var tasks: [MeshTask] = [.other(.clearDfuReceivers(from: firmwareDistributorServerModel))]
+        let chunks = receivers.chunked(by: 10)
+        chunks.forEach { receivers in
+            tasks.append(.other(.addDfuReceivers(receivers, to: firmwareDistributorServerModel)))
+        }
+        operations.merge(with: tasks, for: distributor)
+        
+        // In case of DFU, the Configuration screen is not a final destination.
+        // Hide the Cancel button and replace it with Back.
+        navigationItem.leftItemsSupplementBackButton = true
+        navigationItem.leftBarButtonItem = nil
+        self.doneButton.title = "Next"
+        self.isDfu = true
+        self.distributor = distributor
+        self.bearer = bearer
+        self.receivers = receivers
+        self.updatePackage = updatePackage
+        self.parameters = parameters
+        self.applicationKey = applicationKey
     }
     
     // MARK: - Private properties
     
-    private var node: Node!
-    private var tasks: [MeshTask] = []
-    private var statuses: [MeshTaskStatus]!
+    private var operations: [(node: Node, tasks: [(task: MeshTask, status: MeshTaskStatus)])] = []
     private var handler: MessageHandle?
     private var inProgress: Bool = true
     private var current: Int = -1
     
-    /// The timer firest every second and refreshes the time and remaining time.
+    /// The timer fires every second and refreshes the time and remaining time.
     private var timer: Timer!
     /// The timestamp when the configuration has started.
     private var startDate: Date!
+    
+    // MARK: - Private properties for DFU
+    
+    private var isDfu: Bool = false
+    private var distributor: Node?
+    private var bearer: GattBearer?
+    private var receivers: [Receiver]?
+    private var updatePackage: UpdatePackage?
+    private var parameters: DFUParameters?
+    private var applicationKey: ApplicationKey?
     
     // MARK: - View Controller
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Make the dialog modal (non-dismissable).
+        // Make the dialog modal (non-dismissible).
         navigationController?.presentationController?.delegate = self
         
         tableView.delegate = self
         tableView.dataSource = self
-        
-        // Initially, set all statuses to "pending".
-        statuses = tasks.map { _ in .pending }
     }
     
     func presentationControllerShouldDismiss(_ presentationController: UIPresentationController) -> Bool {
@@ -344,23 +481,35 @@ class ConfigurationViewController: UIViewController,
         return !inProgress
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let destination = segue.destination as? DFUViewController {
+            destination.distributor = distributor
+            destination.bearer = bearer
+            destination.receivers = receivers
+            destination.updatePackage = updatePackage
+            destination.parameters = parameters
+            destination.applicationKey = applicationKey
+        }
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
-        navigationItem.rightBarButtonItem?.isEnabled = tasks.isEmpty
-        navigationItem.leftBarButtonItem?.isEnabled = !tasks.isEmpty
-        progress.isHidden = tasks.isEmpty
-        progress.setMax(tasks.count)
-        time.isHidden = tasks.isEmpty
-        remainingTime.isHidden = tasks.isEmpty
+        navigationItem.rightBarButtonItem?.isEnabled = operations.isEmpty
+        navigationItem.leftBarButtonItem?.isEnabled = !operations.isEmpty
+        progress.isHidden = operations.isEmpty
+        progress.setMax(operations.count)
+        time.isHidden = operations.isEmpty
+        remainingTime.isHidden = operations.isEmpty
         
-        if tasks.isEmpty {
-            statusView.text = "The node is already configured."
+        if operations.isEmpty {
+            statusView.text = "No configuration required."
         }
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        if !tasks.isEmpty {
+        let taskCount = operations.taskCount
+        if taskCount > 0 {
             startDate = Date()
             timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
                 guard let self = self, self.inProgress else {
@@ -376,7 +525,7 @@ class ConfigurationViewController: UIViewController,
                 let seconds = floor(elapsedTime - minutes * 60)
                 
                 let avgTime = elapsedTime / Double(current)
-                let eta = Double(self.tasks.count) * avgTime - elapsedTime
+                let eta = Double(taskCount) * avgTime - elapsedTime
                 let remainingMinutes = floor(eta / 60)
                 let remainingSeconds = floor(eta - remainingMinutes * 60)
                 
@@ -388,30 +537,33 @@ class ConfigurationViewController: UIViewController,
             MeshNetworkManager.instance.delegate = self
             executeNext()
         }
-        
     }
     
 }
 
-extension ConfigurationViewController: UITableViewDelegate {
-    
-}
-
-extension ConfigurationViewController: UITableViewDataSource {
+extension ConfigurationViewController: UITableViewDelegate, UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return operations.count
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return tasks.count
+        return operations[section].tasks.count
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if operations.count > 1 {
+            return operations[section].node.name
+        }
+        return nil
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "task", for: indexPath)
-        cell.textLabel?.text = tasks[indexPath.row].title
-        cell.imageView?.image = tasks[indexPath.row].icon
-        let status = statuses[indexPath.row]
+        let task = operations[indexPath.section].tasks[indexPath.row].task
+        cell.textLabel?.text = task.title
+        cell.imageView?.image = task.icon
+        let status = operations[indexPath.section].tasks[indexPath.row].status
         cell.detailTextLabel?.text = status.description
         cell.detailTextLabel?.textColor = status.color
         if case .inProgress = status {
@@ -428,6 +580,15 @@ extension ConfigurationViewController: UITableViewDataSource {
             cell.accessoryView = nil
         }
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        // Don't display the header if only one Node is being configured.
+        if operations.count <= 1 {
+            // Returning 0 is ignored.
+            return .leastNonzeroMagnitude
+        }
+        return UITableView.automaticDimension
     }
     
 }
@@ -453,12 +614,12 @@ private extension ConfigurationViewController {
     
     func executeNext() {
         current += 1
+        handler = nil
         
         let current = current
         
         // Are we done?
-        if current >= tasks.count || !inProgress {
-            handler = nil
+        guard let task = operations.task(at: current)?.task, inProgress else {
             inProgress = false
             completed()
             return
@@ -467,21 +628,28 @@ private extension ConfigurationViewController {
         // Display the title of the current task.
         reload(taskAt: current, with: .inProgress)
         
-        // Pop new task and execute.
-        let task = tasks[current]
-        
         var skipped: Bool!
         switch task {
-        // Skip application keys if a network key was not sent.
-        case .sendApplicationKey(let applicationKey):
-            skipped = !node.knows(networkKey: applicationKey.boundNetworkKey)
-        // Skip binding models to Application Keys not known to the Node.
-        case .bind(let applicationKey, to: _):
-            skipped = !node.knows(applicationKey: applicationKey)
-        // Skip publication with keys that failed to be sent.
-        case .setPublication(let publish, to: _):
-            skipped = !node.knows(applicationKeyIndex: publish.index)
-        default:
+        case .config(let meshTask):
+            switch meshTask {
+                // Skip application keys if a network key was not sent.
+            case .sendApplicationKey(let applicationKey, to: let node):
+                skipped = !node.knows(networkKey: applicationKey.boundNetworkKey)
+                // Skip binding models to Application Keys not known to the Node.
+            case .bind(let applicationKey, to: let model):
+                skipped = !(model.parentElement?.parentNode?.knows(applicationKey: applicationKey) ?? false)
+                // Skip publication with keys that failed to be sent.
+            case .setPublication(let publish, to: let model):
+                skipped = !(model.parentElement?.parentNode?.knows(applicationKeyIndex: publish.index) ?? false)
+            default:
+                skipped = false
+            }
+        case .other(let meshTask):
+            switch meshTask {
+            case .clearDfuReceivers, .addDfuReceivers:
+                // If at least one configuration task for DFU task failed, abort.
+                skipped = operations.hasAnyFailed
+            }
             skipped = false
         }
         
@@ -496,16 +664,11 @@ private extension ConfigurationViewController {
         
         // Send the message.
         do {
-            let manager = MeshNetworkManager.instance
             switch task {
-            // Publication Set message can be sent to a different node in some cases.
-            case .setPublication(_, to: let model):
-                guard let address = model.parentElement?.parentNode?.primaryUnicastAddress else {
-                    fallthrough
-                }
-                handler = try manager.send(task.message, to: address)
-            default:
-                handler = try manager.send(task.message, to: node.primaryUnicastAddress)
+            case .config(let meshTask):
+                handler = try MeshNetworkManager.instance.send(meshTask.message, to: meshTask.target)
+            case .other(let meshTask):
+                handler = try MeshNetworkManager.instance.send(meshTask.message, to: meshTask.target)
             }
         } catch {
             reload(taskAt: current, with: .failed(error))
@@ -514,9 +677,13 @@ private extension ConfigurationViewController {
     
     func reload(taskAt index: Int, with status: MeshTaskStatus) {
         DispatchQueue.main.async {
-            self.statusView.text = self.tasks[index].title
-            self.statuses[index] = status
-            self.tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
+            guard let task = self.operations.task(at: index)?.task else {
+                return
+            }
+            self.statusView.text = task.title
+            if let indexPath = self.operations.updateStatus(at: index, with: status) {
+                self.tableView.reloadRows(at: [indexPath], with: .none)
+            }
         }
     }
     
@@ -538,27 +705,22 @@ extension ConfigurationViewController: MeshNetworkDelegate {
                             didReceiveMessage message: MeshMessage,
                             sentFrom source: Address,
                             to destination: MeshAddress) {
-        let current = current
-        if current >= 0 && current < tasks.count &&
-           message.opCode == tasks[current].message.responseOpCode {
-            if let status = message as? ConfigStatusMessage {
-                reload(taskAt: current, with: .resultOf(status))
-                DispatchQueue.main.async {
-                    if status.isSuccess {
-                        self.progress.addSuccess()
-                    } else {
-                        self.progress.addFail()
-                    }
-                }
-            } else {
-                self.reload(taskAt: current, with: .success)
-                DispatchQueue.main.async {
+        if let status = message as? StatusMessage {
+            reload(taskAt: current, with: .resultOf(status))
+            DispatchQueue.main.async {
+                if status.isSuccess {
                     self.progress.addSuccess()
+                } else {
+                    self.progress.addFail()
                 }
             }
-            
-            executeNext()
+        } else {
+            reload(taskAt: current, with: .success)
+            DispatchQueue.main.async {
+                self.progress.addSuccess()
+            }
         }
+        executeNext()
     }
     
     func meshNetworkManager(_ manager: MeshNetworkManager,

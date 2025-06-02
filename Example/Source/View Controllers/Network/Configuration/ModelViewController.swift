@@ -42,6 +42,7 @@ private enum Section: String {
     case sensors = "Sensor Values"
     case healthServer = "Attention Timer"
     case firmwareInformation = "Firmware Information"
+    case firmwareSlots = "Firmware Distribution Slots"
     case custom = "Control"
     
     var title: String {
@@ -64,6 +65,7 @@ class ModelViewController: ProgressViewController {
     private var healthFaultStatus: HealthFaultStatus?
     private var healthCurrentStatus: HealthCurrentStatus?
     private var firmwareUpdateInformationStatus: FirmwareUpdateInformationStatus?
+    private var firmwareSlots: [FirmwareId]?
     
     /// Sensor values are defined only for Sensor Server model,
     /// and only when the value has been read.
@@ -105,11 +107,15 @@ class ModelViewController: ProgressViewController {
         if model.isHealthServer {
             sections.append(.healthServer)
         }
+        if model.hasCustomUI {
+            sections.append(.custom)
+        }
+        // These should be after Custom UI.
         if model.isFirmwareUpdateServer {
             sections.append(.firmwareInformation)
         }
-        if model.hasCustomUI {
-            sections.append(.custom)
+        if model.isFirmwareDistributionServer {
+            sections.append(.firmwareSlots)
         }
         if model.isConfigurationServer {
             sections.append(.configurationServer)
@@ -143,6 +149,8 @@ class ModelViewController: ProgressViewController {
                            forCellReuseIdentifier: UInt16.lightLCServerModelId.hex)
         tableView.register(UINib(nibName: "FirmwareDistribution", bundle: nil),
                            forCellReuseIdentifier: UInt16.firmwareDistributionServerModelId.hex)
+        tableView.register(UINib(nibName: "FirmwareUpdate", bundle: nil),
+                           forCellReuseIdentifier: UInt16.firmwareUpdateServerModelId.hex)
         tableView.register(UINib(nibName: "PairingResponder", bundle: nil),
                            forCellReuseIdentifier: "pairingInitiator")
         tableView.register(UINib(nibName: "VendorModel", bundle: nil),
@@ -255,6 +263,8 @@ class ModelViewController: ProgressViewController {
             return (sensorValues?.count ?? 0) + 1 // Get Action.
         case .firmwareInformation:
             return 1 + (firmwareUpdateInformationStatus?.list.count ?? 0) // Firmware Information entries, Get action.
+        case .firmwareSlots:
+            return 1 + ((firmwareSlots?.count ?? -1) + 1) // Firmware Distribution slots, Get action, Delete All.
         case .custom:
             return 1
         case .healthServer:
@@ -352,7 +362,7 @@ class ModelViewController: ProgressViewController {
             fallthrough
         case .custom:
             // A custom cell for the Model.
-            let identifier = model.isBluetoothSIGAssigned ? model.modelIdentifier.hex : 
+            let identifier = model.isBluetoothSIGAssigned ? model.modelIdentifier.hex :
                              model.companyIdentifier == .nordicSemiconductorCompanyId && model.modelIdentifier == .lePairingResponder ? "pairingInitiator" :
                              "vendor"
             let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as! ModelViewCell
@@ -494,7 +504,30 @@ class ModelViewController: ProgressViewController {
             let cell = tableView.dequeueReusableCell(withIdentifier: "firmwareInformation", for: indexPath)
             let info = status.list[indexPath.row]
             cell.textLabel?.text = "Image \(Int(status.firstIndex) + indexPath.row)"
-            cell.detailTextLabel?.text = CompanyIdentifier.name(for: info.currentFirmwareId.companyIdentifier) ?? "Unknown"
+            let version = info.currentFirmwareId.versionString ?? "Unknown version"
+            let entryCompanyIdentifier = info.currentFirmwareId.companyIdentifier
+            let nodeCompanyIdentifier = model.parentElement?.parentNode?.companyIdentifier
+            let company = entryCompanyIdentifier == nodeCompanyIdentifier ? "" : " (\(CompanyIdentifier.name(for: entryCompanyIdentifier) ?? "Unknown manufacturer"))"
+            cell.detailTextLabel?.text = "Version: \(version)\(company)"
+            cell.accessoryType = .disclosureIndicator
+            return cell
+        case .firmwareSlots:
+            guard let slots = firmwareSlots,
+                  indexPath.row < slots.count else {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "action", for: indexPath)
+                cell.textLabel?.text = indexPath.row == (firmwareSlots?.count ?? 0) ? "Get" : "Delete All"
+                cell.textLabel?.isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
+                return cell
+            }
+            let cell = tableView.dequeueReusableCell(withIdentifier: "firmwareInformation", for: indexPath)
+            let firmwareId = slots[indexPath.row]
+            cell.textLabel?.text = "Slot \(indexPath.row)"
+            let version = firmwareId.versionString ?? "Unknown version"
+            let entryCompanyIdentifier = firmwareId.companyIdentifier
+            let nodeCompanyIdentifier = model.parentElement?.parentNode?.companyIdentifier
+            let company = entryCompanyIdentifier == nodeCompanyIdentifier ? "" : " (\(CompanyIdentifier.name(for: entryCompanyIdentifier) ?? "Unknown manufacturer"))"
+            cell.detailTextLabel?.text = "Version: \(version)\(company)"
+            cell.accessoryType = .none
             return cell
         }
     }
@@ -521,6 +554,8 @@ class ModelViewController: ProgressViewController {
             return indexPath.row == sensorValues?.count ?? 0
         case .firmwareInformation:
             return true
+        case .firmwareSlots:
+            return indexPath.row >= firmwareSlots?.count ?? 0
         case .custom, .configurationServer, .healthServer:
             return false
         }
@@ -556,6 +591,12 @@ class ModelViewController: ProgressViewController {
             } else {
                 performSegue(withIdentifier: "firmwareInformation", sender: indexPath)
             }
+        case .firmwareSlots:
+            if indexPath.row == firmwareSlots?.count ?? 0 {
+                readFirmwareDistributionSlot(byIndex: 0)
+            } else {
+                deleteAllFirmwareDistributionSlots()
+            }
         default:
             break
         }
@@ -577,6 +618,8 @@ class ModelViewController: ProgressViewController {
         case .subscriptions:
             return indexPath.row < model.subscriptions.count &&
                    model.subscriptions[indexPath.row].address.address != .allNodes
+        case .firmwareSlots:
+            return indexPath.row < firmwareSlots?.count ?? 0
         default:
             return false
         }
@@ -661,6 +704,11 @@ class ModelViewController: ProgressViewController {
         case .subscriptions:
             let group = model.subscriptions[indexPath.row]
             unsubscribe(from: group)
+        case .firmwareSlots:
+            guard let firmwareId = firmwareSlots?[indexPath.row] else {
+                break
+            }
+            deleteFirmwareDistributionSlot(byFirmwareId: firmwareId)
         default:
             break
         }
@@ -849,6 +897,21 @@ private extension ModelViewController {
     func readFirmwareInformation() {
         let message = FirmwareUpdateInformationGet(from: 0, limit: 10) // 10???
         send(message, description: "Reading Firmware Information...")
+    }
+    
+    func readFirmwareDistributionSlot(byIndex index: UInt16) {
+        let message = FirmwareDistributionFirmwareGetByIndex(index)
+        send(message, description: "Reading Firmware Distribution Slots...")
+    }
+    
+    func deleteAllFirmwareDistributionSlots() {
+        let message = FirmwareDistributionFirmwareDeleteAll()
+        send(message, description: "Deleting Slots...")
+    }
+    
+    func deleteFirmwareDistributionSlot(byFirmwareId firmwareId: FirmwareId) {
+        let message = FirmwareDistributionFirmwareDelete(firmwareId)
+        send(message, description: "Deleting Slot...")
     }
     
     func readNodeIdentityStatus(for networkKey: NetworkKey) {
@@ -1044,6 +1107,59 @@ extension ModelViewController: MeshNetworkDelegate {
                 self.reloadSections(.firmwareInformation, with: .automatic)
             }
             
+        case let status as FirmwareDistributionFirmwareStatus:
+            // In case of failure, present the reason.
+            guard status.status == .success else {
+                switch status.status {
+                case .firmwareNotFound:
+                    done()
+                default:
+                    done {
+                        self.presentAlert(title: "Error", message: "\(status.status)")
+                    }
+                }
+                return
+            }
+            // Was a slot removed?
+            if let removedFirmwareId = status.firmwareId, status.imageIndex == nil {
+                done {
+                    self.firmwareSlots?.removeAll { firmwareId in firmwareId == removedFirmwareId }
+                    if self.firmwareSlots?.isEmpty ?? true {
+                        // This will hide the Delete All button.
+                        self.firmwareSlots = nil
+                    }
+                    self.reloadSections(.firmwareSlots, with: .automatic)
+                }
+                return
+            }
+            // Were all slots removed?
+            if status.entryCount == 0 {
+                done {
+                    self.firmwareSlots = nil
+                    self.reloadSections(.firmwareSlots, with: .automatic)
+                }
+                return
+            }
+            // Otherwise, we are reading slots.
+            guard let imageIndex = status.imageIndex, imageIndex != 0xFFFF,
+                  let firmwareId = status.firmwareId else {
+                done()
+                return
+            }
+            firmwareSlots = firmwareSlots ?? []
+            // This check is to avoid duplicates when used clicks Get over and over.
+            if imageIndex == firmwareSlots!.count  {
+                firmwareSlots?.append(firmwareId)
+            }
+            if status.entryCount > imageIndex + 1 {
+                reloadSections(.firmwareSlots, with: .automatic)
+                readFirmwareDistributionSlot(byIndex: imageIndex + 1)
+            } else {
+                done {
+                    self.reloadSections(.firmwareSlots, with: .automatic)
+                }
+            }
+            
         // Custom UI & Health Server
         default:
             if let status = message as? HealthFaultStatus {
@@ -1158,6 +1274,10 @@ private extension Model {
         return isBluetoothSIGAssigned && modelIdentifier == .firmwareUpdateServerModelId
     }
     
+    var isFirmwareDistributionServer: Bool {
+        return isBluetoothSIGAssigned && modelIdentifier == .firmwareDistributionServerModelId
+    }
+    
 }
 
 private extension Model {
@@ -1172,6 +1292,7 @@ private extension Model {
             || modelIdentifier == .genericDefaultTransitionTimeServerModelId
             || modelIdentifier == .lightLCServerModelId
             || modelIdentifier == .firmwareDistributionServerModelId
+            || modelIdentifier == .firmwareUpdateServerModelId
     }
     
 }

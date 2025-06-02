@@ -173,6 +173,17 @@
 		F03414832B912F95009DD792 /* LightLCModeGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03414822B912F95009DD792 /* LightLCModeGroupCell.swift */; };
 		F03414852B9131BA009DD792 /* LightLCOccupancyModeGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03414842B9131BA009DD792 /* LightLCOccupancyModeGroupCell.swift */; };
 		F03414872B91373E009DD792 /* LightLCLightOnOffGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03414862B91373E009DD792 /* LightLCLightOnOffGroupCell.swift */; };
+		F0389F3C2DD5D39E00068D75 /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0389F3B2DD5D39100068D75 /* CircularProgressView.swift */; };
+		F0389F3E2DD5D6B000068D75 /* DFUViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0389F3D2DD5D6B000068D75 /* DFUViewController.swift */; };
+		F0389F402DD5EDF000068D75 /* NodeProgressViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0389F3F2DD5EDE900068D75 /* NodeProgressViewCell.swift */; };
+		F0389F442DD5F96700068D75 /* DFUParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0389F432DD5F95F00068D75 /* DFUParameters.swift */; };
+		F0389F462DD61DE600068D75 /* UIButton+Filled.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0389F452DD61DD900068D75 /* UIButton+Filled.swift */; };
+		F0389F482DD6724300068D75 /* UploadProgressViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0389F472DD6722D00068D75 /* UploadProgressViewCell.swift */; };
+		F044AE5E2DA949AC006D6674 /* DFU.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F044AE5C2DA949AC006D6674 /* DFU.storyboard */; };
+		F044AE602DAD203B006D6674 /* ProxySelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F044AE5F2DAD203B006D6674 /* ProxySelectionViewController.swift */; };
+		F044AE652DAE884E006D6674 /* BindAppKey.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F044AE632DAE884E006D6674 /* BindAppKey.storyboard */; };
+		F044AE682DAE8CD4006D6674 /* AddAppKey.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F044AE662DAE8CD4006D6674 /* AddAppKey.storyboard */; };
+		F044AE6B2DAE8CF4006D6674 /* AddNetKey.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F044AE692DAE8CF4006D6674 /* AddNetKey.storyboard */; };
 		F0464DAD2D5F79D200AE3684 /* UITableViewCell+Disabled.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0464DAB2D5F79D200AE3684 /* UITableViewCell+Disabled.swift */; };
 		F0464DAE2D5F79D200AE3684 /* UIViewController+Identify.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0464DAC2D5F79D200AE3684 /* UIViewController+Identify.swift */; };
 		F0587F6F2D96C5AA0091CDF4 /* PairingResponder.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0587F6E2D96C5AA0091CDF4 /* PairingResponder.xib */; };
@@ -180,6 +191,9 @@
 		F0587F732D96EC6B0091CDF4 /* PairingInitiatorDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0587F722D96EC6B0091CDF4 /* PairingInitiatorDelegate.swift */; };
 		F0587F772D96ECB90091CDF4 /* PairingRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0587F762D96ECB90091CDF4 /* PairingRequest.swift */; };
 		F0587F792D96EE0F0091CDF4 /* PairingResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0587F782D96EE0F0091CDF4 /* PairingResponse.swift */; };
+		F058A63A2DBFA17C00E9E914 /* IgnoreCertificateDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F058A6392DBFA16900E9E914 /* IgnoreCertificateDelegate.swift */; };
+		F058A63D2DC023EB00E9E914 /* UpdatedFirmwareInformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = F058A63C2DC023E000E9E914 /* UpdatedFirmwareInformation.swift */; };
+		F058A6412DC9036400E9E914 /* UpdatePackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F058A6402DC9035B00E9E914 /* UpdatePackage.swift */; };
 		F063C01A29C2774300A445A9 /* SelectKeysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F063C01929C2774300A445A9 /* SelectKeysViewController.swift */; };
 		F063C01D29C27EAB00A445A9 /* IntroViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F063C01C29C27EAB00A445A9 /* IntroViewController.swift */; };
 		F085C9FB29C496AB00C2DF89 /* SelectModelsForBindingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F085C9FA29C496AB00C2DF89 /* SelectModelsForBindingViewController.swift */; };
@@ -192,12 +206,26 @@
 		F096D8482DA5668100A1A1E4 /* FirmwareDistributionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F096D8472DA5668100A1A1E4 /* FirmwareDistributionViewCell.swift */; };
 		F09DE4C729D771F20073969A /* Model+Name.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DE4C629D771F20073969A /* Model+Name.swift */; };
 		F09DE4CA29DC68900073969A /* MulticolorProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DE4C929DC68900073969A /* MulticolorProgressView.swift */; };
-		F09DE4CF29E5A0BF0073969A /* MeshTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DE4CE29E5A0BF0073969A /* MeshTask.swift */; };
+		F09DE4CF29E5A0BF0073969A /* ConfigTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DE4CE29E5A0BF0073969A /* ConfigTask.swift */; };
 		F09DE4D129E5A2180073969A /* MeshTaskStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DE4D029E5A2180073969A /* MeshTaskStatus.swift */; };
 		F09DE4D329E99A360073969A /* SelectGroupsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DE4D229E99A360073969A /* SelectGroupsViewController.swift */; };
 		F09DE4D729EEBEAD0073969A /* SelectModelsForSubscriptionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DE4D629EEBEAD0073969A /* SelectModelsForSubscriptionViewController.swift */; };
+		F0B67D7E2DAF925000B1A69D /* SelectProxy.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F0B67D7C2DAF925000B1A69D /* SelectProxy.storyboard */; };
+		F0B67D802DAFCE7B00B1A69D /* PasskeyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0B67D7F2DAFCE7B00B1A69D /* PasskeyViewController.swift */; };
+		F0B67D822DB0F0D700B1A69D /* FirmwareSelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0B67D812DB0F0D700B1A69D /* FirmwareSelectionViewController.swift */; };
+		F0D8C3692DDC7F01003E3E29 /* FirmwareUpdate.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0D8C3682DDC7F01003E3E29 /* FirmwareUpdate.xib */; };
+		F0D8C36B2DDC81B1003E3E29 /* FirmwareUpdateViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D8C36A2DDC81B1003E3E29 /* FirmwareUpdateViewCell.swift */; };
 		F0DAF5BC2D3A6186000874EA /* DfuMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0DAF5BB2D3A617C000874EA /* DfuMessages.swift */; };
+		F0DFB0082DA6CF4400B209FD /* FirmwareUpdateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0DFB0062DA6CF4400B209FD /* FirmwareUpdateController.swift */; };
 		F0E6D64D29F2A4D2004B1C26 /* SchedulerMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E6D64B29F2A4A9004B1C26 /* SchedulerMessages.swift */; };
+		F0F0D9CD2DCA0E92009FDE6B /* DFUParametersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F0D9CC2DCA0E92009FDE6B /* DFUParametersViewController.swift */; };
+		F0F0D9D02DCCAE32009FDE6B /* TimeoutViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F0D9CF2DCCAE32009FDE6B /* TimeoutViewCell.swift */; };
+		F0F0D9D22DCCB345009FDE6B /* SegmentedContriolViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F0D9D12DCCB345009FDE6B /* SegmentedContriolViewCell.swift */; };
+		F0F0D9D52DCE3C68009FDE6B /* Configuration.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F0F0D9D32DCE3C68009FDE6B /* Configuration.storyboard */; };
+		F0F0D9D92DD34661009FDE6B /* MeshTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F0D9D82DD3461C009FDE6B /* MeshTask.swift */; };
+		F0F0D9DB2DD3607E009FDE6B /* Receiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F0D9DA2DD3607A009FDE6B /* Receiver.swift */; };
+		F0F0D9DD2DD3718C009FDE6B /* ApplicationTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F0D9DC2DD37189009FDE6B /* ApplicationTask.swift */; };
+		F0F0D9DF2DD38751009FDE6B /* Array+Chunk.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F0D9DE2DD38747009FDE6B /* Array+Chunk.swift */; };
 		F0FB18F72B8E90CF00683C3F /* LightLCViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0FB18F52B8E90CF00683C3F /* LightLCViewCell.swift */; };
 		F0FB18F82B8E90CF00683C3F /* LightLC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0FB18F62B8E90CF00683C3F /* LightLC.xib */; };
 		F0FB18FA2B8E919C00683C3F /* LightLCClientDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0FB18F92B8E919C00683C3F /* LightLCClientDelegate.swift */; };
@@ -394,6 +422,17 @@
 		F03414822B912F95009DD792 /* LightLCModeGroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCModeGroupCell.swift; sourceTree = "<group>"; };
 		F03414842B9131BA009DD792 /* LightLCOccupancyModeGroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCOccupancyModeGroupCell.swift; sourceTree = "<group>"; };
 		F03414862B91373E009DD792 /* LightLCLightOnOffGroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCLightOnOffGroupCell.swift; sourceTree = "<group>"; };
+		F0389F3B2DD5D39100068D75 /* CircularProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
+		F0389F3D2DD5D6B000068D75 /* DFUViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DFUViewController.swift; sourceTree = "<group>"; };
+		F0389F3F2DD5EDE900068D75 /* NodeProgressViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeProgressViewCell.swift; sourceTree = "<group>"; };
+		F0389F432DD5F95F00068D75 /* DFUParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DFUParameters.swift; sourceTree = "<group>"; };
+		F0389F452DD61DD900068D75 /* UIButton+Filled.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+Filled.swift"; sourceTree = "<group>"; };
+		F0389F472DD6722D00068D75 /* UploadProgressViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadProgressViewCell.swift; sourceTree = "<group>"; };
+		F044AE5D2DA949AC006D6674 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/DFU.storyboard; sourceTree = "<group>"; };
+		F044AE5F2DAD203B006D6674 /* ProxySelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxySelectionViewController.swift; sourceTree = "<group>"; };
+		F044AE642DAE884E006D6674 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/BindAppKey.storyboard; sourceTree = "<group>"; };
+		F044AE672DAE8CD4006D6674 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/AddAppKey.storyboard; sourceTree = "<group>"; };
+		F044AE6A2DAE8CF4006D6674 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/AddNetKey.storyboard; sourceTree = "<group>"; };
 		F0464DAB2D5F79D200AE3684 /* UITableViewCell+Disabled.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableViewCell+Disabled.swift"; sourceTree = "<group>"; };
 		F0464DAC2D5F79D200AE3684 /* UIViewController+Identify.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Identify.swift"; sourceTree = "<group>"; };
 		F0587F6E2D96C5AA0091CDF4 /* PairingResponder.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PairingResponder.xib; sourceTree = "<group>"; };
@@ -401,6 +440,9 @@
 		F0587F722D96EC6B0091CDF4 /* PairingInitiatorDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingInitiatorDelegate.swift; sourceTree = "<group>"; };
 		F0587F762D96ECB90091CDF4 /* PairingRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingRequest.swift; sourceTree = "<group>"; };
 		F0587F782D96EE0F0091CDF4 /* PairingResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingResponse.swift; sourceTree = "<group>"; };
+		F058A6392DBFA16900E9E914 /* IgnoreCertificateDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IgnoreCertificateDelegate.swift; sourceTree = "<group>"; };
+		F058A63C2DC023E000E9E914 /* UpdatedFirmwareInformation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatedFirmwareInformation.swift; sourceTree = "<group>"; };
+		F058A6402DC9035B00E9E914 /* UpdatePackage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatePackage.swift; sourceTree = "<group>"; };
 		F063C01929C2774300A445A9 /* SelectKeysViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectKeysViewController.swift; sourceTree = "<group>"; };
 		F063C01C29C27EAB00A445A9 /* IntroViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroViewController.swift; sourceTree = "<group>"; };
 		F085C9FA29C496AB00C2DF89 /* SelectModelsForBindingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectModelsForBindingViewController.swift; sourceTree = "<group>"; };
@@ -413,13 +455,27 @@
 		F096D8472DA5668100A1A1E4 /* FirmwareDistributionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareDistributionViewCell.swift; sourceTree = "<group>"; };
 		F09DE4C629D771F20073969A /* Model+Name.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Model+Name.swift"; path = "Utils/Model+Name.swift"; sourceTree = "<group>"; };
 		F09DE4C929DC68900073969A /* MulticolorProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MulticolorProgressView.swift; sourceTree = "<group>"; };
-		F09DE4CE29E5A0BF0073969A /* MeshTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshTask.swift; sourceTree = "<group>"; };
+		F09DE4CE29E5A0BF0073969A /* ConfigTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigTask.swift; sourceTree = "<group>"; };
 		F09DE4D029E5A2180073969A /* MeshTaskStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshTaskStatus.swift; sourceTree = "<group>"; };
 		F09DE4D229E99A360073969A /* SelectGroupsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectGroupsViewController.swift; sourceTree = "<group>"; };
 		F09DE4D629EEBEAD0073969A /* SelectModelsForSubscriptionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectModelsForSubscriptionViewController.swift; sourceTree = "<group>"; };
 		F0AA20602AD6AD0100CF81FF /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		F0B67D7D2DAF925000B1A69D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/SelectProxy.storyboard; sourceTree = "<group>"; };
+		F0B67D7F2DAFCE7B00B1A69D /* PasskeyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasskeyViewController.swift; sourceTree = "<group>"; };
+		F0B67D812DB0F0D700B1A69D /* FirmwareSelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareSelectionViewController.swift; sourceTree = "<group>"; };
+		F0D8C3682DDC7F01003E3E29 /* FirmwareUpdate.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FirmwareUpdate.xib; sourceTree = "<group>"; };
+		F0D8C36A2DDC81B1003E3E29 /* FirmwareUpdateViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateViewCell.swift; sourceTree = "<group>"; };
 		F0DAF5BB2D3A617C000874EA /* DfuMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DfuMessages.swift; sourceTree = "<group>"; };
+		F0DFB0062DA6CF4400B209FD /* FirmwareUpdateController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareUpdateController.swift; sourceTree = "<group>"; };
 		F0E6D64B29F2A4A9004B1C26 /* SchedulerMessages.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SchedulerMessages.swift; sourceTree = "<group>"; };
+		F0F0D9CC2DCA0E92009FDE6B /* DFUParametersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DFUParametersViewController.swift; sourceTree = "<group>"; };
+		F0F0D9CF2DCCAE32009FDE6B /* TimeoutViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeoutViewCell.swift; sourceTree = "<group>"; };
+		F0F0D9D12DCCB345009FDE6B /* SegmentedContriolViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedContriolViewCell.swift; sourceTree = "<group>"; };
+		F0F0D9D42DCE3C68009FDE6B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Configuration.storyboard; sourceTree = "<group>"; };
+		F0F0D9D82DD3461C009FDE6B /* MeshTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshTask.swift; sourceTree = "<group>"; };
+		F0F0D9DA2DD3607A009FDE6B /* Receiver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Receiver.swift; sourceTree = "<group>"; };
+		F0F0D9DC2DD37189009FDE6B /* ApplicationTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationTask.swift; sourceTree = "<group>"; };
+		F0F0D9DE2DD38747009FDE6B /* Array+Chunk.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Chunk.swift"; sourceTree = "<group>"; };
 		F0FB18F52B8E90CF00683C3F /* LightLCViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCViewCell.swift; sourceTree = "<group>"; };
 		F0FB18F62B8E90CF00683C3F /* LightLC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LightLC.xib; sourceTree = "<group>"; };
 		F0FB18F92B8E919C00683C3F /* LightLCClientDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCClientDelegate.swift; sourceTree = "<group>"; };
@@ -510,10 +566,16 @@
 			isa = PBXGroup;
 			children = (
 				5231403A22FDA8280074325A /* Model */,
+				F044AE692DAE8CF4006D6674 /* AddNetKey.storyboard */,
+				F044AE662DAE8CD4006D6674 /* AddAppKey.storyboard */,
+				F044AE632DAE884E006D6674 /* BindAppKey.storyboard */,
+				F0F0D9D32DCE3C68009FDE6B /* Configuration.storyboard */,
 				3089BC9E2099CA4900E30192 /* LaunchScreen.storyboard */,
+				F044AE5C2DA949AC006D6674 /* DFU.storyboard */,
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
 				52E54CD92343878B00478F05 /* Control.storyboard */,
 				52CD0A5C2330C04700A9A181 /* Network.storyboard */,
+				F0B67D7C2DAF925000B1A69D /* SelectProxy.storyboard */,
 				523F778B22CCEA900030EA6A /* SetPublication.storyboard */,
 				52A8EA8924E6A371004C14C7 /* SetHeartbeatPublication.storyboard */,
 				52A8EA9024ED35F4004C14C7 /* SetHeartbeatSubscription.storyboard */,
@@ -538,6 +600,7 @@
 				5217D2E4250F90D8004FDE79 /* GenericDefaultTransitionTime.xib */,
 				F0587F6E2D96C5AA0091CDF4 /* PairingResponder.xib */,
 				F096D8452DA5602800A1A1E4 /* FirmwareDistribution.xib */,
+				F0D8C3682DDC7F01003E3E29 /* FirmwareUpdate.xib */,
 				5231404C230AC4680074325A /* VendorModel.xib */,
 			);
 			path = Model;
@@ -552,6 +615,7 @@
 				A7A59BD6277225E70045A8ED /* GenericPowerOnOffViewCell.swift */,
 				F0587F702D96C63A0091CDF4 /* PairingResponderViewCell.swift */,
 				F096D8472DA5668100A1A1E4 /* FirmwareDistributionViewCell.swift */,
+				F0D8C36A2DDC81B1003E3E29 /* FirmwareUpdateViewCell.swift */,
 				A7B526A5277B210000F5C60D /* GenericPowerOnOffSetupViewCell.swift */,
 				52A9C1C32313D7D80036792A /* GenericLevelViewCell.swift */,
 				5217D2E3250F90D8004FDE79 /* GenericDefaultTransitionTimeViewCell.swift */,
@@ -673,6 +737,7 @@
 			children = (
 				528AB9F7228D847C000BE9DC /* NetworkViewController.swift */,
 				52DF5D8B228DAA0500C297C1 /* NodeViewCell.swift */,
+				F0DFB0072DA6CF4400B209FD /* DFU */,
 				5283527E22806BA60097B949 /* Provisioning */,
 				52DF5D88228DA75F00C297C1 /* Configuration */,
 			);
@@ -715,6 +780,10 @@
 		529B757322410784008F1CE7 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				F0389F452DD61DD900068D75 /* UIButton+Filled.swift */,
+				F0389F3B2DD5D39100068D75 /* CircularProgressView.swift */,
+				F0F0D9DE2DD38747009FDE6B /* Array+Chunk.swift */,
+				F058A6392DBFA16900E9E914 /* IgnoreCertificateDelegate.swift */,
 				529B7574224107A5008F1CE7 /* AppInfo.swift */,
 				529EC8D92A309C640056BB48 /* CompanyIdentifier.swift */,
 				F09DE4C629D771F20073969A /* Model+Name.swift */,
@@ -951,6 +1020,17 @@
 			path = Messages;
 			sourceTree = "<group>";
 		};
+		F058A63B2DC023CF00E9E914 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				F0389F432DD5F95F00068D75 /* DFUParameters.swift */,
+				F0F0D9DA2DD3607A009FDE6B /* Receiver.swift */,
+				F058A6402DC9035B00E9E914 /* UpdatePackage.swift */,
+				F058A63C2DC023E000E9E914 /* UpdatedFirmwareInformation.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		F063C01B29C27E8500A445A9 /* Automation */ = {
 			isa = PBXGroup;
 			children = (
@@ -976,7 +1056,9 @@
 		F09DE4CD29E5A0A50073969A /* Tasks */ = {
 			isa = PBXGroup;
 			children = (
-				F09DE4CE29E5A0BF0073969A /* MeshTask.swift */,
+				F0F0D9D82DD3461C009FDE6B /* MeshTask.swift */,
+				F09DE4CE29E5A0BF0073969A /* ConfigTask.swift */,
+				F0F0D9DC2DD37189009FDE6B /* ApplicationTask.swift */,
 				F09DE4D029E5A2180073969A /* MeshTaskStatus.swift */,
 			);
 			path = Tasks;
@@ -998,6 +1080,32 @@
 				F09DE4D629EEBEAD0073969A /* SelectModelsForSubscriptionViewController.swift */,
 			);
 			path = Subscription;
+			sourceTree = "<group>";
+		};
+		F0DFB0072DA6CF4400B209FD /* DFU */ = {
+			isa = PBXGroup;
+			children = (
+				F0F0D9CE2DCCAE0F009FDE6B /* Cells */,
+				F058A63B2DC023CF00E9E914 /* Model */,
+				F0DFB0062DA6CF4400B209FD /* FirmwareUpdateController.swift */,
+				F044AE5F2DAD203B006D6674 /* ProxySelectionViewController.swift */,
+				F0B67D7F2DAFCE7B00B1A69D /* PasskeyViewController.swift */,
+				F0B67D812DB0F0D700B1A69D /* FirmwareSelectionViewController.swift */,
+				F0F0D9CC2DCA0E92009FDE6B /* DFUParametersViewController.swift */,
+				F0389F3D2DD5D6B000068D75 /* DFUViewController.swift */,
+			);
+			path = DFU;
+			sourceTree = "<group>";
+		};
+		F0F0D9CE2DCCAE0F009FDE6B /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				F0389F3F2DD5EDE900068D75 /* NodeProgressViewCell.swift */,
+				F0389F472DD6722D00068D75 /* UploadProgressViewCell.swift */,
+				F0F0D9CF2DCCAE32009FDE6B /* TimeoutViewCell.swift */,
+				F0F0D9D12DCCB345009FDE6B /* SegmentedContriolViewCell.swift */,
+			);
+			path = Cells;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1051,7 +1159,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 0830;
-				LastUpgradeCheck = 1620;
+				LastUpgradeCheck = 1630;
 				ORGANIZATIONNAME = CocoaPods;
 				TargetAttributes = {
 					607FACCF1AFB9204008FA782 = {
@@ -1102,13 +1210,17 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F044AE682DAE8CD4006D6674 /* AddAppKey.storyboard in Resources */,
 				5217D2E6250F90D8004FDE79 /* GenericDefaultTransitionTime.xib in Resources */,
 				52A8EA9224ED35F4004C14C7 /* SetHeartbeatSubscription.storyboard in Resources */,
 				52CD0A582330BDE600A9A181 /* Groups.storyboard in Resources */,
+				F0D8C3692DDC7F01003E3E29 /* FirmwareUpdate.xib in Resources */,
 				523F778D22CCEA910030EA6A /* SetPublication.storyboard in Resources */,
 				52A9C17E230EB9490036792A /* GenericOnOff.xib in Resources */,
 				52CD0A5E2330C04700A9A181 /* Network.storyboard in Resources */,
+				F044AE5E2DA949AC006D6674 /* DFU.storyboard in Resources */,
 				A7A59BD5277225A70045A8ED /* GenericPowerOnOff.xib in Resources */,
+				F0F0D9D52DCE3C68009FDE6B /* Configuration.storyboard in Resources */,
 				52E54CDB2343878B00478F05 /* Control.storyboard in Resources */,
 				F0587F6F2D96C5AA0091CDF4 /* PairingResponder.xib in Resources */,
 				3089BCA02099CA4900E30192 /* LaunchScreen.storyboard in Resources */,
@@ -1120,7 +1232,10 @@
 				5231404E230AC4680074325A /* VendorModel.xib in Resources */,
 				5231403C22FDA8670074325A /* ConfigurationServer.xib in Resources */,
 				521599DB25E9306300F602FA /* CHANGELOG.md in Resources */,
+				F044AE6B2DAE8CF4006D6674 /* AddNetKey.storyboard in Resources */,
+				F044AE652DAE884E006D6674 /* BindAppKey.storyboard in Resources */,
 				F0FB18F82B8E90CF00683C3F /* LightLC.xib in Resources */,
+				F0B67D7E2DAF925000B1A69D /* SelectProxy.storyboard in Resources */,
 				52A8EA8B24E6A371004C14C7 /* SetHeartbeatPublication.storyboard in Resources */,
 				F0FEE6F72D5374580092B7B7 /* HealthServer.xib in Resources */,
 				F096D8462DA5602800A1A1E4 /* FirmwareDistribution.xib in Resources */,
@@ -1178,10 +1293,16 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-nRF Mesh/Pods-nRF Mesh-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/CryptoSwift/CryptoSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftCBOR/SwiftCBOR.framework",
+				"${BUILT_PRODUCTS_DIR}/ZIPFoundation/ZIPFoundation.framework",
+				"${BUILT_PRODUCTS_DIR}/iOSMcuManagerLibrary/iOSMcuManagerLibrary.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CryptoSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftCBOR.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ZIPFoundation.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/iOSMcuManagerLibrary.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1241,13 +1362,16 @@
 			files = (
 				52DE3ABA25DA871800268D7D /* SensorClientDelegate.swift in Sources */,
 				F096D8482DA5668100A1A1E4 /* FirmwareDistributionViewCell.swift in Sources */,
+				F0D8C36B2DDC81B1003E3E29 /* FirmwareUpdateViewCell.swift in Sources */,
 				5275962E2A138D9700B04C6F /* SelectPublicationViewController.swift in Sources */,
 				529B764722522D37008F1CE7 /* UITableView+EmptyView.swift in Sources */,
+				F058A63A2DBFA17C00E9E914 /* IgnoreCertificateDelegate.swift in Sources */,
 				5288153D25125AB600484AF0 /* RootTabBarController.swift in Sources */,
 				52CD0A55232FC11700A9A181 /* AddressCell.swift in Sources */,
 				52313FEE22EAFB090074325A /* SubscribeViewController.swift in Sources */,
 				5212152B23152A450059FB3D /* SectionView.swift in Sources */,
 				5212152F231554190059FB3D /* ProgressCollectionViewController.swift in Sources */,
+				F0F0D9D22DCCB345009FDE6B /* SegmentedContriolViewCell.swift in Sources */,
 				523F776A22C621F50030EA6A /* NodeAddNetworkKeyViewController.swift in Sources */,
 				52E54CE12344974B00478F05 /* GenericLevelClientDelegate.swift in Sources */,
 				5292F8A9250654C600EA0F2A /* SceneSetupServerGroupCell.swift in Sources */,
@@ -1261,12 +1385,16 @@
 				5217D2E2250F7639004FDE79 /* GenericDefaultTransitionTimeClientDelegate.swift in Sources */,
 				5288C20823705C8D00321ED3 /* ProxyCell.swift in Sources */,
 				52BC6F4824507A5400EBEEA4 /* DisconnectCell.swift in Sources */,
+				F058A63D2DC023EB00E9E914 /* UpdatedFirmwareInformation.swift in Sources */,
 				523F777B22CB86A00030EA6A /* ModelBindAppKeyViewController.swift in Sources */,
 				52DF5D8F229691BD00C297C1 /* NetworkConnection.swift in Sources */,
 				52547F27232A3F470002AA7B /* EditRangesViewController.swift in Sources */,
+				F0389F3C2DD5D39E00068D75 /* CircularProgressView.swift in Sources */,
 				52B7FD6D2525B40300308673 /* NodeSceneRecallViewController.swift in Sources */,
 				F09DE4D129E5A2180073969A /* MeshTaskStatus.swift in Sources */,
+				F0F0D9DF2DD38751009FDE6B /* Array+Chunk.swift in Sources */,
 				521215312316C36B0059FB3D /* GenericLevelGroupCell.swift in Sources */,
+				F044AE602DAD203B006D6674 /* ProxySelectionViewController.swift in Sources */,
 				52E54CDD23438B2E00478F05 /* GenericOnOffClientDelegate.swift in Sources */,
 				52DF5D8C228DAA0500C297C1 /* NodeViewCell.swift in Sources */,
 				52CD0A50232FA6CD00A9A181 /* ProxyViewController.swift in Sources */,
@@ -1284,17 +1412,21 @@
 				5215600929FBFD230048B2D2 /* WizardViewController.swift in Sources */,
 				F0587F712D96C63A0091CDF4 /* PairingResponderViewCell.swift in Sources */,
 				528AB9F8228D847C000BE9DC /* NetworkViewController.swift in Sources */,
+				F0389F402DD5EDF000068D75 /* NodeProgressViewCell.swift in Sources */,
 				523F778722CCDE250030EA6A /* SetPublicationViewController.swift in Sources */,
 				52CD0A622330DCFF00A9A181 /* CustomAddressCell.swift in Sources */,
 				52A8EA8F24EBF099004C14C7 /* SetHeartbeatPublicationDestinationsViewController.swift in Sources */,
+				F0F0D9D92DD34661009FDE6B /* MeshTask.swift in Sources */,
 				5288C2122371B16500321ED3 /* SimpleOnOffSetUnacknowledged.swift in Sources */,
 				52547F29232A3F470002AA7B /* FabView.swift in Sources */,
 				F09DE4D729EEBEAD0073969A /* SelectModelsForSubscriptionViewController.swift in Sources */,
+				F0389F482DD6724300068D75 /* UploadProgressViewCell.swift in Sources */,
 				52A9C17D230EB9490036792A /* GenericOnOffViewCell.swift in Sources */,
 				5292F8A5250237A600EA0F2A /* NodeStoreSceneViewController.swift in Sources */,
 				52E54CD62343875400478F05 /* GenericLevelClientCell.swift in Sources */,
 				529B76492252499E008F1CE7 /* UIColor+Nordic.swift in Sources */,
 				52547EF92317ECA70002AA7B /* DialogSegue.swift in Sources */,
+				F0F0D9DB2DD3607E009FDE6B /* Receiver.swift in Sources */,
 				525242E0225CBFEC0044CECB /* RangeObject+String.swift in Sources */,
 				529B7575224107A5008F1CE7 /* AppInfo.swift in Sources */,
 				F0FB18FA2B8E919C00683C3F /* LightLCClientDelegate.swift in Sources */,
@@ -1302,6 +1434,7 @@
 				527596322A138F0600B04C6F /* SelectModelsForPublicationViewController.swift in Sources */,
 				A7A59BD92773218C0045A8ED /* GenericPowerOnOffClientDelegate.swift in Sources */,
 				523F776622C609D90030EA6A /* NodeNetworkKeysViewController.swift in Sources */,
+				F0F0D9D02DCCAE32009FDE6B /* TimeoutViewCell.swift in Sources */,
 				5211EAD5250777E100089FF2 /* SceneServerDelegate.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 				523F776C22C6324A0030EA6A /* ProgressViewController.swift in Sources */,
@@ -1317,6 +1450,7 @@
 				5288C20E2371A91900321ED3 /* SimpleOnOffSet.swift in Sources */,
 				523F779722CE2BF60030EA6A /* SetPublicationDestinationsViewController.swift in Sources */,
 				52E54CD023437D3D00478F05 /* ModelControlCell.swift in Sources */,
+				F0B67D802DAFCE7B00B1A69D /* PasskeyViewController.swift in Sources */,
 				523F776422C4EDD90030EA6A /* SwitchCell.swift in Sources */,
 				5292F8A7250652BB00EA0F2A /* SceneServerGroupCell.swift in Sources */,
 				522AFFDC22BBA34900521EDC /* ActionCell.swift in Sources */,
@@ -1325,18 +1459,22 @@
 				521215292315290F0059FB3D /* GroupControlViewController.swift in Sources */,
 				52A8EA8824E6946D004C14C7 /* HeartbeatPublicationCell.swift in Sources */,
 				52F6AD7622BA612900F0D7DF /* UIViewController+Toast.swift in Sources */,
+				F0F0D9CD2DCA0E92009FDE6B /* DFUParametersViewController.swift in Sources */,
+				F0389F3E2DD5D6B000068D75 /* DFUViewController.swift in Sources */,
 				5217D2E5250F90D8004FDE79 /* GenericDefaultTransitionTimeViewCell.swift in Sources */,
 				528445C924EEA765002168A1 /* HeartbeatSubscriptionCell.swift in Sources */,
 				5231403F2301761C0074325A /* ConfigurationServerViewCell.swift in Sources */,
+				F0F0D9DD2DD3718C009FDE6B /* ApplicationTask.swift in Sources */,
 				52A8EA9624EE704A004C14C7 /* SetHeartbeatSubscriptionViewController.swift in Sources */,
 				52547EFB231800F30002AA7B /* GroupTargetModelsViewController.swift in Sources */,
 				5217D2E0250F522A004FDE79 /* GenericDefaultTransitionTimeServerDelegate.swift in Sources */,
 				F09DE4C729D771F20073969A /* Model+Name.swift in Sources */,
 				52E54CD42343874000478F05 /* GenericOnOffServerCell.swift in Sources */,
 				52547F24232A3F470002AA7B /* RangeCell.swift in Sources */,
+				F0389F462DD61DE600068D75 /* UIButton+Filled.swift in Sources */,
 				5231404D230AC4680074325A /* VendorModelViewCell.swift in Sources */,
 				529B758622428A45008F1CE7 /* UIViewController+Alert.swift in Sources */,
-				F09DE4CF29E5A0BF0073969A /* MeshTask.swift in Sources */,
+				F09DE4CF29E5A0BF0073969A /* ConfigTask.swift in Sources */,
 				529B7572223FFC39008F1CE7 /* AppKeysViewController.swift in Sources */,
 				52E54CD22343871E00478F05 /* GenericOnOffClientCell.swift in Sources */,
 				520A7D6724F3E05A00BF370A /* RightActionCell.swift in Sources */,
@@ -1348,6 +1486,7 @@
 				F063C01D29C27EAB00A445A9 /* IntroViewController.swift in Sources */,
 				5292F8A325021B8F00EA0F2A /* ModelIdentifiers.swift in Sources */,
 				52835258227AEDA30097B949 /* DeviceCell.swift in Sources */,
+				F0DFB0082DA6CF4400B209FD /* FirmwareUpdateController.swift in Sources */,
 				52E54CD82343876000478F05 /* GenericLevelServerCell.swift in Sources */,
 				A7B526A7277B210000F5C60D /* GenericPowerOnOffSetupViewCell.swift in Sources */,
 				F063C01A29C2774300A445A9 /* SelectKeysViewController.swift in Sources */,
@@ -1373,10 +1512,13 @@
 				52A9C1C52313D7D80036792A /* GenericLevelViewCell.swift in Sources */,
 				5288C20A2371A89900321ED3 /* SimpleOnOffClientDelegate.swift in Sources */,
 				529B759C2243BA10008F1CE7 /* NetworkKeysViewController.swift in Sources */,
+				F0389F442DD5F96700068D75 /* DFUParameters.swift in Sources */,
 				521599D525E91F9300F602FA /* SensorValueCell.swift in Sources */,
 				F03414832B912F95009DD792 /* LightLCModeGroupCell.swift in Sources */,
 				52518B3122E0B18400A1FD1E /* GroupsViewController.swift in Sources */,
+				F0B67D822DB0F0D700B1A69D /* FirmwareSelectionViewController.swift in Sources */,
 				52A8EA9424EE6D18004C14C7 /* HeartbeatSubscriptionPeriodCell.swift in Sources */,
+				F058A6412DC9036400E9E914 /* UpdatePackage.swift in Sources */,
 				5283528222806D7C0097B949 /* NetworkKeySelectionViewController.swift in Sources */,
 				522AFFDE22BBBC6400521EDC /* NodeFeaturesCell.swift in Sources */,
 				523F776E22C63EAD0030EA6A /* NodeAddAppKeyViewController.swift in Sources */,
@@ -1510,12 +1652,60 @@
 			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
+		F044AE5C2DA949AC006D6674 /* DFU.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F044AE5D2DA949AC006D6674 /* Base */,
+			);
+			name = DFU.storyboard;
+			sourceTree = "<group>";
+		};
+		F044AE632DAE884E006D6674 /* BindAppKey.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F044AE642DAE884E006D6674 /* Base */,
+			);
+			name = BindAppKey.storyboard;
+			sourceTree = "<group>";
+		};
+		F044AE662DAE8CD4006D6674 /* AddAppKey.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F044AE672DAE8CD4006D6674 /* Base */,
+			);
+			name = AddAppKey.storyboard;
+			sourceTree = "<group>";
+		};
+		F044AE692DAE8CF4006D6674 /* AddNetKey.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F044AE6A2DAE8CF4006D6674 /* Base */,
+			);
+			name = AddNetKey.storyboard;
+			sourceTree = "<group>";
+		};
 		F085CA0029D1E0B900C2DF89 /* Subscribe.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
 				F085CA0129D1E0B900C2DF89 /* Base */,
 			);
 			name = Subscribe.storyboard;
+			sourceTree = "<group>";
+		};
+		F0B67D7C2DAF925000B1A69D /* SelectProxy.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F0B67D7D2DAF925000B1A69D /* Base */,
+			);
+			name = SelectProxy.storyboard;
+			sourceTree = "<group>";
+		};
+		F0F0D9D32DCE3C68009FDE6B /* Configuration.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F0F0D9D42DCE3C68009FDE6B /* Base */,
+			);
+			name = Configuration.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -1554,6 +1744,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = P3R8YQEV4L;
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -1578,6 +1769,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "";
 				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 			};
@@ -1616,6 +1808,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = P3R8YQEV4L;
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -1649,7 +1842,6 @@
 				CODE_SIGN_ENTITLEMENTS = "nRF Mesh.entitlements";
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = P3R8YQEV4L;
 				ENABLE_BITCODE = NO;
 				ENABLE_DEBUG_DYLIB = YES;
 				INFOPLIST_FILE = Source/Info.plist;
@@ -1684,7 +1876,6 @@
 				CODE_SIGN_ENTITLEMENTS = "nRF Mesh.entitlements";
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = P3R8YQEV4L;
 				ENABLE_BITCODE = NO;
 				ENABLE_DEBUG_DYLIB = YES;
 				INFOPLIST_FILE = Source/Info.plist;
@@ -1714,7 +1905,6 @@
 			baseConfigurationReference = 3440420687768FA73DB8A905 /* Pods-nRF Mesh Tests.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
-				DEVELOPMENT_TEAM = P3R8YQEV4L;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SDKROOT)/System/Library/Frameworks",
@@ -1747,7 +1937,6 @@
 			baseConfigurationReference = 4A1A469C2CCA6F730EFD3B60 /* Pods-nRF Mesh Tests.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
-				DEVELOPMENT_TEAM = P3R8YQEV4L;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SDKROOT)/System/Library/Frameworks",

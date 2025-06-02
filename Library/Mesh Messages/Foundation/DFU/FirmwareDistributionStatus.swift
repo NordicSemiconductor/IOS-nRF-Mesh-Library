@@ -39,10 +39,9 @@ import Foundation
 /// * ``FirmwareDistributionSuspend``,
 /// * ``FirmwareDistributionCancel``,
 /// * ``FirmwareDistributionApply``.
-public struct FirmwareDistributionStatus: StaticMeshResponse {
+public struct FirmwareDistributionStatus: StaticMeshResponse, FirmwareDistributionStatusMessage {
     public static let opCode: UInt32 = 0x831D
     
-    /// Status for the requesting message.
     public let status: FirmwareDistributionMessageStatus
     /// Phase of the firmware image distribution.
     public let phase: FirmwareDistributionPhase

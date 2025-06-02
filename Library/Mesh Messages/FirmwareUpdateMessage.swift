@@ -38,6 +38,8 @@ import Foundation
 ///
 /// The Firmware ID is used by the Firmware Distribution Server to query new firmware image
 /// based on the current Firmware ID. If should identify the device type and firmware version.
+/// - seeAlso: For Zephyr and nRF Connect SDK implementation see
+/// [Firmware images documentation](https://docs.nordicsemi.com/bundle/ncs-latest/page/zephyr/connectivity/bluetooth/api/mesh/dfu.html#firmware_images).
 public struct FirmwareId: Sendable, Equatable {
     /// The 16-bit Company Identifier (CID) assigned by the Bluetooth SIG.
     ///
@@ -47,6 +49,9 @@ public struct FirmwareId: Sendable, Equatable {
     /// Vendor-specific information describing the firmware binary package.
     ///
     /// The version information shall be 0-106 bytes long.
+    ///
+    /// Use ``versionString`` to get a human readable version string if the version is
+    /// following Zephyr build versioning scheme (`UInt8, UInt8, UInt16, UInt32`).
     public let version: Data
     
     /// Returns the Firmware ID as a byte array.
@@ -66,9 +71,79 @@ public struct FirmwareId: Sendable, Equatable {
         self.version = version
     }
     
+    public init?(data: Data) {
+        guard data.count >= 2 else {
+            return nil
+        }
+        companyIdentifier = data.read(fromOffset: 0)
+        version = data.subdata(in: 2..<data.count)
+    }
+    
+    /// Returns the version string in the format `major.minor.revision+build`,
+    /// skipping the build number if it is 0.
+    ///
+    /// If the `version` is 1, 2, 4 or 8 bytes long it is interpreted as: `UInt8, UInt8, UInt16, UInt32`.
+    ///
+    /// If `version` is empty, `nil` is returned. If the number of bytes is
+    /// different than 1, 2, 4 or 8, the `version` is returned as a hex string with "0x" prefix.
+    public var versionString: String? {
+        guard version.count > 0 else {
+            return nil
+        }
+        var major: UInt8 = 0
+        var minor: UInt8 = 0
+        var revision: UInt16 = 0
+        var build: UInt32 = 0
+        switch version.count {
+        case 8:
+            build = version.read(fromOffset: 4)
+            fallthrough
+        case 4:
+            revision = version.read(fromOffset: 2)
+            fallthrough
+        case 2:
+            minor = version[1]
+            fallthrough
+        case 1:
+            major = version[0]
+            // Hide the build number if it is 0. I'm sure someone will complain.
+            if build == 0 {
+                return "\(major).\(minor).\(revision)"
+            }
+            return "\(major).\(minor).\(revision)+\(build)"
+        default:
+            return "0x\(version.hex)"
+        }
+    }
+    
     public static func == (lhs: FirmwareId, rhs: FirmwareId) -> Bool {
         return lhs.companyIdentifier == rhs.companyIdentifier &&
                lhs.version == rhs.version
+    }
+}
+
+/// The Firmware Information entry identifies the information for a firmware
+/// subsystem on the Node from the Firmware Information List state.
+public struct FirmwareInformation: Sendable {
+    /// Identifies the firmware image on the Node or any subsystem on the Node.
+    public let currentFirmwareId: FirmwareId
+    /// URI used to retrieve a new firmware image (optional).
+    ///
+    /// The Update URI state indicates the location of the new firmware archive file.
+    ///
+    /// The Update URI state is either a URI, or empty. If the Update URI
+    /// state is not empty, then it shall be formatted as the URI data type is defined in CSS
+    /// and shall use the `https` scheme.
+    public let updateUri: URL?
+    
+    /// Creates a new Firmware Information Entry.
+    ///
+    /// - parameters:
+    ///  - currentFirmwareId: Identifies the firmware image on the Node or any subsystem on the Node.
+    ///  - updateUri: URI used to retrieve a new firmware image (optional).
+    public init(currentFirmwareId: FirmwareId, updateUri: URL?) {
+        self.currentFirmwareId = currentFirmwareId
+        self.updateUri = updateUri
     }
 }
 
@@ -143,6 +218,38 @@ public enum FirmwareUpdatePhase: UInt8, Sendable {
     case verificationFailed    = 0x5
     /// The Apply New Firmware procedure is being executed.
     case applyingUpdate        = 0x6
+    
+    /// A flag indicating whether the firmware update can be canceled.
+    ///
+    /// Send ``FirmwareUpdateCancel`` message to cancel the firmware update.
+    ///
+    /// Cancelling update deletes any stored information about the update on a Firmware Update Server.
+    public var isCancellable: Bool {
+        // Firmware Update can be cancelled in any state.
+        return true
+    }
+    
+    /// A flag indicating whether the firmware update can be started.
+    public var canStart: Bool {
+        // When a Firmware Update Server receives a Firmware Update Start message,
+        // and the Update Phase state is:
+        // - Idle,
+        // - Transfer Error,
+        // - Verification Failed,
+        // and the message is successfully processed, then the server shall begin update.
+        return self == .idle || self == .transferError || self == .verificationFailed
+    }
+    
+    /// A flag indicating whether the firmware update can be applied.
+    public var canApply: Bool {
+        // When the Firmware Update Server receives a Firmware Update Apply message,
+        // and the Update Phase state is not either:
+        // - Verification Succeeded or
+        // - Applying Update,
+        // the server shall respond with a Firmware Update Status message with
+        // the Status field set to Wrong Phase.
+        return self == .verificationSucceeded || self == .applyingUpdate
+    }
 }
 
 /// The Retrieved Update Phase field identifies the phase of the firmware update
@@ -196,6 +303,56 @@ public enum FirmwareDistributionPhase: UInt8, Sendable {
     case cancelingUpdate   = 0x06
     /// The Transfer BLOB procedure is suspended.
     case transferSuspended = 0x07
+    
+    /// A flag indicating whether the firmware distribution can be canceled.
+    ///
+    /// Send ``FirmwareDistributionCancel`` message to cancel the firmware distribution.
+    public var isCancellable: Bool {
+        // Firmware Distribution can be cancelled in any state.
+        return true
+    }
+    
+    /// A flag indicating whether the firmware distribution is not in progress.
+    ///
+    /// When the Distributor is in ``.completed`` or ``.failed`` state, the Distributor
+    /// needs to be reset to ``.idle`` state using ``FirmwareDistributionCancel``
+    /// message before starting a new firmware distribution.
+    public var isBusy: Bool {
+        return self != .idle && self != .failed && self != .completed && self != .applyingUpdate
+    }
+    
+    /// A flag indicating whether the firmware distribution can be suspended.
+    ///
+    /// Send ``FirmwareDistributionSuspend`` message to suspend the firmware distribution.
+    public var isSuspendable: Bool {
+        // When a Firmware Distribution Server receives a Firmware Distribution Suspend
+        // message, and the Distribution Phase state of the server is NOT
+        // - Transfer Active or
+        // - Transfer Suspended,
+        // the server shall respond with a Firmware Distribution Status message
+        // with the Status field set to Wrong Phase.
+        return self == .transferActive || self == .transferSuspended
+    }
+        
+    
+    /// A flag indicating whether the new firmware can be applied to the Target Nodes.
+    ///
+    /// Send ``FirmwareDistributionApply`` message to apply the new firmware.
+    ///
+    /// - note: Firmware can be automatically applied using ``FirmwareUpdatePolicy/verifyAndApply``
+    public var canApply: Bool {
+        // When a Firmware Distribution Server receives a Firmware Distribution Apply
+        // message, and the Distribution Phase state of the server is
+        // - Idle,
+        // - Canceling Update,
+        // - Transfer Active,
+        // - Transfer Suspended,
+        // - Failed,
+        // the server shall respond with a Firmware Distribution Status message with
+        // the Status field set to Wrong Phase.
+        return self != .idle && self != .cancelingUpdate && self != .transferActive
+            && self != .transferSuspended && self != .failed
+    }
 }
 
 /// The Firmware Update Additional Information state identifies the Node state after
@@ -228,12 +385,41 @@ public enum FirmwareUpdatePolicy: UInt8, Sendable {
     case verifyAndApply = 0x01
 }
 
+// MARK: - Message types
+
+public protocol FirmwareDistributionStatusMessage: StatusMessage {
+    /// Status for the requesting message.
+    var status: FirmwareDistributionMessageStatus { get }
+}
+
+public extension FirmwareDistributionStatusMessage {
+    
+    var isSuccess: Bool {
+        return status == .success
+    }
+    
+    var message: String {
+        return "\(status)"
+    }
+    
+}
+
 // MARK: - CustomDebugStringConvertible
 
 extension FirmwareId: CustomDebugStringConvertible {
     
     public var debugDescription: String {
         return "FirmwareId(companyId: 0x\(companyIdentifier.hex), version: 0x\(version.hex))"
+    }
+    
+}
+
+extension FirmwareInformation: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        let companyId = "0x\(currentFirmwareId.companyIdentifier.hex)"
+        let versionString = currentFirmwareId.versionString ?? (currentFirmwareId.version.isEmpty ? "nil" : "0x\(currentFirmwareId.version.hex)")
+        return "FirmwareInformation(companyId: \(companyId), version: \(versionString), updateUri: \(updateUri?.absoluteString ?? "nil"))"
     }
     
 }
@@ -310,6 +496,22 @@ extension FirmwareDistributionPhase: CustomDebugStringConvertible {
         case .failed:            return "Failed"
         case .cancelingUpdate:   return "Canceling Update"
         case .transferSuspended: return "Transfer Suspended"
+        }
+    }
+    
+}
+
+extension FirmwareUpdatePhase: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .idle:                  return "Idle"
+        case .transferError:         return "Transfer Error"
+        case .transferActive:        return "Transfer Active"
+        case .verifyingUpdate:       return "Verifying Update"
+        case .verificationSucceeded: return "Verification Succeeded"
+        case .verificationFailed:    return "Verification Failed"
+        case .applyingUpdate:        return "Applying Update"
         }
     }
     

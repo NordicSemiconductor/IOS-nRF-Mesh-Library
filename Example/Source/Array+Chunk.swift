@@ -27,27 +27,18 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 */
-import Foundation
 
-/// An Attention Timer Delegate is used to notify the app about the Attention Timer state.
-///
-/// The Attention Timer is used to attract the user's attention to the device.
-///
-/// It may only be started and stopped by sending a ``HealthAttentionSet`` or
-/// ``HealthAttentionSetUnacknowledged`` message to the main Element
-/// of the local Node.
-public protocol AttentionTimerDelegate: AnyObject {
+extension Array {
     
-    /// A callback called when the Attention Timer state has been started..
-    ///
-    /// The app should start attracting the user's attention.
-    ///
-    /// - parameter duration: The time after which the Attention Timer will time out, in range 1-255 seconds.
-    func attentionTimerDidStart(duration: TimeInterval)
+    func chunked(by size: Int) -> [[Element]] {
+        var chunks: [[Element]] = []
+        
+        for index in stride(from: 0, to: count, by: size) {
+            let chunk = Array(self[index..<Swift.min(index + size, count)])
+            chunks.append(chunk)
+        }
+        
+        return chunks
+    }
     
-    /// A callback called when the Attention Timer state has been stopped.
-    ///
-    /// This callback is called when the Attention Timer times out, or is stopped
-    /// remotely by a remote user.
-    func attentionTimerDidStop()
 }

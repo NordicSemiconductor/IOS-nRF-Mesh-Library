@@ -70,6 +70,13 @@ public struct FirmwareDistributionReceiversAdd: StaticAcknowledgedMeshMessage {
     
     /// Creates the Firmware Distribution Receivers Add message.
     ///
+    /// - parameter receiver: A Receiver Entry field.
+    public init(receiver: Receiver) {
+        self.receivers = [receiver]
+    }
+    
+    /// Creates the Firmware Distribution Receivers Add message.
+    ///
     /// - parameter receivers: List of Receiver Entry fields. The list shall contain at least one receiver.
     ///                        For each Receiver Entry field in the Receivers List field, the value of the
     ///                        ``Receiver/address`` field shall be unique.

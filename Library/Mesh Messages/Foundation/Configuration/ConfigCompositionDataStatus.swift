@@ -74,7 +74,7 @@ public struct ConfigCompositionDataStatus: ConfigResponse {
     }
 }
 
-public struct ElementData: Sendable {
+public struct ElementData: Sendable, CustomDebugStringConvertible {
     /// Numeric order of the Element within this Node.
     let index: UInt8
     /// Description of the Element's location.
@@ -129,9 +129,13 @@ public struct ElementData: Sendable {
         self.models = models
         offset += vendorModelsByteCount
     }
+    
+    public var debugDescription: String {
+        return "Element(index: \(index), location: \(location), models: \(models))"
+    }
 }
 
-public struct ModelData: Sendable {
+public struct ModelData: Sendable, CustomDebugStringConvertible {
     public let modelId: UInt32
     
     /// Bluetooth SIG or vendor-assigned model identifier.
@@ -162,13 +166,20 @@ public struct ModelData: Sendable {
     internal init(vendorModelId: UInt16, companyId: UInt16) {
         modelId = (UInt32(companyId) << 16) | UInt32(vendorModelId)
     }
+    
+    public var debugDescription: String {
+        if let companyId = companyIdentifier {
+            return "\(modelIdentifier.hex) (companyId: \(companyId.hex))"
+        }
+        return modelIdentifier.hex
+    }
 }
 
 /// Composition Data Page 0 shall be present on a Node.
 ///
 /// Composition Data Page 0 shall not change during a term of a Node
 /// on the network.
-public struct Page0: CompositionDataPage {
+public struct Page0: CompositionDataPage, CustomDebugStringConvertible {
     public let page: UInt8
     
     /// The 16-bit Company Identifier (CID) assigned by the Bluetooth SIG.
@@ -238,6 +249,11 @@ public struct Page0: CompositionDataPage {
             readElements.append(element)
         }
         elements = readElements
+    }
+    
+    public var debugDescription: String {
+        return "Page0(companyId: \(companyIdentifier.hex), productId: \(productIdentifier.hex), versionId: \(versionIdentifier.hex), " +
+               "minimumRPL: \(minimumNumberOfReplayProtectionList), features: \(features), elements: \(elements))"
     }
 }
 

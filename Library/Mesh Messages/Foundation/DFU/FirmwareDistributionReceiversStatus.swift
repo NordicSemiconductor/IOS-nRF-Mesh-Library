@@ -36,10 +36,9 @@ import Foundation
 ///A Firmware Distribution Receivers Status message is sent as a response to
 ///a ``FirmwareDistributionReceiversAdd`` message or
 ///a ``FirmwareDistributionReceiversDeleteAll`` message.
-public struct FirmwareDistributionReceiversStatus: StaticMeshResponse {
+public struct FirmwareDistributionReceiversStatus: StaticMeshResponse, FirmwareDistributionStatusMessage {
     public static let opCode: UInt32 = 0x8313
     
-    /// Status for the requesting message.
     public let status: FirmwareDistributionMessageStatus
     /// The number of entries in the Distribution Receivers List state.
     public let totalCount: UInt16
@@ -59,7 +58,7 @@ public struct FirmwareDistributionReceiversStatus: StaticMeshResponse {
     }
     
     public init?(parameters: Data) {
-        guard parameters.count != 3 else {
+        guard parameters.count == 3 else {
             return nil
         }
         guard let status = FirmwareDistributionMessageStatus(rawValue: parameters[0]) else {

@@ -38,10 +38,9 @@ import Foundation
 /// * ``FirmwareDistributionFirmwareGetByIndex`` message,
 /// * ``FirmwareDistributionFirmwareDelete`` message,
 /// * ``FirmwareDistributionFirmwareDeleteAll`` message.
-public struct FirmwareDistributionFirmwareStatus: StaticMeshResponse {
+public struct FirmwareDistributionFirmwareStatus: StaticMeshResponse, FirmwareDistributionStatusMessage {
     public static let opCode: UInt32 = 0x8327
     
-    /// Status for the requesting message.
     public let status: FirmwareDistributionMessageStatus
     /// The number of firmware images stored on the Firmware Distribution Server.
     ///

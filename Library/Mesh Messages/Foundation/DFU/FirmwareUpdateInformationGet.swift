@@ -48,6 +48,20 @@ public struct FirmwareUpdateInformationGet: StaticAcknowledgedMeshMessage {
         return Data([firstIndex, entriesLimit])
     }
     
+    /// Creates the Firmware Update Information Get message.
+    ///
+    /// This initiator will only request the total count of entries in the Firmware Information List state.
+    public init() {
+        firstIndex = 0
+        entriesLimit = 0
+    }
+    
+    /// Creates the Firmware Update Information Get message.
+    ///
+    /// - parameters:
+    ///   - firstIndex: Index of the first requested entry from the Firmware Information List state.
+    ///   - entriesLimit: Maximum number of entries that the server includes in a Firmware Update
+    ///                   Information Status message.
     public init(from firstIndex: UInt8, limit entriesLimit: UInt8) {
         self.firstIndex = firstIndex
         self.entriesLimit = entriesLimit

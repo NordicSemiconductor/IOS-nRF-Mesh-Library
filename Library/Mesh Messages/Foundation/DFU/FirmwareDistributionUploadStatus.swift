@@ -38,10 +38,9 @@ import Foundation
 /// * ``FirmwareDistributionUploadStart``,
 /// * ``FirmwareDistributionUploadOOBStart``,
 /// * ``FirmwareDistributionCancel``,
-public struct FirmwareDistributionUploadStatus: StaticMeshResponse {
+public struct FirmwareDistributionUploadStatus: StaticMeshResponse, FirmwareDistributionStatusMessage {
     public static let opCode: UInt32 = 0x8322
     
-    /// Status for the requesting message.
     public let status: FirmwareDistributionMessageStatus
     /// Phase of the firmware image upload to a Firmware Distribution Server.
     public let phase: FirmwareDistributionPhase
@@ -51,7 +50,7 @@ public struct FirmwareDistributionUploadStatus: StaticMeshResponse {
     public let isOob: Bool?
     /// The Firmware ID of the new firmware image that is being uploaded or was
     /// uploaded to the Firmware Distribution Server.
-    public  let firmwareId: FirmwareId?
+    public let firmwareId: FirmwareId?
     
     public var parameters: Data? {
         var data = Data([status.rawValue, phase.rawValue])

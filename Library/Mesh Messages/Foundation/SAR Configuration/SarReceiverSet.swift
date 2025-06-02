@@ -56,8 +56,6 @@ public struct SarReceiverSet: AcknowledgedConfigMessage {
     /// ```
     /// (SAR Discard Timeout + 1) * 5 ms
     /// ```
-    ///
-    /// - seeAlso:``discardTimeout``
     public let sarDiscardTimeout: UInt8
     
     /// The **SAR Acknowledgment Delay Increment state** is a 3-bit value that controls

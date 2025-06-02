@@ -50,8 +50,7 @@ internal class FirmwareUpdateClientHandler: ModelDelegate {
         let types: [StaticMeshMessage.Type] = [
             FirmwareUpdateInformationStatus.self,
             FirmwareUpdateFirmwareMetadataStatus.self,
-            // This one is required only for the Distributor role:
-            // FirmwareUpdateStatus.self
+            FirmwareUpdateStatus.self,
         ]
         self.messageTypes = types.toMap()
     }

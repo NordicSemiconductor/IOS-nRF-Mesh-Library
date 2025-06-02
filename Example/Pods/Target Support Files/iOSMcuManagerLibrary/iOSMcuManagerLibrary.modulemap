@@ -1,0 +1,6 @@
+framework module iOSMcuManagerLibrary {
+  umbrella header "iOSMcuManagerLibrary-umbrella.h"
+
+  export *
+  module * { export * }
+}

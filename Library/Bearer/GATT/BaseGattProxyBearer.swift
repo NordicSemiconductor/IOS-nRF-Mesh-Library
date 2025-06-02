@@ -105,7 +105,7 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     ///
     /// - parameter uuid: The UUID associated with the peer.
     public init(targetWithIdentifier uuid: UUID) {
-        centralManager  = CBCentralManager()
+        centralManager = CBCentralManager()
         identifier = uuid
         protocolHandler = ProxyProtocolHandler()
         super.init()

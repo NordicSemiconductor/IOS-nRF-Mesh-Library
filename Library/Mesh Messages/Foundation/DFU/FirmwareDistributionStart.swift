@@ -78,7 +78,7 @@ public struct FirmwareDistributionStart: StaticAcknowledgedMeshMessage {
     public var parameters: Data? {
         var data = Data() + applicationKeyIndex + ttl + timeoutBase
         // This takes 2 + 1 bit, 5 bits are Reserved for Future Use:
-        data += UInt8((transferMode.rawValue << 6) | (updatePolicy.rawValue << 5))
+        data += UInt8((transferMode.rawValue) | (updatePolicy.rawValue << 2))
         data += firmwareImageIndex
         
         if let label = multicastAddress.virtualLabel {
@@ -94,7 +94,7 @@ public struct FirmwareDistributionStart: StaticAcknowledgedMeshMessage {
     /// - parameters:
     ///   - firmwareImageIndex: Index of the firmware image in the Firmware Images List state to use
     ///                         during firmware image distribution.
-    ///   - multicastAddress: Multicast Address used in a firmware image distribution. By default
+    ///   - multicastAddress: Multicast Address used in a firmware image distribution. If `nil`,
     ///                       it is set to an Unassigned Address, which means the firmware will not be
     ///                       sent to a multicast address.
     ///   - applicationKeyIndex: Index of the application key used in a firmware image distribution.
@@ -106,12 +106,12 @@ public struct FirmwareDistributionStart: StaticAcknowledgedMeshMessage {
     ///                              will be suspended.
     public init(
         firmwareWithImageIndex firmwareImageIndex: UInt16,
-        to multicastAddress: MeshAddress = MeshAddress(.unassignedAddress),
+        to multicastAddress: MeshAddress? = nil,
         usingKeyIndex applicationKeyIndex: KeyIndex,
         ttl distributionTtl: UInt8 = 0xFF,
         mode distributionTransferMode: TransferMode = .push,
         updatePolicy: FirmwareUpdatePolicy = .verifyAndApply,
-        distributionTimeoutBase: UInt16
+        distributionTimeoutBase: UInt16 = 118, // 20 minutes
     ) {
         self.applicationKeyIndex = applicationKeyIndex
         self.ttl = distributionTtl
@@ -119,7 +119,34 @@ public struct FirmwareDistributionStart: StaticAcknowledgedMeshMessage {
         self.transferMode = distributionTransferMode
         self.updatePolicy = updatePolicy
         self.firmwareImageIndex = firmwareImageIndex
-        self.multicastAddress = multicastAddress
+        self.multicastAddress = multicastAddress ?? MeshAddress(.unassignedAddress)
+    }
+    
+    /// Creates the Firmware Distribution Start message from the given
+    /// ``FirmwareDistributionStatus`` message.
+    ///
+    /// Use this initializer to resume suspended firmware distribution.
+    public init?(resume status: FirmwareDistributionStatus) {
+        guard status.phase == .transferSuspended else {
+            return nil
+        }
+        guard let applicationKeyIndex = status.applicationKeyIndex,
+              let ttl = status.ttl,
+              let timeoutBase = status.timeoutBase,
+              let transferMode = status.transferMode,
+              let updatePolicy = status.updatePolicy,
+              let firmwareImageIndex = status.firmwareImageIndex,
+              let multicastAddress = status.multicastAddress else {
+            return nil
+        }
+        self.applicationKeyIndex = applicationKeyIndex
+        self.ttl = ttl
+        self.timeoutBase = timeoutBase
+        self.transferMode = transferMode
+        self.updatePolicy = updatePolicy
+        self.firmwareImageIndex = firmwareImageIndex
+        // This can be a Label UUID or a Group Address.
+        self.multicastAddress = MeshAddress(multicastAddress)
     }
     
     public init?(parameters: Data) {

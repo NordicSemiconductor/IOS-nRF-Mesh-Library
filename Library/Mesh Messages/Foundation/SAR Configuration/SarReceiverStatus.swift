@@ -55,8 +55,6 @@ public struct SarReceiverStatus: ConfigResponse {
     /// ```
     /// (SAR Discard Timeout + 1) * 5 ms
     /// ```
-    ///
-    /// - seeAlso:``discardTimeout``
     public let sarDiscardTimeout: UInt8
     
     /// The **SAR Acknowledgment Delay Increment state** is a 3-bit value that controls
@@ -115,7 +113,7 @@ public struct SarReceiverStatus: ConfigResponse {
     /// The default value of the **SAR Acknowledgment Retransmissions Count state** is `0b00`
     /// (1 transmission, retransmissions disabled).
     ///
-    /// - note: Retransmission of Segment Acknowledgent messages is controlled by
+    /// - note: Retransmission of Segment Acknowledgment messages is controlled by
     ///         ``sarSegmentsThreshold``.
     ///
     /// - seeAlso: ``sarSegmentsThreshold``

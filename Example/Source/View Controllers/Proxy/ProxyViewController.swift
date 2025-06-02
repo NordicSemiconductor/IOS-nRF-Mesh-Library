@@ -39,15 +39,11 @@ class ProxyViewController: ProgressViewController, Editable {
     
     // MARK: - Implementation
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        MeshNetworkManager.bearer.delegate = self
-    }
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tableView.reloadData()
         
+        MeshNetworkManager.bearer.delegate = self
         MeshNetworkManager.instance.proxyFilter.delegate = self
         addButton.isEnabled = MeshNetworkManager.bearer.isOpen
         
@@ -177,7 +173,7 @@ extension ProxyViewController: BearerDelegate {
     
     func bearerDidOpen(_ bearer: Bearer) {
         addButton.isEnabled = true
-        tableView.reloadRows(at: [.status, .action, .control], with: .automatic)
+        tableView.reloadData()
     }
     
     func bearer(_ bearer: Bearer, didClose error: Error?) {

@@ -67,9 +67,9 @@ class IntroViewController: UIViewController {
         )
         content.showEmptyView()
         
-        makeBlue(customAppKeyBindings)
-        makeBlue(customSubscriptions)
-        makeBlue(customPublication)
+        customAppKeyBindings.makeBlue()
+        customSubscriptions.makeBlue()
+        customPublication.makeBlue()
     }
     
     // MARK: - Navigation
@@ -92,14 +92,6 @@ class IntroViewController: UIViewController {
 }
 
 private extension IntroViewController {
-    
-    func makeBlue(_ button: UIButton) {
-        button.setTitleColor(.white, for: .normal)
-        button.setTitleColor(.almostWhite, for: .highlighted)
-        button.backgroundColor = .dynamicColor(light: .nordicLake, dark: .nordicBlue)
-        button.layer.cornerRadius = 4
-        button.layer.masksToBounds = true
-    }
     
     func showInfo(for button: UIButton) {
         switch button.tag {
