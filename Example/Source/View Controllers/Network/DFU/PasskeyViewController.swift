@@ -55,7 +55,24 @@ class PasskeyViewController: UIViewController {
             message: "Establishing secure connection...",
             messageImage: #imageLiteral(resourceName: "baseline-security")
         )
-        view.showEmptyView()
+        
+        // If in portrait mode on iPhone:
+        if UIDevice.current.userInterfaceIdiom != .phone || UIDevice.current.orientation.isPortrait || UIDevice.current.orientation.isFlat {
+            view.showEmptyView()
+            passkeyLabel.isHidden = false
+        } else {
+            passkeyLabel.isHidden = true
+        }
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
+        if UIDevice.current.userInterfaceIdiom != .phone || UIDevice.current.orientation.isPortrait || UIDevice.current.orientation.isFlat {
+            view.showEmptyView()
+            passkeyLabel.isHidden = false
+        } else {
+            view.hideEmptyView()
+            passkeyLabel.isHidden = true
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -126,6 +143,7 @@ private extension PasskeyViewController {
                         self.passkeyLabel.alpha = 1.0
                     }
                     self.passkeyLabel.text = String(format: "%06d", response.passkey)
+                    self.navigationItem.prompt = String(format: "Code copied to Clipboard: %06d", response.passkey)
                     
                     UIPasteboard.general.string = "\(response.passkey)"
                     self.showToast("Passkey copied to Clipboard.\nPaste it or type it into the Pairing dialog.", delay: .shortDelay)
