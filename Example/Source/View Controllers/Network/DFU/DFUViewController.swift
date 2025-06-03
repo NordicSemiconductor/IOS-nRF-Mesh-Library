@@ -506,7 +506,7 @@ class DFUViewController: UIViewController {
     /// The speed will be updated during distribution based on the lowest transfer speed.
     private func estimateDistributionSpeed(forReceivers receivers: [Receiver], usingMulticast multicast: Bool) {
         if !multicast {
-            estimatedDistributionSpeed =  130.0 / Float(max(1, receivers.count))
+            estimatedDistributionSpeed = 130.0 / Float(max(1, receivers.count))
         } else {
             estimatedDistributionSpeed = 40.0
         }
