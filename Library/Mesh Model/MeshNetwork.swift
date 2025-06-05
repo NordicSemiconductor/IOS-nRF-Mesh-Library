@@ -72,7 +72,15 @@ public class MeshNetwork: Codable {
     internal var networkExclusions: [ExclusionList]?
     
     /// The IV Index of the mesh network.
-    internal var ivIndex: IvIndex {
+    ///
+    /// - warning: This property is an internal value of the mesh network and is exposed only for advanced users.
+    ///
+    /// The  value is set automatically to 0 when a new mesh network is created.
+    ///
+    /// - note: The IV Index is automatically set to the value obtained from the Secure Network beacon
+    ///         or Private beacon when connected to a GATT Proxy Node. It should not be modified by the user,
+    ///         unless necessary. In that case use ``setIvIndex(_:updateActive:)`` method.
+    public internal(set) var ivIndex: IvIndex {
         didSet {
             // Clean up the network exclusions.
             networkExclusions?.cleanUp(forIvIndex: ivIndex)
