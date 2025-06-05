@@ -30,6 +30,20 @@
 
 import Foundation
 
+/// An observer protocol for the IV Index changes in the mesh network.
+///
+/// - warning: This protocol is for advanced users and should be used with caution.
+///            The IV Index is managed internally by the library. Tracking changes
+///            to the IV Index is not necessary for most applications.
+public protocol IvIndexObserver: AnyObject {
+    /// Called when the IV Index of the mesh network has changed.
+    ///
+    /// - note: This method is called from the main dispatch queue.
+    ///
+    /// - parameter ivIndex: The new IV Index value.
+    func ivIndexDidChange(to ivIndex: IvIndex)
+}
+
 /// The Bluetooth Mesh Network configuration.
 ///
 /// The mesh network object contains information about known Nodes, Provisioners,
@@ -71,6 +85,10 @@ public class MeshNetwork: Codable {
     /// An array containing Unicast Addresses that cannot be assigned to new Nodes.
     internal var networkExclusions: [ExclusionList]?
     
+    /// The observer for the IV Index changes in the mesh network.
+    ///
+    /// - warning: This property is for advanced users and should be used with caution.
+    public weak var ivIndexObserver: IvIndexObserver?
     /// The IV Index of the mesh network.
     ///
     /// - warning: This property is an internal value of the mesh network and is exposed only for advanced users.
@@ -82,10 +100,25 @@ public class MeshNetwork: Codable {
     ///         unless necessary. In that case use ``setIvIndex(_:updateActive:)`` method.
     public internal(set) var ivIndex: IvIndex {
         didSet {
+            guard ivIndex != oldValue else { return }
+            
+            let before = networkExclusions?.count ?? 0
             // Clean up the network exclusions.
             networkExclusions?.cleanUp(forIvIndex: ivIndex)
             if networkExclusions?.isEmpty ?? false {
                 networkExclusions = nil
+            }
+            let after = networkExclusions?.count ?? 0
+            
+            if before != after {
+                // Why the notification isn't posted here?
+                // It is, but the timestamp setter. One is enough.
+                timestamp = Date()
+            }
+            // Notify the observer about the IV Index change.
+            let ivIndex = ivIndex
+            DispatchQueue.main.async { [weak self] in
+                self?.ivIndexObserver?.ivIndexDidChange(to: ivIndex)
             }
         }
     }
