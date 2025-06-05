@@ -148,6 +148,14 @@ class SettingsViewController: UITableViewController {
     
 }
 
+extension SettingsViewController: IvIndexObserver {
+    
+    func ivIndexDidChange(to ivIndex: IvIndex) {
+        ivIndexLabel.text = "\(ivIndex.index)\(ivIndex.updateActive ? " (update active)" : "")"
+    }
+    
+}
+
 extension SettingsViewController: WizardDelegate {
     
     /// Opens the Document Picker to select the Mesh Network configuration to import.
@@ -234,8 +242,10 @@ private extension SettingsViewController {
         let alert = UIAlertController(title: "IV Index", message: "Provide the initial value of IV Index.", preferredStyle: .alert)
         alert.addTextField { textField in
             textField.text = "\(network.ivIndex.index)"
-            textField.placeholder = "0 - 4294967295"
-            textField.keyboardType = .numberPad
+            textField.placeholder     = "0 - 4294967295"
+            textField.clearButtonMode = .whileEditing
+            textField.returnKeyType   = .done
+            textField.keyboardType    = .numberPad
             textField.addTarget(self, action: .ivIndexRequired, for: .editingChanged)
             textField.addTarget(self, action: .ivIndexRequired, for: .editingDidBegin)
         }
@@ -267,7 +277,6 @@ private extension SettingsViewController {
             }
             let updateActive = switchView.isOn
             try? network.setIvIndex(index, updateActive: updateActive)
-            self.ivIndexLabel.text = "\(index)\(updateActive ? " (update active)" : "")"
         })
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         
@@ -322,13 +331,15 @@ private extension SettingsViewController {
         guard let meshNetwork = MeshNetworkManager.instance.meshNetwork else {
             return
         }
+        // Assign the view controller as the IV Index observer.
+        meshNetwork.ivIndexObserver = self
+        ivIndexDidChange(to: meshNetwork.ivIndex)
+        
         networkNameLabel.text  = meshNetwork.meshName
         provisionersLabel.text = "\(meshNetwork.provisioners.count)"
         networkKeysLabel.text  = "\(meshNetwork.networkKeys.count)"
         appKeysLabel.text      = "\(meshNetwork.applicationKeys.count)"
         scenesLabel.text       = "\(meshNetwork.scenes.count)"
-        let ivIndex = meshNetwork.ivIndex
-        ivIndexLabel.text      = "\(ivIndex.index)\(ivIndex.updateActive ? " (update active)" : "")"
         lastModifiedLabel.text = dateFormatter.string(from: meshNetwork.timestamp)
         tableView.reloadData()
     }
