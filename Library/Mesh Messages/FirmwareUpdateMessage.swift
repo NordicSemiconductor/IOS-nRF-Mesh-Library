@@ -314,8 +314,8 @@ public enum FirmwareDistributionPhase: UInt8, Sendable {
     
     /// A flag indicating whether the firmware distribution is not in progress.
     ///
-    /// When the Distributor is in ``.completed`` or ``.failed`` state, the Distributor
-    /// needs to be reset to ``.idle`` state using ``FirmwareDistributionCancel``
+    /// When the Distributor is in ``completed`` or ``failed`` state, the Distributor
+    /// needs to be reset to ``idle`` state using ``FirmwareDistributionCancel``
     /// message before starting a new firmware distribution.
     public var isBusy: Bool {
         return self != .idle && self != .failed && self != .completed && self != .applyingUpdate
