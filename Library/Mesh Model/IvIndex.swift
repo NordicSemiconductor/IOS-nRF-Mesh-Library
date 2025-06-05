@@ -44,22 +44,9 @@ import Foundation
 /// beacon and in the Friend Update message shall be set to 1. When this state is
 /// active, a node shall transmit using the current IV Index - 1 and shall process
 /// messages from the current IV Index - 1 and also the current IV Index.
-internal struct IvIndex {
-    var index: UInt32 = 0
-    var updateActive: Bool = false
-    
-    /// The IV Index used for transmitting messages.
-    var transmitIndex: UInt32 {
-        return updateActive && index > 0 ? index - 1 : index
-    }
-    
-    /// The IV Index that is to be used for decrypting messages.
-    ///
-    /// - parameter ivi: The IVI bit of the received Network PDU.
-    /// - returns: The IV Index to be used to decrypt the message.
-    func index(for ivi: UInt8) -> UInt32 {
-        return ivi == index & 1 ? index : max(1, index) - 1
-    }
+public struct IvIndex {
+    public var index: UInt32 = 0
+    public var updateActive: Bool = false
 }
 
 internal extension IvIndex {
@@ -89,14 +76,31 @@ internal extension IvIndex {
 
 extension IvIndex: Comparable {
     
-    static func < (lhs: IvIndex, rhs: IvIndex) -> Bool {
+    public static func < (lhs: IvIndex, rhs: IvIndex) -> Bool {
         return lhs.index < rhs.index ||
               (lhs.index == rhs.index && lhs.updateActive && !rhs.updateActive)
+    }
+    
+    public static func == (lhs: IvIndex, rhs: IvIndex) -> Bool {
+        return lhs.index == rhs.index && lhs.updateActive == rhs.updateActive
     }
     
 }
 
 internal extension IvIndex {
+    
+    /// The IV Index used for transmitting messages.
+    var transmitIndex: UInt32 {
+        return updateActive && index > 0 ? index - 1 : index
+    }
+    
+    /// The IV Index that is to be used for decrypting messages.
+    ///
+    /// - parameter ivi: The IVI bit of the received Network PDU.
+    /// - returns: The IV Index to be used to decrypt the message.
+    func index(for ivi: UInt8) -> UInt32 {
+        return ivi == index & 1 ? index : max(1, index) - 1
+    }
     
     /// The following IV Index, or `nil` if maximum value has been reached.
     var next: IvIndex? {
@@ -120,7 +124,7 @@ internal extension IvIndex {
 
 extension IvIndex: CustomDebugStringConvertible {
     
-    var debugDescription: String {
+    public var debugDescription: String {
         return "IV Index: \(index) (\(updateActive ? "update active" : "normal operation"))"
     }
     

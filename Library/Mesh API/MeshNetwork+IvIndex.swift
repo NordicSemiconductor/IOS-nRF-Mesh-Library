@@ -49,7 +49,8 @@ public extension MeshNetwork {
     /// it will obtain the current IV Index automatically just after connection using the
     /// Secure Network beacon, in which case calling this method is not necessary.
     ///
-    /// - important: Mind, that it is no possible to revert IV Index to smaller value
+    /// - important: Mind, that unless there are no Nodes in the network except the
+    ///              Provisioner, it is no possible to revert IV Index to smaller value
     ///              (at least not using the public API). If you set too high IV Index
     ///              the phone will not be able to communicate with the mesh network.
     ///              Always use the current IV Index of the mesh network.
@@ -60,12 +61,12 @@ public extension MeshNetwork {
     /// - throws: ``MeshNetworkError/ivIndexTooSmall`` when the new IV Index is
     ///           lower than the current one.
     func setIvIndex(_ index: UInt32, updateActive: Bool) throws {
-        let newIvIndex = IvIndex(index: index, updateActive: updateActive)
-        
-        // Verify that the new IV Index is greater than or equal to the current one.
-        guard newIvIndex >= ivIndex else {
+        guard canSetIvIndex(index, updateActive: updateActive) else {
             throw MeshNetworkError.ivIndexTooSmall
         }
+        
+        let newIvIndex = IvIndex(index: index, updateActive: updateActive)
+        
         // If they are equal, we're done.
         if ivIndex == newIvIndex {
             return
@@ -79,6 +80,24 @@ public extension MeshNetwork {
         // IV Recovery is active.
         defaults.set(true, forKey: IvIndex.ivRecoveryKey)
         defaults.set(Date(), forKey: IvIndex.timestampKey)
+    }
+    
+    /// A flag indicating whether the IV Index can be changed to a new value.
+    ///
+    /// The IV Index can be changed only when the network has no Nodes
+    /// except the local Provisioner.
+    ///
+    /// - note: Even if there are Nodes in the network, the IV Index can be increased
+    ///         using ``setIvIndex(_:updateActive:)`` method.
+    func canSetIvIndex(_ index: UInt32, updateActive: Bool) -> Bool {
+        let newIvIndex = IvIndex(index: index, updateActive: updateActive)
+        
+        // The IV Index can be changed only when the network has no Nodes
+        // except the local Provisioner.
+        let onlyProvisioner = nodes
+            .filter { !$0.isLocalProvisioner }
+            .isEmpty
+        return onlyProvisioner || newIvIndex >= ivIndex
     }
     
 }

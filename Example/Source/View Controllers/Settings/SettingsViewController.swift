@@ -41,6 +41,7 @@ class SettingsViewController: UITableViewController {
     @IBOutlet weak var networkKeysLabel: UILabel!
     @IBOutlet weak var appKeysLabel: UILabel!
     @IBOutlet weak var scenesLabel: UILabel!
+    @IBOutlet weak var ivIndexLabel: UILabel!
     @IBOutlet weak var testModeSwitch: UISwitch!
     @IBOutlet weak var lastModifiedLabel: UILabel!
     @IBAction func testModeDidChange(_ sender: UISwitch) {
@@ -104,6 +105,22 @@ class SettingsViewController: UITableViewController {
         if indexPath.isNetworkName {
             presentNameDialog()
         }
+        if indexPath.isIvIndex {
+            if let meshNetwork = MeshNetworkManager.instance.meshNetwork {
+                // The IV Index can be changed only when the network has no Nodes
+                // except the local Provisioner.
+                let onlyProvisioner = meshNetwork.nodes
+                    .filter { !$0.isLocalProvisioner }
+                    .isEmpty
+                if onlyProvisioner {
+                    presentIvIndexDialog()
+                } else {
+                    presentAlert(title: "IV Index",
+                                 message: "The IV Index can only be changed on a new network before any nodes are provisioned.\n\n" +
+                                          "Currently it is not possible to trigger IV Update procedure from nRF Mesh app. IV Update can be triggered from other Nodes.")
+                }
+            }
+        }
         if indexPath.isResetNetwork {
             presentResetConfirmation()
         }
@@ -124,9 +141,17 @@ class SettingsViewController: UITableViewController {
         if indexPath.isIvUpdateTestMode {
             presentAlert(title: "Info",
                          message: "IV Update test mode allows to transition to the subsequent "
-                                + "IV Index without having to wait at least 96 hours. The "
-                                + "transition will be done upon receiving a valid Secure Network beacon.")
+                                + "IV Index without having to wait at least 96 hours.\n\n"
+                                + "The transition is initiated when a valid Secure Network beacon is received.")
         }
+    }
+    
+}
+
+extension SettingsViewController: IvIndexObserver {
+    
+    func ivIndexDidChange(to ivIndex: IvIndex) {
+        ivIndexLabel.text = "\(ivIndex.index)\(ivIndex.updateActive ? " (update active)" : "")"
     }
     
 }
@@ -211,6 +236,54 @@ private extension SettingsViewController {
         }
     }
     
+    func presentIvIndexDialog() {
+        let network = MeshNetworkManager.instance.meshNetwork!
+        
+        let alert = UIAlertController(title: "IV Index", message: "Provide the initial value of IV Index.", preferredStyle: .alert)
+        alert.addTextField { textField in
+            textField.text = "\(network.ivIndex.index)"
+            textField.placeholder     = "0 - 4294967295"
+            textField.clearButtonMode = .whileEditing
+            textField.returnKeyType   = .done
+            textField.keyboardType    = .numberPad
+            textField.addTarget(self, action: .ivIndexRequired, for: .editingChanged)
+            textField.addTarget(self, action: .ivIndexRequired, for: .editingDidBegin)
+        }
+        
+        let switchView = UISwitch()
+        switchView.isOn = network.ivIndex.updateActive
+        switchView.translatesAutoresizingMaskIntoConstraints = false
+        alert.view.addSubview(switchView)
+        
+        let label = UILabel()
+        label.text = "Update Active"
+        label.font = UIFont.systemFont(ofSize: 13)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        alert.view.addSubview(label)
+        
+        // Add constraints.
+        NSLayoutConstraint.activate([
+            alert.view.heightAnchor.constraint(equalToConstant: 206),
+            switchView.trailingAnchor.constraint(equalTo: alert.view.trailingAnchor, constant: -20),
+            switchView.topAnchor.constraint(equalTo: alert.view.topAnchor, constant: 120),
+            label.leadingAnchor.constraint(equalTo: alert.view.leadingAnchor, constant: 20),
+            label.centerYAnchor.constraint(equalTo: switchView.centerYAnchor)
+        ])
+        
+        alert.addAction(UIAlertAction(title: "OK", style: .default) { action in
+            guard let text = alert.textFields?[0].text,
+                  let index = UInt32(text) else {
+                return
+            }
+            let updateActive = switchView.isOn
+            try? network.setIvIndex(index, updateActive: updateActive)
+        })
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        
+        // Present the alert
+        present(alert, animated: true)
+    }
+    
     /// Presents a dialog with resetting confirmation.
     func presentResetConfirmation() {
         let alert = UIAlertController(title: "Reset Network",
@@ -258,6 +331,10 @@ private extension SettingsViewController {
         guard let meshNetwork = MeshNetworkManager.instance.meshNetwork else {
             return
         }
+        // Assign the view controller as the IV Index observer.
+        meshNetwork.ivIndexObserver = self
+        ivIndexDidChange(to: meshNetwork.ivIndex)
+        
         networkNameLabel.text  = meshNetwork.meshName
         provisionersLabel.text = "\(meshNetwork.provisioners.count)"
         networkKeysLabel.text  = "\(meshNetwork.networkKeys.count)"
@@ -399,9 +476,14 @@ private extension IndexPath {
         return section == IndexPath.nameSection && row == 0
     }
     
+    /// Returns whether the IndexPath points to the IV Index row.
+    var isIvIndex: Bool {
+        return section == IndexPath.networkSection && row == 4
+    }
+    
     /// Returns whether the IndexPath points to the IV Update Test Mode switch row.
     var isIvUpdateTestMode: Bool {
-        return section == IndexPath.networkSection && row == 4
+        return section == IndexPath.networkSection && row == 5
     }
     
     /// Returns whether the IndexPath points to the network resetting option.

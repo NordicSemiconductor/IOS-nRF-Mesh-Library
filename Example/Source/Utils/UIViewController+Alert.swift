@@ -49,6 +49,7 @@ extension Selector {
     static let key32Required = #selector(UIViewController.key32Required(_:))
     static let publicKeyRequired = #selector(UIViewController.publicKeyRequired(_:))
     static let ttlRequired = #selector(UIViewController.ttlRequired(_:))
+    static let ivIndexRequired = #selector(UIViewController.ivIndexRequired(_:))
     
 }
 
@@ -211,7 +212,7 @@ extension UIViewController {
                          .unicastAddressRequired, .groupAddressRequired,
                          .scene, .sceneRequired, .hexRequired:
                         textField.autocapitalizationType = .allCharacters
-                    case .ttlRequired:
+                    case .ttlRequired, .ivIndexRequired:
                         textField.keyboardType = .numberPad
                     default:
                         break
@@ -279,6 +280,12 @@ extension UIViewController {
         let alert = getAlert(from: textField)
         let ttl = UInt8(textField.text!)
         alert.setValid(ttl != nil && (ttl! == 0 || ttl! >= 2) && ttl! <= 127)
+    }
+    
+    @objc func ivIndexRequired(_ textField: UITextField) {
+        let alert = getAlert(from: textField)
+        let ivIndex = UInt32(textField.text!)
+        alert.setValid(ivIndex != nil)
     }
     
     @objc func numberRequired(_ textField: UITextField) {
