@@ -141,8 +141,8 @@ class SettingsViewController: UITableViewController {
         if indexPath.isIvUpdateTestMode {
             presentAlert(title: "Info",
                          message: "IV Update test mode allows to transition to the subsequent "
-                                + "IV Index without having to wait at least 96 hours. The "
-                                + "transition will be done upon receiving a valid Secure Network beacon.")
+                                + "IV Index without having to wait at least 96 hours.\n\n"
+                                + "The transition is initiated when a valid Secure Network beacon is received.")
         }
     }
     
