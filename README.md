@@ -40,6 +40,8 @@ and [**Mesh Device Properties**](https://www.bluetooth.com/specifications/device
     [Configuration Database Profile 1.0.1](https://www.bluetooth.com/specifications/specs/mesh-configuration-database-profile-1-0-1/), 
     including partial export.
 11. Option to use own transport layer with default GATT Bearer implementation available.
+12. Remote Provisioning.
+13. Firmware Update Client and Firmware Distributor Client models.
 
 [^1]: OOB - Out Of Band
 
@@ -50,7 +52,6 @@ The following features are not (yet) supported:
 1. The rest of models defined by Bluetooth SIG - *PRs are welcome!*
 2. IV Index update (initiation) - *not a top priority, as other nodes may initiate the update.*
 3. Health server messages - *in our TODO list.*
-4. Device Firmware Update (DFU) - *coming next!*
 
 ## How to start
 
@@ -85,6 +86,8 @@ The app is available on [App Store](https://apps.apple.com/us/app/nrf-mesh/id138
    - Vendor models.
 8. Scenes, both as client and server.
 9. Automatic connection to nearby nodes and automatic proxy filter management.
+10. Remote Provisioning.
+11. Device Firmware Update (DFU) over SMP.
 
 ## Testing
 
