@@ -182,7 +182,7 @@ class FirmwareSelectionViewController: UITableViewController {
                     }
                 }
                 // Distributor Node is the last one in the list.
-                .sorted { n1, n2 in n1.node.uuid != node.uuid && n2.node.uuid != node.uuid }
+                .sorted { n1, n2 in n1.node.uuid == node.uuid ? false : n2.node.uuid == node.uuid }
             
             // The list may include the Distributor Node itself.
             // We look for it, as it gets its own header and footer.
