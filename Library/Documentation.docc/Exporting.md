@@ -28,3 +28,7 @@ Before exporting, the owner may create a new ``Provisioner`` object with limited
 ranges, disallowing the guest to provision more devices.
 
 After the guest moves out, the keys can be changed or removed from the devices.
+
+## What's next
+
+We're done with the basics. If you want to learn about Device Firmware Update over mesh, check out <doc:DFU>.

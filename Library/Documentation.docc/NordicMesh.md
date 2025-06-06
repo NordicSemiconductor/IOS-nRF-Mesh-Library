@@ -34,6 +34,7 @@ To learn how to use the library, start here: <doc:Usage>.
 - <doc:SendingMessages>
 - <doc:Configuration>
 - <doc:Exporting>
+- <doc:DFU>
 
 ### Mesh Network Manager
 
