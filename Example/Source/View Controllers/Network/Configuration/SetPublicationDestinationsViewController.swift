@@ -141,8 +141,9 @@ class SetPublicationDestinationsViewController: UITableViewController {
                 selectedIndexPath = indexPath
                 selectedDestination = nil
             }
-            cell.textLabel?.text = element.name ?? "Element \(element.index + 1)"
-            cell.detailTextLabel?.text = element.parentNode!.name ?? "Unknown Device"
+            let elementName = element.name ?? "Element \(element.index + 1)"
+            cell.textLabel?.text = "\(elementName) (0x\(element.unicastAddress.hex))"
+            cell.detailTextLabel?.text = "\(element.parentNode!.name ?? "Unknown Device") (0x\(element.parentNode!.primaryUnicastAddress.hex))"
             cell.imageView?.image = #imageLiteral(resourceName: "ic_flag_24pt")
             cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
         }
