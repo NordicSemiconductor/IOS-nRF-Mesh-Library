@@ -101,6 +101,7 @@ class ScenesViewController: UITableViewController, Editable {
         let network = MeshNetworkManager.instance.meshNetwork!
         let scene = network.scenes[indexPath.sceneIndex]
         cell.textLabel?.text = scene.name
+        cell.detailTextLabel?.text = scene.number.asString()
         return cell
     }
     

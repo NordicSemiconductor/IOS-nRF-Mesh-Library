@@ -50,6 +50,7 @@ class SelectPublicationViewController: ProgressViewController {
     @IBOutlet weak var destinationIcon: UIImageView!
     @IBOutlet weak var destinationLabel: UILabel!
     @IBOutlet weak var destinationSubtitleLabel: UILabel!
+    @IBOutlet weak var destinationAddress: UILabel!
     @IBOutlet weak var keyIcon: UIImageView!
     @IBOutlet weak var keyLabel: UILabel!
     @IBOutlet weak var boundKeyLabel: UILabel!
@@ -242,6 +243,7 @@ private extension SelectPublicationViewController {
                 destinationIcon.tintColor = .lightGray
             }
             destinationSubtitleLabel.text = nil
+            destinationAddress.text = nil
             nextButton.isEnabled = false
             return
         }
@@ -250,6 +252,7 @@ private extension SelectPublicationViewController {
         } else {
             destinationLabel.textColor = .darkText
         }
+        destinationAddress.text = "0x\(address.address.hex)"
         let meshNetwork = MeshNetworkManager.instance.meshNetwork!
         if address.address.isUnicast {
             let meshNetwork = MeshNetworkManager.instance.meshNetwork!

@@ -36,6 +36,7 @@ class PublicationCell: UITableViewCell {
     @IBOutlet weak var destinationIcon: UIImageView!
     @IBOutlet weak var destinationLabel: UILabel!
     @IBOutlet weak var destinationSubtitleLabel: UILabel!
+    @IBOutlet weak var destinationAddress: UILabel!
     @IBOutlet weak var keyIcon: UIImageView!
     @IBOutlet weak var keyLabel: UILabel!
     @IBOutlet weak var boundKeyLabel: UILabel!
@@ -44,6 +45,7 @@ class PublicationCell: UITableViewCell {
         didSet {
             let meshNetwork = MeshNetworkManager.instance.meshNetwork!
             let address = publish.publicationAddress
+            destinationAddress.text = "0x\(address.address.hex)"
             if address.address.isUnicast {
                 let meshNetwork = MeshNetworkManager.instance.meshNetwork!
                 let node = meshNetwork.node(withAddress: address.address)
@@ -59,7 +61,7 @@ class PublicationCell: UITableViewCell {
                     }
                 } else {
                     destinationLabel.text = "Unknown Element"
-                    destinationSubtitleLabel.text = "Unknown Node"
+                    destinationSubtitleLabel.text = "Unknown Device"
                 }
                 destinationIcon.tintColor = .nordicLake
                 destinationIcon.image = #imageLiteral(resourceName: "ic_flag_24pt")

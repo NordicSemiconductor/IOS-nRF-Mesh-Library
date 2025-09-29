@@ -170,6 +170,8 @@
 		A7B526A7277B210000F5C60D /* GenericPowerOnOffSetupViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B526A5277B210000F5C60D /* GenericPowerOnOffSetupViewCell.swift */; };
 		A7B526A8277B210000F5C60D /* GenericPowerOnOffSetup.xib in Resources */ = {isa = PBXBuildFile; fileRef = A7B526A6277B210000F5C60D /* GenericPowerOnOffSetup.xib */; };
 		C5D0E3889048D952B61974DA /* Pods_nRF_Mesh.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41E003FABAE6DD367FEC93B5 /* Pods_nRF_Mesh.framework */; };
+		F03288942E4CCBC0008FD9DB /* ElementCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03288922E4CCBC0008FD9DB /* ElementCell.swift */; };
+		F03288952E4CCBC0008FD9DB /* ElementCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F03288932E4CCBC0008FD9DB /* ElementCell.xib */; };
 		F03414832B912F95009DD792 /* LightLCModeGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03414822B912F95009DD792 /* LightLCModeGroupCell.swift */; };
 		F03414852B9131BA009DD792 /* LightLCOccupancyModeGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03414842B9131BA009DD792 /* LightLCOccupancyModeGroupCell.swift */; };
 		F03414872B91373E009DD792 /* LightLCLightOnOffGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03414862B91373E009DD792 /* LightLCLightOnOffGroupCell.swift */; };
@@ -419,6 +421,8 @@
 		A7B526A6277B210000F5C60D /* GenericPowerOnOffSetup.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GenericPowerOnOffSetup.xib; sourceTree = "<group>"; };
 		C775BBAAAC42952ED786BABF /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		E7CB7DCE18F6E38D2240310F /* nRFMeshProvision.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = nRFMeshProvision.podspec; path = ../nRFMeshProvision.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		F03288922E4CCBC0008FD9DB /* ElementCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementCell.swift; sourceTree = "<group>"; };
+		F03288932E4CCBC0008FD9DB /* ElementCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ElementCell.xib; sourceTree = "<group>"; };
 		F03414822B912F95009DD792 /* LightLCModeGroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCModeGroupCell.swift; sourceTree = "<group>"; };
 		F03414842B9131BA009DD792 /* LightLCOccupancyModeGroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCOccupancyModeGroupCell.swift; sourceTree = "<group>"; };
 		F03414862B91373E009DD792 /* LightLCLightOnOffGroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCLightOnOffGroupCell.swift; sourceTree = "<group>"; };
@@ -565,6 +569,7 @@
 		5231403922FDA80E0074325A /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				F03288912E4CCB6E008FD9DB /* Cells */,
 				5231403A22FDA8280074325A /* Model */,
 				F044AE692DAE8CF4006D6674 /* AddNetKey.storyboard */,
 				F044AE662DAE8CD4006D6674 /* AddAppKey.storyboard */,
@@ -1002,6 +1007,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		F03288912E4CCB6E008FD9DB /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				F03288922E4CCBC0008FD9DB /* ElementCell.swift */,
+				F03288932E4CCBC0008FD9DB /* ElementCell.xib */,
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
 		F0587F742D96EC8E0091CDF4 /* LE Pairing */ = {
 			isa = PBXGroup;
 			children = (
@@ -1220,6 +1234,7 @@
 				52CD0A5E2330C04700A9A181 /* Network.storyboard in Resources */,
 				F044AE5E2DA949AC006D6674 /* DFU.storyboard in Resources */,
 				A7A59BD5277225A70045A8ED /* GenericPowerOnOff.xib in Resources */,
+				F03288952E4CCBC0008FD9DB /* ElementCell.xib in Resources */,
 				F0F0D9D52DCE3C68009FDE6B /* Configuration.storyboard in Resources */,
 				52E54CDB2343878B00478F05 /* Control.storyboard in Resources */,
 				F0587F6F2D96C5AA0091CDF4 /* PairingResponder.xib in Resources */,
@@ -1516,6 +1531,7 @@
 				521599D525E91F9300F602FA /* SensorValueCell.swift in Sources */,
 				F03414832B912F95009DD792 /* LightLCModeGroupCell.swift in Sources */,
 				52518B3122E0B18400A1FD1E /* GroupsViewController.swift in Sources */,
+				F03288942E4CCBC0008FD9DB /* ElementCell.swift in Sources */,
 				F0B67D822DB0F0D700B1A69D /* FirmwareSelectionViewController.swift in Sources */,
 				52A8EA9424EE6D18004C14C7 /* HeartbeatSubscriptionPeriodCell.swift in Sources */,
 				F058A6412DC9036400E9E914 /* UpdatePackage.swift in Sources */,

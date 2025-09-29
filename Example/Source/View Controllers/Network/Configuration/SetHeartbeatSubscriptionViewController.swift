@@ -140,7 +140,8 @@ class SetHeartbeatSubscriptionViewController: ProgressViewController {
                 selectedSourceIndexPath = indexPath
                 selectedSource = nil
             }
-            cell.textLabel?.text = otherNode.name ?? "Unknown Device"
+            cell.textLabel?.text = otherNode.name ?? "Unknown Node"
+            cell.detailTextLabel?.text = otherNode.primaryUnicastAddress.asString()
             cell.accessoryType = indexPath == selectedSourceIndexPath ? .checkmark : .none
             cell.isEnabled = true
         }
@@ -149,7 +150,8 @@ class SetHeartbeatSubscriptionViewController: ProgressViewController {
                 selectedDestinationIndexPath = indexPath
                 selectedDestination = nil
             }
-            cell.textLabel?.text = node.name ?? "Unknown Device"
+            cell.textLabel?.text = node.name ?? "Unknown Node"
+            cell.detailTextLabel?.text = node.primaryUnicastAddress.asString()
             cell.accessoryType = indexPath == selectedDestinationIndexPath ? .checkmark : .none
             cell.isEnabled = true
         }
@@ -160,6 +162,7 @@ class SetHeartbeatSubscriptionViewController: ProgressViewController {
                 selectedDestination = nil
             }
             cell.textLabel?.text = group.name
+            cell.detailTextLabel?.text = group.address.address.asString()
             cell.accessoryType = indexPath == selectedDestinationIndexPath ? .checkmark : .none
             cell.isEnabled = !group.address.address.isVirtual
         }
@@ -170,6 +173,7 @@ class SetHeartbeatSubscriptionViewController: ProgressViewController {
                 selectedDestination = nil
             }
             cell.textLabel?.text = group.name
+            cell.detailTextLabel?.text = group.address.address.asString()
             cell.accessoryType = indexPath == selectedDestinationIndexPath ? .checkmark : .none
             cell.isEnabled = true
         }

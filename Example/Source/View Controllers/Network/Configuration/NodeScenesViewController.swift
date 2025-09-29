@@ -140,6 +140,7 @@ class NodeScenesViewController: ProgressViewController, Editable {
         
         let scene = node.scenes[indexPath.sceneIndex]
         cell.textLabel?.text = scene.name
+        cell.detailTextLabel?.text = scene.number.asString()
         cell.accessoryType = indexPath == currentSceneIndexPath ? .checkmark : .none
         
         return cell

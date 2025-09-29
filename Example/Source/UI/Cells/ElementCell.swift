@@ -1,6 +1,5 @@
-//
 /*
-* Copyright (c) 2019, Nordic Semiconductor
+* Copyright (c) 2025, Nordic Semiconductor
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -29,39 +28,44 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
-import Foundation
 import UIKit
+import NordicMesh
 
-extension UITableViewCell {
+class ElementCell: UITableViewCell {
+    @IBOutlet weak var elementAddress: UILabel!
+    @IBOutlet weak var elementName: UILabel!
+    @IBOutlet weak var nodeName: UILabel!
     
-    var isEnabled: Bool {
-        get {
-            return isUserInteractionEnabled
+    var element: Element! {
+        didSet {
+            let elementName = element.name ?? "Element \(element.index + 1)"
+            self.elementName.text = "\(elementName)"
+            self.nodeName.text = "\(element.parentNode!.name ?? "Unknown Node")"
+            self.elementAddress.text = "0x\(element.unicastAddress.hex)"
         }
-        set(enabled) {
-            isUserInteractionEnabled = enabled
-            if enabled {
-                if #available(iOS 13.0, *) {
-                    textLabel?.textColor = .label
-                    detailTextLabel?.textColor = .secondaryLabel
-                    imageView?.tintColor = .nordicLake
-                } else {
-                    textLabel?.textColor = .darkText
-                    detailTextLabel?.textColor = .lightGray
-                    imageView?.tintColor = .nordicLake
-                }
-            } else {
-                if #available(iOS 13.0, *) {
-                    textLabel?.textColor = .secondaryLabel
-                    detailTextLabel?.textColor = .secondaryLabel
-                    imageView?.tintColor = .secondaryLabel
-                } else {
-                    textLabel?.textColor = .lightGray
-                    detailTextLabel?.textColor = .lightGray
-                    imageView?.tintColor = .lightGray
-                }
-            }
-        }
+    }
+    
+    func attributedString(for element: Element) -> NSAttributedString {
+        let attributedText = NSMutableAttributedString()
+
+        // Style for the name
+        let nameAttributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: UIColor.label
+        ]
+        let nameString = NSAttributedString(string: element.name ?? "Element \(element.index + 1)", attributes: nameAttributes)
+        attributedText.append(nameString)
+        
+        // Style for the address
+        let addressAttributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: UIColor.secondaryLabel
+        ]
+        let addressString = NSAttributedString(
+            string: " (0x\(element.unicastAddress.hex))",
+            attributes: addressAttributes
+        )
+        attributedText.append(addressString)
+        
+        return attributedText
     }
     
 }
