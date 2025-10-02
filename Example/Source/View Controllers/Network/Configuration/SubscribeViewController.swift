@@ -133,6 +133,7 @@ class SubscribeViewController: ProgressViewController {
         let groupSet = indexPath.section == 0 ? groups! : specialGroups!
         let group = groupSet[indexPath.row]
         cell.textLabel?.text = group.name
+        cell.detailTextLabel?.text = group.address.address.asString()
         cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
         return cell
     }

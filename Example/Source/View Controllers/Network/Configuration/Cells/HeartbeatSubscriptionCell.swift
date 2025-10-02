@@ -34,34 +34,34 @@ import NordicMesh
 class HeartbeatSubscriptionCell: UITableViewCell {
 
     @IBOutlet weak var sourceLabel: UILabel!
+    @IBOutlet weak var sourceAddress: UILabel!
     @IBOutlet weak var sourceIcon: NSLayoutConstraint!
     
     @IBOutlet weak var destinationLabel: UILabel!
     @IBOutlet weak var destinationIcon: UIImageView!
-    @IBOutlet weak var destinationSubtitle: UILabel!
+    @IBOutlet weak var destinationAddress: UILabel!
     
     var subscription: HeartbeatSubscription! {
         didSet {
             let network = MeshNetworkManager.instance.meshNetwork!
             sourceLabel.text = network.node(withAddress: subscription.source)?
-                .name ?? "Unknown Device"
+                .name ?? "Unknown Node"
+            sourceAddress.text = subscription.source.asString()
+            
+            destinationAddress.text = subscription.destination.asString()
             switch subscription.destination {
             case let unicastAddress where unicastAddress.isUnicast:
-                destinationLabel.text = network.node(withAddress: unicastAddress)?.name ?? "Unknown Device"
-                destinationSubtitle.text = nil
+                destinationLabel.text = network.node(withAddress: unicastAddress)?.name ?? "Unknown Node"
                 destinationIcon.image = #imageLiteral(resourceName: "ic_flag_24pt")
             case let groupAddress where groupAddress.isGroup || groupAddress.isVirtual:
                 if let group = network.group(withAddress: groupAddress) ?? Group.specialGroup(withAddress: groupAddress) {
                     destinationLabel.text = group.name
-                    destinationSubtitle.text = nil
                 } else {
                     destinationLabel.text = "Unknown Group"
-                    destinationSubtitle.text = groupAddress.asString()
                 }
                 destinationIcon.image = #imageLiteral(resourceName: "ic_group_24pt")
             default:
                 destinationLabel.text = "Unknown Address"
-                destinationSubtitle.text = subscription.destination.asString()
                 destinationIcon.image = #imageLiteral(resourceName: "ic_flag_24pt")
             }
         }

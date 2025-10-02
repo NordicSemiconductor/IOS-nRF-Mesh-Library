@@ -151,6 +151,7 @@ class DFUParametersViewController: UITableViewController {
             let cell = tableView.dequeueReusableCell(withIdentifier: "group", for: indexPath)
             let group = groups[indexPath.row - 1]
             cell.textLabel?.text = group.name
+            cell.detailTextLabel?.text = group.address.address.asString()
             cell.accessoryType = selectedGroup == group ? .checkmark : .none
             // Virtual Address is not supported yet.
             cell.isEnabled = group.address.virtualLabel == nil

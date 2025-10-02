@@ -42,6 +42,15 @@ class GroupTargetModelsViewController: UITableViewController {
     // MARK: - Properties
 
     var models: [Model]!
+    
+    // MARK: - View Controller
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        // Register Nibs for common cells.
+        tableView.register(UINib(nibName: "ElementCell", bundle: nil), forCellReuseIdentifier: "element")
+    }
 
     // MARK: - Table view data source
 
@@ -54,11 +63,10 @@ class GroupTargetModelsViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "item", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "element", for: indexPath) as! ElementCell
         let model = models[indexPath.row]
         let element = model.parentElement!
-        cell.textLabel?.text = "\(model.parentElement?.name ?? "Element \(element.index + 1)")"
-        cell.detailTextLabel?.text = "\(element.parentNode!.name ?? "Unknown node")"
+        cell.element = element
         return cell
     }
     

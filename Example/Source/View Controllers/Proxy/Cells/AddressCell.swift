@@ -49,7 +49,7 @@ class AddressCell: UITableViewCell {
                 
                 title.text = targetElement != nil ?
                     targetElement!.name ?? "Element \(targetElement!.index + 1)" : "Unknown Element"
-                subtitle.text = node?.name ?? "Unknown device"
+                subtitle.text = node?.name ?? "Unknown Node"
                 icon.image = #imageLiteral(resourceName: "ic_flag_24pt")
                 tintColor = .nordicLake
                 
@@ -65,7 +65,7 @@ class AddressCell: UITableViewCell {
                 tintColor = .nordicLake
                 
             default:
-                title.text = "Invalid address"
+                title.text = "Invalid Address"
                 icon.image = #imageLiteral(resourceName: "ic_flag_24pt")
                 tintColor = .nordicRed
             }

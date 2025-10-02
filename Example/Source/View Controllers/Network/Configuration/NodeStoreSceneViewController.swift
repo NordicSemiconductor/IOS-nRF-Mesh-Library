@@ -140,8 +140,10 @@ class NodeStoreSceneViewController: ProgressViewController {
 
         if indexPath.section == 0 && !newScenes.isEmpty {
             cell.textLabel?.text = newScenes[indexPath.row].name
+            cell.detailTextLabel?.text = newScenes[indexPath.row].number.asString()
         } else {
             cell.textLabel?.text = currentScenes[indexPath.row].name
+            cell.detailTextLabel?.text = currentScenes[indexPath.row].number.asString()
         }
         cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
 

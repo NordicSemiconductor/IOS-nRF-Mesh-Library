@@ -123,26 +123,46 @@ class AddAddressViewController: ProgressViewController {
                 return tableView.dequeueReusableCell(withIdentifier: "empty", for: indexPath)
             }
             let cell = tableView.dequeueReusableCell(withIdentifier: "subtitle", for: indexPath) as! AddressCell
-            cell.address = elements[indexPath.row].unicastAddress
+            let element = elements[indexPath.row]
+            cell.address = element.unicastAddress
             cell.accessoryType = selectedAddresses.contains(cell.address) ? .checkmark : .none
+            cell.tag = Int(element.unicastAddress)
             return cell
         }
         if indexPath.isGroupsSection {
             guard groups.count > indexPath.row else {
                 return tableView.dequeueReusableCell(withIdentifier: "empty", for: indexPath)
             }
-            let cell = tableView.dequeueReusableCell(withIdentifier: "subtitle", for: indexPath) as! AddressCell
-            cell.address = groups[indexPath.row].address.address
-            cell.accessoryType = selectedAddresses.contains(cell.address) ? .checkmark : .none
-            return cell
+            let group = groups[indexPath.row]
+            if group.address.address.isVirtual {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "subtitle", for: indexPath) as! AddressCell
+                cell.address = group.address.address
+                cell.accessoryType = selectedAddresses.contains(cell.address) ? .checkmark : .none
+                cell.tag = Int(group.address.address)
+                return cell
+            } else {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "group", for: indexPath)
+                cell.textLabel?.text = group.name
+                cell.detailTextLabel?.text = group.address.address.asString()
+                cell.accessoryType = selectedAddresses.contains(group.address.address) ? .checkmark : .none
+                cell.tag = Int(group.address.address)
+                return cell
+            }
         }
         if indexPath.isSpecialGroupSection {
             guard specialGroups.count > indexPath.row else {
                 return tableView.dequeueReusableCell(withIdentifier: "empty", for: indexPath)
             }
-            let cell = tableView.dequeueReusableCell(withIdentifier: "subtitle", for: indexPath) as! AddressCell
-            cell.address = specialGroups[indexPath.row]
-            cell.accessoryType = selectedAddresses.contains(cell.address) ? .checkmark : .none
+            let cell = tableView.dequeueReusableCell(withIdentifier: "group", for: indexPath)
+            let address = specialGroups[indexPath.row]
+            if let group = Group.specialGroup(withAddress: address) {
+                cell.textLabel?.text = group.name
+            } else {
+                cell.textLabel?.text = "Unknown"
+            }
+            cell.detailTextLabel?.text = address.asString()
+            cell.accessoryType = selectedAddresses.contains(address) ? .checkmark : .none
+            cell.tag = Int(address)
             return cell
         }
         fatalError("Invalid IndexPath")
@@ -166,15 +186,16 @@ class AddAddressViewController: ProgressViewController {
             return
         }
         
-        guard let addressCell = cell as? AddressCell else {
+        let address = Address(cell.tag)
+        guard address.isValidAddress else {
             return
         }
         
-        if selectedAddresses.contains(addressCell.address) {
-            selectedAddresses.remove(addressCell.address)
+        if selectedAddresses.contains(address) {
+            selectedAddresses.remove(address)
             cell.accessoryType = .none
         } else {
-            selectedAddresses.insert(addressCell.address)
+            selectedAddresses.insert(address)
             cell.accessoryType = .checkmark
         }
         doneButton.isEnabled = !selectedAddresses.isEmpty || customAddressSelected

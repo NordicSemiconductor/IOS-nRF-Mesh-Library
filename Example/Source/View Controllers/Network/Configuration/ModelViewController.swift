@@ -480,7 +480,7 @@ class ModelViewController: ProgressViewController {
             let cell = tableView.dequeueReusableCell(withIdentifier: "group", for: indexPath)
             let group = model.subscriptions[indexPath.row]
             cell.textLabel?.text = group.name
-            cell.detailTextLabel?.text = nil
+            cell.detailTextLabel?.text = group.address.address.asString()
             return cell
         case .sensors:
             guard let sensorValues = sensorValues,

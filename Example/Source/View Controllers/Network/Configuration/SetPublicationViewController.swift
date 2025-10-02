@@ -61,6 +61,7 @@ class SetPublicationViewController: ProgressViewController {
     @IBOutlet weak var destinationIcon: UIImageView!
     @IBOutlet weak var destinationLabel: UILabel!
     @IBOutlet weak var destinationSubtitleLabel: UILabel!
+    @IBOutlet weak var destinationAddress: UILabel!
     @IBOutlet weak var keyIcon: UIImageView!
     @IBOutlet weak var keyLabel: UILabel!
     @IBOutlet weak var boundKeyLabel: UILabel!
@@ -277,6 +278,7 @@ private extension SetPublicationViewController {
                 destinationIcon.tintColor = .lightGray
             }
             destinationSubtitleLabel.text = nil
+            destinationAddress.text = nil
             doneButton.isEnabled = false
             return
         }
@@ -286,6 +288,7 @@ private extension SetPublicationViewController {
             destinationLabel.textColor = .darkText
         }
         let meshNetwork = MeshNetworkManager.instance.meshNetwork!
+        destinationAddress.text = "0x\(address.address.hex)"
         if address.address.isUnicast {
             let meshNetwork = MeshNetworkManager.instance.meshNetwork!
             let node = meshNetwork.node(withAddress: address.address)

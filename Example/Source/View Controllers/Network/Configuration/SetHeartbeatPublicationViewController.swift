@@ -57,7 +57,7 @@ class SetHeartbeatPublicationViewController: ProgressViewController {
     
     @IBOutlet weak var destinationIcon: UIImageView!
     @IBOutlet weak var destinationLabel: UILabel!
-    @IBOutlet weak var destinationSubtitleLabel: UILabel!
+    @IBOutlet weak var destinationAddress: UILabel!
     @IBOutlet weak var keyIcon: UIImageView!
     @IBOutlet weak var keyLabel: UILabel!
     
@@ -196,7 +196,7 @@ private extension SetHeartbeatPublicationViewController {
                 destinationLabel.textColor = .lightGray
                 destinationIcon.tintColor = .lightGray
             }
-            destinationSubtitleLabel.text = nil
+            destinationAddress.text = nil
             doneButton.isEnabled = false
             return
         }
@@ -205,28 +205,25 @@ private extension SetHeartbeatPublicationViewController {
         } else {
             destinationLabel.textColor = .darkText
         }
+        destinationAddress.text = address.asString()
         let meshNetwork = MeshNetworkManager.instance.meshNetwork!
         if address.isUnicast {
             let node = meshNetwork.node(withAddress: address)
-            destinationLabel.text = node?.name ?? "Unknown Device"
-            destinationSubtitleLabel.text = nil
+            destinationLabel.text = node?.name ?? "Unknown Node"
             destinationIcon.tintColor = .nordicLake
             destinationIcon.image = #imageLiteral(resourceName: "ic_flag_24pt")
             doneButton.isEnabled = true
         } else if address.isGroup {
             if let group = meshNetwork.group(withAddress: address) ?? Group.specialGroup(withAddress: address) {
                 destinationLabel.text = group.name
-                destinationSubtitleLabel.text = nil
             } else {
-                destinationLabel.text = "Unknown group"
-                destinationSubtitleLabel.text = address.asString()
+                destinationLabel.text = "Unknown Group"
             }
             destinationIcon.image = #imageLiteral(resourceName: "tab_groups_outline_black_24pt")
             destinationIcon.tintColor = .nordicLake
             doneButton.isEnabled = true
         } else {
-            destinationLabel.text = "Invalid address"
-            destinationSubtitleLabel.text = nil
+            destinationLabel.text = "Invalid Address"
             destinationIcon.tintColor = .nordicRed
             destinationIcon.image = #imageLiteral(resourceName: "ic_flag_24pt")
             doneButton.isEnabled = false

@@ -65,6 +65,8 @@ class SelectPublicationDestinationsViewController: UITableViewController {
         if let index = index {
             keySelected(IndexPath(row: index, section: IndexPath.keysSection))
         }
+        // Register Nibs for common cells.
+        tableView.register(UINib(nibName: "ElementCell", bundle: nil), forCellReuseIdentifier: "element")
     }
 
     // MARK: - Table view data source
@@ -140,14 +142,13 @@ class SelectPublicationDestinationsViewController: UITableViewController {
             cell.accessoryType = indexPath == selectedKeyIndexPath ? .checkmark : .none
         }
         if indexPath.isElementsSection {
+            let elementCell = cell as! ElementCell
             let element = compatibleElements[indexPath.row]
             if let destination = selectedDestination, destination.address == element.unicastAddress {
                 selectedIndexPath = indexPath
                 selectedDestination = nil
             }
-            cell.textLabel?.text = element.name ?? "Element \(element.index + 1)"
-            cell.detailTextLabel?.text = element.parentNode!.name ?? "Unknown Device"
-            cell.imageView?.image = #imageLiteral(resourceName: "ic_flag_24pt")
+            elementCell.element = element
             cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
         }
         if indexPath.isGroupsSection {
@@ -157,7 +158,7 @@ class SelectPublicationDestinationsViewController: UITableViewController {
                 selectedDestination = nil
             }
             cell.textLabel?.text = group.name
-            cell.imageView?.image = #imageLiteral(resourceName: "ic_group_24pt")
+            cell.detailTextLabel?.text = group.address.address.hex
             cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
         }
         if indexPath.isSpecialGroupsSection {
@@ -167,7 +168,7 @@ class SelectPublicationDestinationsViewController: UITableViewController {
                 selectedDestination = nil
             }
             cell.textLabel?.text = group.name
-            cell.imageView?.image = #imageLiteral(resourceName: "ic_group_24pt")
+            cell.detailTextLabel?.text = group.address.address.hex
             cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
         }
         return cell
@@ -278,7 +279,7 @@ private extension IndexPath {
             return "key"
         }
         if isElementsSection {
-            return "subtitle"
+            return "element"
         }
         return "normal"
     }

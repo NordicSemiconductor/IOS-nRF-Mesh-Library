@@ -35,7 +35,7 @@ class HeartbeatPublicationCell: UITableViewCell {
 
     @IBOutlet weak var destinationIcon: UIImageView!
     @IBOutlet weak var destinationLabel: UILabel!
-    @IBOutlet weak var destinationSubtitleLabel: UILabel!
+    @IBOutlet weak var destinationAddress: UILabel!
     @IBOutlet weak var keyIcon: UIImageView!
     @IBOutlet weak var keyLabel: UILabel!
     
@@ -45,26 +45,23 @@ class HeartbeatPublicationCell: UITableViewCell {
             let address = heartbeatPublication.address
             if address.isUnicast {
                 let node = meshNetwork.node(withAddress: address)
-                destinationLabel.text = node?.name ?? "Unknown Device"
-                destinationSubtitleLabel.text = nil
+                destinationLabel.text = node?.name ?? "Unknown Node"
                 destinationIcon.tintColor = .nordicLake
                 destinationIcon.image = #imageLiteral(resourceName: "ic_flag_24pt")
             } else if address.isGroup {
                 if let group = meshNetwork.group(withAddress: address) ?? Group.specialGroup(withAddress: address) {
                     destinationLabel.text = group.name
-                    destinationSubtitleLabel.text = nil
                 } else {
-                    destinationLabel.text = "Unknown group"
-                    destinationSubtitleLabel.text = address.asString()
+                    destinationLabel.text = "Unknown Group"
                 }
                 destinationIcon.image = #imageLiteral(resourceName: "tab_groups_outline_black_24pt")
                 destinationIcon.tintColor = .nordicLake
             } else {
-                destinationLabel.text = "Invalid address"
-                destinationSubtitleLabel.text = nil
+                destinationLabel.text = "Invalid Address"
                 destinationIcon.tintColor = .nordicRed
                 destinationIcon.image = #imageLiteral(resourceName: "ic_flag_24pt")
             }
+            destinationAddress.text = address.asString()
             
             if let networkKey = meshNetwork.networkKeys[heartbeatPublication.networkKeyIndex] {
                 keyIcon.tintColor = .nordicLake

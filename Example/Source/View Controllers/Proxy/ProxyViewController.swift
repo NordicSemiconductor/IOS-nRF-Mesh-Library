@@ -132,14 +132,29 @@ class ProxyViewController: ProgressViewController, Editable {
             cell.filterTypeControl.isEnabled = MeshNetworkManager.bearer.isOpen
             return cell
         }
-        let cell = tableView.dequeueReusableCell(withIdentifier: "subtitle", for: indexPath) as! AddressCell
         let addresses = proxyFilter.addresses.sorted()
         guard addresses.count > indexPath.row else {
-            cell.address = .unassignedAddress
+            let cell = tableView.dequeueReusableCell(withIdentifier: "normal", for: indexPath)
+            cell.textLabel?.text = "Invalid Group"
+            cell.detailTextLabel?.text = nil
             return cell
         }
-        cell.address = addresses.sorted()[indexPath.row]
-        return cell
+        let address = addresses[indexPath.row]
+        if address.isUnicast || address.isVirtual {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "subtitle", for: indexPath) as! AddressCell
+            cell.address = addresses[indexPath.row]
+            return cell
+        } else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "normal", for: indexPath)
+            let meshNetwork = MeshNetworkManager.instance.meshNetwork!
+            if let group = meshNetwork.group(withAddress: address) ?? Group.specialGroup(withAddress: address) {
+                cell.textLabel?.text = group.name
+            } else {
+                cell.textLabel?.text = "Unknown Group"
+            }
+            cell.detailTextLabel?.text = address.asString()
+            return cell
+        }
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
