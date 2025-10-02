@@ -64,6 +64,7 @@ class GroupTargetModelsViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "element", for: indexPath) as! ElementCell
+        cell.selectionStyle = .none
         let model = models[indexPath.row]
         let element = model.parentElement!
         cell.element = element

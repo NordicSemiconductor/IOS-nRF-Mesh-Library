@@ -12,7 +12,7 @@
             <objects>
                 <tabBarController title="Tab Bar Controller" id="BYb-mK-mH5" customClass="RootTabBarController" customModule="nRF_Mesh" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationItem key="navigationItem" id="uit-TO-OCn"/>
-                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="ig6-ap-aTu">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="49"/>
                         <autoresizingMask key="autoresizingMask"/>
