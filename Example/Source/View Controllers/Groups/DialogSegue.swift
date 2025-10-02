@@ -91,7 +91,10 @@ extension DialogSegue {
                 
                 if let navigationController = toViewController as? UINavigationController,
                    let bottomSheet = navigationController.topViewController as? GroupTargetModelsViewController {
-                    let navBarHeight = navigationController.navigationBar.frame.height
+                    var navBarHeight = navigationController.navigationBar.frame.height
+                    if #available(iOS 26.0, *) {
+                        navBarHeight = 70
+                    }
                     let subtitleCellHeight = 56
                     let itemsCount = min(5, bottomSheet.models.count)
                     let height = navBarHeight + CGFloat(itemsCount * subtitleCellHeight)

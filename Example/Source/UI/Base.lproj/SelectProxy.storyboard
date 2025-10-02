@@ -64,25 +64,7 @@
                                 <action selector="cancelTapped:" destination="iDp-Mq-8KE" id="uvN-fQ-8gW"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" id="bMC-FC-eON">
-                            <view key="customView" contentMode="scaleToFill" misplaced="YES" id="s8B-xV-mE3">
-                                <rect key="frame" x="307" y="4.0000000000000009" width="83" height="36"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <subviews>
-                                    <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="sN7-fp-QfD">
-                                        <rect key="frame" x="63" y="12" width="20" height="20"/>
-                                    </activityIndicatorView>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstItem="sN7-fp-QfD" firstAttribute="centerY" secondItem="s8B-xV-mE3" secondAttribute="centerY" id="32h-S0-Zoh"/>
-                                    <constraint firstAttribute="trailingMargin" secondItem="sN7-fp-QfD" secondAttribute="trailing" id="Rb1-gx-TDy"/>
-                                </constraints>
-                            </view>
-                        </barButtonItem>
                     </navigationItem>
-                    <connections>
-                        <outlet property="activityIndicator" destination="sN7-fp-QfD" id="RBC-br-PeV"/>
-                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Os3-8f-jML" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>

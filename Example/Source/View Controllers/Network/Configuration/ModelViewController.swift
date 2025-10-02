@@ -942,6 +942,7 @@ extension ModelViewController: MeshNetworkDelegate {
         }
         // Is the message targeting the current Node or Model?
         guard model.parentElement?.unicastAddress == source ||
+              model.parentElement?.unicastAddress == destination.address ||
              (model.parentElement?.parentNode!.primaryUnicastAddress == source
                 && message is ConfigMessage) else {
             return
@@ -1159,6 +1160,12 @@ extension ModelViewController: MeshNetworkDelegate {
                     self.reloadSections(.firmwareSlots, with: .automatic)
                 }
             }
+            
+        case is ConfigMessage:
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+            fallthrough
             
         // Custom UI & Health Server
         default:

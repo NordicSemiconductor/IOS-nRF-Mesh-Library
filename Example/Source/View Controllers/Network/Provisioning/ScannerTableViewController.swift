@@ -42,7 +42,7 @@ class ScannerTableViewController: UITableViewController {
     
     // MARK: - Outlets and Actions
     
-    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    var activityIndicator: UIActivityIndicatorView!
     @IBAction func cancelTapped(_ sender: UIBarButtonItem) {
         dismiss(animated: true)
     }
@@ -68,6 +68,13 @@ class ScannerTableViewController: UITableViewController {
         centralManager = CBCentralManager()
         
         tableView.showEmptyView()
+        
+        activityIndicator = UIActivityIndicatorView(style: .medium)
+        let indicator = UIBarButtonItem(customView: activityIndicator)
+        if #available(iOS 26.0, *) {
+            indicator.hidesSharedBackground = true
+        }
+        navigationItem.rightBarButtonItem = indicator
     }
     
     override func viewDidAppear(_ animated: Bool) {

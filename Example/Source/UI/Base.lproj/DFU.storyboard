@@ -50,8 +50,8 @@
                                             <constraint firstAttribute="height" constant="35" id="h6Y-Pp-Lwa"/>
                                             <constraint firstAttribute="width" constant="200" id="qwI-Ft-sGE"/>
                                         </constraints>
-                                        <state key="normal" title="Button"/>
-                                        <buttonConfiguration key="configuration" style="plain" title="DFU over SMP"/>
+                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                        <state key="normal" title="DFU over SMP"/>
                                         <connections>
                                             <segue destination="4nR-2l-Xhz" kind="show" id="Iwx-gj-pW9"/>
                                         </connections>

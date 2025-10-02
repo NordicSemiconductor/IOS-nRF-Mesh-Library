@@ -35,22 +35,48 @@ class RootViewController: UINavigationController {
     // Make sure the status bar is light in the app.
     // The default is set to black, as this one is used in the Launch Screen.
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
+        if #available(iOS 26.0, *) {
+            return .darkContent
+        } else {
+            return .lightContent
+        }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if #available(iOS 13.0, *) {
-            let navBarAppearance = UINavigationBarAppearance()
+        
+        let navBarAppearance = UINavigationBarAppearance()
+        if #available(iOS 26.0, *) {
+            navigationBar.barStyle = .default
+            // In case of bar style .black, the barTintColor defines the color of the top part
+            // of the screen (status bar area) when nav bar is collapsed.
+            // For .default, it has no effect.
+            // navigationBar.barTintColor = .nordicBlue
+            
+            // The NavigationBar background color just applies to the NavBar, not the status bar area.
+            // navigationBar.backgroundColor = .nordicBlue
+            
+            navigationBar.isTranslucent = true
+            navigationBar.prefersLargeTitles = true
+            
+            navBarAppearance.configureWithTransparentBackground()
+            navBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.dynamicColor(light: .nordicBlue, dark: .white)]
+            navBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.dynamicColor(light: .nordicBlue, dark: .white)]
+        } else {
+            navigationBar.barStyle = .default
+            navigationBar.isTranslucent = false
+            navigationBar.prefersLargeTitles = true
+            // This changes the color of nav bar buttons.
+            navigationBar.tintColor = .white
+            
             navBarAppearance.configureWithOpaqueBackground()
             navBarAppearance.backgroundColor = UIColor.dynamicColor(light: .nordicBlue, dark: .black)
             navBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.white]
             navBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
-            navigationBar.standardAppearance = navBarAppearance
-            navigationBar.scrollEdgeAppearance = navBarAppearance
-        } else {
-            // Fallback on earlier versions
         }
+        
+        navigationBar.standardAppearance = navBarAppearance
+        navigationBar.scrollEdgeAppearance = navBarAppearance
     }
 
 }
