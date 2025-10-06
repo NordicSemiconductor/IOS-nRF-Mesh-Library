@@ -58,8 +58,8 @@ class SetPublicationDestinationsViewController: UITableViewController {
         super.viewDidLoad()
 
         let network = MeshNetworkManager.instance.meshNetwork!
-        groups = network.groups
         unicastTargets = network.nodes.map { ($0, $0.elements) }
+        groups = network.groups
         
         // Expand a Node with selected Element.
         if let selectedDestination = selectedDestination,

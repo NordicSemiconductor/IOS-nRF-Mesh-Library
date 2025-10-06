@@ -40,10 +40,11 @@ class SelectPublicationDestinationsViewController: UITableViewController {
     var selectedApplicationKey: ApplicationKey?
     var selectedDestination: MeshAddress?
     
-    /// List of Elements.
-    private var compatibleElements: [Element]!
+    private var unicastTargets: [(node: Node, elements: [Element])]!
+    private var groups: [Group]!
     private var selectedKeyIndexPath: IndexPath?
-    private var selectedIndexPath: IndexPath?
+    
+    private var expandedNodes = Set<Node>()
     
     // MARK: - View Controller
     
@@ -51,10 +52,16 @@ class SelectPublicationDestinationsViewController: UITableViewController {
         super.viewDidLoad()
 
         let network = MeshNetworkManager.instance.meshNetwork!
-        compatibleElements = network.nodes
-            .filter { $0 != node }
-            .flatMap { $0.elements }
+        unicastTargets = network.nodes.map { ($0, $0.elements) }
+        groups = network.groups
         
+        // Expand a Node with selected Element.
+        if let selectedDestination = selectedDestination,
+           let node = network.node(withAddress: selectedDestination.address) {
+            expandedNodes.insert(node)
+        }
+        
+        // Select the previously selected key, if any. Note, that no App Keys may exist initially.
         var index: Int? = nil
         if let key = selectedApplicationKey {
             selectedApplicationKey = nil
@@ -65,8 +72,9 @@ class SelectPublicationDestinationsViewController: UITableViewController {
         if let index = index {
             keySelected(IndexPath(row: index, section: IndexPath.keysSection))
         }
+        
         // Register Nibs for common cells.
-        tableView.register(UINib(nibName: "ElementCell", bundle: nil), forCellReuseIdentifier: "element")
+        tableView.register(DetailCell.self, forCellReuseIdentifier: "element")
     }
 
     // MARK: - Table view data source
@@ -81,7 +89,15 @@ class SelectPublicationDestinationsViewController: UITableViewController {
             return network.applicationKeys.count + 1 // Add Key
         }
         if section == IndexPath.elementsSection {
-            return max(compatibleElements.count, 1)
+            // Each Node takes at least 1 row (the Node itself), plus rows for Elements if expanded.
+            return unicastTargets.reduce(0) { count, tuple in
+                let (node, elements) = tuple
+                if expandedNodes.contains(node) {
+                    return count + 1 + elements.count
+                } else {
+                    return count + 1
+                }
+            }
         }
         if section == IndexPath.groupsSection {
             return network.groups.count + 1 // Add Group
@@ -97,7 +113,7 @@ class SelectPublicationDestinationsViewController: UITableViewController {
         case IndexPath.keysSection:
             return "Application Keys"
         case IndexPath.elementsSection:
-            return "Elements"
+            return "Unicast Destinations"
         case IndexPath.groupsSection:
             return "Groups"
         default:
@@ -105,17 +121,8 @@ class SelectPublicationDestinationsViewController: UITableViewController {
         }
     }
     
-    override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        switch section {
-        case IndexPath.elementsSection:
-            return "Note: The list above does not contain elements from the configured node."
-        default:
-            return nil
-        }
-    }
-    
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.isElementsSection && compatibleElements.isEmpty {
+        if indexPath.isElementsSection && unicastTargets.isEmpty {
             return 56
         }
         return UITableView.automaticDimension
@@ -127,10 +134,10 @@ class SelectPublicationDestinationsViewController: UITableViewController {
         guard !indexPath.isKeySection || indexPath.row < network.applicationKeys.count else {
             return tableView.dequeueReusableCell(withIdentifier: "addKey", for: indexPath)
         }
-        guard !indexPath.isElementsSection || !compatibleElements.isEmpty else {
+        guard !indexPath.isElementsSection || !unicastTargets.isEmpty else {
             return tableView.dequeueReusableCell(withIdentifier: "empty", for: indexPath)
         }
-        guard !indexPath.isGroupsSection || indexPath.row < network.groups.count else {
+        guard !indexPath.isGroupsSection || indexPath.row < groups.count else {
             return tableView.dequeueReusableCell(withIdentifier: "addGroup", for: indexPath)
         }
         let cell = tableView.dequeueReusableCell(withIdentifier: indexPath.reuseIdentifier, for: indexPath)
@@ -142,40 +149,55 @@ class SelectPublicationDestinationsViewController: UITableViewController {
             cell.accessoryType = indexPath == selectedKeyIndexPath ? .checkmark : .none
         }
         if indexPath.isElementsSection {
-            let elementCell = cell as! ElementCell
-            let element = compatibleElements[indexPath.row]
-            if let destination = selectedDestination, destination.address == element.unicastAddress {
-                selectedIndexPath = indexPath
-                selectedDestination = nil
+            // Walk through nodes + expanded state to determine what this row represents
+            var row = indexPath.row
+            for (node, elements) in unicastTargets {
+                if row == 0 {
+                    cell.imageView?.image = #imageLiteral(resourceName: "ic_flag_24pt")
+                    cell.textLabel?.text = node.name ?? "Unknown Node"
+                    cell.detailTextLabel?.text = node.primaryUnicastAddress.asString()
+                    cell.accessoryType = .none
+                    let expandCollapse = UIImageView(image: UIImage(systemName: expandedNodes.contains(node) ? "chevron.down" : "chevron.right"))
+                    expandCollapse.tintColor = .tertiaryLabel
+                    cell.accessoryView = expandCollapse
+                    cell.selectionStyle = .default
+                    cell.separatorInset = UIEdgeInsets(top: 0, left: 60, bottom: 0, right: 0)
+                    return cell
+                }
+                row -= 1
+                if expandedNodes.contains(node) {
+                    if row < elements.count {
+                        let element = elements[row]
+                        cell.imageView?.image = nil
+                        cell.textLabel?.text = element.name ?? "Element \(element.index + 1)"
+                        cell.detailTextLabel?.text = element.unicastAddress.asString()
+                        cell.accessoryView = nil
+                        cell.accessoryType = element.unicastAddress == selectedDestination?.address ? .checkmark : .none
+                        cell.selectionStyle = .default
+                        cell.separatorInset = UIEdgeInsets(top: 0, left: 60, bottom: 0, right: 0)
+                        return cell
+                    }
+                    row -= elements.count
+                }
             }
-            elementCell.element = element
-            cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
         }
         if indexPath.isGroupsSection {
-            let group = network.groups[indexPath.row]
-            if let destination = selectedDestination, destination == group.address {
-                selectedIndexPath = indexPath
-                selectedDestination = nil
-            }
+            let group = groups[indexPath.row]
             cell.textLabel?.text = group.name
-            cell.detailTextLabel?.text = group.address.address.hex
-            cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
+            cell.detailTextLabel?.text = "0x\(group.address.address.hex)" // Don't show Virtual labels, just 16-bit address.
+            cell.accessoryType = group.address == selectedDestination ? .checkmark : .none
         }
         if indexPath.isSpecialGroupsSection {
             let group = Group.specialGroups[indexPath.row]
-            if let destination = selectedDestination, destination == group.address {
-                selectedIndexPath = indexPath
-                selectedDestination = nil
-            }
             cell.textLabel?.text = group.name
-            cell.detailTextLabel?.text = group.address.address.hex
-            cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
+            cell.detailTextLabel?.text = "0x\(group.address.address.hex)"
+            cell.accessoryType = group.address == selectedDestination ? .checkmark : .none
         }
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard !indexPath.isElementsSection || !compatibleElements.isEmpty else {
+        guard !indexPath.isElementsSection || !unicastTargets.isEmpty else {
             return
         }
         
@@ -213,15 +235,63 @@ class SelectPublicationDestinationsViewController: UITableViewController {
         }
         
         var rows: [IndexPath] = []
-        if let previousSelection = selectedIndexPath {
-            rows.append(previousSelection)
+        if let previousDestination = selectedDestination,
+           let previousIndexPath = self.indexPath(for: previousDestination) {
+            rows.append(previousIndexPath)
         }
-        rows.append(indexPath)
-        selectedIndexPath = indexPath
         
-        tableView.reloadRows(at: rows, with: .automatic)
+        if indexPath.isElementsSection {
+            // Determine if row is a Node or Element
+            var row = indexPath.row
+            for (node, elements) in unicastTargets {
+                if row == 0 {
+                    let indexPaths = (1...elements.count).map { IndexPath(row: indexPath.row + $0, section: indexPath.section) }
+                    tableView.beginUpdates()
+                    if expandedNodes.contains(node) {
+                        expandedNodes.remove(node)
+                        tableView.deleteRows(at: indexPaths, with: .fade)
+                    } else {
+                        expandedNodes.insert(node)
+                        tableView.insertRows(at: indexPaths, with: .fade)
+                    }
+                    tableView.reloadRows(at: [indexPath], with: .none)
+                    tableView.endUpdates()
+                    return
+                }
+                row -= 1
+                if expandedNodes.contains(node) {
+                    if row < elements.count {
+                        // Element selected
+                        let element = elements[row]
+                        selectedDestination = MeshAddress(element.unicastAddress)
+                        delegate?.destinationSelected(selectedDestination!)
+                        
+                        rows.append(indexPath)
+                        tableView.reloadRows(at: rows, with: .automatic)
+                        return
+                    }
+                    row -= elements.count
+                }
+            }
+        }
         
-        destinationSelected(indexPath)
+        if indexPath.isGroupsSection {
+            let group = groups[indexPath.row]
+            selectedDestination = group.address
+            delegate?.destinationSelected(group.address)
+            
+            rows.append(indexPath)
+            tableView.reloadRows(at: rows, with: .automatic)
+        }
+        
+        if indexPath.isSpecialGroupsSection {
+            let group = Group.specialGroups[indexPath.row]
+            selectedDestination = group.address
+            delegate?.destinationSelected(group.address)
+            
+            rows.append(indexPath)
+            tableView.reloadRows(at: rows, with: .automatic)
+        }
     }
 
 }
@@ -245,25 +315,39 @@ private extension SelectPublicationDestinationsViewController {
         let key = network.applicationKeys[indexPath.row]
         delegate?.keySelected(key)
         
-        tableView.beginUpdates()
         tableView.reloadRows(at: rows, with: .automatic)
-        tableView.reloadSections(.elements, with: .automatic)
-        tableView.endUpdates()
     }
     
-    func destinationSelected(_ indexPath: IndexPath) {
-        let network = MeshNetworkManager.instance.meshNetwork!
-        switch indexPath.section {
-        case IndexPath.elementsSection:
-            let element = compatibleElements[indexPath.row]
-            delegate?.destinationSelected(MeshAddress(element.unicastAddress))
-        case IndexPath.groupsSection where !network.groups.isEmpty:
-            let selectedGroup = network.groups[indexPath.row]
-            delegate?.destinationSelected(selectedGroup.address)
-        default:
-            let selectedGroup = Group.specialGroups[indexPath.row]
-            delegate?.destinationSelected(selectedGroup.address)
+    private func indexPath(for address: MeshAddress) -> IndexPath? {
+        // Nodes section
+        var row = 0
+        for (node, elements) in unicastTargets {
+            row += 1 // node row itself
+            if expandedNodes.contains(node) {
+                for element in elements {
+                    if element.unicastAddress == address.address {
+                        return IndexPath(row: row, section: IndexPath.elementsSection)
+                    }
+                    row += 1
+                }
+            }
         }
+        
+        // Groups section
+        for (i, group) in groups.enumerated() {
+            if group.address == address {
+                return IndexPath(row: i, section: IndexPath.groupsSection)
+            }
+        }
+        
+        // Special groups section
+        for (i, group) in Group.specialGroups.enumerated() {
+            if group.address == address {
+                return IndexPath(row: i, section: IndexPath.specialGroupsSection)
+            }
+        }
+        
+        return nil
     }
 }
 
