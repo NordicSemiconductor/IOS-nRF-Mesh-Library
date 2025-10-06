@@ -92,7 +92,9 @@ class SetHeartbeatPublicationDestinationsViewController: UITableViewController {
         case IndexPath.keysSection:
             return "Network Keys"
         case IndexPath.nodesSection:
-            return "Destination"
+            return "Unicast Destinations"
+        case IndexPath.groupsSection:
+            return "Groups"
         default:
             return nil
         }
