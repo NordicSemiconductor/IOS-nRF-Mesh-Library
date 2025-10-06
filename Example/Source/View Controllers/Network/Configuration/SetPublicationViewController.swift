@@ -159,9 +159,6 @@ class SetPublicationViewController: ProgressViewController {
         if indexPath.isDestination {
             return 123
         }
-        if indexPath.isDetailsSection {
-            return 44
-        }
         return UITableView.automaticDimension
     }
     
