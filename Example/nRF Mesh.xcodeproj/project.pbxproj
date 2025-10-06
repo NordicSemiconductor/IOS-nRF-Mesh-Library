@@ -198,6 +198,7 @@
 		F058A6412DC9036400E9E914 /* UpdatePackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F058A6402DC9035B00E9E914 /* UpdatePackage.swift */; };
 		F063C01A29C2774300A445A9 /* SelectKeysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F063C01929C2774300A445A9 /* SelectKeysViewController.swift */; };
 		F063C01D29C27EAB00A445A9 /* IntroViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F063C01C29C27EAB00A445A9 /* IntroViewController.swift */; };
+		F0849F0A2E9054820080DD30 /* DetailCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0849F092E9054750080DD30 /* DetailCell.swift */; };
 		F085C9FB29C496AB00C2DF89 /* SelectModelsForBindingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F085C9FA29C496AB00C2DF89 /* SelectModelsForBindingViewController.swift */; };
 		F085C9FD29CB26B000C2DF89 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = F085C9FC29CB26B000C2DF89 /* Models.swift */; };
 		F085CA0229D1E0B900C2DF89 /* Subscribe.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F085CA0029D1E0B900C2DF89 /* Subscribe.storyboard */; };
@@ -449,6 +450,7 @@
 		F058A6402DC9035B00E9E914 /* UpdatePackage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatePackage.swift; sourceTree = "<group>"; };
 		F063C01929C2774300A445A9 /* SelectKeysViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectKeysViewController.swift; sourceTree = "<group>"; };
 		F063C01C29C27EAB00A445A9 /* IntroViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroViewController.swift; sourceTree = "<group>"; };
+		F0849F092E9054750080DD30 /* DetailCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailCell.swift; sourceTree = "<group>"; };
 		F085C9FA29C496AB00C2DF89 /* SelectModelsForBindingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectModelsForBindingViewController.swift; sourceTree = "<group>"; };
 		F085C9FC29CB26B000C2DF89 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		F085CA0129D1E0B900C2DF89 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Subscribe.storyboard; sourceTree = "<group>"; };
@@ -1010,6 +1012,7 @@
 		F03288912E4CCB6E008FD9DB /* Cells */ = {
 			isa = PBXGroup;
 			children = (
+				F0849F092E9054750080DD30 /* DetailCell.swift */,
 				F03288922E4CCBC0008FD9DB /* ElementCell.swift */,
 				F03288932E4CCBC0008FD9DB /* ElementCell.xib */,
 			);
@@ -1455,6 +1458,7 @@
 				523F776C22C6324A0030EA6A /* ProgressViewController.swift in Sources */,
 				52547F25232A3F470002AA7B /* EditProvisionerViewController.swift in Sources */,
 				5245737D2500E12600CF8500 /* EditSceneViewController.swift in Sources */,
+				F0849F0A2E9054820080DD30 /* DetailCell.swift in Sources */,
 				5288C2102371B0F700321ED3 /* SimpleOnOffGet.swift in Sources */,
 				529B756D223FE7F1008F1CE7 /* RootViewController.swift in Sources */,
 				52CD0A53232FA79300A9A181 /* FilterTypeCell.swift in Sources */,
