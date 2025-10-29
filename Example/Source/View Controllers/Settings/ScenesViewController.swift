@@ -38,7 +38,7 @@ class ScenesViewController: UITableViewController, Editable {
         let generate = UIButtonAction(title: "Generate") {
             self.presentTextAlert(title: "Generate scenes",
                                   message: "Specify number of scenes to generate (max 20):",
-                                  placeHolder: "E.g. 3", type: .numberRequired,
+                                  placeHolder: "E.g. 3", type: .numberRequired, max: 20,
                                   cancelHandler: nil) { value in
                 guard let network = MeshNetworkManager.instance.meshNetwork,
                       let number = Int(value), number > 0 else {

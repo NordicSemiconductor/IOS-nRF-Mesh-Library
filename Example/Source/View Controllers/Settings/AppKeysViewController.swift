@@ -55,7 +55,7 @@ class AppKeysViewController: UITableViewController, Editable {
         let generate = UIButtonAction(title: "Generate") {
             self.presentTextAlert(title: "Generate keys",
                                   message: "Specify number of application keys to generate (max 5):",
-                                  placeHolder: "E.g. 3", type: .numberRequired,
+                                  placeHolder: "E.g. 3", type: .numberRequired, max: 5,
                                   cancelHandler: nil) { [weak self] value in
                 guard let self = self else { return }
                 guard let network = MeshNetworkManager.instance.meshNetwork,
