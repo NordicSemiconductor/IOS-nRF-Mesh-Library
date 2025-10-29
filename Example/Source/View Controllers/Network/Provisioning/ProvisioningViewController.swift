@@ -505,10 +505,11 @@ extension ProvisioningViewController: ProvisioningDelegate {
                 }
             }
             
-        case let .provideNumeric(maximumNumberOfDigits: _, outputAction: action, callback: callback):
+        case let .provideNumeric(maximumNumberOfDigits: max, outputAction: action, callback: callback):
             self.dismissStatusDialog {
                 var message: String
                 switch action {
+                // case .outputAlphanumeric is handled by provideAlphanumeric below.
                 case .blink:
                     message = "Enter number of blinks."
                 case .beep:
@@ -522,7 +523,13 @@ extension ProvisioningViewController: ProvisioningDelegate {
                 }
                 self.presentTextAlert(title: "Authentication", message: message,
                                       type: .unsignedNumberRequired, cancelHandler: nil) { text in
-                    callback(UInt(text)!)
+                    guard let value = BigUInt(decimalString: text) else {
+                        self.presentAlert(title: "Error", message: "Invalid number format. Maximum number of digits: \(max).") { _ in
+                            self.authenticationActionRequired(.provideNumeric(maximumNumberOfDigits: max, outputAction: action, callback: callback))
+                        }
+                        return
+                    }
+                    callback(value)
                 }
             }
             
@@ -539,7 +546,13 @@ extension ProvisioningViewController: ProvisioningDelegate {
             self.presentStatusDialog(message: "Enter the following text on your device:\n\n\(text)")
             
         case let .displayNumber(value, inputAction: action):
-            self.presentStatusDialog(message: "Perform \(action) \(value) times on your device.")
+            switch action {
+            // case .inputAlphanumeric is handled by displayAlphanumeric above.
+            case .inputNumeric:
+                self.presentStatusDialog(message: "Enter the following number on your device:\n\n\(value)")
+            default:
+                self.presentStatusDialog(message: "Perform \(action) \(value) times on your device.")
+            }
         }
     }
     

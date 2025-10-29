@@ -97,7 +97,7 @@ public enum AuthenticationMethod: Sendable {
     /// - parameters:
     ///   - action: The chosen action.
     ///   - size: Number of digits or letters that can be output
-    ///           (e.g., displayed or spoken). Size must be in range 1...8.
+    ///           (e.g., displayed or spoken). Size must be in range 1...32.
     case outputOob(action: OutputAction, size: UInt8)
     /// Input OOB authentication.
     ///
@@ -111,7 +111,7 @@ public enum AuthenticationMethod: Sendable {
     /// - parameters:
     ///   - action: The chosen input action.
     ///   - size: Number of digits or letters that can be entered.
-    ///           Size must be in range 1...8.
+    ///           Size must be in range 1...32.
     case inputOob(action: InputAction, size: UInt8)
 }
 
@@ -164,8 +164,8 @@ open class InputActionValueGenerator {
     ///
     /// - parameter size: The maximum supported length of the integer.
     /// - returns: A random integer of maximum given length.
-    func randomInt(size: UInt8) -> UInt {
-        return UInt.random(length: size)
+    func randomInt(size: UInt8) -> BigUInt {
+        return BigUInt.random(length: Int(size)) ?? BigUInt.random(length: BigUInt.maxDecimalDigits)!
     }
 }
 
@@ -240,9 +240,9 @@ extension OobInformation: CustomDebugStringConvertible {
             (.onPieceOfPaper, "On Piece Of Paper"),
             (.insideManual,   "Inside Manual"),
             (.onDevice,       "On Device")
-            ]
-            .compactMap { (option, name) in contains(option) ? name : nil }
-            .joined(separator: ", ")
+        ]
+        .compactMap { (option, name) in contains(option) ? name : nil }
+        .joined(separator: ", ")
     }
     
 }
@@ -296,9 +296,9 @@ extension OobType: CustomDebugStringConvertible {
         return [
             (.staticOobInformationAvailable, "Static OOB Information Available"),
             (.onlyOobAuthenticatedProvisioningSupported, "Only OOB Authenticated Provisioning Supported")
-            ]
-            .compactMap { option, name in contains(option) ? name : nil }
-            .joined(separator: ", ")
+        ]
+        .compactMap { option, name in contains(option) ? name : nil }
+        .joined(separator: ", ")
     }
     
 }
@@ -315,9 +315,9 @@ extension OutputOobActions: CustomDebugStringConvertible {
             (.vibrate, "Vibrate"),
             (.outputNumeric, "Output Numeric"),
             (.outputAlphanumeric, "Output Alphanumeric")
-            ]
-            .compactMap { (option, name) in contains(option) ? name : nil }
-            .joined(separator: ", ")
+        ]
+        .compactMap { (option, name) in contains(option) ? name : nil }
+        .joined(separator: ", ")
     }
     
 }
@@ -333,9 +333,9 @@ extension InputOobActions: CustomDebugStringConvertible {
             (.twist, "Twist"),
             (.inputNumeric, "Input Numeric"),
             (.inputAlphanumeric, "Input Alphanumeric")
-            ]
-            .compactMap { (option, name) in contains(option) ? name : nil }
-            .joined(separator: ", ")
+        ]
+        .compactMap { (option, name) in contains(option) ? name : nil }
+        .joined(separator: ", ")
     }
     
 }

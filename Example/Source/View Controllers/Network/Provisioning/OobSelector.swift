@@ -95,11 +95,21 @@ extension OobSelector where Self: UIViewController {
         let size = capabilities.outputOobSize
         
         let alert = UIAlertController(title: "Select Output OOB Type", message: nil, preferredStyle: .actionSheet)
-        if actions.contains(.blink) { alert.addAction(action(for: .blink, size: size, callback: callback)) }
-        if actions.contains(.beep) { alert.addAction(action(for: .beep, size: size, callback: callback)) }
-        if actions.contains(.vibrate) { alert.addAction(action(for: .vibrate, size: size, callback: callback)) }
-        if actions.contains(.outputNumeric) { alert.addAction(action(for: .outputNumeric, size: size, callback: callback)) }
-        if actions.contains(.outputAlphanumeric) { alert.addAction(action(for: .outputAlphanumeric, size: size, callback: callback)) }
+        if actions.contains(.blink) { alert.addAction(action(for: .blink, size: 1, callback: callback)) }
+        if actions.contains(.beep) { alert.addAction(action(for: .beep, size: 1, callback: callback)) }
+        if actions.contains(.vibrate) { alert.addAction(action(for: .vibrate, size: 1, callback: callback)) }
+        if actions.contains(.outputNumeric) {
+            alert.addAction(action(for: .outputNumeric, size: min(size, 4), callback: callback))
+            if size > 4 {
+                alert.addAction(action(for: .outputNumeric, size: size, callback: callback))
+            }
+        }
+        if actions.contains(.outputAlphanumeric) {
+            alert.addAction(action(for: .outputAlphanumeric, size: min(size, 8), callback: callback))
+            if size > 8 {
+                alert.addAction(action(for: .outputAlphanumeric, size: size, callback: callback))
+            }
+        }
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         alert.popoverPresentationController?.barButtonItem = item
         present(alert, animated: true)
@@ -117,40 +127,52 @@ extension OobSelector where Self: UIViewController {
         let alert = UIAlertController(title: "Select Input OOB Type", message: nil, preferredStyle: .actionSheet)
         if actions.contains(.push) { alert.addAction(action(for: .push, size: 1, callback: callback)) }
         if actions.contains(.twist) { alert.addAction(action(for: .twist, size: 1, callback: callback)) }
-        if actions.contains(.inputNumeric) { alert.addAction(action(for: .inputNumeric, size: size, callback: callback)) }
-        if actions.contains(.inputAlphanumeric) { alert.addAction(action(for: .inputAlphanumeric, size: size, callback: callback)) }
+        if actions.contains(.inputNumeric) {
+            alert.addAction(action(for: .inputNumeric, size: min(size, 4), callback: callback))
+            if size > 4 {
+                alert.addAction(action(for: .inputNumeric, size: size, callback: callback))
+            }
+        }
+        if actions.contains(.inputAlphanumeric) {
+            alert.addAction(action(for: .inputAlphanumeric, size: min(size, 8), callback: callback))
+            if size > 8 {
+                alert.addAction(action(for: .inputAlphanumeric, size: size, callback: callback))
+            }
+        }
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         alert.popoverPresentationController?.barButtonItem = item
         present(alert, animated: true)
     }
     
-    /// Creates an UIAlertAction for given Output Action for user to select.
+    /// Creates an `UIAlertAction` for given Output Action for user to select.
     ///
     /// - parameters:
     ///   - action: The Output Action.
     ///   - size:   The number of digits or alphanumerics to display on the device.
     ///             For other actions, the device will pick a random number in range from
-    ///             1..<10^size and will perform the action this number of times.
-    /// - returns: The UIAlertAction for given action.
+    ///             `1..<10^size` and will perform the action this number of times.
+    /// - returns: The `UIAlertAction` for given action.
     private func action(for action: OutputAction, size: UInt8,
                         callback: @escaping (AuthenticationMethod) -> Void) -> UIAlertAction {
-        return UIAlertAction(title: "\(action)", style: .default) { _ in
+        let warning = size > 1 ? " (size: \(size))" : ""
+        return UIAlertAction(title: "\(action)\(warning)", style: .default) { _ in
             callback(.outputOob(action: action, size: size))
         }
     }
     
-    /// Creates an UIAlertAction for given Input Action for user to select.
+    /// Creates an `UIAlertAction` for given Input Action for user to select.
     ///
     /// - parameters:
     ///   - action: The Input Action.
     ///   - size:   The number of digits or alphanumerics to display on the phone.
     ///             For other actions, the Provisioner will pick a random number
-    ///             in range from 1..<10^size and display it for the user to perform
+    ///             in range from `1..<10^size` and display it for the user to perform
     ///             the action this many times on the device that is being provisioned.
-    /// - returns: The UIAlertAction for given action.
+    /// - returns: The `UIAlertAction` for given action.
     private func action(for action: InputAction, size: UInt8,
                         callback: @escaping (AuthenticationMethod) -> Void) -> UIAlertAction {
-        return UIAlertAction(title: "\(action)", style: .default) { _ in
+        let warning = size > 1 ? " (\(size))" : ""
+        return UIAlertAction(title: "\(action)\(warning)", style: .default) { _ in
             callback(.inputOob(action: action, size: size))
         }
     }

@@ -61,7 +61,7 @@ extension UIViewController {
     /// - parameters:
     ///   - title:   The alert title.
     ///   - message: The message below the title.
-    ///   - onCancel:The Cancel button handler.   
+    ///   - onCancel:The Cancel button handler.
     ///   - handler: The Confirm button handler.
     func confirm(title: String?, message: String?, onCancel: ((UIAlertAction) -> Void)? = nil, handler: ((UIAlertAction) -> Void)? = nil) {
         // TODO: Should only iPad be handled differently? How about carPlay or Apple TV?
@@ -296,8 +296,12 @@ extension UIViewController {
     
     @objc func unsignedNumberRequired(_ textField: UITextField) {
         let alert = getAlert(from: textField)
-        let number = UInt(textField.text!)
-        alert.setValid(number != nil)
+        // Ensure characters are ASCII digits 0-9 only.
+        let notEmpty = textField.text != ""
+        let valid = textField.text!.unicodeScalars.allSatisfy { scalar in
+            scalar.value >= 48 && scalar.value <= 57 // '0'..'9'
+        }
+        alert.setValid(notEmpty && valid)
     }
     
     @objc func hexRequired(_ textField: UITextField) {
