@@ -109,14 +109,19 @@ public enum AuthAction: Sendable {
     /// The user shall provide 16 byte OOB Static Key.
     case provideStaticKey(callback: @Sendable (Data) -> Void)
     /// The user shall provide a number.
-    case provideNumeric(maximumNumberOfDigits: UInt8, outputAction: OutputAction, callback: @Sendable (UInt) -> Void)
+    case provideNumeric(maximumNumberOfDigits: UInt8, outputAction: OutputAction, callback: @Sendable (BigUInt) -> Void)
     /// The user shall provide an alphanumeric text.
     case provideAlphanumeric(maximumNumberOfCharacters: UInt8, callback: @Sendable (String) -> Void)
     /// The application should display this number to the user.
+    ///
     /// User should perform selected action given number of times,
     /// or enter the number on the remote device.
-    case displayNumber(_ value: UInt, inputAction: InputAction)
+    ///
+    /// The `inputAction` will NOT be ``InputAction/inputAlphanumeric``,
+    /// which is handled by ``displayAlphanumeric(_:)`` case.
+    case displayNumber(_ value: BigUInt, inputAction: InputAction)
     /// The application should display the text to the user.
+    ///
     /// User should enter the text on the provisioning device.
     case displayAlphanumeric(_ text: String)
 }

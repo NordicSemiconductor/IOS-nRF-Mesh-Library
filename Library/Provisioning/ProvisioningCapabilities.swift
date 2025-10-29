@@ -41,11 +41,11 @@ public struct ProvisioningCapabilities: Sendable {
     public let publicKeyType:    PublicKeyType
     /// Supported static OOB Types.
     public let oobType:          OobType
-    /// Maximum size of Output OOB supported.
+    /// Maximum supported size of Output OOB value.
     public let outputOobSize:    UInt8
     /// Supported Output OOB Actions.
     public let outputOobActions: OutputOobActions
-    /// Maximum size of Input OOB supported.
+    /// Maximum supported size of Input OOB value.
     public let inputOobSize:     UInt8
     /// Supported Input OOB Actions.
     public let inputOobActions:  InputOobActions

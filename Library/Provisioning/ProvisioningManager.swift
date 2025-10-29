@@ -441,8 +441,10 @@ extension ProvisioningManager: BearerDelegate, BearerDataDelegate {
             
             switch authAction! {
             case let .displayNumber(value, inputAction: _):
-                var authValue = Data(count: max(0, sizeInBytes - MemoryLayout.size(ofValue: value)))
-                authValue += value.bigEndian
+                guard let authValue = value.toData(sizeInBytes: sizeInBytes) else {
+                    state = .failed(ProvisioningError.invalidOobValueFormat)
+                    return
+                }
                 authValueReceived(authValue)
             case let .displayAlphanumeric(text):
                 var authValue = text.data(using: .ascii)!
@@ -590,8 +592,10 @@ private extension ProvisioningManager {
                         self.state = .failed(ProvisioningError.invalidState)
                         return
                     }
-                    var authValue = Data(count: sizeInBytes - MemoryLayout.size(ofValue: value))
-                    authValue += value.bigEndian
+                    guard let authValue = value.toData(sizeInBytes: sizeInBytes) else {
+                        self.state = .failed(ProvisioningError.invalidOobValueFormat)
+                        return
+                    }
                     self.delegate?.inputComplete()
                     self.authValueReceived(authValue)
                 }))

@@ -366,11 +366,11 @@ private extension AuthenticationMethod {
         case 0x01: self = .staticOob
         case 0x02:
             guard let outputAction = OutputAction(rawValue: pdu[4]),
-                  pdu[5] >= 1 && pdu[5] <= 8 else { return nil }
+                  pdu[5] >= 1 && pdu[5] <=  BigUInt.maxDecimalDigits else { return nil }
             self = .outputOob(action: outputAction, size: pdu[5])
         case 0x03:
             guard let inputAction = InputAction(rawValue: pdu[4]),
-                  pdu[5] >= 1 && pdu[5] <= 8 else { return nil }
+                  pdu[5] >= 1 && pdu[5] <= BigUInt.maxDecimalDigits else { return nil }
             self = .inputOob(action: inputAction, size: pdu[5])
         default: return nil
         }

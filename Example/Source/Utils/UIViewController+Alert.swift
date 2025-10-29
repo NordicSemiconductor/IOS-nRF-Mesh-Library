@@ -61,7 +61,7 @@ extension UIViewController {
     /// - parameters:
     ///   - title:   The alert title.
     ///   - message: The message below the title.
-    ///   - onCancel:The Cancel button handler.   
+    ///   - onCancel:The Cancel button handler.
     ///   - handler: The Confirm button handler.
     func confirm(title: String?, message: String?, onCancel: ((UIAlertAction) -> Void)? = nil, handler: ((UIAlertAction) -> Void)? = nil) {
         // TODO: Should only iPad be handled differently? How about carPlay or Apple TV?
@@ -188,7 +188,8 @@ extension UIViewController {
     ///   - cancelHandler: The Cancel button handler.
     ///   - handler:       The OK button handler.
     func presentTextAlert(title: String?, message: String?, text: String? = "", placeHolder: String? = "",
-                          type selector: Selector? = nil, option action: UIAlertAction? = nil,
+                          type selector: Selector? = nil, max: Int? = nil,
+                          option action: UIAlertAction? = nil,
                           cancelHandler: (() -> Void)? = nil, handler: ((String) -> Void)? = nil) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
@@ -199,6 +200,10 @@ extension UIViewController {
                 textField.clearButtonMode        = .whileEditing
                 textField.returnKeyType          = .done
                 textField.keyboardType           = .alphabet
+                if let max = max {
+                    // min is forced to 1.
+                    textField.tag = max
+                }
                 
                 if let selector = selector {
                     textField.addTarget(self, action: selector, for: .editingChanged)
@@ -212,7 +217,7 @@ extension UIViewController {
                          .unicastAddressRequired, .groupAddressRequired,
                          .scene, .sceneRequired, .hexRequired:
                         textField.autocapitalizationType = .allCharacters
-                    case .ttlRequired, .ivIndexRequired:
+                    case .ttlRequired, .ivIndexRequired, .numberRequired, .unsignedNumberRequired:
                         textField.keyboardType = .numberPad
                     default:
                         break
@@ -291,13 +296,21 @@ extension UIViewController {
     @objc func numberRequired(_ textField: UITextField) {
         let alert = getAlert(from: textField)
         let number = Int(textField.text!)
+        if textField.tag > 0 {
+            alert.setValid(number != nil && number! >= 1 && number! <= textField.tag)
+            return
+        }
         alert.setValid(number != nil)
     }
     
     @objc func unsignedNumberRequired(_ textField: UITextField) {
         let alert = getAlert(from: textField)
-        let number = UInt(textField.text!)
-        alert.setValid(number != nil)
+        // Ensure characters are ASCII digits 0-9 only.
+        let notEmpty = textField.text != ""
+        let valid = textField.text!.unicodeScalars.allSatisfy { scalar in
+            scalar.value >= 48 && scalar.value <= 57 // '0'..'9'
+        }
+        alert.setValid(notEmpty && valid)
     }
     
     @objc func hexRequired(_ textField: UITextField) {
