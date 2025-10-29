@@ -38,7 +38,6 @@ class ProxySelectorViewController: UITableViewController {
     
     // MARK: - Outlets and Actions
     
-    var activityIndicator: UIActivityIndicatorView!
     @IBAction func cancelTapped(_ sender: UIBarButtonItem) {
         dismiss(animated: true)
     }
@@ -50,6 +49,7 @@ class ProxySelectorViewController: UITableViewController {
     private var centralManager: CBCentralManager!
     private var proxies: [DiscoveredProxy] = []
     
+    private var activityIndicator: UIActivityIndicatorView!
     private var alert: UIAlertController?
     private var selectedDevice: GattBearer?
     

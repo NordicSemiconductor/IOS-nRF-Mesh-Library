@@ -42,7 +42,6 @@ class ScannerTableViewController: UITableViewController {
     
     // MARK: - Outlets and Actions
     
-    var activityIndicator: UIActivityIndicatorView!
     @IBAction func cancelTapped(_ sender: UIBarButtonItem) {
         dismiss(animated: true)
     }
@@ -53,7 +52,8 @@ class ScannerTableViewController: UITableViewController {
     
     private var centralManager: CBCentralManager!
     private var discoveredPeripherals: [DiscoveredPeripheral] = []
-
+    
+    private var activityIndicator: UIActivityIndicatorView!
     private var alert: UIAlertController?
     private var selectedDevice: UnprovisionedDevice?
     private var previousNode: Node?
