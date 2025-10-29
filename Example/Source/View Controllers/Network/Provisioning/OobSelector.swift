@@ -98,18 +98,8 @@ extension OobSelector where Self: UIViewController {
         if actions.contains(.blink) { alert.addAction(action(for: .blink, size: 1, callback: callback)) }
         if actions.contains(.beep) { alert.addAction(action(for: .beep, size: 1, callback: callback)) }
         if actions.contains(.vibrate) { alert.addAction(action(for: .vibrate, size: 1, callback: callback)) }
-        if actions.contains(.outputNumeric) {
-            alert.addAction(action(for: .outputNumeric, size: min(size, 4), callback: callback))
-            if size > 4 {
-                alert.addAction(action(for: .outputNumeric, size: size, callback: callback))
-            }
-        }
-        if actions.contains(.outputAlphanumeric) {
-            alert.addAction(action(for: .outputAlphanumeric, size: min(size, 8), callback: callback))
-            if size > 8 {
-                alert.addAction(action(for: .outputAlphanumeric, size: size, callback: callback))
-            }
-        }
+        if actions.contains(.outputNumeric) { alert.addAction(action(for: .outputNumeric, size: size, callback: callback)) }
+        if actions.contains(.outputAlphanumeric) { alert.addAction(action(for: .outputAlphanumeric, size: size, callback: callback)) }
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         alert.popoverPresentationController?.barButtonItem = item
         present(alert, animated: true)
@@ -127,18 +117,8 @@ extension OobSelector where Self: UIViewController {
         let alert = UIAlertController(title: "Select Input OOB Type", message: nil, preferredStyle: .actionSheet)
         if actions.contains(.push) { alert.addAction(action(for: .push, size: 1, callback: callback)) }
         if actions.contains(.twist) { alert.addAction(action(for: .twist, size: 1, callback: callback)) }
-        if actions.contains(.inputNumeric) {
-            alert.addAction(action(for: .inputNumeric, size: min(size, 4), callback: callback))
-            if size > 4 {
-                alert.addAction(action(for: .inputNumeric, size: size, callback: callback))
-            }
-        }
-        if actions.contains(.inputAlphanumeric) {
-            alert.addAction(action(for: .inputAlphanumeric, size: min(size, 8), callback: callback))
-            if size > 8 {
-                alert.addAction(action(for: .inputAlphanumeric, size: size, callback: callback))
-            }
-        }
+        if actions.contains(.inputNumeric) { alert.addAction(action(for: .inputNumeric, size: size, callback: callback)) }
+        if actions.contains(.inputAlphanumeric) { alert.addAction(action(for: .inputAlphanumeric, size: size, callback: callback)) }
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         alert.popoverPresentationController?.barButtonItem = item
         present(alert, animated: true)
@@ -154,9 +134,14 @@ extension OobSelector where Self: UIViewController {
     /// - returns: The `UIAlertAction` for given action.
     private func action(for action: OutputAction, size: UInt8,
                         callback: @escaping (AuthenticationMethod) -> Void) -> UIAlertAction {
-        let warning = size > 1 ? " (size: \(size))" : ""
-        return UIAlertAction(title: "\(action)\(warning)", style: .default) { _ in
-            callback(.outputOob(action: action, size: size))
+        return UIAlertAction(title: "\(action)", style: .default) { _ in
+            if size > 1 {
+                self.chooseOobSize(for: "\(action)", andMaxSize: size) { selectedSize in
+                    callback(.outputOob(action: action, size: selectedSize))
+                }
+            } else {
+                callback(.outputOob(action: action, size: size))
+            }
         }
     }
     
@@ -171,10 +156,41 @@ extension OobSelector where Self: UIViewController {
     /// - returns: The `UIAlertAction` for given action.
     private func action(for action: InputAction, size: UInt8,
                         callback: @escaping (AuthenticationMethod) -> Void) -> UIAlertAction {
-        let warning = size > 1 ? " (\(size))" : ""
-        return UIAlertAction(title: "\(action)\(warning)", style: .default) { _ in
-            callback(.inputOob(action: action, size: size))
+        return UIAlertAction(title: "\(action)", style: .default) { _ in
+            if size > 1 {
+                self.chooseOobSize(for: "\(action)", andMaxSize: size) { selectedSize in
+                    callback(.inputOob(action: action, size: selectedSize))
+                }
+            } else {
+                callback(.inputOob(action: action, size: size))
+            }
         }
     }
     
+    /// Creates and presents an alert to choose the OOB size.
+    ///
+    /// - parameters:
+    ///  - action: The action for which the size is being chosen, as String.
+    ///  - size:   The maximum size supported.
+    ///  - callback: The callback to be called with the selected size.
+    private func chooseOobSize(for action: String, andMaxSize size: UInt8, callback: @escaping (UInt8) -> Void) {
+        let lastOobSize = UserDefaults.standard.integer(forKey: "oobSize")
+        presentTextAlert(title: "\(action)",
+                         message: "Choose number of characters to display:",
+                         text: lastOobSize == 0 ? "" : "\(lastOobSize)",
+                         placeHolder: "1-\(size)",
+                         type: .numberRequired, max: Int(size),
+                         cancelHandler: nil) { text in
+            if let enteredSize = UInt8(text),
+               enteredSize >= 1, enteredSize <= size {
+                // Store the value for next time.
+                UserDefaults.standard.set(enteredSize, forKey: "oobSize")
+                
+                callback(enteredSize)
+            } else {
+                // Invalid size entered, do nothing.
+            }
+        }
+    }
+
 }
