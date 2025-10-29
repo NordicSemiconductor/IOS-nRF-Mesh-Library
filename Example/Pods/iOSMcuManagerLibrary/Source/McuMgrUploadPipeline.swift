@@ -27,7 +27,7 @@ public struct McuMgrUploadPipeline {
         
         if let bleTransport = transport as? McuMgrBleTransport {
             bleTransport.numberOfParallelWrites = depth
-            bleTransport.chunkSendDataToMtuSize = bufferSize != 0
+            bleTransport.chunkSendDataToMtuSize = bufferSize != 0 // && bufferSize > mtu ?
         }
     }
     

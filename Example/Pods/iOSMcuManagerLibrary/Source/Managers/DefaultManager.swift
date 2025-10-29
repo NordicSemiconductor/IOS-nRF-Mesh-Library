@@ -7,10 +7,12 @@
 import Foundation
 import SwiftCBOR
 
+// MARK: - DefaultManager
+
 public class DefaultManager: McuManager {
     override class var TAG: McuMgrLogCategory { .default }
     
-    // MARK: - Constants
+    // MARK: Constants
 
     enum ID: UInt8 {
         case echo = 0
@@ -24,6 +26,24 @@ public class DefaultManager: McuManager {
         case bootloaderInformation = 8
     }
     
+    // MARK: ResetBootMode
+    
+    public enum ResetBootMode: UInt8, CustomStringConvertible, CaseIterable {
+        case normal = 0
+        case bootloader = 1
+        
+        public var description: String {
+            switch self {
+            case .normal:
+                return "Normal"
+            case .bootloader:
+                return "Bootloader / Firmware Loader"
+            }
+        }
+    }
+    
+    // MARK: ApplicationInfoFormat
+    
     public enum ApplicationInfoFormat: String {
         case kernelName = "s"
         case nodeName = "n"
@@ -36,6 +56,8 @@ public class DefaultManager: McuManager {
         case operatingSystem = "o"
         case all = "a"
     }
+    
+    // MARK: BootloaderInfoQuery
     
     public enum BootloaderInfoQuery: String {
         case name = ""
@@ -134,9 +156,22 @@ public class DefaultManager: McuManager {
     
     /// Trigger the device to soft reset.
     ///
+    /// - parameter bootMode: The boot mode to use for the reset, defaults to `normal`.
+    /// - parameter force: Force reset on the firmware so it's not rejected. Defaults to `false`.
     /// - parameter callback: The response callback.
-    public func reset(callback: @escaping McuMgrCallback<McuMgrResponse>) {
-        send(op: .write, commandId: ID.reset, payload: nil, callback: callback)
+    public func reset(bootMode: ResetBootMode = .normal, force: Bool = false,
+                      callback: @escaping McuMgrCallback<McuMgrResponse>) {
+        var payload: [String:CBOR]?
+        if bootMode != .normal || force {
+            payload = [:]
+            if bootMode != .normal {
+                payload?["boot_mode"] = CBOR.unsignedInt(UInt64(bootMode.rawValue))
+            }
+            if force {
+                payload?["force"] = CBOR.boolean(true)
+            }
+        }
+        send(op: .write, commandId: ID.reset, payload: payload, callback: callback)
     }
     
     // MARK: McuMgr Parameters

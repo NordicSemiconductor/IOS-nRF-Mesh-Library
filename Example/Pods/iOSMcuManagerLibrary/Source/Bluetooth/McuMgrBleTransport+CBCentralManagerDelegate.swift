@@ -36,7 +36,7 @@ extension McuMgrBleTransport: CBCentralManagerDelegate {
         previousUpdateNotificationSequenceNumber = nil
         log(msg: "Discovering services...", atLevel: .verbose)
         peripheral.delegate = self
-        peripheral.discoverServices([McuMgrBleTransportConstant.SMP_SERVICE])
+        peripheral.discoverServices([configuration.serviceUUID])
     }
     
     public func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {

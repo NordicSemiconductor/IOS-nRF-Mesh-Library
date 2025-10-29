@@ -140,7 +140,9 @@ fileprivate extension McuMgrPackage {
         try fileManager.unzipItem(at: url, to: unzipLocationURL)
         let unzippedURLs = try fileManager.contentsOfDirectory(at: unzipLocationURL, includingPropertiesForKeys: nil, options: [])
         
-        guard let dfuManifestURL = unzippedURLs.first(where: { $0.pathExtension == "json" }) else {
+        guard let dfuManifestURL = unzippedURLs.first(where: {
+            $0.lastPathComponent == "manifest.json"
+        }) else {
             throw McuMgrPackage.Error.manifestFileNotFound
         }
         let manifest = try McuMgrManifest(from: dfuManifestURL)

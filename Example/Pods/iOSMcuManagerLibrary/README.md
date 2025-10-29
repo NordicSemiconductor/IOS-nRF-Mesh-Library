@@ -106,6 +106,11 @@ McuManager is organized by functionality into command groups. In _mcumgr-ios_, c
 * **`ShellManager`**: Send McuMgr Shell commands to the device.
 * **`SuitManager`**: Send SUIT (Software Update for Internet of Things)-specific commands to the device. This applies to devices running SUIT as their bootloader.
 
+> [!CAUTION]
+> **Always make your API calls from the Main Thread**. For DFU, FileSystem, etc. Unless calls from background threads are explicitly mentioned as allowed. This requirement has its roots in programming invariants written into the library since its *Inception*.
+> 
+> **We will crash if we catch you to alert you of the issue as soon as possible.**
+
 # Firmware Upgrade
 
 Firmware upgrade is generally a four step process performed using commands from the `image` and `default` commands groups: `upload`, `test`, `reset`, and `confirm`.
@@ -116,8 +121,8 @@ This library provides `FirmwareUpgradeManager` as a convenience for upgrading th
 
 `FirmwareUpgradeManager` provides an easy way to perform firmware upgrades on a device. A `FirmwareUpgradeManager` must be initialized with an `McuMgrTransport` which defines the transport scheme and device. Once initialized, `FirmwareUpgradeManager` can perform one firmware upgrade at a time. Firmware upgrades are started using the `start(package: McuMgrPackage)` function and can be paused, resumed, and canceled using `pause()`, `resume()`, and `cancel()` respectively.
 
-> [!CAUTION]
-> **Always** make your start/pause/cancel DFU API calls from the Main Thread.
+> [!TIP]
+> You may reuse a `FirmwareUpgradeManager` / `McuMgrTransport` combo for multiple operations. But it is recommended to make a new pair for each operation. For example, for each DFU attempt. Nevertheless, we will provide support (and fixes) for issues stemming from keeping the same pair for multiple operations.
 
 ### McuMgrPackage API
 
@@ -143,8 +148,10 @@ do {
 
 This is our new, improved, all-conquering API. You create a `McuMgrPackage`, and you give it to the `FirmwareUpgradeManager`. [There's no Step Three](https://www.youtube.com/watch?v=A0QK0JfHzhg&pp). This API supports:
 
-- [x] .bin file(s) (Single-Core nRF52xxx) MCUboot Application Update
-- [x] .suit file(s) (Canonical nRF54xx) SUIT Update
+- [x] .bin file(s)
+  - [x] (Single-Core nRF52xxx) MCUboot Application Update
+  - [x] (Bare Metal nRF54xx) MCUboot Update
+- [x] .suit file(s) (~~Canonical nRF54xx)~~ SUIT Update
 - [x] .zip file(s)
   - [x] DirectXIP (nRF52840) MCUboot Upgrade
   - [x] Multi-Image (Application Core, Network Core nRF5340) MCUboot Update
@@ -295,9 +302,12 @@ func uploadRequestsResource(_ resource: FirmwareUpgradeResource) {
 
 McuManager firmware upgrades can be performed following slightly different procedures. These different upgrade modes determine the commands sent after the `upload` step. `FirmwareUpgradeManager` can be configured to perform these upgrade variations by setting the `upgradeMode` in `FirmwareUpgradeManager`'s `configuration` property, explained below. (NOTE: this was previously set with `mode` property of `FirmwareUpgradeManager`, now removed) The different firmware upgrade modes are as follows:
 
-* **`.testAndConfirm`**: This mode is the **default and recommended mode** for performing upgrades due to it's ability to recover from a bad firmware upgrade. The process for this mode is `upload`, `test`, `reset`, `confirm`. 
-* **`.confirmOnly`**: This mode is **not recommended, except for Multi-Image DFU where it is the only supported mode**. If the device fails to boot into the new image, it will not be able to recover and will need to be re-flashed. The process for this mode is `upload`, `confirm`, `reset`.
+* **`.confirmOnly`**: This mode is **the default mode**, due to its support for almost any type of DFU variant (Single Image, Multi-Image, Direct XIP, SUIT, etc.). It is in fact, the only supported mode for any form of Multi-Image DFU. However, there is one big caveat to keep in mind: this mode does not support any form of automatic error recovery. So, **if the device fails to boot into the new image, it will not be able to recover and will need to be re-flashed**. The process for this mode is `upload`, `confirm`, `reset`.
+
+* **`.testAndConfirm`**: This mode is the **recommended, but not default mode** for performing upgrades due to it's ability to recover from a bad firmware upgrade. **It is no longer set as the default, due to it only being fully supported in Single Image DFU Mode**. The process for this mode is `upload`, `test`, `reset`, `confirm`.
+
 * **`.testOnly`**: This mode is useful if you want to run tests on the new image running before confirming it manually as the primary boot image. The process for this mode is `upload`, `test`, `reset`.
+
 * **`.uploadOnly`**: This is a very particular mode. It does not listen or acknowledge Bootloader Info, and plows through the upgrade process with just `upload` followed by `reset`. That's it. **It is up to the user, since this is not a default, to decide this is the right mode to use**.
 
 ### Firmware Upgrade State
@@ -310,11 +320,16 @@ McuManager firmware upgrades can be performed following slightly different proce
 
 In version 1.2, new features were introduced to speed-up the Upload speeds, mirroring the work first done on the Android side, and they're all available through the new `FirmwareUpgradeConfiguration` struct.
 
-* **`pipelineDepth`**: (Represented as 'Number of Buffers' in the Example App UI.) For values larger than 1, this enables the **SMP Pipelining** feature. It means multiple write packets are sent concurrently, thereby providing a large speed increase the higher the number of buffers the receiving device is configured with. Set to `1` (Number of Buffers = Disabled) by default. 
-* **`byteAlignment`**: This is required when used in conjunction with SMP Pipelining. By fixing the size of each chunk of Data sent for the Firmware Upgrade, we can predict the receiving device's offset jumps and therefore smoothly send multiple Data packets at the same time. When SMP Pipelining is not being used (`pipelineDepth` set to `1`), the library still performs Byte Alignment if set, but it is not required for updates to work. Set to `ImageUploadAlignment.disabled` by default.
+* **`pipelineDepth`**: (Represented as 'Number of Buffers' in the Example App UI.) For values larger than 1, this enables the **SMP Pipelining** feature. It means multiple write packets are sent concurrently, thereby providing a large speed increase the higher the number of buffers the receiving device is configured with. Set to `1` (Number of Buffers = Disabled) by default.
+
+* **`byteAlignment`**: This was required for firmware built using nRF Connect SDK version 1.7 or older for SMP Pipelining. By fixing the size of each chunk of Data sent for the Firmware Upgrade, we can predict the receiving device's offset jumps and therefore smoothly send multiple Data packets at the same time. When SMP Pipelining is not being used (`pipelineDepth` set to `1`), the library still performs Byte Alignment if set, but it is not required for updates to work. Set to `ImageUploadAlignment.disabled` by default. [nRF Connect SDK 1.7](https://docs.nordicsemi.com/bundle/ncs-3.0.0/page/nrf/releases_and_maturity/releases/release-notes-1.7.0.html) dates back to [September 2021](https://github.com/nrfconnect/sdk-nrf/releases/tag/v1.7.0), so if your firmware is newer, there's no need to change the default.
+
 * **reassemblyBufferSize**: SMP Reassembly is another speed-improving feature. It works on devices running NCS 2.0 firmware or later, and is self-adjusting. Before the Upload starts, a request is sent via `DefaultManager` asking for MCU Manager Paremeters. If received, it means the firmware can accept data in chunks larger than the MTU Size, therefore also increasing speed. This property will reflect the size of the buffer on the receiving device, and the `McuMgrBleTransport` will be set to chunk the data down within the same Sequence Number, keeping each packet transmission within the MTU boundaries. **There is no work required for SMP Reassembly to work** - on devices not supporting it, the MCU Manager Paremeters request will fail, and the Upload will proceed assuming no reassembly capabilities. **Must not be larger than UInt16.max (65535)**
+
 * **`eraseAppSettings`**: This is not a speed-related feature. Instead, setting this to `true` means all app data on the device, including Bond Information, Number of Steps, Login or anything else are all erased. If there are any major data changes to the new firmware after the update, like a complete change of functionality or a new update with different save structures, this is recommended. Set to `false` by default.
+
 * **`upgradeMode`**: Firmware Upgrade Mode. See Section above for an in-depth explanation of all possible Upgrade Modes.
+
 * **`bootloaderMode`**: The Bootloader Mode is not necessarily intended to be a setting. It behaves as a setting if the target firmware does not offer a valid response to Bootloader Info request, for example, if it's not supported. What it does is inform iOSMcuMgrLibrary of the supported operations by the Bootloader. For example, if `upgradeMode` is set to `confirmOnly` but the Bootloader is in DirectXIP with no Revert mode, sending a Confirm command will be returned with an error. Which means, no Confirm command will be sent, despite the `upgradeMode` being set so. So yes, it's yet another layer of complexity from SMP / McuManager we have to deal with.
 
 #### Configuration Example
@@ -340,6 +355,82 @@ let pipelinedConfiguration = FirmwareUpgradeConfiguration(
     byteAlignment: .fourByte
 )
 dfuManager.start(package: package, using: pipelinedConfiguration)
+```
+
+# SMP Server
+
+SMP stands for Simple Management Protocol, or SMP, Server. SMP Server supports multiple command groups, of while file system / management is one of. More information is available in the [Zephyr SMP Server Sample Application documentation](https://docs.zephyrproject.org/latest/samples/subsys/mgmt/mcumgr/smp_svr/README.html).
+
+## FileSystemManager
+
+`FileSystemManager` provides an interface for the file management command group of Zephyr's SMP Server. That is, mainly, to provide file upload and file download capabilities. 
+
+The easiest way to begin working with FileSystemManager, is to create a [smp_svr sample application](https://github.com/nrfconnect/sdk-zephyr/tree/v4.0.99-ncs1/samples/subsys/mgmt/mcumgr/smp_svr/), for example, using the [nRF Connect for VS Code Extension](https://www.nordicsemi.com/Products/Development-tools/nRF-Connect-for-VS-Code). You can then create a new Build Configuration for the development platform of your convenience.
+
+### Upload Example
+
+```swift
+import iOSMcuManagerLibrary
+
+// Setup
+let bleTransport = McuMgrBleTransport(cbPeripheral)
+bleTransport.logDelegate = UIApplication.shared.delegate as? McuMgrLogDelegate
+let fsManager = FileSystemManager(transport: bleTransport)
+
+// Parameters
+let fileData: Data = // File Contents
+let mountingPoint: String = "/lfs1" // Default. May vary depending on your specific setup.
+let fileName: String = mountingPoint + "/" + "example.txt"
+let uploadDelegate: FileUploadDelegate = // FileUploadDelegate
+
+// Non-Pipelined (Default Configuration) Example
+let didUploadStart = fsManager.upload(name: fileName, data: fileData, delegate: uploadDelegate)
+
+// Pipelined Example
+var pipelinedConfiguration = FirmwareUpgradeConfiguration()
+pipelinedConfiguration.pipelineDepth = 4 // Equivalent to CONFIG_MCUMGR_TRANSPORT_NETBUF_COUNT=4 in firmware KConfig files.
+let didUploadStart = fsManager.upload(name: fileName, data: fileData, using: pipelinedConfiguration, delegate: uploadDelegate)
+```
+
+### Download Example
+
+> [!NOTE]
+> Reassembly works automagically for downloads, since SMP Server supports it since its original release. As long as the sender (SMP Server Device) does the right thing in its packet header, the same logic in `McuMgrBleTransport` that handles Reassembly for DFU and File Uploads will work.
+
+```swift
+import iOSMcuManagerLibrary
+
+// Setup
+let bleTransport = McuMgrBleTransport(cbPeripheral)
+bleTransport.logDelegate = UIApplication.shared.delegate as? McuMgrLogDelegate
+let fsManager = FileSystemManager(transport: bleTransport)
+
+// Parameters
+let fileData: Data = // File Contents
+let mountingPoint: String = "/lfs1" // Default. May vary depending on your specific setup.
+let fileName: String = mountingPoint + "/" + "example.txt"
+let downloadDelegate: FileDownloadDelegate = // FileDownloadDelegate
+let downloadStarted = fsManager.download(name: destination, delegate: downloadDelegate)
+
+// FileDownloadDelegate {
+    
+    func download(of name: String, didFinish data: Data) {
+        // Downloaded file's contents are in @data parameter
+    }
+    
+    func downloadProgressDidChange(bytesDownloaded: Int, fileSize: Int, timestamp: Date) {
+        /* ... */
+    }
+    
+    func downloadDidFail(with error: Error) {
+        /* ... */
+    }
+    
+    func downloadDidCancel() {
+        /* ... */
+    }
+}
+ 
 ```
 
 # Logging

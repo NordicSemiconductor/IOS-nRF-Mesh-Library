@@ -1,5 +1,5 @@
 //
-//  McuMgrROBBuffer.swift
+//  McuMgrCallbackOoOBuffer.swift
 //  iOSMcuManagerLibrary
 //
 //  Created by Dinesh Harjani on 29/9/22.
@@ -9,12 +9,12 @@ import Foundation
 import Dispatch
 import os.log
 
-// MARK: - McuMgrROBBuffer<Key, Value>
+// MARK: - McuMgrCallbackOoOBuffer<Key, Value>
 
 /**
- <Key, Value> Re-Order Buffer.
+ <Key, Value> Out-of-Order Buffer.
  */
-public struct McuMgrROBBuffer<Key: Hashable & Comparable, Value> {
+public struct McuMgrCallbackOoOBuffer<Key: Hashable & Comparable, Value> {
     
     // MARK: BufferError
     
@@ -57,9 +57,7 @@ public struct McuMgrROBBuffer<Key: Hashable & Comparable, Value> {
      This function informs the buffer a `Value` has been received. If the
      buffer recommends proceeding with a call to get a value, which is
      through the `deliver(to:)` API, it will return true. If not, the buffer
-     is pending reception of values for a different key. Of course, you
-     can still call `deliver(to:)` if you'd like to, but then the buffer
-     might be missing values.
+     is pending reception of values for a different key.
      
      - returns: `true` if a subsequent call to `deliver(to:)` is suggested.
      */
@@ -70,7 +68,8 @@ public struct McuMgrROBBuffer<Key: Hashable & Comparable, Value> {
                     buffer[key] = value
                     log(msg: "Received missing OoO (Out of Order) Key \(key).", atLevel: .debug)
                     outOfOrderKeys.remove(key)
-                    return outOfOrderKeys.isEmpty
+                    // Deliver the received key.
+                    return true
                 } else {
                     throw BufferError.invalidKey(key)
                 }
@@ -127,7 +126,7 @@ public struct McuMgrROBBuffer<Key: Hashable & Comparable, Value> {
     }
 }
 
-private extension McuMgrROBBuffer {
+private extension McuMgrCallbackOoOBuffer {
     
     func log(msg: @autoclosure () -> String, atLevel level: McuMgrLogLevel) {
         if let logDelegate, level >= logDelegate.minLogLevel() {

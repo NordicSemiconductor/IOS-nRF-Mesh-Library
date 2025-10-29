@@ -1,9 +1,9 @@
 PODS:
   - CryptoSwift (1.8.4)
-  - iOSMcuManagerLibrary (1.9.2):
+  - iOSMcuManagerLibrary (1.10.1):
     - SwiftCBOR (= 0.4.7)
     - ZIPFoundation (= 0.9.19)
-  - nRFMeshProvision (4.4.0):
+  - nRFMeshProvision (4.6.0):
     - CryptoSwift (= 1.8.4)
   - SwiftCBOR (0.4.7)
   - ZIPFoundation (0.9.19)
@@ -25,8 +25,8 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   CryptoSwift: e64e11850ede528a02a0f3e768cec8e9d92ecb90
-  iOSMcuManagerLibrary: 37ee5ab2a62e0e8ea4f0c5b85fa2a04d7872b7bb
-  nRFMeshProvision: dcccd5e7c2d30ece09b2be0eecb2b0762d62864d
+  iOSMcuManagerLibrary: e9555825af11a61744fe369c12e1e66621061b58
+  nRFMeshProvision: d16dfa28de046f4a9be8d43a4017a0e5fad47e2c
   SwiftCBOR: 465775bed0e8bac7bfb8160bcf7b95d7f75971e4
   ZIPFoundation: b8c29ea7ae353b309bc810586181fd073cb3312c
 

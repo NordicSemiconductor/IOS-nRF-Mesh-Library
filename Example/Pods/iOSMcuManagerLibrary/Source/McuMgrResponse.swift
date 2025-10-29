@@ -864,6 +864,7 @@ public final class BootloaderInfoResponse: McuMgrResponse {
         case directXIPNoRevert = 4
         case directXIPWithRevert = 5
         case RAMLoader = 6
+        case firmwareLoader = 7
         
         /**
          Intended for use cases where it's not important to know what kind of DirectXIP
@@ -872,6 +873,13 @@ public final class BootloaderInfoResponse: McuMgrResponse {
          */
         public var isDirectXIP: Bool {
             return self == .directXIPNoRevert || self == .directXIPWithRevert
+        }
+        
+        /**
+         - Returns: `true` if the Bootloader represents Nordic Bare Metal SDK-based firmware.
+         */
+        public var isBareMetal: Bool {
+            return self == .firmwareLoader
         }
         
         public var description: String {
@@ -892,6 +900,8 @@ public final class BootloaderInfoResponse: McuMgrResponse {
                 return "Direct-XIP with revert"
             case .RAMLoader:
                 return "RAM Loader"
+            case .firmwareLoader:
+                return "Firmware Loader"
             }
         }
         
@@ -1367,11 +1377,11 @@ public class McuMgrStatsListResponse: McuMgrResponse {
 public class McuMgrConfigResponse: McuMgrResponse {
     
     /// Config value.
-    public var val: String?
+    public var val: [UInt8]?
     
     public required init(cbor: CBOR?) throws {
         try super.init(cbor: cbor)
-        if case let CBOR.utf8String(val)? = cbor?["val"] {self.val = val}
+        if case let CBOR.byteString(val)? = cbor?["val"] {self.val = val}
     }
 }
 
