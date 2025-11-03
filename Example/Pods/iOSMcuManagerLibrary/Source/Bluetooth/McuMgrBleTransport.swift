@@ -52,14 +52,9 @@ public class McuMgrBleTransport: NSObject {
     /// Used to track the Sequence Number the chunked responses belong to.
     internal var previousUpdateNotificationSequenceNumber: McuSequenceNumber?
     
-    internal struct PausedWriteWithoutResponse {
-        let sequenceNumber: McuSequenceNumber
-        let remaining: ArraySlice<Data>
-        let peripheral: CBPeripheral
-        let characteristic: CBCharacteristic
-        let callback: (Data?, McuMgrTransportError?) -> Void
-    }
-    internal var pausedWrites = [PausedWriteWithoutResponse]()
+    internal lazy var robWriteBuffer = McuMgrBleROBWriteBuffer(logDelegate)
+    
+    internal let configuration: McuMgrBleTransport.Configuration
     
     /// SMP Characteristic object. Used to write requests and receive
     /// notifications.
@@ -115,6 +110,8 @@ public class McuMgrBleTransport: NSObject {
             }
         }
     }
+    
+    // MARK: init
 
     /// Creates a BLE transport object for the given peripheral.
     /// The implementation will create internal instance of
@@ -128,8 +125,13 @@ public class McuMgrBleTransport: NSObject {
     ///
     /// - parameter target: The BLE peripheral with Simple Management
     ///   Protocol (SMP) service.
-    public convenience init(_ target: CBPeripheral) {
-        self.init(target.identifier)
+    /// - parameter uuidConfig: A custom UUID configuration.
+    public convenience init(_ peripheral: CBPeripheral, _ configuration: Configuration? = nil) {
+        self.init(
+            peripheral, peripheral.identifier,
+            CBCentralManager(delegate: nil, queue: .global(qos: .userInitiated)),
+            configuration ?? DefaultTransportConfiguration()
+        )
     }
 
     /// Creates a BLE transport object for the peripheral matching given
@@ -144,8 +146,17 @@ public class McuMgrBleTransport: NSObject {
     ///
     /// - parameter targetIdentifier: The UUID of the peripheral with Simple Management
     ///   Protocol (SMP) service.
-    public init(_ targetIdentifier: UUID) {
-        self.centralManager = CBCentralManager(delegate: nil, queue: .global(qos: .userInitiated))
+    /// - parameter uuidConfig: A custom UUID configuration
+    public convenience init(_ targetIdentifier: UUID, _ configuration: Configuration? = nil) {
+        let centralManager = CBCentralManager(delegate: nil, queue: .global(qos: .userInitiated))
+        let peripheral = centralManager.retrievePeripherals(withIdentifiers: [targetIdentifier]).first //can return nil oddly enough
+
+        self.init(peripheral, targetIdentifier, centralManager,
+                  configuration ?? DefaultTransportConfiguration())
+    }
+
+    private init(_ peripheral: CBPeripheral?, _ targetIdentifier: UUID, _ centralManager: CBCentralManager, _ configuration: Configuration) {
+        self.centralManager = centralManager
         self.identifier = targetIdentifier
         self.connectionLock = ResultLock(isOpen: false)
         self.writeState = McuMgrBleTransportWriteState()
@@ -153,13 +164,24 @@ public class McuMgrBleTransport: NSObject {
         self.operationQueue = OperationQueue()
         self.operationQueue.qualityOfService = .userInitiated
         self.operationQueue.maxConcurrentOperationCount = 1
+        self.configuration = configuration
         super.init()
+
         self.centralManager.delegate = self
-        if let peripheral = centralManager.retrievePeripherals(withIdentifiers: [targetIdentifier]).first {
-            self.peripheral = peripheral
-            self.mtu = min(peripheral.maximumWriteValueLength(for: .withoutResponse),
-                           McuManager.getDefaultMtu(scheme: getScheme()))
-        }
+        self.peripheral = peripheral
+        
+        self.mtu = {
+            let defaultMtu = McuManager.getDefaultMtu(scheme: getScheme())
+            guard let peripheral else {
+                return defaultMtu
+            }
+            
+            // Note that it is 99.9% likely that this is the wrong value unless
+            // we're already connected. The correct MTU value needs to be in
+            // the _send() function just after acquiring the (Result)Lock.
+            let peripheralWriteValueLength = max(McuManager.ValidMTURange.lowerBound, peripheral.maximumWriteValueLength(for: .withoutResponse))
+            return min(peripheralWriteValueLength, defaultMtu)
+        }()
     }
     
     public var name: String? {
@@ -168,10 +190,11 @@ public class McuMgrBleTransport: NSObject {
     
     public private(set) var identifier: UUID
 
+    // MARK: notifyPeripheralDelegate
+    
     private func notifyPeripheralDelegate() {
-        if let peripheral = self.peripheral {
-            delegate?.peripheral(peripheral, didChangeStateTo: state)
-        }
+        guard let delegate, let peripheral else { return }
+        delegate.peripheral(peripheral, didChangeStateTo: state)
     }
 }
 
@@ -195,6 +218,11 @@ extension McuMgrBleTransport: McuMgrTransport {
                     } else {
                         self.log(msg: "Retry \(i + 1) (Unknown Header Type)", atLevel: .info)
                     }
+                case .failure(McuMgrTransportError.peripheralNotReadyForWriteWithoutResponse):
+                    if let header = try? McuMgrHeader(data: data) {
+                        self.log(msg: "(Retry \(i + 1)) Peripheral not ready for write without response. Attempting to wait or send seq: \(header.sequenceNumber)", atLevel: .debug)
+                    }
+                    continue // try to send again or wait for a response
                 case .failure(let error):
                     self.log(msg: error.localizedDescription, atLevel: .error)
                     DispatchQueue.main.async {
@@ -256,6 +284,18 @@ extension McuMgrBleTransport: McuMgrTransport {
         }
     }
     
+    /**
+     Clean any necessary state between Peripheral Connections.
+     
+     Multiple heavy-duty operations may be performed using the same 'transport' instance. To
+     prevent issues and attempt to improve reliability, it's better to wipe any lingering state.
+     */
+    internal func softReset() {
+        previousUpdateNotificationSequenceNumber = nil
+        writeState = McuMgrBleTransportWriteState()
+        robWriteBuffer = McuMgrBleROBWriteBuffer(logDelegate)
+    }
+    
     /// This method sends the data to the target. Before, it ensures that
     /// CBCentralManager is ready and the peripheral is connected.
     /// The peripheral will automatically be connected when it's not.
@@ -307,7 +347,7 @@ extension McuMgrBleTransport: McuMgrTransport {
                 log(msg: "Discovering services...", atLevel: .verbose)
                 state = .connecting
                 targetPeripheral.delegate = self
-                targetPeripheral.discoverServices([McuMgrBleTransportConstant.SMP_SERVICE])
+                targetPeripheral.discoverServices([configuration.characteristicUUUID])
             case .disconnected:
                 // If the peripheral is disconnected, begin the setup process by
                 // connecting to the device. Once the characteristic's
@@ -362,9 +402,14 @@ extension McuMgrBleTransport: McuMgrTransport {
             writeState.completedWrite(sequenceNumber: sequenceNumber)
         }
         
-        if mtu == nil {
-            mtu = targetPeripheral.maximumWriteValueLength(for: .withoutResponse)
+        // Don't be smart caching the MTU.
+        let negotiatedMTU = targetPeripheral.maximumWriteValueLength(for: .withoutResponse)
+        if mtu != negotiatedMTU {
+            log(msg: "peripheral.maximumWriteValueLength(for: .withoutResponse): \(negotiatedMTU) != Current MTU (\(mtu))", atLevel: .debug)
+            mtu = negotiatedMTU
         }
+        
+        // if reassembly {
         if chunkSendDataToMtuSize {
             var dataChunks = [Data]()
             var dataChunksSize = 0
@@ -381,7 +426,7 @@ extension McuMgrBleTransport: McuMgrTransport {
                 return .failure(error)
             }
             
-            coordinatedWrite(of: sequenceNumber, data: dataChunks, to: targetPeripheral, characteristic: smpCharacteristic) { [weak self] chunk, error in
+            robWriteBuffer.enqueue(sequenceNumber, data: dataChunks, to: targetPeripheral, characteristic: smpCharacteristic) { [weak self] chunk, error in
                 if let error {
                     writeLock.open(error)
                     return
@@ -393,12 +438,13 @@ extension McuMgrBleTransport: McuMgrTransport {
         } else {
             // No SMP Reassembly Supported. So no 'chunking'.
             guard data.count <= mtu else {
+                log(msg: "Error: \(data.count)-byte packet is larger than MTU Size (\(mtu)) without Reassembly being enabled.", atLevel: .error)
                 let error = McuMgrTransportError.insufficientMtu(mtu: mtu)
                 writeState.open(sequenceNumber: sequenceNumber, dueTo: error)
                 return .failure(error)
             }
             
-            coordinatedWrite(of: sequenceNumber, data: [data], to: targetPeripheral, characteristic: smpCharacteristic) { [weak self] data, error in
+            robWriteBuffer.enqueue(sequenceNumber, data: [data], to: targetPeripheral, characteristic: smpCharacteristic) { [weak self] data, error in
                 if let error {
                     writeLock.open(error)
                     return
@@ -414,6 +460,10 @@ extension McuMgrBleTransport: McuMgrTransport {
         
         switch result {
         case .failure(McuMgrTransportError.sendTimeout):
+            guard !robWriteBuffer.isInFlight(sequenceNumber) else {
+                writeLock.open(McuMgrTransportError.peripheralNotReadyForWriteWithoutResponse)
+                return .failure(McuMgrTransportError.peripheralNotReadyForWriteWithoutResponse)
+            }
             writeLock.open(McuMgrTransportError.waitAndRetry)
             return .failure(McuMgrTransportError.waitAndRetry)
         case .failure(let error):
@@ -428,28 +478,6 @@ extension McuMgrBleTransport: McuMgrTransport {
         }
     }
     
-    
-    
-    /**
-     All chunks of the same packet need to be sent together. Otherwise, they can't be merged properly on the receiving end. This lock guarantees parallel writes don't mean each write command's bytes are not sent interleaved.
-     */
-    internal func coordinatedWrite(of sequenceNumber: McuSequenceNumber, data: [Data], to peripheral: CBPeripheral, characteristic: CBCharacteristic, callback: @escaping (Data?, McuMgrTransportError?) -> Void) {
-        writeState.sharedLock { [unowned self] in
-            for i in 0..<data.count {
-                guard peripheral.canSendWriteWithoutResponse else {
-                    log(msg: "⏸︎ [Seq: \(sequenceNumber)] Paused (Peripheral not Ready for Write Without Response)", atLevel: .debug)
-                    let remainingData = data.suffix(from: i)
-                    pausedWrites.append(PausedWriteWithoutResponse(sequenceNumber: sequenceNumber, remaining: remainingData, peripheral: peripheral, characteristic: characteristic, callback: callback))
-                    return
-                }
-                
-                let chunk = data[i]
-                peripheral.writeValue(chunk, for: characteristic, type: .withoutResponse)
-                callback(chunk, nil)
-            }
-        }
-    }
-    
     internal func log(msg: @autoclosure () -> String, atLevel level: McuMgrLogLevel) {
         if let logDelegate, level >= logDelegate.minLogLevel() {
             logDelegate.log(msg(), ofCategory: .transport, atLevel: level)
@@ -460,10 +488,6 @@ extension McuMgrBleTransport: McuMgrTransport {
 // MARK: - McuMgrBleTransportConstant
 
 public enum McuMgrBleTransportConstant {
-    
-    public static let SMP_SERVICE = CBUUID(string: "8D53DC1D-1DB7-4CD3-868B-8A527460AA84")
-    public static let SMP_CHARACTERISTIC = CBUUID(string: "DA2E7828-FBCE-4E01-AE9E-261174997C48")
-    
     /// Max number of retries until the transaction is failed.
     internal static let MAX_RETRIES = 3
     /// The interval to wait before attempting a transaction again in seconds.

@@ -64,6 +64,8 @@ public enum McuMgrTransportError: Error, Hashable {
     case badResponse
     /// Device is busy, so we sleep for a few seconds and try again.
     case waitAndRetry
+    /// Device BLE Radio not ready to accept more writes.
+    case peripheralNotReadyForWriteWithoutResponse
 }
 
 extension McuMgrTransportError: LocalizedError {
@@ -90,6 +92,8 @@ extension McuMgrTransportError: LocalizedError {
             return "Bad response received."
         case .waitAndRetry:
             return "Device Busy. Will retry after a short wait..."
+        case .peripheralNotReadyForWriteWithoutResponse:
+            return "Peripheral unable to receive Data over BLE. Have you tried reducing the number of buffers?"
         }
     }
 }

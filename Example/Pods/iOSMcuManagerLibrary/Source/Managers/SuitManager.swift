@@ -207,6 +207,8 @@ public class SuitManager: McuManager {
     // MARK: upload(_:delegate:)
     
     public func upload(_ images: [ImageManager.Image], using configuration: FirmwareUpgradeConfiguration, delegate: SuitManagerDelegate?) {
+        verifyOnMainThread()
+        
         // Sort Images so Envelope is at index zero.
         uploadImages = images.sorted(by: { l, _ in
             l.content == .suitEnvelope

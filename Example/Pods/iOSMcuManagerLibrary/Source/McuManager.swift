@@ -8,6 +8,8 @@ import Foundation
 import CoreBluetooth
 import SwiftCBOR
 
+// MARK: - McuSequenceNumber
+
 /**
  Valid values are within the bounds of UInt8 (0...255).
  
@@ -23,7 +25,10 @@ extension McuSequenceNumber {
     }
 }
 
-open class McuManager : NSObject {
+// MARK: - McuManager
+
+open class McuManager: NSObject {
+    
     class var TAG: McuMgrLogCategory { .default }
     
     //**************************************************************************
@@ -42,7 +47,7 @@ open class McuManager : NSObject {
     public static let DEFAULT_SEND_TIMEOUT_SECONDS = 40
     /// This is the default time to wait for a command to be sent, executed
     /// and received (responded to) by the firmware on the other end.
-    public static let FAST_TIMEOUT = 5
+    public static let FAST_TIMEOUT = 10
     
     //**************************************************************************
     // MARK: Properties
@@ -66,9 +71,9 @@ open class McuManager : NSObject {
     private var nextSequenceNumber: McuSequenceNumber = .random()
     
     /**
-     Sequence Number Response ReOrder Buffer
+     Sequence Number Response OoO Buffer
      */
-    private var robBuffer = McuMgrROBBuffer<McuSequenceNumber, Any>()
+    private var oobBuffer = McuMgrCallbackOoOBuffer<McuSequenceNumber, Any>()
     
     //**************************************************************************
     // MARK: Initializers
@@ -79,7 +84,23 @@ open class McuManager : NSObject {
         self.transport = transport
     }
     
-    // MARK: - Send
+    // MARK: verifyOnMainThread
+    
+    /**
+     A big part of this library, if not 95% of it, was written before Nordic inheritance.
+     
+     And, the code assumes, in many places, it's being run from the Main Thread. So this
+     is why this (maybe annoying) function is called to crash on you. To tell you about it
+     - don't make actionable calls from background threads.
+     */
+    internal func verifyOnMainThread() {
+        guard Thread.isMainThread else {
+            fatalError("Call from @MainActor / DispatchQueue.main. Don't call from background threads.")
+        }
+        dispatchPrecondition(condition: .onQueue(.main))
+    }
+    
+    // MARK: send
     
     public func send<T: McuMgrResponse, R: RawRepresentable>(op: McuMgrOperation, commandId: R, payload: [String:CBOR]?,
                                                              timeout: Int = DEFAULT_SEND_TIMEOUT_SECONDS,
@@ -107,8 +128,8 @@ open class McuManager : NSObject {
             }
             
             do {
-                guard try self.robBuffer.received((response, error), for: packetSequenceNumber) else { return }
-                try self.robBuffer.deliver { responseSequenceNumber, response in
+                guard try self.oobBuffer.received((response, error), for: packetSequenceNumber) else { return }
+                try self.oobBuffer.deliver { responseSequenceNumber, response in
                     let responseResult = response as? (T?, (any Error)?)
                     if let response = responseResult?.0 {
                         self.smpVersion = McuMgrVersion(rawValue: response.header.version) ?? .SMPv1
@@ -127,8 +148,8 @@ open class McuManager : NSObject {
             }
         }
         
-        robBuffer.logDelegate = logDelegate
-        robBuffer.enqueueExpectation(for: packetSequenceNumber)
+        oobBuffer.logDelegate = logDelegate
+        oobBuffer.enqueueExpectation(for: packetSequenceNumber)
         send(data: packetData, timeout: timeout, callback: _callback)
         // Use of Overflow operator
         nextSequenceNumber = nextSequenceNumber &+ 1
@@ -193,6 +214,29 @@ open class McuManager : NSObject {
         }
     }
     
+    // MARK: maxDataPacketLengthFor(data:at:with:and:)
+    
+    /**
+     At one point, there were 3 copy / paste copies of this very same code accross three different `McuManager` subclasses, so there comes a time when "one solution" to keep all bugs in one place is necessary.
+     
+     - parameter packetOverhead: how many bytes are taken by the wrapper/header and/or other `McuMgrTransport` related considerations that do not count towards the `data` itself.
+     - returns: for the provided `Data` at the given `offset`, how many bytes can fit in the next write command.
+     */
+    internal func maxDataPacketLengthFor(data: Data, at offset: UInt64, with packetOverhead: Int,
+                                         and configuration: FirmwareUpgradeConfiguration) -> UInt64 {
+        guard offset < data.count else {
+            return UInt64(McuMgrHeader.HEADER_LENGTH)
+        }
+        
+        let remainingBytes = UInt64(data.count) - offset
+        let maxPacketSize = max(configuration.reassemblyBufferSize, UInt64(transport.mtu))
+        var maxDataLength = maxPacketSize - UInt64(packetOverhead)
+        if configuration.byteAlignment != .disabled {
+            maxDataLength = (maxDataLength / configuration.byteAlignment.rawValue) * configuration.byteAlignment.rawValue
+        }
+        return min(maxDataLength, remainingBytes)
+    }
+    
     //**************************************************************************
     // MARK: Utilities
     //**************************************************************************
@@ -217,6 +261,13 @@ open class McuManager : NSObject {
     
     static let ValidMTURange = 73...1024
     
+    /**
+     **Warning!** Throws `McuManagerError.mtuValueHasNotChanged` if called to set
+     MTU (Maximum Transmission Unit) to the same value it's already set to.
+     
+     This is to break infinite-loops caused by firmware returning this error
+     code repeatedly, at which point something has to break the loop.
+     */
     public func setMtu(_ mtu: Int) throws  {
         guard Self.ValidMTURange.contains(mtu) else {
             throw McuManagerError.mtuValueOutsideOfValidRange(mtu)
@@ -255,6 +306,8 @@ open class McuManager : NSObject {
         }
     }
 }
+
+// MARK: log(msg: atLevel:)
 
 extension McuManager {
     
@@ -482,33 +535,33 @@ extension McuMgrReturnCode: CustomStringConvertible {
         case .ok:
             return "OK"
         case .unknown:
-            return "Unknown error"
+            return "Unknown error (RC: \(rawValue))"
         case .noMemory:
-            return "No memory"
+            return "No memory (RC: \(rawValue))"
         case .inValue:
-            return "Invalid value"
+            return "Invalid value (RC: \(rawValue))"
         case .timeout:
-            return "Timeout"
+            return "Timeout (RC: \(rawValue))"
         case .noEntry:
-            return "No entry" // For Filesystem Operations, Does Your Mounting Point Match Your Target Firmware / Device?
+            return "No entry (RC: \(rawValue))" // For Filesystem Operations, Does Your Mounting Point Match Your Target Firmware / Device?
         case .badState:
-            return "Bad state"
+            return "Bad state (RC: \(rawValue))"
         case .responseIsTooLong:
-            return "Response is too long"
+            return "Response is too long v"
         case .unsupported:
-            return "Not supported"
+            return "Not supported (RC: \(rawValue))"
         case .corruptPayload:
-            return "Corrupt payload"
+            return "Corrupt payload (RC: \(rawValue))"
         case .busy:
-            return "Busy, try again later" // Busy processing previous SMP Request
+            return "Busy, try again later (RC: \(rawValue))" // Busy processing previous SMP Request
         case .accessDenied:
-            return "Access denied" // Are You Trying to Downgrade to a Lower Image Version?
+            return "Access denied (RC: \(rawValue))" // Are You Trying to Downgrade to a Lower Image Version?
         case .unsupportedTooOld:
-            return "Requested SMP McuMgr protocol version is too old"
+            return "Requested SMP McuMgr protocol version is too old (RC: \(rawValue))"
         case .unsupportedTooNew:
-            return "Requested SMP McuMgr protocol version is too new"
+            return "Requested SMP McuMgr protocol version is too new (RC: \(rawValue))"
         case .userDefinedError:
-            return "User-Defined Error"
+            return "User-Defined Error (RC: \(rawValue))"
         default:
             if rawValue >= McuMgrReturnCode.userDefinedError.rawValue {
                 return "User-Defined Error (Code: \(rawValue))"

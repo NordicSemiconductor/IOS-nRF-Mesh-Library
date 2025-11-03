@@ -16,6 +16,9 @@ public class SettingsManager: McuManager {
     
     enum ConfigID: UInt8 {
         case zero = 0
+        case one = 1
+        case two = 2
+        case three = 3
     }
     
     // MARK: Initializers
@@ -44,6 +47,36 @@ public class SettingsManager: McuManager {
         let payload: [String:CBOR] = ["name": CBOR.utf8String(name),
                                       "val":  CBOR.byteString(value)]
         send(op: .write, commandId: ConfigID.zero, payload: payload, callback: callback)
+    }
+    
+    /// Delete setting command allows deleting a setting on a device.
+    ///
+    /// - parameter name: The name of the sys config variable to write.
+    /// - parameter callback: The response callback.
+    public func delete(name: String, callback: @escaping McuMgrCallback<McuMgrResponse>) {
+        let payload: [String:CBOR] = ["name": CBOR.utf8String(name)]
+        send(op: .write, commandId: ConfigID.one, payload: payload, callback: callback)
+    }
+    
+    /// Commit settings command allows committing all settings that have been set but not yet applied on a device.
+    ///
+    /// - parameter callback: The response callback.
+    public func commit(callback: @escaping McuMgrCallback<McuMgrResponse>) {
+        send(op: .write, commandId: ConfigID.two, payload: nil, callback: callback)
+    }
+    
+    /// Load settings command allows loading all serialized items from persistent storage on a device.
+    ///
+    /// - parameter callback: The response callback.
+    public func load(callback: @escaping McuMgrCallback<McuMgrResponse>) {
+        send(op: .read, commandId: ConfigID.three, payload: nil, callback: callback)
+    }
+    
+    /// Save settings command allows saving all serialized items to persistent storage on a device.
+    ///
+    /// - parameter callback: The response callback.
+    public func save(callback: @escaping McuMgrCallback<McuMgrResponse>) {
+        send(op: .write, commandId: ConfigID.three, payload: nil, callback: callback)
     }
 }
 

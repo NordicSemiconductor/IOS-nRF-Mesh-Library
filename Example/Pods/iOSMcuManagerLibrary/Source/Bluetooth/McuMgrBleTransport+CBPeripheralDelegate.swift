@@ -33,9 +33,9 @@ extension McuMgrBleTransport: CBPeripheralDelegate {
         }
         // Find the service matching the SMP service UUID.
         for service in services {
-            if service.uuid == McuMgrBleTransportConstant.SMP_SERVICE {
+            if service.uuid == configuration.serviceUUID {
                 log(msg: "Discovering characteristics...", atLevel: .verbose)
-                peripheral.discoverCharacteristics([McuMgrBleTransportConstant.SMP_CHARACTERISTIC],
+                peripheral.discoverCharacteristics([configuration.characteristicUUUID],
                                                    for: service)
                 return
             }
@@ -65,7 +65,7 @@ extension McuMgrBleTransport: CBPeripheralDelegate {
         }
         // Find the characteristic matching the SMP characteristic UUID.
         for characteristic in characteristics {
-            if characteristic.uuid == McuMgrBleTransportConstant.SMP_CHARACTERISTIC {
+            if characteristic.uuid == configuration.characteristicUUUID {
                 // Set the characteristic notification if available.
                 if characteristic.properties.contains(.notify) {
                     log(msg: "Enabling notifications...", atLevel: .verbose)
@@ -82,7 +82,7 @@ extension McuMgrBleTransport: CBPeripheralDelegate {
     public func peripheral(_ peripheral: CBPeripheral,
                            didUpdateNotificationStateFor characteristic: CBCharacteristic,
                            error: Error?) {
-        guard characteristic.uuid == McuMgrBleTransportConstant.SMP_CHARACTERISTIC else {
+        guard characteristic.uuid == configuration.characteristicUUUID else {
             return
         }
         // Check for error.
@@ -96,6 +96,7 @@ extension McuMgrBleTransport: CBPeripheralDelegate {
         // Set the SMP characteristic.
         smpCharacteristic = characteristic
         state = .connected
+        softReset()
         notifyStateChanged(.connected)
         
         // The SMP Service and characteristic have now been discovered and set
@@ -106,7 +107,7 @@ extension McuMgrBleTransport: CBPeripheralDelegate {
     public func peripheral(_ peripheral: CBPeripheral,
                            didUpdateValueFor characteristic: CBCharacteristic,
                            error: Error?) {
-        guard characteristic.uuid == McuMgrBleTransportConstant.SMP_CHARACTERISTIC else {
+        guard characteristic.uuid == configuration.characteristicUUUID else {
             return
         }
         
@@ -144,13 +145,6 @@ extension McuMgrBleTransport: CBPeripheralDelegate {
     
     public func peripheralIsReady(toSendWriteWithoutResponse peripheral: CBPeripheral) {
         // Restart any paused writes due to Peripheral not being ready for more writes.
-        writeState.sharedLock { [unowned self] in
-            guard !pausedWrites.isEmpty else { return }
-            for pausedWrite in pausedWrites {
-                log(msg: "► [Seq: \(pausedWrite.sequenceNumber)] Resume (Peripheral Ready for Write Without Response)", atLevel: .debug)
-                coordinatedWrite(of: pausedWrite.sequenceNumber, data: Array(pausedWrite.remaining), to: pausedWrite.peripheral, characteristic: pausedWrite.characteristic, callback: pausedWrite.callback)
-            }
-            pausedWrites.removeAll()
-        }
+        robWriteBuffer.peripheralReadyToWrite(peripheral)
     }
 }
