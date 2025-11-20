@@ -196,7 +196,8 @@ class VendorModelViewCell: ModelViewCell, UITextFieldDelegate {
             return false
             
         default:
-            fatalError()
+            // A company identifier is different.
+            return false
         }
     }
 }
