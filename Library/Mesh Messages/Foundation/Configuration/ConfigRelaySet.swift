@@ -77,8 +77,8 @@ public struct ConfigRelaySet: AcknowledgedConfigMessage {
     
     /// Enables and sets the Relay settings on the Node.
     ///
-    /// - parameter relayRetransmit: The Relay Retranmission settings.
-    /// - since: 4.0.0 
+    /// - parameter relayRetransmit: The Relay Retransmission settings.
+    /// - since: 4.0.0
     public init(_ relayRetransmit: Node.RelayRetransmit) {
         self.state = .enabled
         self.count = relayRetransmit.count - 1

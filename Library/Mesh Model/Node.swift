@@ -93,6 +93,7 @@ public class Node: Codable {
     /// layer messages relayed by a mesh node.
     public struct RelayRetransmit: Codable {
         /// Number of transmissions for relay messages.
+        ///
         /// The value is in range from 1 to 8.
         public let count: UInt8
         /// The interval (in milliseconds) between retransmissions
@@ -210,14 +211,20 @@ public class Node: Codable {
         }
     }
     /// The object represents parameters of the transmissions of network
-    /// layer messages originating from a mesh node.
+    /// layer messages originating from a mesh Node.
+    ///
+    /// Set to `nil` if the value is unknown.
     public internal(set) var networkTransmit: NetworkTransmit? {
           didSet {
               meshNetwork?.timestamp = Date()
           }
       }
     /// The object represents parameters of the retransmissions of network
-    /// layer messages relayed by a mesh node.
+    /// layer messages relayed by a mesh Node.
+    ///
+    /// Set to `nil` if the Node does not support Relay feature, or the Relay
+    /// feature is disabled. Check ``Node/features`` property for actual state of
+    /// the feature.
     public internal(set) var relayRetransmit: RelayRetransmit? {
           didSet {
               meshNetwork?.timestamp = Date()

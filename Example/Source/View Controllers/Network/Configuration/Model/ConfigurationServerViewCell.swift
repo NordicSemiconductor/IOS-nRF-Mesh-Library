@@ -42,9 +42,12 @@ class ConfigurationServerViewCell: ModelViewCell {
     @IBOutlet weak var relayIntervalLabel: UILabel!
     
     @IBAction func relayCountDidChange(_ sender: UISlider) {
-        let value = Int(sender.value + 1)
+        let value = Int(sender.value)
         relayIntervalSlider.isEnabled = value > 1
-        if value == 1 {
+        if value == 0 {
+            relayCountLabel.text = "Disabled"
+            relayIntervalLabel.text = "N/A"
+        } else if value == 1 {
             relayCountLabel.text = "\(value) transmission"
             relayIntervalLabel.text = "N/A"
         } else {
@@ -57,7 +60,15 @@ class ConfigurationServerViewCell: ModelViewCell {
     }
     @IBOutlet weak var setRelayButton: UIButton!
     @IBAction func setRelayTapped(_ sender: UIButton) {
-        setRelay()
+        let count = UInt8(relayCountSlider.value)
+        let steps = UInt8(relayIntervalSlider.value)
+        let enabled = count > 0
+        if enabled {
+            // Values 0-7 correspond to 1-8 transmissions.
+            setRelay(count: count - 1, steps: steps)
+        } else {
+            disableRelay()
+        }
     }
     
     // Network Transmit
@@ -82,7 +93,9 @@ class ConfigurationServerViewCell: ModelViewCell {
         networkTransmitIntervalLabel.text = "\(Int(sender.value + 1) * 10) ms"
     }
     @IBAction func setNetworkTransmitTapped(_ sender: UIButton) {
-        setNetworkTransmit()
+        let count = UInt8(networkTransmitCountSlider.value)
+        let steps = UInt8(networkTransmitIntervalSlider.value)
+        setNetworkTransmit(count: count, steps: steps)
     }
     
     // Secure Network Beacon
@@ -105,18 +118,21 @@ class ConfigurationServerViewCell: ModelViewCell {
     
     override func reload(using model: Model) {
         if let node = model.parentElement?.parentNode {
+            let relaySupported = node.features?.relay != .notSupported
             if let relay = node.relayRetransmit {
                 // Interval needs to be set first, as Count may override its Label to N/A.
                 relayIntervalSlider.value = Float(relay.steps)
-                relayIntervalSlider.isEnabled = true
                 relayIntervalDidChange(relayIntervalSlider)
-                relayCountSlider.value = Float(relay.count - 1)
+                relayCountSlider.value = Float(relay.count)
                 relayCountDidChange(relayCountSlider)
-            } else if delegate.isRefreshing {
+            } else if relaySupported {
+                relayIntervalSlider.value = 0
+                relayIntervalDidChange(relayIntervalSlider)
+                relayCountSlider.value = 0
+                relayCountDidChange(relayCountSlider)
+            } else {
                 relayCountLabel.text = "Not supported"
                 relayIntervalLabel.text = "N/A"
-                relayCountSlider.isEnabled = false
-                relayIntervalSlider.isEnabled = false
             }
             if let networkTransmit = node.networkTransmit {
                 // Interval needs to be set first, as Count may override its Label to N/A.
@@ -127,7 +143,9 @@ class ConfigurationServerViewCell: ModelViewCell {
             }
             let localProvisioner = MeshNetworkManager.instance.meshNetwork?.localProvisioner
             let isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
-            setRelayButton.isEnabled = isEnabled && node.relayRetransmit != nil
+            setRelayButton.isEnabled = isEnabled && relaySupported
+            relayCountSlider.isEnabled = isEnabled && relaySupported
+            relayIntervalSlider.isEnabled = isEnabled && relaySupported && relayCountSlider.value > 1
             networkTransmitButton.isEnabled = isEnabled
             
             secureNetworkBeaconSwitch.isOn = node.secureNetworkBeacon ?? false
@@ -212,9 +230,11 @@ private extension ConfigurationServerViewCell {
         delegate?.send(ConfigRelayGet(), description: "Reading Relay status...")
     }
     
-    func setRelay() {
-        let count = UInt8(relayCountSlider.value)
-        let steps = UInt8(relayIntervalSlider.value)
+    func disableRelay() {
+        delegate?.send(ConfigRelaySet(), description: "Disabling Relay feature...")
+    }
+    
+    func setRelay(count: UInt8, steps: UInt8) {
         delegate?.send(ConfigRelaySet(count: count, steps: steps), description: "Sending Relay settings...")
     }
     
@@ -222,9 +242,7 @@ private extension ConfigurationServerViewCell {
         delegate?.send(ConfigNetworkTransmitGet(), description: "Reading Network Transmit status...")
     }
     
-    func setNetworkTransmit() {
-        let count = UInt8(networkTransmitCountSlider.value)
-        let steps = UInt8(networkTransmitIntervalSlider.value)
+    func setNetworkTransmit(count: UInt8, steps: UInt8) {
         delegate?.send(ConfigNetworkTransmitSet(count: count, steps: steps), description: "Sending Network Transmit settings...")
     }
     
