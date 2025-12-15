@@ -306,7 +306,7 @@ internal class ConfigurationClientHandler: ModelDelegate {
                     node.features = NodeFeaturesState()
                 }
                 node.features?.relay = status.state
-                if case .notSupported = status.state {
+                if status.state != .enabled {
                     node.relayRetransmit = nil
                 } else {
                     node.relayRetransmit = Node.RelayRetransmit(status)
