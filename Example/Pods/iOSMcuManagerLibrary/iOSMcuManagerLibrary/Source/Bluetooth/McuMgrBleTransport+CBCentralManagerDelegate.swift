@@ -18,7 +18,8 @@ extension McuMgrBleTransport: CBCentralManagerDelegate {
             if let peripheral = centralManager
                 .retrievePeripherals(withIdentifiers: [identifier])
                 .first {
-                self.peripheral = peripheral
+                log(msg: "\(#function): Setting Peripheral for \(mode) mode.", atLevel: .debug)
+                modePeripherals[mode] = peripheral
                 connectionLock.open(key: McuMgrBleTransportKey.awaitingCentralManager.rawValue)
             } else {
                 connectionLock.open(McuMgrBleTransportError.centralManagerNotReady)
@@ -44,10 +45,7 @@ extension McuMgrBleTransport: CBCentralManagerDelegate {
             return
         }
         log(msg: "Peripheral disconnected", atLevel: .info)
-        peripheral.delegate = nil
-        smpCharacteristic = nil
-        connectionLock.open(McuMgrTransportError.disconnected)
-        state = .disconnected
+        didDisconnect()
         notifyStateChanged(.disconnected)
     }
     

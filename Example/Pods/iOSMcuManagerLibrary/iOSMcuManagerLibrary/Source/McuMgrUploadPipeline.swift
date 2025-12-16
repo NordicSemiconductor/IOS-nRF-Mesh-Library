@@ -13,15 +13,16 @@ public struct McuMgrUploadPipeline {
     
     // MARK: Properties
     
+    let depth: Int
+    
     private let bufferSize: UInt64
-    private let depth: Int
     private var lastReceivedOffset: UInt64
     private var expectedReturnOffsets: [UInt64] = []
     
     // MARK: init
     
     public init(adopting configuration: FirmwareUpgradeConfiguration, over transport: McuMgrTransport) {
-        self.depth = configuration.pipelineDepth
+        self.depth = max(1, configuration.pipelineDepth)
         self.bufferSize = configuration.reassemblyBufferSize
         self.lastReceivedOffset = 0
         

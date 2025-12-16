@@ -230,7 +230,12 @@ open class McuManager: NSObject {
         
         let remainingBytes = UInt64(data.count) - offset
         let maxPacketSize = max(configuration.reassemblyBufferSize, UInt64(transport.mtu))
-        var maxDataLength = maxPacketSize - UInt64(packetOverhead)
+        let overhead = UInt64(packetOverhead)
+        guard maxPacketSize > overhead else {
+            // We can't send anything if the overhead is larger than max packet size.
+            return UInt64(McuMgrHeader.HEADER_LENGTH)
+        }
+        var maxDataLength = maxPacketSize - overhead
         if configuration.byteAlignment != .disabled {
             maxDataLength = (maxDataLength / configuration.byteAlignment.rawValue) * configuration.byteAlignment.rawValue
         }
@@ -433,9 +438,16 @@ public enum McuMgrError: Error, LocalizedError {
 
 public class McuMgrGroupReturnCode: CBORMappable {
     
-    public var group: UInt64 = 0
+    // MARK: Public Properties
     
+    public var group: UInt64 = 0
     public var rc: McuMgrReturnCode = .ok
+    
+    // MARK: Private
+    
+    private var returnCodeValue: UInt64 = 0
+    
+    // MARK: init
     
     public required init(cbor: CBOR?) throws {
         try super.init(cbor: cbor)
@@ -443,7 +455,8 @@ public class McuMgrGroupReturnCode: CBORMappable {
             self.group = group
         }
         if case let CBOR.unsignedInt(rc)? = cbor?["rc"] {
-            self.rc = McuMgrReturnCode(rawValue: rc) ?? .ok
+            self.rc = McuMgrReturnCode(rawValue: rc) ?? .unrecognized
+            self.returnCodeValue = rc
         }
     }
     
@@ -453,7 +466,8 @@ public class McuMgrGroupReturnCode: CBORMappable {
             self.group = group
         }
         if case let CBOR.unsignedInt(rc)? = map["rc"] {
-            self.rc = McuMgrReturnCode(rawValue: rc) ?? .ok
+            self.rc = McuMgrReturnCode(rawValue: rc) ?? .unrecognized
+            self.returnCodeValue = rc
         }
     }
     
@@ -463,23 +477,23 @@ public class McuMgrGroupReturnCode: CBORMappable {
         let error: LocalizedError?
         switch McuMgrGroup(rawValue: UInt16(group)) {
         case .OS:
-            error = OSManagerError(rawValue: rc.rawValue)
+            error = OSManagerError(rawValue: returnCodeValue)
         case .image:
-            error = ImageManagerError(rawValue: rc.rawValue)
+            error = ImageManagerError(rawValue: returnCodeValue)
         case .statistics:
-            error = StatsManagerError(rawValue: rc.rawValue)
+            error = StatsManagerError(rawValue: returnCodeValue)
         case .settings:
-            error = SettingsManagerError(rawValue: rc.rawValue)
+            error = SettingsManagerError(rawValue: returnCodeValue)
         case .filesystem:
-            error = FileSystemManagerError(rawValue: rc.rawValue)
+            error = FileSystemManagerError(rawValue: returnCodeValue)
         case .basic:
-            error = BasicManagerError(rawValue: rc.rawValue)
+            error = BasicManagerError(rawValue: returnCodeValue)
         default:
             // Passthrough to McuMgr 'RC' Errors for Unknown
             // or Unsupported values.
-            error = McuManagerError.returnCodeValue(rc.rawValue)
+            error = McuManagerError.returnCodeValue(returnCodeValue)
         }
-        return error ?? McuManagerError.returnCodeValue(rc.rawValue)
+        return error ?? McuManagerError.returnCodeValue(returnCodeValue)
     }
 }
 
@@ -489,7 +503,7 @@ public class McuMgrGroupReturnCode: CBORMappable {
  Return codes for `McuMgrResponse`.
  
  All Mcu Manager responses contain a "rc" key with a return code. If
- they don't, `.ok` is assumed.
+ they don't, `.ok` is safe to be assumed.
  */
 public enum McuMgrReturnCode: UInt64, Error {
     case ok                = 0
@@ -508,6 +522,11 @@ public enum McuMgrReturnCode: UInt64, Error {
     case unsupportedTooNew = 13
     case userDefinedError  = 256
     
+    /**
+     ``unrecognized``'s `rawValue` does not match a return code `rc` value. If it does, it's by accident. See `Discussion` section for more information.
+     
+     - Note: ``unrecognized`` represents any return code value that is not currently represented by the listing of ``McuMgrReturnCode`` cases. So for example, an rc value of `14` might be listed as ``unrecognized``, which has a `rawValue` of `13`. So they are not interchangeable in the case of ``unrecognized``.
+     */
     case unrecognized
     
     public func isSuccess() -> Bool {

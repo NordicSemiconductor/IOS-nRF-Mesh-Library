@@ -132,7 +132,7 @@ public indirect enum CBOR : Equatable, Hashable,
         }
     }
 
-    public struct Tag: RawRepresentable, Equatable, Hashable {
+    public struct Tag: RawRepresentable, Hashable, Sendable {
         public let rawValue: UInt64
 
         public init(rawValue: UInt64) {
@@ -174,6 +174,6 @@ extension CBOR.Tag {
     public static let selfDescribeCBOR = CBOR.Tag(rawValue: 55799)
 }
 
-#if os(Linux)
+#if os(Linux) || os(Windows)
 let NSEC_PER_SEC: UInt64 = 1_000_000_000
 #endif

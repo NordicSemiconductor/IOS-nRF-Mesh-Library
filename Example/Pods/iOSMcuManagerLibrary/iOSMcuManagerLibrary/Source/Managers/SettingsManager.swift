@@ -10,6 +10,9 @@ import SwiftCBOR
 // MARK: - SettingsManager
 
 public class SettingsManager: McuManager {
+    
+    // MARK: TAG
+    
     override class var TAG: McuMgrLogCategory { .settings }
     
     // MARK: IDs
@@ -77,6 +80,35 @@ public class SettingsManager: McuManager {
     /// - parameter callback: The response callback.
     public func save(callback: @escaping McuMgrCallback<McuMgrResponse>) {
         send(op: .write, commandId: ConfigID.three, payload: nil, callback: callback)
+    }
+    
+    /// Set the Advertising name after reset into Firmware Loader Mode.
+    ///
+    /// This mostly applies to Bare Metal SDK software, wherein the firmware loader is independent of the application partition. For automatic 'buttonless' DFU such as those provided for nRF5 SDK, regular NCS SDK as well as SUIT special case, we need to be able to reconnect to the device in Firmware Loader Mode. To be able to find it after it resets and the Firmware Loader begins advertising, we can set the name it should advertise with.
+    ///
+    /// - parameter name: The name the Firmware Loader should advertise as.
+    /// - parameter callback: The response callback.
+    public func setFirmwareLoaderAdvertisingName(_ name: String, callback: @escaping McuMgrCallback<McuMgrResponse>) {
+        let nameBlob: [UInt8] = Array(name.utf8)
+        write(name: "fw_loader/adv_name", value: nameBlob) { [unowned self] response, error in
+            if let error {
+                callback(response, error)
+                return
+            }
+            self.save(callback: callback)
+        }
+    }
+}
+
+// MARK: - API
+
+public extension SettingsManager {
+    
+    func generateNewAdvertisingName() -> String {
+        let now = Date()
+        let components = Calendar.current.dateComponents([.hour, .minute, .second],
+                                                         from: now)
+        return "FL_\(components.hour!)\(components.minute!)\(components.second!)"
     }
 }
 

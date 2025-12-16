@@ -23,34 +23,39 @@ public class ImageManager: McuManager {
         public let data: Data
         
         /**
+         Convenience initialiser.
+         
+         Please see ``init(name:image:slot:content:hash:data:)`` for more information.
+         */
+        public init(_ manifest: McuMgrManifest.File, hash: Data, data: Data) {
+            self.init(name: manifest.file, image: manifest.image, slot: manifest.slot, content: manifest.content, hash: hash, data: data)
+        }
+        
+        /**
          Default Initialiser.
          
-         - parameters:
-            - slot: All of the previous code / modes target `slot` 1 (Secondary) as where they want the image uploaded, so that's the default. Only DirectXIP would target `slot` 0 (Primary) for upload.
+         - Important:
+         McuMgr firmware commands expect slot numbers limited to 0 (Primary) and 1 (Secondary). However, newer DFU package generation backends have began to adopt an ever-increasing slot number. So for example, whereas previously Image 1, Slot 1 would represent the Secondary slot for the Secondary core, a newer DFU package might list the same combination as Image 1, Slot 3. This can lead to errors being returned when sending McuMgr commands, so we patch the slot number in the initialiser back to Image 1, Slot 1 for maximum compatibility.
+         
+         - Parameters:
+            - slot: set by default to `slot` 1 (Secondary). Other than for DirectXIP, this conforms to the user-expected behaviour of representing a slice of memory in the target Core (i.e. `image`) that is not currently running. See ``Discussion`` for important details.
             - content: This is a necessary aid for complex SUIT updates involving `suitCache` resources. It defaults to `.unknown` so as to not alter the behavior of unrelated DFU operations. It can be set to other, more descriptive values, but improper use might cause erratic upload behavior.
          */
-        public init(image: Int, slot: Int = 1, content: McuMgrManifest.File.ContentType = .unknown,
-                    hash: Data, data: Data) {
-            self.name = nil
+        public init(name: String? = nil, image: Int, slot: Int = 1,
+                    content: McuMgrManifest.File.ContentType = .unknown, hash: Data, data: Data) {
+            self.name = name
             self.image = image
-            self.slot = slot
+            self.slot = slot % 2
             self.content = content
             self.hash = hash
             self.data = data
         }
         
-        public init(_ manifest: McuMgrManifest.File, hash: Data, data: Data) {
-            self.name = manifest.file
-            self.image = manifest.image
-            self.slot = manifest.slot
-            self.content = manifest.content
-            self.hash = hash
-            self.data = data
-        }
-        
         internal init(_ image: FirmwareUpgradeImage) {
-            self.name = nil
+            self.name = image.content.description
             self.image = image.image
+            // Note that FirmwareUpgradeImage is itself derived from ImageManager.Image, so
+            // there's no need to repeat the fix for the slot.
             self.slot = image.slot
             self.content = image.content
             self.hash = image.hash
@@ -250,15 +255,27 @@ public class ImageManager: McuManager {
         return true
     }
 
-    /// Erases an unused image from the secondary image slot on the device.
-    ///
-    /// The image cannot be erased if the image is a confirmed image, is marked
-    /// for test on the next reboot, or is an active image for a split image
-    /// setup.
-    ///
-    /// - parameter callback: The response callback.
-    public func erase(callback: @escaping McuMgrCallback<McuMgrResponse>) {
-        send(op: .write, commandId: ImageID.erase, payload: nil, callback: callback)
+    // MARK: erase
+    
+    /**
+     Erases an unconfirmed image slot from the target device.
+     
+     There will be errors if the target slot is confirmed, marked for test on next reboot, or is an active image for a split image (perhaps DirectXiP?) setup.
+     
+     - parameter image: By default, if set to `nil`, McuMgr will erase the slot that is not currently active. See `Discussion` section for more.
+     - parameter slot: By default, if set to `nil`, McuMgr will erase the slot that is not currently active. See `Discussion` section for more.
+     - parameter callback: The response callback.
+     
+     - note: We are aware that other APIs, such as ``test(hash:callback:)`` and ``confirm(hash:callback:)`` use the slot's `hash` as a parameter. This API does not, because we're mirroring Zephyr / McuMgr's own API. So yes, we too, wish it were consistent.
+     - important: Both `image` and `slot` parameters are needed for a targetted (`image`, `slot`) combination to be sent with this API call. Otherwise, the target firmware will revert to its default behaviour which, is to erase the secondary slot that is not marked as active (i.e. booted / running from). This is as [per Zephyr Documentation](https://github.com/nrfconnect/sdk-zephyr/blob/f7859899ec7dbb21e0580eef25b229bda727f04a/subsys/mgmt/mcumgr/grp/img_mgmt/src/img_mgmt.c#L450).
+     */
+    public func erase(image: Int? = nil, slot: Int? = nil, callback: @escaping McuMgrCallback<McuMgrResponse>) {
+        var payload: [String: CBOR]?
+        if let image, let slot {
+            let convertedSlotParameter = 2 * image + slot
+            payload = ["slot": CBOR.unsignedInt(UInt64(convertedSlotParameter))]
+        }
+        send(op: .write, commandId: ImageID.erase, payload: payload, callback: callback)
     }
     
     /// Request core dump on the device. The data will be stored in the dump

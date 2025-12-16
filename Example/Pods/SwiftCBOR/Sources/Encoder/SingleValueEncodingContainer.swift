@@ -131,14 +131,14 @@ extension _CBOREncoder.SingleValueContainer: SingleValueEncodingContainer {
         self.storage.append(contentsOf: CBOR.encode(value))
     }
 
-    func encode(_ value: Date) throws {
+    func encodeDate(_ value: Date) throws {
         try checkCanEncode(value: value)
         defer { self.canEncodeNewValue = false }
 
         self.storage.append(contentsOf: CBOR.encodeDate(value, options: self.options.toCBOROptions()))
     }
 
-    func encode(_ value: Data) throws {
+    func encodeData(_ value: Data) throws {
         try checkCanEncode(value: value)
         defer { self.canEncodeNewValue = false }
 
@@ -151,15 +151,14 @@ extension _CBOREncoder.SingleValueContainer: SingleValueEncodingContainer {
 
         switch value {
         case let data as Data:
-            try self.encode(data)
+            try self.encodeData(data)
         case let date as Date:
-            try self.encode(date)
+            try self.encodeDate(date)
         default:
             let encoder = _CBOREncoder(options: self.options)
             try value.encode(to: encoder)
             self.storage.append(encoder.data)
         }
-
     }
 }
 

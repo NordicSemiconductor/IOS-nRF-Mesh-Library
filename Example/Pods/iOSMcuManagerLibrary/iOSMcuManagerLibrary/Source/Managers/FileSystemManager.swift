@@ -201,7 +201,7 @@ public class FileSystemManager: McuManager {
         uploadConfiguration.reassemblyBufferSize = min(uploadConfiguration.reassemblyBufferSize, UInt64(UInt16.max))
         uploadPipeline = McuMgrUploadPipeline(adopting: uploadConfiguration, over: transport)
         if let bleTransport = transport as? McuMgrBleTransport {
-            bleTransport.numberOfParallelWrites = uploadConfiguration.pipelineDepth
+            bleTransport.numberOfParallelWrites = uploadPipeline.depth
             bleTransport.chunkSendDataToMtuSize = uploadConfiguration.reassemblyBufferSize > bleTransport.mtu
         }
         
@@ -422,14 +422,7 @@ public class FileSystemManager: McuManager {
             return
         }
         
-        guard let bufferCount = response.bufferCount, var bufferSize = response.bufferSize else {
-            self.log(msg: "Invalid McuMgr Parameters response received.", atLevel: .warning)
-            self.finishedMcuMgrParametersRequest() // Proceed to upload
-            return
-        }
-        self.log(msg: "Mcu Manager parameters received (\(bufferCount) x \(bufferSize))", atLevel: .application)
-        self.storedMcuMgrParametersResponse = response
-        // Continue
+        self.receivedMcuMgrParametersResponse(response)
         self.finishedMcuMgrParametersRequest()
     }
     
@@ -482,7 +475,7 @@ public class FileSystemManager: McuManager {
         if let offset = response.off {
             // if 'first successful sequenceNumber upload'
             if self.offset == 0 && offset > 0, let response = self.storedMcuMgrParametersResponse {
-                self.processMcuMgrParametersResponse(response)
+                self.patchReassemblyAndPipeliningSetup(using: response)
                 self.storedMcuMgrParametersResponse = nil
             }
             // Set the file upload offset.
@@ -612,6 +605,8 @@ public class FileSystemManager: McuManager {
 
 private extension FileSystemManager {
     
+    // MARK: mcuMgrParameters
+    
     func requestMcuMgrParameters() {
         objc_sync_enter(self)
         log(msg: "Requesting McuMgr Parameters...", atLevel: .application)
@@ -622,34 +617,26 @@ private extension FileSystemManager {
         objc_sync_exit(self)
     }
     
-    func processMcuMgrParametersResponse(_ response: McuMgrParametersResponse) {
+    func receivedMcuMgrParametersResponse(_ response: McuMgrParametersResponse) {
         log(msg: "Processing McuMgr Parameters Response.", atLevel: .debug)
-        var bufferSize: UInt64! = response.bufferSize
         guard let bleTransport = transport as? McuMgrBleTransport else {
             log(msg: "Ignoring McuMgr Parameters Response due to unsupported (non-BLE) Transport.", atLevel: .debug)
             return
         }
-        if bufferSize > UInt16.max {
-            bufferSize = UInt64(UInt16.max)
-            log(msg: "SAR Buffer Size is larger than maximum of \(UInt16.max) bytes. Reducing Buffer Size to maximum value.", atLevel: .warning)
-        }
-        log(msg: "Setting SAR Buffer Size to \(bufferSize) bytes.", atLevel: .debug)
-        uploadConfiguration.reassemblyBufferSize = bufferSize
         
-        if let bufferCount = response.bufferCount, uploadConfiguration.pipelineDepth >= bufferCount {
-            log(msg: "Target pipeline depth of \(bufferCount - 1) is smaller than upload configuration of \(uploadConfiguration.pipelineDepth).", atLevel: .warning)
-            log(msg: "Setting pipeline depth to \(bufferCount - 1).", atLevel: .debug)
-            uploadConfiguration.pipelineDepth = Int(bufferCount - 1)
-            uploadPipeline = McuMgrUploadPipeline(adopting: uploadConfiguration, over: transport)
-            bleTransport.numberOfParallelWrites = uploadConfiguration.pipelineDepth
+        guard let bufferCount = response.bufferCount, var bufferSize = response.bufferSize else {
+            self.log(msg: "Invalid McuMgr Parameters response received.", atLevel: .warning)
+            storedMcuMgrParametersResponse = nil // just in case
+            return
         }
+        log(msg: "Mcu Manager parameters received (\(bufferCount) x \(bufferSize))", atLevel: .application)
+        storedMcuMgrParametersResponse = response
+        bufferSize = min(response.bufferSize, UInt64(UInt16.max))
         
-        if bufferSize > bleTransport.mtu, !bleTransport.chunkSendDataToMtuSize {
-            log(msg: "Enabling SMP Reassembly.", atLevel: .debug)
-            bleTransport.chunkSendDataToMtuSize = true
-        } else if transport.mtu > bufferSize {
+        // Guard against soft-lock on first sequenceNumber upload
+        if bufferSize < transport.mtu {
             do {
-                log(msg: "SAR Buffer Size of \(bufferSize) is larger than MTU Size of \(transport.mtu). Setting MTU Size to \(bufferSize).", atLevel: .debug)
+                log(msg: "SAR Buffer Size of \(bufferSize) is smaller than MTU Size of \(transport.mtu). Setting MTU Size to \(bufferSize).", atLevel: .debug)
                 try setMtu(Int(bufferSize))
                 if bleTransport.chunkSendDataToMtuSize {
                     log(msg: "Disabling Reassembly due to low Buffer Size of \(bufferSize) bytes.", atLevel: .debug)
@@ -661,6 +648,30 @@ private extension FileSystemManager {
         }
     }
     
+    func patchReassemblyAndPipeliningSetup(using response: McuMgrParametersResponse) {
+        guard let bleTransport = transport as? McuMgrBleTransport else {
+            log(msg: "Skipping \(#function) due to unsupported (non-Bluetooth LE) Transport.", atLevel: .debug)
+            return
+        }
+        
+        let bufferSize: UInt64! = min(response.bufferSize, UInt64(UInt16.max))
+        log(msg: "Setting SAR Buffer Size to \(bufferSize) bytes.", atLevel: .debug)
+        uploadConfiguration.reassemblyBufferSize = bufferSize
+        
+        if let bufferCount = response.bufferCount, uploadConfiguration.pipelineDepth >= bufferCount {
+            log(msg: "Target pipeline depth of \(bufferCount - 1) is smaller than upload configuration of \(uploadConfiguration.pipelineDepth).", atLevel: .warning)
+            uploadConfiguration.pipelineDepth = Int(bufferCount - 1)
+            uploadPipeline = McuMgrUploadPipeline(adopting: uploadConfiguration, over: transport)
+            bleTransport.numberOfParallelWrites = uploadPipeline.depth
+            log(msg: "Pipeline depth set to \(uploadPipeline.depth).", atLevel: .debug)
+        }
+        
+        if bufferSize > bleTransport.mtu, !bleTransport.chunkSendDataToMtuSize {
+            log(msg: "Enabling SMP Reassembly.", atLevel: .debug)
+            bleTransport.chunkSendDataToMtuSize = true
+        }
+    }
+    
     func finishedMcuMgrParametersRequest() {
         defaultManager = nil
         let fileName: String! = fileName
@@ -669,12 +680,16 @@ private extension FileSystemManager {
         upload(name: fileName, data: fileData, offset: 0, callback: uploadCallback)
     }
     
+    // MARK: sendNext(from:)
+    
     func sendNext(from offset: UInt) {
         if transferState != .uploading {
             return
         }
         upload(name: fileName!, data: fileData!, offset: offset, callback: uploadCallback)
     }
+    
+    // MARK: requestNext(from:)
     
     func requestNext(from offset: UInt) {
         if transferState != .downloading {
