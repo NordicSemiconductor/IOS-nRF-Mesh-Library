@@ -367,6 +367,25 @@ public extension MeshNetworkManager {
                              to: publish.publicationAddress, using: networkManager)
     }
     
+    /// This message checks whether a message encrypted with the given Network Key
+    /// can be relayed using the connected GATT Proxy Node.
+    ///
+    /// A message may be sent to a local Node, or using a GATT Proxy Node.
+    /// Check if the message can be relayed to the destination using a Proxy Node.
+    /// The Proxy Node must know the Network Key; otherwise it will not be able to
+    /// decode the destination and decrement TTL.
+    ///
+    /// - parameter networkKey: The Network Key to be used to send the message.
+    internal func ensureNetworkKey(_ networkKey: NetworkKey) {
+        if let proxy = proxyFilter.proxy {
+            if !proxy.knows(networkKey: networkKey) {
+                logger?.w(.proxy, "\(proxy.name ?? "The GATT Proxy Node") cannot relay messages using \(networkKey), message will be sent only to the local Node.")
+            }
+        } else {
+            logger?.w(.proxy, "No GATT Proxy connected, message will be sent only to the local Node.")
+        }
+    }
+    
     /// Encrypts the message with the Application Key and the Network Key
     /// bound to it, and sends to the given destination address.
     ///
@@ -411,25 +430,7 @@ public extension MeshNetworkManager {
             print("Error: TTL value \(initialTtl!) is invalid")
             throw AccessError.invalidTtl
         }
-        // A message may be sent to a local Node, or using a GATT Proxy Node.
-        // Check if the message can be relayed to the destination using a Proxy Node.
-        // The Proxy Node must know the Network Key; otherwise it will not be able to
-        // decode the destination and decrement TTL.
-        if destination.address.isUnicast {
-            guard localNode.contains(elementWithAddress: destination.address) ||
-                  proxyFilter.proxy?.knows(networkKey: applicationKey.boundNetworkKey) == true else {
-                print("Error: The GATT Proxy Node is not connected or it cannot decrypt \(applicationKey.boundNetworkKey)")
-                throw AccessError.cannotRelay
-            }
-        } else {
-            if let proxy = proxyFilter.proxy {
-                if !proxy.knows(networkKey: applicationKey.boundNetworkKey) {
-                    logger?.w(.proxy, "\(proxy.name ?? "The GATT Proxy Node") cannot relay messages using \(applicationKey.boundNetworkKey), message will be sent only to the local Node.")
-                }
-            } else {
-                logger?.w(.proxy, "No GATT Proxy connected, message will be sent only to the local Node.")
-            }
-        }
+        ensureNetworkKey(applicationKey.boundNetworkKey)
         try await networkManager.send(message, from: source, to: destination,
                                       withTtl: initialTtl, using: applicationKey)
     }
@@ -522,8 +523,7 @@ public extension MeshNetworkManager {
             .first(where: {
                 // Unless the message is sent locally, take only keys known to the Proxy Node.
                 node.isLocalProvisioner || proxyFilter.proxy?.knows(networkKey: $0.boundNetworkKey) == true
-            }),
-            node.isLocalProvisioner || proxyFilter.proxy?.knows(networkKey: applicationKey.boundNetworkKey) == true else {
+            }) else {
             print("Error: No GATT Proxy connected or no common Network Keys")
             throw AccessError.cannotRelay
         }
@@ -634,8 +634,7 @@ public extension MeshNetworkManager {
               .first(where: {
                   // Unless the message is sent locally, take only keys known to the Proxy Node.
                   node.isLocalProvisioner || proxyFilter.proxy?.knows(networkKey: $0.boundNetworkKey) == true
-              }),
-              node.isLocalProvisioner || proxyFilter.proxy?.knows(networkKey: applicationKey.boundNetworkKey) == true else {
+              }) else {
             print("Error: No GATT Proxy connected or no common Network Keys")
             throw AccessError.cannotRelay
         }
@@ -652,6 +651,7 @@ public extension MeshNetworkManager {
             print("Error: TTL value \(initialTtl!) is invalid")
             throw AccessError.invalidTtl
         }
+        ensureNetworkKey(applicationKey.boundNetworkKey)
         return try await networkManager
             .send(message, from: source, to: element.unicastAddress,
                   withTtl: initialTtl, using: applicationKey)
@@ -755,8 +755,7 @@ public extension MeshNetworkManager {
               .first(where: {
                     // Unless the message is sent locally, take only keys known to the Proxy Node.
                     node.isLocalProvisioner || proxyFilter.proxy?.knows(networkKey: $0) == true
-              }),
-              node.isLocalProvisioner || proxyFilter.proxy?.knows(networkKey: networkKey) == true else {
+              }) else {
             print("Error: No GATT Proxy connected or no common Network Keys")
             throw AccessError.cannotRelay
         }
@@ -768,6 +767,7 @@ public extension MeshNetworkManager {
             print("Error: TTL value \(initialTtl!) is invalid")
             throw AccessError.invalidTtl
         }
+        ensureNetworkKey(networkKey)
         try await networkManager.send(message, from: element, to: destination,
                                       withTtl: initialTtl, using: networkKey)
     }
@@ -862,8 +862,7 @@ public extension MeshNetworkManager {
                     (message as? ConfigNetKeyDelete)?.networkKeyIndex != $0.index &&
                     // Unless the message is sent locally, take only keys known to the Proxy Node.
                     (node.isLocalProvisioner || proxyFilter.proxy?.knows(networkKey: $0) == true)
-              }),
-              node.isLocalProvisioner || proxyFilter.proxy?.knows(networkKey: networkKey) == true else {
+              }) else {
             if let configNetKeyDelete = message as? ConfigNetKeyDelete,
                networkKey == nil || networkKey?.index == configNetKeyDelete.networkKeyIndex {
                 print("Error: Cannot delete the last Network Key or a key used to secure the message")
@@ -880,6 +879,7 @@ public extension MeshNetworkManager {
             print("Error: TTL value \(initialTtl!) is invalid")
             throw AccessError.invalidTtl
         }
+        ensureNetworkKey(networkKey)
         return try await networkManager
             .send(message, from: element, to: destination,
                   withTtl: initialTtl, using: networkKey)
