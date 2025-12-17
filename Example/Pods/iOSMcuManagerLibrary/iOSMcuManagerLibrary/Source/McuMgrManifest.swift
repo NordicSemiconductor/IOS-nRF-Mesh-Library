@@ -141,11 +141,18 @@ extension McuMgrManifest {
             } else {
                 bootloader = .unknown
             }
-            // Load Address is an MCUBoot Manifest requirement.
-            // For SUIT it's not set, so we set it to zero for backwards compatibility.
-            loadAddress = bootloader == .mcuboot
-                ? try values.decode(Int.self, forKey: .loadAddress)
-                : .zero
+            
+            let loadAddressString: String? = try? values.decode(String.self, forKey: .loadAddress)
+            let loadAddressInt: Int
+            if let loadAddressString {
+                loadAddressInt = Int(loadAddressString) ?? .zero
+            } else {
+                loadAddressInt = (try? values.decode(Int.self, forKey: .loadAddress)) ?? .zero
+            }
+            
+            // Load Address is an MCUBoot Manifest "requirement".
+            // For SUIT it's not set, but we keep it at zero for backwards compatibility.
+            loadAddress = bootloader == .mcuboot ? loadAddressInt : .zero
             
             if let partitionString = try? values.decode(String.self, forKey: ._partition) {
                 _partition = Int(partitionString)

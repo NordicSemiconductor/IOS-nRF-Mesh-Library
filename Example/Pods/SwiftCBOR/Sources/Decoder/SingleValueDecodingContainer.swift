@@ -231,35 +231,14 @@ extension _CBORDecoder.SingleValueContainer: SingleValueDecodingContainer {
         }
     }
 
-    func decode(_ type: Data.Type) throws -> Data {
-        guard let cbor = try? CBOR.decode(self.data.map { $0 }) else {
-            let context = DecodingError.Context(codingPath: self.codingPath, debugDescription: "Invalid format: \(self.data)")
-            throw DecodingError.dataCorrupted(context)
-        }
-        switch cbor {
-        case .byteString(let bytes): return Data(bytes)
-        default:
-            let context = DecodingError.Context(codingPath: self.codingPath, debugDescription: "Invalid format: \(self.data)")
-            throw DecodingError.typeMismatch(Data.self, context)
-        }
-    }
-
     func decode<T: Decodable>(_ type: T.Type) throws -> T {
-        switch type {
-        // TODO: These seem unnecessary/wrong?!
-        case is Data.Type:
-            return try decode(Data.self) as! T
-        case is Date.Type:
-            return try decode(Date.self) as! T
-        default:
-            let decoder = _CBORDecoder(data: self.data, options: self.options)
-            let value = try T(from: decoder)
-            if let nextIndex = decoder.container?.index {
-                self.index = nextIndex
-            }
-
-            return value
+        let decoder = _CBORDecoder(data: self.data, options: self.options)
+        let value = try T(from: decoder)
+        if let nextIndex = decoder.container?.index {
+            self.index = nextIndex
         }
+
+        return value
     }
 }
 

@@ -36,8 +36,6 @@ public protocol PeripheralDelegate: AnyObject {
 
 public class McuMgrBleTransport: NSObject {
     
-    /// The CBPeripheral for this transport to communicate with.
-    internal var peripheral: CBPeripheral?
     /// The CBCentralManager instance from which the peripheral was obtained.
     /// This is used to connect and cancel connection.
     internal let centralManager: CBCentralManager
@@ -56,6 +54,11 @@ public class McuMgrBleTransport: NSObject {
     
     internal let configuration: McuMgrBleTransport.Configuration
     
+    /// There's no longer a @peripheral property. Instead, since we had to add
+    /// the modes, we store ``CBPeripheral``s in a dictionary we query based
+    /// on the current ``mode``.
+    internal var modePeripherals: [McuMgrTransportMode: CBPeripheral]
+    
     /// SMP Characteristic object. Used to write requests and receive
     /// notifications.
     internal var smpCharacteristic: CBCharacteristic?
@@ -65,6 +68,16 @@ public class McuMgrBleTransport: NSObject {
             log(msg: "MTU set to \(mtu)", atLevel: .info)
         }
     }
+    
+    /// Mode of operation.
+    ///
+    /// In the case of ``McuMgrBleTransport``, we've hijacked
+    /// it to represent targeted ``CBPeripheral``. This is because for resets into
+    /// Firmware Loader mode, the same physical device is represented by a different
+    /// ``CBPeripheral``. Since the ``McuMgrTransport`` handles transport, we had
+    /// to extend the API in some way, whilst trying to keep it flexible for other
+    /// methods of transport. As well as to attempt to provide some semblance of consistency.
+    public private(set) var mode: McuMgrTransportMode
     
     /// An array of observers.
     private var observers: [ConnectionObserver]
@@ -165,10 +178,14 @@ public class McuMgrBleTransport: NSObject {
         self.operationQueue.qualityOfService = .userInitiated
         self.operationQueue.maxConcurrentOperationCount = 1
         self.configuration = configuration
+        self.mode = .default
+        self.modePeripherals = [:]
         super.init()
 
         self.centralManager.delegate = self
-        self.peripheral = peripheral
+        if let peripheral {
+            modePeripherals[mode] = peripheral
+        }
         
         self.mtu = {
             let defaultMtu = McuManager.getDefaultMtu(scheme: getScheme())
@@ -177,7 +194,7 @@ public class McuMgrBleTransport: NSObject {
             }
             
             // Note that it is 99.9% likely that this is the wrong value unless
-            // we're already connected. The correct MTU value needs to be in
+            // we're already connected. A valid MTU value needs to be set in
             // the _send() function just after acquiring the (Result)Lock.
             let peripheralWriteValueLength = max(McuManager.ValidMTURange.lowerBound, peripheral.maximumWriteValueLength(for: .withoutResponse))
             return min(peripheralWriteValueLength, defaultMtu)
@@ -185,7 +202,7 @@ public class McuMgrBleTransport: NSObject {
     }
     
     public var name: String? {
-        return peripheral?.name
+        return modePeripherals[mode]?.name
     }
     
     public private(set) var identifier: UUID
@@ -193,7 +210,7 @@ public class McuMgrBleTransport: NSObject {
     // MARK: notifyPeripheralDelegate
     
     private func notifyPeripheralDelegate() {
-        guard let delegate, let peripheral else { return }
+        guard let delegate, let peripheral = modePeripherals[mode] else { return }
         delegate.peripheral(peripheral, didChangeStateTo: state)
     }
 }
@@ -204,6 +221,29 @@ extension McuMgrBleTransport: McuMgrTransport {
     
     public func getScheme() -> McuMgrScheme {
         return .ble
+    }
+    
+    public func switchMode(to newMode: McuMgrTransportMode, with modeParameter: Any?) throws {
+        guard mode != newMode else {
+            throw McuMgrBleTransportError.alreadyInRequestedMode
+        }
+        
+        guard modePeripherals[mode]?.state == .disconnected else {
+            throw McuMgrBleTransportError.modeSwitchRequestedWithPeripheralStillConnected
+        }
+        
+        didDisconnect()
+        softReset()
+        if let modePeripheral = modeParameter as? CBPeripheral {
+            modePeripherals[newMode] = modePeripheral
+        }
+        
+        guard let newPeripheral = modePeripherals[newMode] else {
+            throw McuMgrBleTransportError.modeSwitchRequestedWithoutPeripheral
+        }
+        mode = newMode
+        identifier = newPeripheral.identifier
+        log(msg: "Successfully switched to \(mode) mode.", atLevel: .debug)
     }
     
     public func send<T: McuMgrResponse>(data: Data, timeout: Int, callback: @escaping McuMgrCallback<T>) {
@@ -258,7 +298,8 @@ extension McuMgrBleTransport: McuMgrTransport {
     }
     
     public func close() {
-        if let peripheral, peripheral.state == .connected || peripheral.state == .connecting {
+        if let peripheral = modePeripherals[mode],
+           peripheral.state == .connected || peripheral.state == .connecting {
             log(msg: "Cancelling connection...", atLevel: .verbose)
             state = .disconnecting
             centralManager.cancelPeripheralConnection(peripheral)
@@ -296,6 +337,13 @@ extension McuMgrBleTransport: McuMgrTransport {
         robWriteBuffer = McuMgrBleROBWriteBuffer(logDelegate)
     }
     
+    internal func didDisconnect() {
+        modePeripherals[mode]?.delegate = nil
+        smpCharacteristic = nil
+        connectionLock.open(McuMgrTransportError.disconnected)
+        state = .disconnected
+    }
+    
     /// This method sends the data to the target. Before, it ensures that
     /// CBCentralManager is ready and the peripheral is connected.
     /// The peripheral will automatically be connected when it's not.
@@ -311,7 +359,7 @@ extension McuMgrBleTransport: McuMgrTransport {
         // Wait until it is ready, and timeout if we do not get a valid peripheral instance
         let targetPeripheral: CBPeripheral
 
-        if let existing = peripheral, centralManager.state == .poweredOn {
+        if let existing = modePeripherals[mode], centralManager.state == .poweredOn {
             targetPeripheral = existing
         } else {
             connectionLock.close(key: McuMgrBleTransportKey.awaitingCentralManager.rawValue)
@@ -323,7 +371,7 @@ extension McuMgrBleTransport: McuMgrTransport {
             case let .failure(error):
                 return .failure(error)
             case .success:
-                guard let target = self.peripheral else {
+                guard let target = modePeripherals[mode] else {
                     return .failure(McuMgrTransportError.connectionTimeout)
                 }
                 // continue
@@ -404,8 +452,10 @@ extension McuMgrBleTransport: McuMgrTransport {
         
         // Don't be smart caching the MTU.
         let negotiatedMTU = targetPeripheral.maximumWriteValueLength(for: .withoutResponse)
-        if mtu != negotiatedMTU {
-            log(msg: "peripheral.maximumWriteValueLength(for: .withoutResponse): \(negotiatedMTU) != Current MTU (\(mtu))", atLevel: .debug)
+        // It's possible an upper-layer has set a non-max MTU. Either by mistake, or by design.
+        // We only want to force the MTU value to change if the current value causes issues.
+        if mtu > negotiatedMTU {
+            log(msg: "peripheral.maximumWriteValueLength(for: .withoutResponse): \(negotiatedMTU) > Current MTU (\(mtu))", atLevel: .debug)
             mtu = negotiatedMTU
         }
         
@@ -511,6 +561,9 @@ public enum McuMgrBleTransportError: Error, LocalizedError {
     case missingService
     case missingCharacteristic
     case missingNotifyProperty
+    case alreadyInRequestedMode
+    case modeSwitchRequestedWithPeripheralStillConnected
+    case modeSwitchRequestedWithoutPeripheral
     
     public var errorDescription: String? {
         switch self {
@@ -524,6 +577,12 @@ public enum McuMgrBleTransportError: Error, LocalizedError {
             return "SMP characteristic not found."
         case .missingNotifyProperty:
             return "SMP characteristic does not have notify property."
+        case .alreadyInRequestedMode:
+            return "Cannot change mode since transport is already in the requested mode."
+        case .modeSwitchRequestedWithPeripheralStillConnected :
+            return "Cannot switch mode (CBPeripheral) when the previous mode (CBPeripheral) is still connected to this transport."
+        case .modeSwitchRequestedWithoutPeripheral:
+            return "There's no CBPeripheral attached to the requested mode switch."
         }
     }
 }

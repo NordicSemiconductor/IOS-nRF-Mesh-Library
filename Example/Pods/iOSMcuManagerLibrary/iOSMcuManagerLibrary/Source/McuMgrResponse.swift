@@ -971,12 +971,15 @@ extension McuMgrImageStateResponse {
         public var hash: [UInt8] { byteString() }
         /// Bootable flag.
         public var bootable: Bool { boolean() }
-        /// Pending flag. A pending image will be booted into on reset.
+        /// Pending flag.
+        ///
+        /// An image is marked as ``pending`` after receiving a TEST command, without the device being reset.
+        /// On reset, a pending image will be booted into, and thus marked ``active``.
         public var pending: Bool { boolean() }
         /// Confirmed flag. A confirmed image will always be booted into (unless
         /// another image is pending.
         public var confirmed: Bool { boolean() }
-        /// Active flag. Set if the image in this slot is active.
+        /// Active flag. Set if the image in this slot is active (i.e. running / executed).
         public var active: Bool { boolean() }
         /// Permanent flag. Set if this image is permanent.
         public var permanent: Bool { boolean() }
@@ -986,8 +989,12 @@ extension McuMgrImageStateResponse {
         // MARK: CustomDebugStringConvertible
         
         public var debugDescription: String {
+            let shortHashString = Data(hash)
+                .prefix(12)
+                .hexEncodedString(options: [.prepend0x, .upperCase])
+            
             return """
-            Hash: \(hash)
+            Hash: \(shortHashString)
             Image \(image), Slot \(slot), Version \(version)
             Bootable \(bootable ? "Yes" : "No"), Pending \(pending ? "Yes" : "No"), Confirmed \(confirmed ? "Yes" : "No"), Active \(active ? "Yes" : "No"), Compressed \(compressed ? "Yes" : "No"), Permanent \(permanent ? "Yes" : "No")
             """

@@ -106,7 +106,7 @@ extension Int64: CBOREncodable {
 
 extension UInt: CBOREncodable {
     public func encode(options: CBOROptions = CBOROptions()) -> [UInt8] {
-        return UInt64(self).encode(options: options)
+        return CBOR.encodeVarUInt(UInt64(self))
     }
 
     public func toCBOR(options: CBOROptions = CBOROptions()) -> CBOR {

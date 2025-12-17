@@ -12,8 +12,11 @@ body:
       label: Version
       description: What version of our product are you running?
       options:
-        - 4.3.2 (latest)
-        - 4.3.0 or 4.3.1
+        - 4.6.1 (latest)
+        - 4.6.0
+        - 4.5.0
+        - 4.4.0
+        - 4.3.x
         - 4.2.0
         - 4.1.0
         - 4.0.x

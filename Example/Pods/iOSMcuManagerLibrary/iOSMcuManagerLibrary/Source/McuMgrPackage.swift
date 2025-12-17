@@ -60,7 +60,14 @@ public struct McuMgrPackage {
     public func sizeString() -> String {
         var sizeString = ""
         for (i, image) in images.enumerated() {
-            sizeString += "\(image.data.count) bytes (\(image.imageName()))"
+            if #available(iOS 16.0, macCatalyst 16.0, macOS 13.0, *) {
+                let fileSizeMeasurement = Measurement<UnitInformationStorage>(value: Double(image.data.count), unit: .bytes)
+                sizeString += fileSizeMeasurement.formatted(.byteCount(style: .file))
+            } else {
+                sizeString += "\(image.data.count) bytes"
+            }
+            
+            sizeString += " (\(image.imageName()))"
             guard i != images.count - 1 else { continue }
             sizeString += "\n"
         }

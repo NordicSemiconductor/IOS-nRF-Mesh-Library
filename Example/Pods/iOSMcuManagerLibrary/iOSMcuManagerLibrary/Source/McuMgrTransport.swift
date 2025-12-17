@@ -7,6 +7,8 @@
 import Foundation
 import CoreBluetooth
 
+// MARK: - McuMgrScheme
+
 /// McuManager transport scheme.
 public enum McuMgrScheme {
     case ble, coapBle, coapUdp
@@ -20,9 +22,13 @@ public enum McuMgrScheme {
     }
 }
 
+// MARK: - McuMgrTransportState
+
 public enum McuMgrTransportState {
     case connected, disconnected
 }
+
+// MARK: - ConnectionObserver
 
 /// The connection state observer protocol.
 public protocol ConnectionObserver: AnyObject {
@@ -33,13 +39,19 @@ public protocol ConnectionObserver: AnyObject {
     func transport(_ transport: McuMgrTransport, didChangeStateTo state: McuMgrTransportState)
 }
 
+// MARK: - ConnectionResult
+
 public enum ConnectionResult {
     case connected
     case deferred
     case failed(Error)
 }
 
+// MARK: - ConnectionCallback
+
 public typealias ConnectionCallback = (ConnectionResult) -> Void
+
+// MARK: - McuMgrTransportError
 
 public enum McuMgrTransportError: Error, Hashable {
     /// Connection to the remote device has timed out.
@@ -67,6 +79,8 @@ public enum McuMgrTransportError: Error, Hashable {
     /// Device BLE Radio not ready to accept more writes.
     case peripheralNotReadyForWriteWithoutResponse
 }
+
+// MARK: - LocalizedError
 
 extension McuMgrTransportError: LocalizedError {
     
@@ -98,6 +112,8 @@ extension McuMgrTransportError: LocalizedError {
     }
 }
 
+// MARK: - McuMgrTransport
+
 /// Mcu Mgr transport object. The transport object
 /// should automatically handle connection on first request.
 public protocol McuMgrTransport: AnyObject {
@@ -109,10 +125,14 @@ public protocol McuMgrTransport: AnyObject {
      */
     var mtu: Int! { get set }
     
+    var mode: McuMgrTransportMode { get }
+    
     /// Returns the transport scheme.
     ///
     /// - returns: The transport scheme.
     func getScheme() -> McuMgrScheme
+    
+    func switchMode(to newMode: McuMgrTransportMode, with modeParameter: Any?) throws
     
     /// Sends given data using the transport object.
     ///
@@ -136,4 +156,20 @@ public protocol McuMgrTransport: AnyObject {
     ///
     /// - parameter observer: The observer to be removed.
     func removeObserver(_ observer: ConnectionObserver);
+}
+
+// MARK: - McuMgrTransportMode
+
+public enum McuMgrTransportMode: CustomStringConvertible {
+    case `default`
+    case alternate
+    
+    public var description: String {
+        switch self {
+        case .default:
+            return "default"
+        case .alternate:
+            return "alternate"
+        }
+    }
 }
