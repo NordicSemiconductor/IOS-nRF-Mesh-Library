@@ -68,7 +68,7 @@ class EditRangesViewController: UIViewController, Editable {
     @IBAction func addTapped(_ sender: UIBarButtonItem) {
         presentRangeDialog()
     }
-    @IBAction func resolveConflitsTapped(_ sender: UIButton) {
+    @IBAction func resolveConflictsTapped(_ sender: UIButton) {
         removeConflictingRanges()
         
         UIView.animate(withDuration: 0.5, animations: {
