@@ -243,6 +243,7 @@ public protocol ConfigModelSubscriptionList: ConfigModelMessage {
 internal extension ConfigMessage {
     
     /// Encodes given list of Key Indexes into a Data.
+    ///
     /// As each Key Index is 12 bits long, a pair of them can fit 3 bytes.
     /// This method ensures that they are packed in compliance to the
     /// Bluetooth Mesh specification.
@@ -267,6 +268,7 @@ internal extension ConfigMessage {
     }
     
     /// Decodes number of Key Indexes from the given Data from the given offset.
+    /// 
     /// This will decode as many Indexes as possible, until the end of data is
     /// reached.
     ///

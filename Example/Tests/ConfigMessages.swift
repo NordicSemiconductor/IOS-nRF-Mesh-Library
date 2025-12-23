@@ -76,19 +76,23 @@ class ConfigMessages: XCTestCase {
     
     func testEncodingConfigAppKeyList() {
         let networkKey = try! NetworkKey(name: "Test", index: 0x123, key: Data(hex: "00112233445566778899AABBCCDDEEFF"))
-        let applicationKey = try! ApplicationKey(name: "Test", index: 0x456, key: Data(hex: "0123456789ABCDEF0123456789ABCDEF"), boundTo: networkKey)
+        let applicationKey1 = try! ApplicationKey(name: "Test", index: 0x456, key: Data(hex: "0123456789ABCDEF0123456789ABCDEF"), boundTo: networkKey)
+        let applicationKey2 = try! ApplicationKey(name: "Test", index: 0xABC, key: Data(hex: "0123456789ABCDEF0123456789ABCDEF"), boundTo: networkKey)
         
         let meshNetwork = MeshNetwork(name: "Test Network")
         meshNetwork.networkKeys.append(networkKey)
-        meshNetwork.applicationKeys.append(applicationKey)
-        applicationKey.meshNetwork = meshNetwork
+        meshNetwork.applicationKeys.append(applicationKey1)
+        meshNetwork.applicationKeys.append(applicationKey2)
+        applicationKey1.meshNetwork = meshNetwork
+        applicationKey2.meshNetwork = meshNetwork
         
         let request = ConfigAppKeyGet(networkKey: networkKey)
-        let message = ConfigAppKeyList(responseTo: request, with: [applicationKey])
+        let message = ConfigAppKeyList(responseTo: request, with: [applicationKey1, applicationKey2])
         
+        XCTAssertEqual(message.status, .success)
         XCTAssertEqual(message.networkKeyIndex, 0x123)
-        XCTAssertEqual(message.applicationKeyIndexes, [0x456])
-        XCTAssertEqual(message.parameters, Data(hex: "0023015604"))
+        XCTAssertEqual(message.applicationKeyIndexes, [0x456, 0xABC])
+        XCTAssertEqual(message.parameters, Data(hex: "002301BC6A45"))
     }
     
     func testDecodingConfigAppKeyList() {
@@ -97,6 +101,15 @@ class ConfigMessages: XCTestCase {
         XCTAssertNotNil(message)
         XCTAssertEqual(message?.networkKeyIndex, 0x123)
         XCTAssertEqual(message?.applicationKeyIndexes, [0x456])
+        XCTAssertEqual(message?.status, .success)
+    }
+    
+    func testDecodingConfigAppKeyList_two() {
+        let message = ConfigAppKeyList(parameters: Data(hex: "002301BC6A45"))
+        
+        XCTAssertNotNil(message)
+        XCTAssertEqual(message?.networkKeyIndex, 0x123)
+        XCTAssertEqual(message?.applicationKeyIndexes, [0x456, 0xABC])
         XCTAssertEqual(message?.status, .success)
     }
 
