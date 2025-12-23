@@ -39,13 +39,12 @@ public struct ConfigNetKeyList: ConfigResponse {
         return encode(indexes: networkKeyIndexes[...])
     }
     
-    /// Network Key Indexes known to the Node.
+    /// The list of Key Indexes of all Network Keys known to the Node.
     public let networkKeyIndexes: [KeyIndex]
     
     /// Creates a ``ConfigNetKeyList`` message.
     ///
-    /// - parameter networkKeys: The list of Network Keys bound to the requested
-    ///                          ``ApplicationKey`` that are known to the Node.
+    /// - parameter networkKeys: The list of Network Keys known to the Node.
     public init(networkKeys: [NetworkKey]) {
         self.networkKeyIndexes = networkKeys.map { return $0.index }
     }

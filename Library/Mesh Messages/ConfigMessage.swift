@@ -65,37 +65,37 @@ public enum ConfigMessageStatus: UInt8, Sendable {
     case success                        = 0x00
     /// Invalid Address.
     case invalidAddress                 = 0x01
-    // Invalid Model.
+    /// Invalid Model.
     case invalidModel                   = 0x02
-    // Invalid AppKey Index.
+    /// Invalid AppKey Index.
     case invalidAppKeyIndex             = 0x03
-    // Invalid NetKey Index.
+    /// Invalid NetKey Index.
     case invalidNetKeyIndex             = 0x04
-    // Insufficient Resources.
+    /// Insufficient Resources.
     case insufficientResources          = 0x05
-    // Key Index Already Stored.
+    /// Key Index Already Stored.
     case keyIndexAlreadyStored          = 0x06
-    // Invalid Publish Parameters.
+    /// Invalid Publish Parameters.
     case invalidPublishParameters       = 0x07
-    // Not a Subscribe Model.
+    /// Not a Subscribe Model.
     case notASubscribeModel             = 0x08
-    // Storage Failure.
+    /// Storage Failure.
     case storageFailure                 = 0x09
-    // Feature Not Supported.
+    /// Feature Not Supported.
     case featureNotSupported            = 0x0A
-    // Cannot Update.
+    /// Cannot Update.
     case cannotUpdate                   = 0x0B
-    // Cannot Remove.
+    /// Cannot Remove.
     case cannotRemove                   = 0x0C
-    // Cannot Bind.
+    /// Cannot Bind.
     case cannotBind                     = 0x0D
-    // Temporarily Unable to Change State.
+    /// Temporarily Unable to Change State.
     case temporarilyUnableToChangeState = 0x0E
-    // Cannot Set.
+    /// Cannot Set.
     case cannotSet                      = 0x0F
-    // Unspecified Error.
+    /// Unspecified Error.
     case unspecifiedError               = 0x10
-    // Invalid Binding.
+    /// Invalid Binding.
     case invalidBinding                 = 0x11
 }
 
@@ -219,7 +219,7 @@ public protocol ConfigModelSubscriptionList: ConfigModelMessage {
     case exact(_ value: UInt16)
     /// Number of Heartbeat messages received as range.
     case range(_ range: ClosedRange<UInt16>)
-    /// More than 0xFFFE messages have been received.
+    /// More than 4094 (`0xFFFE`) messages have been received.
     case reallyALot
     /// Unsupported CountLog value sent.
     case invalid(countLog: UInt8)
@@ -232,7 +232,7 @@ public protocol ConfigModelSubscriptionList: ConfigModelMessage {
 /// approximate maximum value of 42 minutes.
 ///
 /// The default value of this state shall be ``RandomUpdateIntervalSteps/interval(n:)``
-/// with value n = 60 (0x3C) (i.e., 10 minutes).
+/// with value `n = 60` (`0x3C`) (i.e., 10 minutes).
 @frozen public enum RandomUpdateIntervalSteps {
     /// Random field is updated for every Mesh Private beacon.
     case everyTime
