@@ -94,7 +94,7 @@ internal struct SegmentedControlMessage: SegmentedMessage {
 extension SegmentedControlMessage: CustomDebugStringConvertible {
     
     var debugDescription: String {
-        return "Segmented \(type) (opCode: \(opCode), seqZero: \(sequenceZero), segO: \(segmentOffset), segN: \(lastSegmentNumber), data: 0x\(upperTransportPdu.hex))"
+        return "Segmented \(type) (opCode: 0x\(opCode.hex), seqZero: \(sequenceZero), segO: \(segmentOffset), segN: \(lastSegmentNumber), data: 0x\(upperTransportPdu.hex))"
     }
     
 }

@@ -217,7 +217,7 @@ internal class NetworkLayer {
         // to configure the Proxy Server. This allows sniffing the network without
         // an option to send messages.
         let source = meshNetwork.localProvisioner?.node?.primaryUnicastAddress ?? Address.maxUnicastAddress
-        logger?.i(.proxy, "Sending \(message) from: \(source.hex) to: 0000")
+        logger?.i(.proxy, "Sending \(message) from: 0x\(source.hex) to: 0000")
         let pdu = ControlMessage(fromProxyConfigurationMessage: message,
                                  sentFrom: source, usingNetworkKey: networkKey,
                                  andIvIndex: meshNetwork.ivIndex)
@@ -419,12 +419,12 @@ private extension NetworkLayer {
         
         if let MessageType = MessageType,
            let message = MessageType.init(parameters: controlMessage.upperTransportPdu) {
-            logger?.i(.proxy, "\(message) received from: \(proxyPdu.source.hex) to: \(proxyPdu.destination.hex)")
+            logger?.i(.proxy, "\(message) received from: 0x\(proxyPdu.source.hex) to: 0x\(proxyPdu.destination.hex)")
             // Look for the proxy Node.
             let proxyNode = meshNetwork.node(withAddress: proxyPdu.source) ?? UnknownNode(from: proxyPdu, in: meshNetwork)
             networkManager.proxy?.handle(message, sentFrom: proxyNode)
         } else {
-            logger?.w(.proxy, "Unsupported proxy configuration message (opcode: \(controlMessage.opCode))")
+            logger?.w(.proxy, "Unsupported proxy configuration message (opcode: 0x\(controlMessage.opCode.hex))")
         }
     }
     

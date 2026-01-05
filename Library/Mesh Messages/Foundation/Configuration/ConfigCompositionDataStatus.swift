@@ -169,7 +169,7 @@ public struct ModelData: Sendable, CustomDebugStringConvertible {
     
     public var debugDescription: String {
         if let companyId = companyIdentifier {
-            return "\(modelIdentifier.hex) (companyId: \(companyId.hex))"
+            return "\(modelIdentifier.hex) (companyId: 0x\(companyId.hex))"
         }
         return modelIdentifier.hex
     }
@@ -252,7 +252,7 @@ public struct Page0: CompositionDataPage, CustomDebugStringConvertible {
     }
     
     public var debugDescription: String {
-        return "Page0(companyId: \(companyIdentifier.hex), productId: \(productIdentifier.hex), versionId: \(versionIdentifier.hex), " +
+        return "Page0(companyId: 0x\(companyIdentifier.hex), productId: 0x\(productIdentifier.hex), versionId: 0x\(versionIdentifier.hex), " +
                "minimumRPL: \(minimumNumberOfReplayProtectionList), features: \(features), elements: \(elements))"
     }
 }

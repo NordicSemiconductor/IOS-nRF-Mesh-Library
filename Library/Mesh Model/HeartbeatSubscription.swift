@@ -259,7 +259,7 @@ private extension HeartbeatSubscription {
             // Maximum value.
             return 0xFFFF
         default:
-            fatalError("PeriodLog out or range: \(periodLog) (required: 0x00-0x11)")
+            fatalError("PeriodLog out or range: 0x\(periodLog.hex) (required: 0x00-0x11)")
         }
     }
     

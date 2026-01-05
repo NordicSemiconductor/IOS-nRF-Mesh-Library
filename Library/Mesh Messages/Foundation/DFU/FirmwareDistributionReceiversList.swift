@@ -104,7 +104,7 @@ public struct FirmwareDistributionReceiversList: StaticMeshResponse {
         }
         
         public var debugDescription: String {
-            return "Receiver(address: \(address.hex), phase: \(phase), updateStatus: \(updateStatus), transferStatus: \(transferStatus), progress: \(transferProgress), imageIndex: \(imageIndex))"
+            return "Receiver(address: 0x\(address.hex), phase: \(phase), updateStatus: \(updateStatus), transferStatus: \(transferStatus), progress: \(transferProgress), imageIndex: \(imageIndex))"
         }
     }
     

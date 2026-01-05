@@ -440,7 +440,7 @@ extension RemainingHeartbeatPublicationCount: CustomDebugStringConvertible {
         case .indefinitely:
             return "Indefinitely"
         case .invalid(let value):
-            return "Invalid: \(value.hex)"
+            return "Invalid: 0x\(value.hex)"
         case .range(let range):
             return range.description
         case .exact(let value):
@@ -457,7 +457,7 @@ extension RemainingHeartbeatSubscriptionPeriod: CustomDebugStringConvertible {
         case .disabled:
             return "Disabled"
         case .invalid(let value):
-            return "Invalid: \(value.hex)"
+            return "Invalid: 0x\(value.hex)"
         case .range(let range):
             return "\(range.description) sec"
         case .exact(let value):
@@ -472,7 +472,7 @@ extension HeartbeatSubscriptionCount: CustomDebugStringConvertible {
     public var debugDescription: String {
         switch self {
         case .invalid(let value):
-            return "Invalid: \(value.hex)"
+            return "Invalid: 0x\(value.hex)"
         case .range(let range):
             return range.description
         case .exact(let value):
