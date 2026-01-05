@@ -89,7 +89,8 @@ internal struct UnprovisionedDeviceBeaconDecoder {
 extension UnprovisionedDeviceBeacon: CustomDebugStringConvertible {
     
     var debugDescription: String {
-        return "Unprovisioned Device beacon (UUID: \(deviceUuid.uuidString), OOB Info: \(oob), URI hash: \(uriHash?.hex ?? "None"))"
+        let uriHashHex = uriHash.map { "0x\($0.hex)" } ?? "None"
+        return "Unprovisioned Device beacon (UUID: \(deviceUuid.uuidString), OOB Info: \(oob), URI hash: \(uriHashHex))"
     }
     
 }

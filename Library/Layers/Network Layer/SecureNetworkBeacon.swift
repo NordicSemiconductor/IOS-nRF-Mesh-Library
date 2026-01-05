@@ -83,7 +83,7 @@ internal struct SecureNetworkBeacon: NetworkBeaconPdu {
 extension SecureNetworkBeacon: CustomDebugStringConvertible {
     
     var debugDescription: String {
-        return "Secure Network beacon (Network ID: \(networkKey.networkId.hex), \(ivIndex), Key Refresh Flag: \(keyRefreshFlag))"
+        return "Secure Network beacon (Network ID: 0x\(networkKey.networkId.hex), \(ivIndex), Key Refresh Flag: \(keyRefreshFlag))"
     }
     
 }

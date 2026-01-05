@@ -56,7 +56,7 @@ extension UnknownMessage: CustomDebugStringConvertible {
     
     public var debugDescription: String {
         let opCodeHex = opCode.hex.suffix(6)
-        let parametersHex = parameters?.hex ?? "nil"
+        let parametersHex = parameters.map { "0x\($0.hex)" } ?? "nil"
         return "UnknownMessage(opCode: 0x\(opCodeHex), parameters: \(parametersHex))"
     }
     

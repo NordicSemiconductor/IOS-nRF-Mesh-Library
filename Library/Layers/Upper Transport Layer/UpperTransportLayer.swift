@@ -82,11 +82,11 @@ internal class UpperTransportLayer {
             switch controlMessage.opCode {
             case HeartbeatMessage.opCode:
                 if let heartbeat = HeartbeatMessage(fromControlMessage: controlMessage) {
-                    logger?.i(.upperTransport, "\(heartbeat) received from \(heartbeat.source.hex)")
+                    logger?.i(.upperTransport, "\(heartbeat) received from 0x\(heartbeat.source.hex)")
                     handle(heartbeat: heartbeat)
                 }
             default:
-                logger?.w(.upperTransport, "Unsupported Control Message received (opCode: \(controlMessage.opCode))")
+                logger?.w(.upperTransport, "Unsupported Control Message received (opCode: 0x\(controlMessage.opCode.hex))")
                 // Other Control Messages are not supported.
                 break
             }
@@ -263,7 +263,7 @@ private extension UpperTransportLayer {
     ///   - heartbeat: The Heartbeat message to be sent.
     ///   - networkKey: The Network Key to encrypt the message with.
     func send(heartbeat: HeartbeatMessage, usingNetworkKey networkKey: NetworkKey) {
-        logger?.i(.upperTransport, "Sending \(heartbeat) to \(heartbeat.destination.hex) " +
+        logger?.i(.upperTransport, "Sending \(heartbeat) to 0x\(heartbeat.destination.hex) " +
                                    "encrypted using key: \(networkKey)")
         networkManager?.lowerTransportLayer.send(heartbeat: heartbeat, usingNetworkKey: networkKey)
     }

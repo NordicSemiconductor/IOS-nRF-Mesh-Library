@@ -84,7 +84,7 @@ internal struct PrivateBeacon: NetworkBeaconPdu {
 extension PrivateBeacon: CustomDebugStringConvertible {
     
     var debugDescription: String {
-        return "Private beacon (Network ID: \(networkKey.networkId.hex), \(ivIndex), Key Refresh Flag: \(keyRefreshFlag))"
+        return "Private beacon (Network ID: 0x\(networkKey.networkId.hex), \(ivIndex), Key Refresh Flag: \(keyRefreshFlag))"
     }
     
 }

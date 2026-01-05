@@ -543,7 +543,7 @@ private extension LowerTransportLayer {
                             }
                         }
                         self.logger?.w(.lowerTransport, "Discard timeout expired, cancelling message " +
-                                                        "(src: \(Address(key >> 16).hex), seqZero: \(key & 0x1FFF), " +
+                                                        "(src: 0x\(Address(key >> 16).hex), seqZero: \(key & 0x1FFF), " +
                                                         "received segments: 0x\(marks.hex))")
                     }
                     self.discardTimers.removeValue(forKey: key)?.invalidate()

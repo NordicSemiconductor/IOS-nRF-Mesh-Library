@@ -130,21 +130,21 @@ public class Group: Codable {
         self.groupAddress = try container.decode(String.self, forKey: .groupAddress)
         guard let address = MeshAddress(hex: groupAddress) else {
             throw DecodingError.dataCorruptedError(forKey: .groupAddress, in: container,
-                                                   debugDescription: "Invalid Group address: \(groupAddress).")
+                                                   debugDescription: "Invalid Group address: 0x\(groupAddress).")
         }
         guard address.address.isGroup || address.address.isVirtual else {
             throw DecodingError.dataCorruptedError(forKey: .groupAddress, in: container,
-                                                   debugDescription: "Not a Group address: \(groupAddress).")
+                                                   debugDescription: "Not a Group address: 0x\(groupAddress).")
         }
         guard !address.address.isSpecialGroup else {
             throw DecodingError.dataCorruptedError(forKey: .groupAddress, in: container,
-                                                   debugDescription: "Illegal Group address: \(groupAddress).")
+                                                   debugDescription: "Illegal Group address: 0x\(groupAddress).")
         }
         self.address = address
         self.parentAddress = try container.decode(String.self, forKey: .parentAddress)
         guard let parentAddress = MeshAddress(hex: parentAddress) else {
             throw DecodingError.dataCorruptedError(forKey: .parentAddress, in: container,
-                                                   debugDescription: "Invalid Group address: \(groupAddress).")
+                                                   debugDescription: "Invalid Group address: 0x\(groupAddress).")
         }
         guard parentAddress.address.isUnassigned ||
               parentAddress.address.isGroup ||

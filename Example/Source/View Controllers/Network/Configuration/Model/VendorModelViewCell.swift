@@ -77,8 +77,8 @@ struct RuntimeAcknowledgedVendorMessage: RuntimeVendorMessage, AcknowledgedVendo
 extension RuntimeUnacknowledgedVendorMessage: CustomDebugStringConvertible {
 
     var debugDescription: String {
-        let hexOpCode = String(format: "%2X", opCode)
-        return "RuntimeVendorMessage(opCode: \(hexOpCode), parameters: \(parameters!.hex), isSegmented: \(isSegmented), security: \(security))"
+        let hexOpCode = String(format: "%02X", opCode)
+        return "RuntimeVendorMessage(opCode: 0x\(hexOpCode), parameters: 0x\(parameters!.hex), isSegmented: \(isSegmented), security: \(security))"
     }
     
 }
@@ -86,9 +86,9 @@ extension RuntimeUnacknowledgedVendorMessage: CustomDebugStringConvertible {
 extension RuntimeAcknowledgedVendorMessage: CustomDebugStringConvertible {
 
     var debugDescription: String {
-        let hexOpCode = String(format: "%2X", opCode)
-        let hexResponseOpCode = String(format: "%2X", responseOpCode)
-        return "RuntimeVendorMessage(opCode: \(hexOpCode), responseOpCode: \(hexResponseOpCode) parameters: \(parameters!.hex), isSegmented: \(isSegmented), security: \(security))"
+        let hexOpCode = String(format: "%02X", opCode)
+        let hexResponseOpCode = String(format: "%02X", responseOpCode)
+        return "RuntimeVendorMessage(opCode: 0x\(hexOpCode), responseOpCode: 0x\(hexResponseOpCode) parameters: 0x\(parameters!.hex), isSegmented: \(isSegmented), security: \(security))"
     }
     
 }

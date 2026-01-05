@@ -229,7 +229,7 @@ internal class AccessLayer {
             m = transactionMessage
         }
         
-        logger?.i(.model, "Sending \(m) from: \(element), to: \(destination.hex)")
+        logger?.i(.model, "Sending \(m) from: \(element), to: 0x\(destination.hex)")
         let pdu = AccessPdu(fromMeshMessage: m,
                             sentFrom: element.unicastAddress, to: destination,
                             userInitiated: true)
@@ -270,7 +270,7 @@ internal class AccessLayer {
             return
         }
         
-        logger?.i(.foundationModel, "Sending \(message) to: \(destination.hex)")
+        logger?.i(.foundationModel, "Sending \(message) to: 0x\(destination.hex)")
         let pdu = AccessPdu(fromMeshMessage: message,
                             sentFrom: element.unicastAddress, to: MeshAddress(destination),
                             userInitiated: true)
@@ -295,7 +295,7 @@ internal class AccessLayer {
                from element: Element, to destination: Address,
                using keySet: KeySet) {
         let category: LogCategory = message is ConfigMessage ? .foundationModel : .model
-        logger?.i(category, "Replying with \(message) from: \(element), to: \(destination.hex)")
+        logger?.i(category, "Replying with \(message) from: 0x\(element), to: 0x\(destination.hex)")
         let pdu = AccessPdu(fromMeshMessage: message,
                             sentFrom: element.unicastAddress, to: MeshAddress(destination),
                             userInitiated: false)
@@ -323,7 +323,7 @@ internal class AccessLayer {
     /// - parameter handle: The message handle.
     func cancel(_ handle: MessageHandle) {
         guard let networkManager = networkManager else { return }
-        logger?.i(.access, "Cancelling messages with opcode: \(handle.opCode.hex), sent from: \(handle.source.hex) to: \(handle.destination.hex)")
+        logger?.i(.access, "Cancelling messages with opcode: 0x\(handle.opCode.hex), sent from: 0x\(handle.source.hex) to: 0x\(handle.destination.hex)")
         mutex.sync {
             if let index = reliableMessageContexts.firstIndex(where: {
                                $0.request.opCode == handle.opCode &&
@@ -397,7 +397,7 @@ private extension AccessLayer {
                        let message = delegate.decode(accessPdu) {
                         // Save and log only the first decoded message (see method's comment).
                         if newMessage == nil {
-                            logger?.i(.model, "\(message) received from: \(accessPdu.source.hex), to: \(accessPdu.destination.hex)")
+                            logger?.i(.model, "\(message) received from: 0x\(accessPdu.source.hex), to: 0x\(accessPdu.destination.hex)")
                             newMessage = message
                         } else if let newMessage = newMessage, type(of: message) != type(of: newMessage) {
                             // If another model's delegate decoded the same message to a different
@@ -451,7 +451,7 @@ private extension AccessLayer {
                     newMessage = message
                     // Is this message targeting the local Node?
                     if localNode.contains(elementWithAddress: accessPdu.destination.address) {
-                        logger?.i(.foundationModel, "\(message) received from: \(accessPdu.source.hex)")
+                        logger?.i(.foundationModel, "\(message) received from: 0x\(accessPdu.source.hex)")
                         if let response = delegate.model(model, didReceiveMessage: message,
                                                          sentFrom: accessPdu.source, to: accessPdu.destination,
                                                          asResponseTo: request) {
@@ -464,7 +464,7 @@ private extension AccessLayer {
                         _ = networkManager.delegate?.networkDidChange()
                     } else {
                         // If not, it was received by adding another Node's address to the Proxy Filter.
-                        logger?.i(.foundationModel, "\(message) received from: \(accessPdu.source.hex), to: \(accessPdu.destination.hex)")
+                        logger?.i(.foundationModel, "\(message) received from: 0x\(accessPdu.source.hex), to: 0x\(accessPdu.destination.hex)")
                     }
                     // A message can only be handled by a single Model, so we can break here.
                     break
@@ -628,7 +628,7 @@ private extension AccessLayer {
                       let networkManager = self.networkManager else { return }
                 self.logger?.w(.access, "Response to \(pdu) not received (timeout)")
                 let category: LogCategory = request is AcknowledgedConfigMessage ? .foundationModel : .model
-                self.logger?.w(category, "\(request) sent from: \(pdu.source.hex), to: \(pdu.destination.hex) timed out")
+                self.logger?.w(category, "\(request) sent from: 0x\(pdu.source.hex), to: 0x\(pdu.destination.hex) timed out")
                 self.cancel(MessageHandle(for: request,
                                           sentFrom: pdu.source, to: pdu.destination,
                                           using: networkManager))
