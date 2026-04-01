@@ -357,7 +357,8 @@ class FirmwareSelectionViewController: UITableViewController {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "image", for: indexPath)
                 cell.textLabel?.text = "Image \(indexPath.row - 1)"
                 
-                let version = entry.firmware.currentFirmwareId.versionString ?? "Unknown version"
+                let version = entry.firmware.currentFirmwareId.memfaultVersion?.description ??
+                              entry.firmware.currentFirmwareId.versionString ?? "Unknown version"
                 let entryCompanyIdentifier = entry.firmware.currentFirmwareId.companyIdentifier
                 let nodeCompanyIdentifier = targets[indexPath.targetSection].node.companyIdentifier
                 let company = entryCompanyIdentifier == nodeCompanyIdentifier ? "" : " (\(CompanyIdentifier.name(for: entryCompanyIdentifier) ?? "Unknown manufacturer"))"

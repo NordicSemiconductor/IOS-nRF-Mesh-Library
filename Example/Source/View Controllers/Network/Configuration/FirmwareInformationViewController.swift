@@ -89,16 +89,19 @@ class FirmwareInformationViewController: ProgressViewController {
         case 0:
             // The first section contains the firmware information.
             let cell = tableView.dequeueReusableCell(withIdentifier: "value", for: indexPath)
+            let fwid = firmwareInformation.currentFirmwareId
             switch indexPath.row {
             case 0:
                 cell.textLabel?.text = "Company"
-                cell.detailTextLabel?.text = CompanyIdentifier.name(for: firmwareInformation.currentFirmwareId.companyIdentifier) ?? "Unknown"
+                cell.detailTextLabel?.text = CompanyIdentifier.name(for: fwid.companyIdentifier) ?? "Unknown"
             case 1:
                 cell.textLabel?.text = "Version"
-                if firmwareInformation.currentFirmwareId.version.isEmpty {
+                if fwid.version.isEmpty {
                     cell.detailTextLabel?.text = "N/A"
                 } else {
-                    cell.detailTextLabel?.text = firmwareInformation.currentFirmwareId.versionString
+                    cell.detailTextLabel?.text =
+                    fwid.memfaultVersion?.description ??
+                    fwid.versionString
                 }
             default:
                 fatalError("Invalid index")
