@@ -45,6 +45,7 @@ class SettingsViewController: UITableViewController {
     @IBOutlet weak var testModeSwitch: UISwitch!
     @IBOutlet weak var lastModifiedLabel: UILabel!
     @IBOutlet weak var resetNetworkButton: UIButton!
+    @IBOutlet weak var memfaultProjectKey: UILabel!
     @IBOutlet weak var quickProvisionSwitch: UISwitch!
     @IBOutlet weak var alwaysReconfigure: UISwitch!
     @IBOutlet weak var appVersionLabel: UILabel!
@@ -371,6 +372,12 @@ private extension SettingsViewController {
         appKeysLabel.text      = "\(meshNetwork.applicationKeys.count)"
         scenesLabel.text       = "\(meshNetwork.scenes.count)"
         lastModifiedLabel.text = dateFormatter.string(from: meshNetwork.timestamp)
+        
+        if let projectKey = try? Keychain.loadProjectKey() {
+            memfaultProjectKey.text = projectKey.shortened
+        } else {
+            memfaultProjectKey.text = "Sign In"
+        }
         tableView.reloadData()
     }
      
@@ -510,8 +517,9 @@ private extension IndexPath {
     static let networkSection   = 1
     static let dateSection      = 2
     static let actionsSection   = 3
-    static let developerSection = 4
-    static let aboutSection     = 5
+    static let memfaultSection  = 4
+    static let developerSection = 5
+    static let aboutSection     = 6
     
     /// Returns whether the IndexPath points to the mesh network name row.
     var isNetworkName: Bool {
@@ -531,6 +539,11 @@ private extension IndexPath {
     /// Returns whether the IndexPath points to the network resetting option.
     var isResetNetwork: Bool {
         return section == IndexPath.actionsSection && row == 0
+    }
+    
+    /// Returns whether the IndexPath points to the Memfault project row.
+    var isMemfaultProject: Bool {
+        return section == IndexPath.memfaultSection && row == 0
     }
     
     /// Returns whether the IndexPath points to the Quick Provisioning switch row.

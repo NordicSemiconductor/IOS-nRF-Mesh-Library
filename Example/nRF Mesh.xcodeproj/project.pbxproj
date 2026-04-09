@@ -171,6 +171,18 @@
 		A7B526A8277B210000F5C60D /* GenericPowerOnOffSetup.xib in Resources */ = {isa = PBXBuildFile; fileRef = A7B526A6277B210000F5C60D /* GenericPowerOnOffSetup.xib */; };
 		C5D0E3889048D952B61974DA /* Pods_nRF_Mesh.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41E003FABAE6DD367FEC93B5 /* Pods_nRF_Mesh.framework */; };
 		F03026382F7C379900DD3671 /* FirmwareId+Memfault.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03026372F7C378E00DD3671 /* FirmwareId+Memfault.swift */; };
+		F030263A2F7D25BF00DD3671 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03026392F7D25BF00DD3671 /* ProfileViewController.swift */; };
+		F030263D2F8650C500DD3671 /* OrganizationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F030263C2F8650C500DD3671 /* OrganizationsViewController.swift */; };
+		F03026402F86510F00DD3671 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = F030263F2F86510700DD3671 /* User.swift */; };
+		F03026442F86513B00DD3671 /* Organization.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03026432F86513B00DD3671 /* Organization.swift */; };
+		F03026462F86514F00DD3671 /* Project.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03026452F86514F00DD3671 /* Project.swift */; };
+		F03026482F86520100DD3671 /* UserApiKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03026472F86520100DD3671 /* UserApiKey.swift */; };
+		F030264A2F86521200DD3671 /* ProjectKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03026492F86521200DD3671 /* ProjectKey.swift */; };
+		F030264C2F865AD600DD3671 /* ProjectsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F030264B2F865AD600DD3671 /* ProjectsViewController.swift */; };
+		F030264F2F865D6700DD3671 /* URLRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F030264E2F865D6700DD3671 /* URLRequest.swift */; };
+		F03026512F86617C00DD3671 /* Requests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03026502F86617100DD3671 /* Requests.swift */; };
+		F03026542F866F7300DD3671 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03026532F866F7300DD3671 /* Keychain.swift */; };
+		F03026562F869BD100DD3671 /* ProjectKeysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03026552F869BD000DD3671 /* ProjectKeysViewController.swift */; };
 		F03288942E4CCBC0008FD9DB /* ElementCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03288922E4CCBC0008FD9DB /* ElementCell.swift */; };
 		F03288952E4CCBC0008FD9DB /* ElementCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F03288932E4CCBC0008FD9DB /* ElementCell.xib */; };
 		F03414832B912F95009DD792 /* LightLCModeGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03414822B912F95009DD792 /* LightLCModeGroupCell.swift */; };
@@ -424,6 +436,18 @@
 		C775BBAAAC42952ED786BABF /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		E7CB7DCE18F6E38D2240310F /* nRFMeshProvision.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = nRFMeshProvision.podspec; path = ../nRFMeshProvision.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		F03026372F7C378E00DD3671 /* FirmwareId+Memfault.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FirmwareId+Memfault.swift"; sourceTree = "<group>"; };
+		F03026392F7D25BF00DD3671 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		F030263C2F8650C500DD3671 /* OrganizationsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrganizationsViewController.swift; sourceTree = "<group>"; };
+		F030263F2F86510700DD3671 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		F03026432F86513B00DD3671 /* Organization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Organization.swift; sourceTree = "<group>"; };
+		F03026452F86514F00DD3671 /* Project.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Project.swift; sourceTree = "<group>"; };
+		F03026472F86520100DD3671 /* UserApiKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserApiKey.swift; sourceTree = "<group>"; };
+		F03026492F86521200DD3671 /* ProjectKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectKey.swift; sourceTree = "<group>"; };
+		F030264B2F865AD600DD3671 /* ProjectsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsViewController.swift; sourceTree = "<group>"; };
+		F030264E2F865D6700DD3671 /* URLRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLRequest.swift; sourceTree = "<group>"; };
+		F03026502F86617100DD3671 /* Requests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Requests.swift; sourceTree = "<group>"; };
+		F03026532F866F7300DD3671 /* Keychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keychain.swift; sourceTree = "<group>"; };
+		F03026552F869BD000DD3671 /* ProjectKeysViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectKeysViewController.swift; sourceTree = "<group>"; };
 		F03288922E4CCBC0008FD9DB /* ElementCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementCell.swift; sourceTree = "<group>"; };
 		F03288932E4CCBC0008FD9DB /* ElementCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ElementCell.xib; sourceTree = "<group>"; };
 		F03414822B912F95009DD792 /* LightLCModeGroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCModeGroupCell.swift; sourceTree = "<group>"; };
@@ -728,6 +752,7 @@
 		52835255227AED0A0097B949 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				F030263B2F853AB600DD3671 /* nRFCloud */,
 				5267FDCB2A02935D00ECD38B /* Wizard */,
 				52547F1B232A3F470002AA7B /* Provisioners */,
 				529B756F223FF1AE008F1CE7 /* SettingsViewController.swift */,
@@ -1010,6 +1035,49 @@
 				F57EEAABA13E16EBDF1CADFD /* Pods_nRF_Mesh_Tests.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F030263B2F853AB600DD3671 /* nRFCloud */ = {
+			isa = PBXGroup;
+			children = (
+				F03026522F866F6B00DD3671 /* Keychain */,
+				F030264D2F865D6100DD3671 /* Request */,
+				F030263E2F8650EA00DD3671 /* Model */,
+				F03026392F7D25BF00DD3671 /* ProfileViewController.swift */,
+				F030263C2F8650C500DD3671 /* OrganizationsViewController.swift */,
+				F030264B2F865AD600DD3671 /* ProjectsViewController.swift */,
+				F03026552F869BD000DD3671 /* ProjectKeysViewController.swift */,
+			);
+			path = nRFCloud;
+			sourceTree = "<group>";
+		};
+		F030263E2F8650EA00DD3671 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				F03026492F86521200DD3671 /* ProjectKey.swift */,
+				F03026472F86520100DD3671 /* UserApiKey.swift */,
+				F03026452F86514F00DD3671 /* Project.swift */,
+				F03026432F86513B00DD3671 /* Organization.swift */,
+				F030263F2F86510700DD3671 /* User.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		F030264D2F865D6100DD3671 /* Request */ = {
+			isa = PBXGroup;
+			children = (
+				F03026502F86617100DD3671 /* Requests.swift */,
+				F030264E2F865D6700DD3671 /* URLRequest.swift */,
+			);
+			path = Request;
+			sourceTree = "<group>";
+		};
+		F03026522F866F6B00DD3671 /* Keychain */ = {
+			isa = PBXGroup;
+			children = (
+				F03026532F866F7300DD3671 /* Keychain.swift */,
+			);
+			path = Keychain;
 			sourceTree = "<group>";
 		};
 		F03288912E4CCB6E008FD9DB /* Cells */ = {
@@ -1381,13 +1449,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F030263D2F8650C500DD3671 /* OrganizationsViewController.swift in Sources */,
 				52DE3ABA25DA871800268D7D /* SensorClientDelegate.swift in Sources */,
 				F096D8482DA5668100A1A1E4 /* FirmwareDistributionViewCell.swift in Sources */,
 				F0D8C36B2DDC81B1003E3E29 /* FirmwareUpdateViewCell.swift in Sources */,
 				5275962E2A138D9700B04C6F /* SelectPublicationViewController.swift in Sources */,
 				529B764722522D37008F1CE7 /* UITableView+EmptyView.swift in Sources */,
 				F058A63A2DBFA17C00E9E914 /* IgnoreCertificateDelegate.swift in Sources */,
+				F03026482F86520100DD3671 /* UserApiKey.swift in Sources */,
 				5288153D25125AB600484AF0 /* RootTabBarController.swift in Sources */,
+				F03026402F86510F00DD3671 /* User.swift in Sources */,
 				52CD0A55232FC11700A9A181 /* AddressCell.swift in Sources */,
 				52313FEE22EAFB090074325A /* SubscribeViewController.swift in Sources */,
 				5212152B23152A450059FB3D /* SectionView.swift in Sources */,
@@ -1397,6 +1468,7 @@
 				52E54CE12344974B00478F05 /* GenericLevelClientDelegate.swift in Sources */,
 				5292F8A9250654C600EA0F2A /* SceneSetupServerGroupCell.swift in Sources */,
 				5283528022806C280097B949 /* ProvisioningViewController.swift in Sources */,
+				F03026442F86513B00DD3671 /* Organization.swift in Sources */,
 				F085CA0429D1E2B000C2DF89 /* RelatedModelsViewController.swift in Sources */,
 				52CD0A602330D71900A9A181 /* AddAddressViewController.swift in Sources */,
 				52835269227B2BAE0097B949 /* ScannerTableViewController.swift in Sources */,
@@ -1410,6 +1482,7 @@
 				523F777B22CB86A00030EA6A /* ModelBindAppKeyViewController.swift in Sources */,
 				52DF5D8F229691BD00C297C1 /* NetworkConnection.swift in Sources */,
 				52547F27232A3F470002AA7B /* EditRangesViewController.swift in Sources */,
+				F03026562F869BD100DD3671 /* ProjectKeysViewController.swift in Sources */,
 				F0389F3C2DD5D39E00068D75 /* CircularProgressView.swift in Sources */,
 				52B7FD6D2525B40300308673 /* NodeSceneRecallViewController.swift in Sources */,
 				F09DE4D129E5A2180073969A /* MeshTaskStatus.swift in Sources */,
@@ -1418,6 +1491,7 @@
 				F044AE602DAD203B006D6674 /* ProxySelectionViewController.swift in Sources */,
 				52E54CDD23438B2E00478F05 /* GenericOnOffClientDelegate.swift in Sources */,
 				52DF5D8C228DAA0500C297C1 /* NodeViewCell.swift in Sources */,
+				F03026542F866F7300DD3671 /* Keychain.swift in Sources */,
 				52CD0A50232FA6CD00A9A181 /* ProxyViewController.swift in Sources */,
 				528AB9FA228D856C000BE9DC /* ProvisioningViewDelegate.swift in Sources */,
 				5288C2162371BC1300321ED3 /* SimpleOnOffClientCell.swift in Sources */,
@@ -1430,6 +1504,7 @@
 				52DA9D7224F6765C0051795B /* UInt16+Time.swift in Sources */,
 				5231401622F460380074325A /* PublicationCell.swift in Sources */,
 				52E54CE32344978300478F05 /* GenericLevelServerDelegate.swift in Sources */,
+				F030263A2F7D25BF00DD3671 /* ProfileViewController.swift in Sources */,
 				5215600929FBFD230048B2D2 /* WizardViewController.swift in Sources */,
 				F0587F712D96C63A0091CDF4 /* PairingResponderViewCell.swift in Sources */,
 				528AB9F8228D847C000BE9DC /* NetworkViewController.swift in Sources */,
@@ -1464,6 +1539,7 @@
 				F0849F0A2E9054820080DD30 /* DetailCell.swift in Sources */,
 				5288C2102371B0F700321ED3 /* SimpleOnOffGet.swift in Sources */,
 				529B756D223FE7F1008F1CE7 /* RootViewController.swift in Sources */,
+				F030264F2F865D6700DD3671 /* URLRequest.swift in Sources */,
 				52CD0A53232FA79300A9A181 /* FilterTypeCell.swift in Sources */,
 				523F776822C615CE0030EA6A /* NodeAppKeysViewController.swift in Sources */,
 				523F777922CB57190030EA6A /* ModelViewController.swift in Sources */,
@@ -1472,6 +1548,7 @@
 				5288C20E2371A91900321ED3 /* SimpleOnOffSet.swift in Sources */,
 				523F779722CE2BF60030EA6A /* SetPublicationDestinationsViewController.swift in Sources */,
 				52E54CD023437D3D00478F05 /* ModelControlCell.swift in Sources */,
+				F03026462F86514F00DD3671 /* Project.swift in Sources */,
 				F0B67D802DAFCE7B00B1A69D /* PasskeyViewController.swift in Sources */,
 				523F776422C4EDD90030EA6A /* SwitchCell.swift in Sources */,
 				5292F8A7250652BB00EA0F2A /* SceneServerGroupCell.swift in Sources */,
@@ -1480,6 +1557,7 @@
 				52DF5D8A228DA78A00C297C1 /* NodeViewController.swift in Sources */,
 				521215292315290F0059FB3D /* GroupControlViewController.swift in Sources */,
 				52A8EA8824E6946D004C14C7 /* HeartbeatPublicationCell.swift in Sources */,
+				F030264A2F86521200DD3671 /* ProjectKey.swift in Sources */,
 				52F6AD7622BA612900F0D7DF /* UIViewController+Toast.swift in Sources */,
 				F0F0D9CD2DCA0E92009FDE6B /* DFUParametersViewController.swift in Sources */,
 				F0389F3E2DD5D6B000068D75 /* DFUViewController.swift in Sources */,
@@ -1505,6 +1583,7 @@
 				5251498122E0E36600CBF1E3 /* AddGroupViewController.swift in Sources */,
 				F09DE4D329E99A360073969A /* SelectGroupsViewController.swift in Sources */,
 				5211EADB25090DB000089FF2 /* SceneSetupServerDelegate.swift in Sources */,
+				F03026512F86617C00DD3671 /* Requests.swift in Sources */,
 				F063C01D29C27EAB00A445A9 /* IntroViewController.swift in Sources */,
 				5292F8A325021B8F00EA0F2A /* ModelIdentifiers.swift in Sources */,
 				52835258227AEDA30097B949 /* DeviceCell.swift in Sources */,
@@ -1545,6 +1624,7 @@
 				F058A6412DC9036400E9E914 /* UpdatePackage.swift in Sources */,
 				5283528222806D7C0097B949 /* NetworkKeySelectionViewController.swift in Sources */,
 				522AFFDE22BBBC6400521EDC /* NodeFeaturesCell.swift in Sources */,
+				F030264C2F865AD600DD3671 /* ProjectsViewController.swift in Sources */,
 				523F776E22C63EAD0030EA6A /* NodeAddAppKeyViewController.swift in Sources */,
 				529B7643225222E8008F1CE7 /* Address+String.swift in Sources */,
 				52248CDC251E21F000B10250 /* ExportViewController.swift in Sources */,
@@ -1866,7 +1946,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
 				CODE_SIGN_ENTITLEMENTS = "nRF Mesh.entitlements";
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_BITCODE = NO;
 				ENABLE_DEBUG_DYLIB = YES;
@@ -1900,7 +1980,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
 				CODE_SIGN_ENTITLEMENTS = "nRF Mesh.entitlements";
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_BITCODE = NO;
 				ENABLE_DEBUG_DYLIB = YES;
