@@ -1,0 +1,6 @@
+framework module MemfaultCloud {
+  umbrella header "MemfaultCloud-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -464,7 +464,7 @@ public class ImageManager: McuManager {
         }
         
         if let error = response.getError() {
-            self.cancelUpload(error: error)
+            self.onUploadResponseError(error, for: response)
             return
         }
         
@@ -532,6 +532,26 @@ public class ImageManager: McuManager {
             self.cancelUpload(error: ImageUploadError.invalidPayload)
         }
     }
+    
+    // MARK: onUploadResponseError(_:for:)
+    
+    private func onUploadResponseError(_ error: any LocalizedError, for response: McuMgrUploadResponse) {
+        if case let McuMgrError.returnCode(.busy) = error {
+            log(msg: "Received 'busy' Error from Device. Will try again after a short day.", atLevel: .debug)
+            if let offset = response.off {
+                Timer.scheduledTimer(withTimeInterval: McuManager.BUSY_WAIT_DELAY_MS, repeats: false) { [weak self] timer in
+                    self?.sendNext(from: offset)
+                }
+                return // prevent Upload Cancellation.
+            } else {
+                log(msg: "Error retrieving current Upload offset. Can't retry after Busy response.", atLevel: .error)
+            }
+        }
+        
+        cancelUpload(error: error)
+    }
+    
+    // MARK: sendNext(from:)
     
     private func sendNext(from offset: UInt64) {
         let imageData: Data! = uploadImages?[uploadIndex].data

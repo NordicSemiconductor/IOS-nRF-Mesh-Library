@@ -30,6 +30,7 @@
 
 import UIKit
 import NordicMesh
+import MemfaultCloud
 
 class FirmwareInformationViewController: ProgressViewController {
     
@@ -42,6 +43,7 @@ class FirmwareInformationViewController: ProgressViewController {
     private var activityIndicator: UIActivityIndicatorView!
     private var metadataCheckStatus: FirmwareUpdateFirmwareMetadataStatus?
     private var updatedFirmwareInformation: UpdatedFirmwareInformation?
+    private var memfaultOtaPackage: MemfaultOtaPackage?
     
     private var previousMetadata: String?
 
@@ -77,7 +79,14 @@ class FirmwareInformationViewController: ProgressViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0: return 2 // Company, Version
-        case 1: return updatedFirmwareInformation != nil ? 5 : 1
+        case 1:
+            if updatedFirmwareInformation != nil {
+                return 5 // Company, Version, DFU Chain Size, Image Size, Download
+            }
+            if memfaultOtaPackage != nil {
+                return 3 // Version, Release Notes, Download
+            }
+            return 1 // Check for Updates
         case 2: return 1 // Check Metadata action
         case 3: return 2 // Status, Additional Information
         default: fatalError("Invalid section")
@@ -108,49 +117,83 @@ class FirmwareInformationViewController: ProgressViewController {
             }
             return cell
         case 1:
-            if updatedFirmwareInformation == nil {
+            if let ufi = updatedFirmwareInformation {
+                switch indexPath.row {
+                case 0:
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "value", for: indexPath)
+                    cell.textLabel?.text = "Company"
+                    let companyIdentifier = ufi.manifest.firmware.firmwareId?.companyIdentifier
+                    cell.detailTextLabel?.text = companyIdentifier.map { CompanyIdentifier.name(for: $0) } ?? "Unknown"
+                    return cell
+                case 1:
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "value", for: indexPath)
+                    cell.textLabel?.text = "Version"
+                    if let version = ufi.manifest.firmware.firmwareId?.versionString {
+                        cell.detailTextLabel?.text = version
+                    } else {
+                        cell.detailTextLabel?.text = "N/A"
+                    }
+                    return cell
+                case 2:
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "value", for: indexPath)
+                    cell.textLabel?.text = "DFU Chain Size"
+                    cell.detailTextLabel?.text = "\(ufi.manifest.firmware.dfuChainSize)"
+                    return cell
+                case 3:
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "value", for: indexPath)
+                    cell.textLabel?.text = "Image Size"
+                    cell.detailTextLabel?.text = "\(ufi.manifest.firmware.firmwareImageFileSize) bytes"
+                    return cell
+                case 4:
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "updateUri", for: indexPath)
+                    cell.textLabel?.text = "Download"
+                    cell.detailTextLabel?.text = firmwareInformation.updateUri!.absoluteString + "/get?cfwid=\(firmwareInformation.currentFirmwareId.bytes.hex)"
+                    cell.detailTextLabel?.textColor = .link
+                    return cell
+                default: fatalError("Invalid section")
+                }
+            } else if let package = memfaultOtaPackage {
+                switch indexPath.row {
+                case 0:
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "value", for: indexPath)
+                    cell.textLabel?.text = "Version"
+                    cell.detailTextLabel?.text = package.softwareVersion
+                    return cell
+                case 1:
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "notes", for: indexPath)
+                    cell.textLabel?.text = "Release Notes"
+                    cell.detailTextLabel?.text = package.releaseNotes.isEmpty ? "\nEmpty" : "\n\(package.releaseNotes)"
+                    return cell
+                case 2:
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "updateUri", for: indexPath)
+                    cell.textLabel?.text = "Download"
+                    cell.detailTextLabel?.text = package.location.absoluteString
+                    cell.detailTextLabel?.textColor = .link
+                    return cell
+                default: fatalError("Invalid section")
+                }
+            } else {
                 // The firmware update information is not available yet.
                 let cell = tableView.dequeueReusableCell(withIdentifier: "updateUri", for: indexPath)
                 if let updateUri = firmwareInformation.updateUri {
                     cell.detailTextLabel?.text = updateUri.absoluteString + "/check?cfwid=\(firmwareInformation.currentFirmwareId.bytes.hex)"
+                    cell.detailTextLabel?.textColor = .link
                 } else {
-                    cell.detailTextLabel?.text = "URI not provided"
-                    cell.isEnabled = false
+                    if let _ = firmwareInformation.currentFirmwareId.memfaultVersion {
+                        // TODO: Project Key can also be available using Vendor Model
+                        if let projectKey = try? Keychain.loadProjectKey() {
+                            cell.detailTextLabel?.text = "nRF Cloud, powered by Memfault (\(projectKey.shortened))"
+                            cell.detailTextLabel?.textColor = .secondaryLabel
+                        } else {
+                            cell.detailTextLabel?.text = "Sign In to nRF Cloud on Settings screen."
+                            cell.isEnabled = false
+                        }
+                    } else {
+                        cell.detailTextLabel?.text = "URI not provided"
+                        cell.isEnabled = false
+                    }
                 }
                 return cell
-            }
-            switch indexPath.row {
-            case 0:
-                let cell = tableView.dequeueReusableCell(withIdentifier: "value", for: indexPath)
-                cell.textLabel?.text = "Company"
-                let companyIdentifier = updatedFirmwareInformation?.manifest.firmware.firmwareId?.companyIdentifier
-                cell.detailTextLabel?.text = companyIdentifier.map { CompanyIdentifier.name(for: $0) } ?? "Unknown"
-                return cell
-            case 1:
-                let cell = tableView.dequeueReusableCell(withIdentifier: "value", for: indexPath)
-                cell.textLabel?.text = "Version"
-                if let version = updatedFirmwareInformation?.manifest.firmware.firmwareId?.versionString {
-                    cell.detailTextLabel?.text = version
-                } else {
-                    cell.detailTextLabel?.text = "N/A"
-                }
-                return cell
-            case 2:
-                let cell = tableView.dequeueReusableCell(withIdentifier: "value", for: indexPath)
-                cell.textLabel?.text = "DFU Chain Size"
-                cell.detailTextLabel?.text = "\(updatedFirmwareInformation!.manifest.firmware.dfuChainSize)"
-                return cell
-            case 3:
-                let cell = tableView.dequeueReusableCell(withIdentifier: "value", for: indexPath)
-                cell.textLabel?.text = "Image Size"
-                cell.detailTextLabel?.text = "\(updatedFirmwareInformation!.manifest.firmware.firmwareImageFileSize) bytes"
-                return cell
-            case 4:
-                let cell = tableView.dequeueReusableCell(withIdentifier: "updateUri", for: indexPath)
-                cell.textLabel?.text = "Download"
-                cell.detailTextLabel?.text = firmwareInformation.updateUri!.absoluteString + "/get?cfwid=\(firmwareInformation.currentFirmwareId.bytes.hex)"
-                return cell
-            default: fatalError("Invalid section")
             }
         case 2:
             // The Check / Select button
@@ -164,10 +207,27 @@ class FirmwareInformationViewController: ProgressViewController {
         
         switch indexPath.section {
         case 1:
+            // The row contains either Check for Updates (handled below),
+            // or some non-clickable value.
             if indexPath.row == 0 {
-                checkForUpdates()
+                if firmwareInformation.updateUri != nil {
+                    checkForUpdates()
+                } else {
+                    checkForUpdatesUsingNrfCloud()
+                }
             } else {
-                downloadUpdate()
+                // The only other clickable row is Download.
+                if let updateUri = firmwareInformation.updateUri,
+                   let _ = updatedFirmwareInformation {
+                    let firmwareId = firmwareInformation.currentFirmwareId.bytes
+                    guard let uri = updateUri
+                        .appending(endpoint: "get", queryItems: [URLQueryItem(name: "cfwid", value: firmwareId.hex)]) else {
+                        return
+                    }
+                    downloadUpdate(url: uri)
+                } else if let package = memfaultOtaPackage {
+                    downloadUpdate(url: package.location)
+                }
             }
         case 2:
             // Check / Select button
@@ -181,7 +241,8 @@ class FirmwareInformationViewController: ProgressViewController {
                 let metadata = Data(hex: text)
                 self?.check(metadata: metadata)
             }
-        default: fatalError("Invalid section")
+        default:
+            break
         }
     }
     
@@ -191,6 +252,54 @@ class FirmwareInformationViewController: ProgressViewController {
 }
 
 private extension FirmwareInformationViewController {
+    
+    func checkForUpdatesUsingNrfCloud() {
+        guard let memfaultVersion = firmwareInformation.currentFirmwareId.memfaultVersion,
+              let projectKey = try? Keychain.loadProjectKey(),
+              let deviceSerial = model.parentElement?.parentNode?.uuid else { return }
+        
+        let info = MemfaultDeviceInfo(
+            deviceSerial: deviceSerial.uuidString,
+            hardwareVersion: memfaultVersion.hwVersion,
+            softwareVersion: memfaultVersion.swVersion,
+            softwareType: memfaultVersion.swType)
+        
+        activityIndicator.startAnimating()
+        
+        Task {
+            do {
+                // When there is no device with the given serial number, or no hardware version,
+                // the API will return an error.
+                // To avoid that, we create a device with the provided information by sending
+                // a fake heartbeat message. This will create a new device and the version.
+                try await nRFCloud.createDevice(info, using: projectKey)
+                
+                // Now, it's safe to call the API to get the latest release for the device.
+                let api = MemfaultApi(configuration: [
+                    kMFLTProjectKey: projectKey.token,
+                ])
+                let (data, isUpToDate) = try await api.getLatestRelease(for: info)
+                if isUpToDate {
+                    await MainActor.run {
+                        self.activityIndicator.stopAnimating()
+                        self.presentAlert(title: "Success", message: "You have the latest firmware.")
+                    }
+                } else {
+                    await MainActor.run {
+                        self.memfaultOtaPackage = data
+                        self.activityIndicator.stopAnimating()
+                        self.tableView.reloadData()
+                    }
+                }
+            } catch {
+                await MainActor.run {
+                    self.activityIndicator.stopAnimating()
+                    self.presentAlert(title: "Error",
+                                      message: "Fetching firmware information failed with error:\n\(error.localizedDescription)")
+                }
+            }
+        }
+    }
     
     func checkForUpdates() {
         guard updatedFirmwareInformation == nil else { return }
@@ -251,13 +360,7 @@ private extension FirmwareInformationViewController {
         }.resume()
     }
  
-    func downloadUpdate() {
-        guard updatedFirmwareInformation != nil else { return }
-        let firmwareId = firmwareInformation.currentFirmwareId.bytes
-        guard let url = firmwareInformation.updateUri?
-            .appending(endpoint: "get", queryItems: [URLQueryItem(name: "cfwid", value: firmwareId.hex)]) else {
-            return
-        }
+    func downloadUpdate(url: URL) {
         activityIndicator.startAnimating()
         
         let urlRequest = URLRequest(url: url)
@@ -348,3 +451,18 @@ private extension FirmwareInformationViewController {
     }
     
 }
+
+private extension MemfaultApi {
+    func getLatestRelease(for deviceInfo: MemfaultDeviceInfo) async throws -> (MemfaultOtaPackage?, Bool) {
+        try await withCheckedThrowingContinuation { continuation in
+            self.getLatestRelease(for: deviceInfo) { data, isUpToDate, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: (data, isUpToDate))
+                }
+            }
+        }
+    }
+}
+

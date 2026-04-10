@@ -29,11 +29,13 @@
 */
 
 import Foundation
+import MemfaultCloud
 
 enum nRFCloud {
     private static let api = URL(string: "https://api.memfault.com/")!
     private static let loginPath = "auth/me" // GET
     private static let apiKeyPath = "auth/api_key" // GET, POST, DELETE
+    private static let eventsPath = "api/v0/events" // POST
     private static func projectsPath(organization: Organization) -> String {
         return "api/v0/organizations/\(organization.slug)/projects"
     }
@@ -132,5 +134,54 @@ enum nRFCloud {
             keys[i].projectName = project.name
         }
         return keys
+    }
+    
+    static func createDevice(_ info: MemfaultDeviceInfo, using projectKey: ProjectKey) async throws {
+        guard let url = api.appending(endpoint: eventsPath) else {
+            throw URLRequest.Error.unknown
+        }
+        
+        struct HeartbeatEvent: Codable {
+            struct EventInfo: Codable {
+                let metrics: [String: Int]
+            }
+            let type: String = "heartbeat"
+            let deviceSerial: String
+            let hardwareVersion: String
+            let softwareVersion: String
+            let softwareType: String
+            let sdkVersion: String = AppInfo.version
+            let eventInfo: EventInfo
+            
+            // MARK: - Codable
+            
+            private enum CodingKeys: String, CodingKey {
+                case type
+                case deviceSerial = "device_serial"
+                case hardwareVersion = "hardware_version"
+                case softwareVersion = "software_version"
+                case softwareType = "software_type"
+                case sdkVersion = "sdk_version"
+                case eventInfo = "event_info"
+            }
+        }
+
+        let event = HeartbeatEvent(
+            deviceSerial: info.deviceSerial,
+            hardwareVersion: info.hardwareVersion,
+            softwareVersion: info.softwareVersion,
+            softwareType: info.softwareType,
+            eventInfo: .init(metrics: [
+                "pre-registered": 1
+            ])
+        )
+        let data = try JSONEncoder().encode([event])
+        
+        var urlRequest = URLRequest(url: url)
+        urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        urlRequest.addValue(projectKey.token, forHTTPHeaderField: "Memfault-Project-Key")
+        urlRequest.httpBody = data
+        
+        _ = try await urlRequest.post()
     }
 }
