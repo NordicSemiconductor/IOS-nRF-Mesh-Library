@@ -182,7 +182,7 @@ class FirmwareInformationViewController: ProgressViewController {
                     if let _ = firmwareInformation.currentFirmwareId.memfaultVersion {
                         // TODO: Project Key can also be available using Vendor Model
                         if let projectKey = try? Keychain.loadProjectKey() {
-                            cell.detailTextLabel?.text = "nRF Cloud, powered by Memfault (\(projectKey.shortened))"
+                            cell.detailTextLabel?.text = "Using Project Key: \(projectKey.shortened)"
                             cell.detailTextLabel?.textColor = .secondaryLabel
                         } else {
                             cell.detailTextLabel?.text = "Sign In to nRF Cloud on Settings screen."
