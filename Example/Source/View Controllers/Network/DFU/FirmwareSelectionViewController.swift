@@ -30,6 +30,7 @@
 
 import UIKit
 import NordicMesh
+import MemfaultCloud
 import iOSMcuManagerLibrary
 
 private struct Target {
@@ -80,6 +81,11 @@ private enum FirmwareEntries {
         }
     }
     
+    var requiresConfiguration: Bool {
+        if case .configurationRequired = self { return true }
+        return false
+    }
+    
     subscript(index: Int) -> FirmwareEntry? {
         get {
             guard case .ready(let entries) = self else {
@@ -112,6 +118,7 @@ private struct FirmwareEntry {
     let firmware: FirmwareInformation
     var status: Status = .unselected
     var availableUpdate: UpdatedFirmwareInformation?
+    var memfaultPackage: MemfaultOtaPackage?
     
     var isSelected: Bool {
         switch status {
@@ -143,6 +150,8 @@ class FirmwareSelectionViewController: UITableViewController {
     
     /// Parsed content of the selected file.
     private var file: UpdatePackage?
+    /// The Firmware ID of the Image, that the `file` was downloaded for.
+    private var requestingFirmwareId: FirmwareId?
     /// List of available targets.
     private var targets: [Target] = []
     private var canDistributorBeUpdated: Bool = false
@@ -225,13 +234,14 @@ class FirmwareSelectionViewController: UITableViewController {
     // MARK: - Table View Data Source
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 2 + targets.count
+        return IndexPath.firstTargetSection + targets.count
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
+        case IndexPath.memfaultSection: return "nRF Cloud"
         case IndexPath.firmwareSection: return "Firmware"
-        case targets.count + 1 where canDistributorBeUpdated: return "Distributor"
+        case IndexPath.firstTargetSection + targets.count - 1 where canDistributorBeUpdated: return "Distributor"
         default: return nil
         }
     }
@@ -241,10 +251,12 @@ class FirmwareSelectionViewController: UITableViewController {
         case IndexPath.infoSection:
             return "Select a ZIP file generated when building the new firmware. " +
                    "The file can also be downloaded automatically by tapping a target node that provide a URI to an online resource with the latest version."
-        case targets.count where canDistributorBeUpdated,
-             targets.count + 1 where !canDistributorBeUpdated:
+        case IndexPath.memfaultSection:
+            return "Automatically check for updates on nRF Cloud, powered by Memfault. Works only for nodes with version matching Memfault schema."
+        case IndexPath.firstTargetSection + targets.count - 2 where canDistributorBeUpdated,
+             IndexPath.firstTargetSection + targets.count - 1 where !canDistributorBeUpdated:
             return "Note: The list contains nodes with Firmware Update Server and BLOB Transfer Server models."
-        case targets.count + 1 where canDistributorBeUpdated:
+        case IndexPath.firstTargetSection + targets.count - 1 where canDistributorBeUpdated:
             return "Updating firmware on the distributor is instantaneous. When selected, no other nodes will be updated."
         default: return nil
         }
@@ -253,11 +265,12 @@ class FirmwareSelectionViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case IndexPath.infoSection: return 0
+        case IndexPath.memfaultSection: return 1
         case IndexPath.firmwareSection:
             guard let images = file?.images else {
                 return 1 // Select File
             }
-            return 5 + images.count // File Name, image details per image, Metadata, Company Name, Version, Select File
+            return 5 + images.count // File Name, image details per image, Metadata, Company Name, Version, Change File
         default:
             return 1 + targets[section - IndexPath.firstTargetSection].entries.count // Node + list of images or an error message
         }
@@ -280,6 +293,17 @@ class FirmwareSelectionViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch indexPath.section {
+        case IndexPath.memfaultSection:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "check", for: indexPath)
+            cell.textLabel?.text = "Check for Updates"
+            // TODO: Project Key can also be available using Vendor Model
+            if let projectKey = try? Keychain.loadProjectKey() {
+                cell.detailTextLabel?.text = "Using Project Key: \(projectKey.shortened)"
+            } else {
+                cell.detailTextLabel?.text = "Sign In to nRF Cloud on Settings screen."
+                cell.textLabel?.textColor = .secondaryLabel // show as disabled, but allow tapping to show (i)
+            }
+            return cell
         case IndexPath.firmwareSection:
             // Rows are shown in the following order:
             // If a valid file is selected:
@@ -401,6 +425,9 @@ class FirmwareSelectionViewController: UITableViewController {
         switch indexPath.section {
         case IndexPath.infoSection:
             return false // No action
+        case IndexPath.memfaultSection:
+            let projectKey = try? Keychain.loadProjectKey()
+            return projectKey != nil // Check for updates only if Project Key is available
         case IndexPath.firmwareSection:
             guard let images = file?.images else {
                 return true // Select File
@@ -418,7 +445,11 @@ class FirmwareSelectionViewController: UITableViewController {
                 switch entry.status {
                 case .unselected:
                     // Allow selecting the image only if the Firmware ID is different.
-                    return entry.firmware.currentFirmwareId != file?.metadata.firmwareId
+                    let different = entry.firmware.currentFirmwareId != file?.metadata.firmwareId
+                    if !different {
+                        presentAlert(title: "Up to Date", message: "This node already has the selected version.")
+                    }
+                    return different
                 case .selected:
                     // Allow to unselect.
                     return true
@@ -439,6 +470,134 @@ class FirmwareSelectionViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
         
         switch indexPath.section {
+        case IndexPath.memfaultSection:
+            // Check if any of the Nodes require configuration.
+            // Note: Nodes will get configured automatically by downloadFirmwareInformation(..).
+            if targets.contains(where: { $0.entries.requiresConfiguration }) {
+                confirm(title: "Configuration required",
+                        message: "Some nodes require binding Application Keys to the Firmware Update Server models.\n\n" +
+                                 "Do you want to configure the nodes automatically?",
+                        onCancel: nil) { [weak self] _ in
+                    guard let self else { return }
+                    for (i, target) in self.targets.enumerated() {
+                        if case .configurationRequired = target.entries {
+                            self.targets[i].entries = .configured
+                        }
+                    }
+                    self.tableView(tableView, didSelectRowAt: indexPath)
+                }
+                return
+            }
+            let alert = UIAlertController(title: "Status", message: "Checking for Updates...", preferredStyle: .alert)
+            // TODO: Check for Internet
+            let task = Task { [weak self] in
+                guard let self else { return }
+                var atLeastOneNodeSupportsMemfault = false
+                // First, send Firmware Information Get to all targets to get the list of available images and their metadata.
+                // Check for available updates using provided URLs and on nRF Cloud.
+                for (i, target) in self.targets.enumerated() {
+                    switch target.entries {
+                    case .configurationRequired:
+                        // This will never happen, as the user has set all to .configured before.
+                        break
+                    case .ready(entries: let entries):
+                        atLeastOneNodeSupportsMemfault = atLeastOneNodeSupportsMemfault || entries.contains { $0.firmware.currentFirmwareId.memfaultVersion != nil }
+                    case .configured, .error, .downloading:
+                        var result: FirmwareEntries
+                        do {
+                            let images = try await downloadFirmwareInformation(from: target.node)
+                            let entries = try await images.asyncMapEnumerated { [weak self] index, image in
+                                atLeastOneNodeSupportsMemfault = atLeastOneNodeSupportsMemfault || image.currentFirmwareId.memfaultVersion != nil
+                                let updatedFirmwareInformation = try await self?.checkForUpdates(image)
+                                let package = try await self?.checkForUpdatesUsingNrfCloud(target.node, image)
+                                return FirmwareEntry(index: UInt8(index), firmware: image,
+                                                     availableUpdate: updatedFirmwareInformation,
+                                                     memfaultPackage: package)
+                            }
+                            result = .ready(entries: entries)
+                        } catch {
+                            result = .error(message: error.localizedDescription)
+                        }
+                        targets[i].entries = result
+                            
+                        tableView.beginUpdates()
+                        tableView.reloadRows(at: [IndexPath(row: 0, section: IndexPath.firstTargetSection + i)], with: .none)
+                        tableView.insertRows(at: (1...result.count).map { IndexPath(row: $0, section: IndexPath.firstTargetSection + i) }, with: .fade)
+                        tableView.endUpdates()
+                    }
+                }
+                // Check if at least one node supports Memfault OTA. If not, show an alert and return to the file selection.
+                if !atLeastOneNodeSupportsMemfault {
+                    alert.dismiss(animated: true) {
+                        self.presentAlert(title: "Not supported", message: "None of the known nodes in the network support nRF Cloud OTA.")
+                    }
+                    return
+                }
+                // Some images may have the same Firmware ID.
+                // Collect the unique Firmware IDs with available updates and their URLs.
+                var availableUpdates: [FirmwareId : MemfaultOtaPackage] = [:]
+                for target in self.targets {
+                    if case .ready(let entries) = target.entries {
+                        for entry in entries {
+                            if let package = entry.memfaultPackage {
+                                availableUpdates[entry.firmware.currentFirmwareId] = package
+                            }
+                        }
+                    }
+                }
+                let download: (MemfaultOtaPackage) async -> () = { [weak self] package in
+                    guard let self else { return }
+                    do {
+                        let package = try await self.downloadFirmware(package)
+                        // Clear all selections, as we have a new image.
+                        self.requestingFirmwareId = nil
+                        self.targets.clearSelections()
+                        self.nextButton.isEnabled = false
+                        // Update the file information.
+                        self.file = package
+                        self.tableView.reloadSections(IndexSet(integer: IndexPath.firmwareSection), with: .automatic)
+                        self.selectAllTargets()
+                    } catch {
+                        self.presentAlert(title: "Error",
+                                          message: "Downloading file failed.\n\n\(error.localizedDescription)")
+                    }
+                }
+                switch availableUpdates.count {
+                case 0:
+                    alert.dismiss(animated: false) {
+                        let confirmation = UIAlertController(title: "Up to Date", message: "No updates available.", preferredStyle: .alert)
+                        confirmation.addAction(UIAlertAction(title: "OK", style: .default))
+                        self.present(confirmation, animated: false)
+                    }
+                case 1:
+                    Task {
+                        await download(availableUpdates.first!.value)
+                    }
+                default:
+                    alert.dismiss(animated: true) {
+                        let chooser = UIAlertController(title: "Multiple updates available",
+                                                        message: "Select firmware for update.",
+                                                        preferredStyle: .actionSheet)
+                        for item in availableUpdates {
+                            let version = item.key.memfaultVersion!
+                            chooser.addAction(UIAlertAction(title: "\(version.hwVersion) (\(version.swVersion)) to \(item.value.softwareVersion)", style: .default) { _ in
+                                Task {
+                                    await download(item.value)
+                                }
+                            })
+                        }
+                        chooser.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+                        self.present(chooser, animated: true)
+                    }
+                }
+            }
+            let cancel = UIAlertAction(title: "Cancel", style: .cancel) { [alert, task] _ in
+                task.cancel()
+                alert.dismiss(animated: true)
+            }
+            alert.addAction(cancel)
+            present(alert, animated: true)
+            
         case IndexPath.firmwareSection:
             if file?.images == nil || indexPath.row - 4 == file?.images.count { // Select File
                 let supportedDocumentTypes = ["public.zip-archive", "com.pkware.zip-archive"]
@@ -467,13 +626,17 @@ class FirmwareSelectionViewController: UITableViewController {
             case .configured:
                 targets[indexPath.targetSection].entries = .downloading
                 tableView.reloadRows(at: [indexPath], with: .none)
+                let node = targets[indexPath.targetSection].node
                 Task { [indexPath] in
                     var result: FirmwareEntries
                     do {
                         let images = try await downloadFirmwareInformation(from: targets[indexPath.targetSection].node)
                         let entries = try await images.asyncMapEnumerated { [weak self] index, image in
                             let updatedFirmwareInformation = try await self?.checkForUpdates(image)
-                            return FirmwareEntry(index: UInt8(index), firmware: image, availableUpdate: updatedFirmwareInformation)
+                            let package = try await self?.checkForUpdatesUsingNrfCloud(node, image)
+                            return FirmwareEntry(index: UInt8(index), firmware: image,
+                                                 availableUpdate: updatedFirmwareInformation,
+                                                 memfaultPackage: package)
                         }
                         result = .ready(entries: entries)
                     } catch {
@@ -493,7 +656,8 @@ class FirmwareSelectionViewController: UITableViewController {
                     let download = { [weak self] in
                         guard let self else { return }
                         do {
-                            let package = try await self.downloadFirmware(entry.firmware)
+                            let package = try await self.downloadFirmware(for: entry)
+                            requestingFirmwareId = entry.firmware.currentFirmwareId
                             // It may happen, that the downloaded image has different metadata than what we got during "check".
                             // To avoid downloading the image in a loop, we need to update the metadata.
                             self.targets[indexPath.targetSection].entries[indexPath.row - 1]?.availableUpdate?.manifest.firmware.firmwareIdString = package.metadata.firmwareIdString
@@ -510,7 +674,7 @@ class FirmwareSelectionViewController: UITableViewController {
                         } catch {
                             self.targets[indexPath.targetSection].entries[indexPath.row - 1]?.status = .unselected
                             self.presentAlert(title: "Error",
-                                               message: "Downloading file failed.\n\n\(error.localizedDescription)")
+                                              message: "Downloading file failed.\n\n\(error.localizedDescription)")
                         }
                     }
                     
@@ -530,6 +694,39 @@ class FirmwareSelectionViewController: UITableViewController {
                                 }
                                 presentAlert(title: "Override selected firmware?",
                                              message: "This image provides a URI to a new firmware version.\n\nDo you want to try to download it and replace the selected one?",
+                                             cancelable: true,
+                                             option: downloadAction) { [weak self] _ in
+                                    self?.tableView(tableView, didSelectRowAt: indexPath)
+                                }
+                                return
+                            }
+                            // No return here, it will fall through to the next case!
+                        } else {
+                            // No file was selected, so we can safely download the new version.
+                            Task {
+                                await download()
+                            }
+                            return
+                        }
+                    }
+                    // Or does it support nRF Cloud, powered by Memfault?
+                    if let _ = entry.memfaultPackage {
+                        targets[indexPath.targetSection].entries[indexPath.row - 1]?.status = .checkingMetadata
+                        tableView.reloadRows(at: [indexPath], with: .automatic)
+                        
+                        // Check if the provided firmwareId is different than the one we already have.
+                        if let _ = file {
+                            // The Memfault response does not provide the new Firmware ID.
+                            // Instead, check if the Firmware ID of the image for which the
+                            // firmware was requested is different.
+                            if requestingFirmwareId == nil || entry.firmware.currentFirmwareId != requestingFirmwareId {
+                                let downloadAction = UIAlertAction(title: "Override", style: .destructive) { _ in
+                                    Task {
+                                        await download()
+                                    }
+                                }
+                                presentAlert(title: "Override selected firmware?",
+                                             message: "The available version seems to be different then the selected one.\n\nDo you want to try to download it and replace the selected one?",
                                              cancelable: true,
                                              option: downloadAction) { [weak self] _ in
                                     self?.tableView(tableView, didSelectRowAt: indexPath)
@@ -585,6 +782,8 @@ class FirmwareSelectionViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
         switch indexPath.section {
+        case IndexPath.memfaultSection:
+            presentAlert(title: "Check for Updates", message: "This action will iterate through all nodes and check if any of them has a pending update available on nRF Cloud. Selected firmware will be automatically downloaded.\n\nThis feature works only with devices reporting the version using Memfault schema.")
         case IndexPath.firmwareSection:
             presentAlert(title: "Firmware Information", message: "The ZIP file must contain binaries together with the 'manifest.json' and 'ble_mesh_metadata.json' files.")
         default:
@@ -612,6 +811,7 @@ extension FirmwareSelectionViewController: UIDocumentPickerDelegate {
             file = try Self.extractImageFromZipFile(from: url, named: name)
             
             // Clear all selections, as we have a new image.
+            requestingFirmwareId = nil
             targets.clearSelections()
             nextButton.isEnabled = false
         } catch {
@@ -686,18 +886,17 @@ private extension FirmwareSelectionViewController {
         Task {
             /// Number of selected receivers. This must be less or equal to `maxReceiversListSize`.
             var selectedCount = targets.selectedReceivers.count
-            /// Target index.
-            var i = -1
             
             // Go through all targets and select first image that passes the checks.
-            for target in targets {
-                i += 1
+            for (i, target) in targets.enumerated() {
                 // Abort if the maximum number of selected receivers is reached.
                 guard selectedCount < maxReceiversListSize else {
                     break
                 }
-                // Skip the Distributor Node.
-                guard target.node.uuid != node.uuid else {
+                // Skip the connected Distributor Node, unless its the only Node that matches.
+                // Updating the connected Distributor is instantaneous. It would not update
+                // other Nodes had it been selected.
+                guard selectedCount == 0 || target.node.uuid != node.uuid else {
                     continue
                 }
                 // Skip already selected Nodes.
@@ -713,7 +912,11 @@ private extension FirmwareSelectionViewController {
                         let images = try await downloadFirmwareInformation(from: target.node)
                         let entries = try await images.asyncMapEnumerated { [weak self] index, image in
                             let updatedFirmwareInformation = try await self?.checkForUpdates(image)
-                            return FirmwareEntry(index: UInt8(index), firmware: image, availableUpdate: updatedFirmwareInformation)
+                            let package = try await self?.checkForUpdatesUsingNrfCloud(target.node, image)
+                            return FirmwareEntry(index: UInt8(index),
+                                                 firmware: image,
+                                                 availableUpdate: updatedFirmwareInformation,
+                                                 memfaultPackage: package)
                         }
                         targets[i].entries = .ready(entries: entries)
                     } catch {
@@ -731,9 +934,7 @@ private extension FirmwareSelectionViewController {
                     guard case .ready(let entries) = targets[i].entries else {
                         continue
                     }
-                    var imageIndex = -1
-                    for entry in entries {
-                        imageIndex += 1
+                    for (imageIndex, entry) in entries.enumerated() {
                         // Skip images that have the same version as the selected one.
                         if entry.firmware.currentFirmwareId == file?.metadata.firmwareId {
                             continue
@@ -821,7 +1022,7 @@ private extension FirmwareSelectionViewController {
             }
         }
     }
-     
+    
     func checkCompatibility(of imageIndex: UInt8, on node: Node, with metadata: Data) async throws -> Result<FirmwareUpdateAdditionalInformation, CompatibilityCheckError> {
         guard let firmwareUpdateServerModel = node.models(withSigModelId: .firmwareUpdateServerModelId).first else {
             throw AccessError.invalidDestination
@@ -835,7 +1036,40 @@ private extension FirmwareSelectionViewController {
         }
         return .success(checkStatus.additionalInformation)
     }
+    
+    @concurrent
+    func checkForUpdatesUsingNrfCloud(_ node: Node,
+                                      _ firmwareInformation: FirmwareInformation) async throws -> MemfaultOtaPackage? {
+        guard let memfaultVersion = firmwareInformation.currentFirmwareId.memfaultVersion,
+              let projectKey = try? Keychain.loadProjectKey() else { return nil }
+        // TODO: Project Key could also be received using a Vendor Model.
+        let deviceSerial = node.uuid
+        
+        let info = MemfaultDeviceInfo(
+            deviceSerial: deviceSerial.uuidString,
+            hardwareVersion: memfaultVersion.hwVersion,
+            softwareVersion: memfaultVersion.swVersion,
+            softwareType: memfaultVersion.swType
+        )
 
+        // When there is no device with the given serial number, or no hardware version,
+        // the API will return an error.
+        // To avoid that, we create a device with the provided information by sending
+        // a fake heartbeat message. This will create a new device and the version.
+        try await nRFCloud.createDevice(info, using: projectKey)
+        
+        // Now, it's safe to call the API to get the latest release for the device.
+        let api = MemfaultApi(configuration: [
+            kMFLTProjectKey: projectKey.token,
+        ])
+        let (data, isUpToDate) = try await api.getLatestRelease(for: info)
+        if isUpToDate {
+            return nil
+        }
+        return data
+    }
+    
+    @concurrent
     func checkForUpdates(_ firmwareInformation: FirmwareInformation) async throws -> UpdatedFirmwareInformation? {
         let firmwareId = firmwareInformation.currentFirmwareId.bytes
         guard let url = firmwareInformation.updateUri?
@@ -897,13 +1131,32 @@ private extension FirmwareSelectionViewController {
         }
     }
     
+    @concurrent
+    func downloadFirmware(for entry: FirmwareEntry) async throws -> UpdatePackage {
+        if let package = entry.memfaultPackage {
+            return try await downloadFirmware(package)
+        } else {
+            return try await downloadFirmware(entry.firmware)
+        }
+    }
+    
+    @concurrent
     func downloadFirmware(_ firmwareInformation: FirmwareInformation) async throws -> UpdatePackage {
         let firmwareId = firmwareInformation.currentFirmwareId.bytes
         guard let url = firmwareInformation.updateUri?
             .appending(endpoint: "get", queryItems: [URLQueryItem(name: "cfwid", value: firmwareId.hex)]) else {
             throw DownloadError.httpStatus(404)
         }
-        
+        return try await downloadFirmware(url)
+    }
+    
+    @concurrent
+    func downloadFirmware(_ package: MemfaultOtaPackage) async throws -> UpdatePackage {
+        return try await downloadFirmware(package.location)
+    }
+    
+    @concurrent
+    func downloadFirmware(_ url: URL) async throws -> UpdatePackage {
         let session = URLSession(configuration: .default, delegate: IgnoreCertificateDelegate(), delegateQueue: nil)
         return try await withCheckedThrowingContinuation { continuation in
             session.downloadTask(with: url) { url, response, error in
@@ -936,8 +1189,9 @@ private extension FirmwareSelectionViewController {
 
 private extension IndexPath {
     static let infoSection = 0
-    static let firmwareSection = 1
-    static let firstTargetSection = 2
+    static let memfaultSection = 1
+    static let firmwareSection = 2
+    static let firstTargetSection = 3
     
     var targetSection: Int {
         return section - IndexPath.firstTargetSection

@@ -452,17 +452,3 @@ private extension FirmwareInformationViewController {
     
 }
 
-private extension MemfaultApi {
-    func getLatestRelease(for deviceInfo: MemfaultDeviceInfo) async throws -> (MemfaultOtaPackage?, Bool) {
-        try await withCheckedThrowingContinuation { continuation in
-            self.getLatestRelease(for: deviceInfo) { data, isUpToDate, error in
-                if let error = error {
-                    continuation.resume(throwing: error)
-                } else {
-                    continuation.resume(returning: (data, isUpToDate))
-                }
-            }
-        }
-    }
-}
-
