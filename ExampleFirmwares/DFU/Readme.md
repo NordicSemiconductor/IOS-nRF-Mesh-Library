@@ -28,9 +28,9 @@ CONFIG_MBEDTLS_HEAP_SIZE=2048
    * **dfu_distr_nrf52840_2.0** - firmware for nRF52840 DK with Distributor sample WITH *LE Pairing Responder* model and Update URI.
    * **dfu_distr_nrf54L_1.0** - firmware for nRF54L15 DK with Target sample.
    * **dfu_distr_nrf54L_2.0** - firmware for nRF54L15 DK with Target sample and Update URI.
-   * **dfu_distr_nrf52840_1.0** - firmware for nRF54L15 DK with Target sample.
-   * **dfu_distr_nrf52840_1.1** - firmware for nRF54L15 DK with Target sample and Update URI.
-   * **dfu_distr_nrf52840_2.0** - firmware for nRF54L15 DK with Target sample and Update URI.
+   * **dfu_distr_nrf52840_1.0** - firmware for nRF52840 DK with Target sample.
+   * **dfu_distr_nrf52840_1.1** - firmware for nRF52840 DK with Target sample and Update URI.
+   * **dfu_distr_nrf52840_2.0** - firmware for nRF52840 DK with Target sample and Update URI.
 
 ## Update URI
 
