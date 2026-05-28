@@ -59,6 +59,14 @@ class IgnoreCertificateDelegate: NSObject, URLSessionDelegate {
 
 extension URL {
     
+    func appending(endpoint: String) -> URL? {
+        if #available(iOS 16.0, *) {
+            return self.appending(path: endpoint, directoryHint: .notDirectory)
+        } else {
+            return self.appendingPathComponent(endpoint, isDirectory: false)
+        }
+    }
+    
     func appending(endpoint: String, queryItems: [URLQueryItem]) -> URL? {
         if #available(iOS 16.0, *) {
             return self

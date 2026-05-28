@@ -40,7 +40,7 @@ import Foundation
 /// based on the current Firmware ID. If should identify the device type and firmware version.
 /// - seeAlso: For Zephyr and nRF Connect SDK implementation see
 /// [Firmware images documentation](https://docs.nordicsemi.com/bundle/ncs-latest/page/zephyr/connectivity/bluetooth/api/mesh/dfu.html#firmware_images).
-public struct FirmwareId: Sendable, Equatable {
+public struct FirmwareId: Sendable, Equatable, Hashable {
     /// The 16-bit Company Identifier (CID) assigned by the Bluetooth SIG.
     ///
     /// Company Identifiers are published in
@@ -119,6 +119,14 @@ public struct FirmwareId: Sendable, Equatable {
     public static func == (lhs: FirmwareId, rhs: FirmwareId) -> Bool {
         return lhs.companyIdentifier == rhs.companyIdentifier &&
                lhs.version == rhs.version
+    }
+    
+    public var hashValue: Int {
+        return bytes.hashValue
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(bytes)
     }
 }
 

@@ -48,6 +48,16 @@ open class McuManager: NSObject {
     /// This is the default time to wait for a command to be sent, executed
     /// and received (responded to) by the firmware on the other end.
     public static let FAST_TIMEOUT = 10
+    /**
+     When encountering a ``McuMgrReturnCode/busy`` value during an Upload,
+     instead of responding with an Error and cancelling the Upload, we can
+     try to wait a very brief amount of time and retry sending the same Data.
+     
+     This return ``McuMgrError`` code, ``McuMgrReturnCode/busy``, can be caused
+     by the target firmware having external flash memory it needs to write to
+     during DFU. This external memory is, of course, slower.
+     */
+    public static let BUSY_WAIT_DELAY_MS: TimeInterval = 0.1
     
     //**************************************************************************
     // MARK: Properties

@@ -4,6 +4,7 @@ platform :ios, '13.0'
 
 target 'nRF Mesh' do
   pod 'iOSMcuManagerLibrary'
+  pod 'MemfaultCloud'
   pod 'nRFMeshProvision', :path => '../'
   target 'nRF Mesh Tests' do
     inherit! :search_paths
