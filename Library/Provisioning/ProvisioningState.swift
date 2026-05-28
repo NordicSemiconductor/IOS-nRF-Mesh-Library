@@ -117,6 +117,8 @@ public enum AuthAction: Sendable {
     /// User should perform selected action given number of times,
     /// or enter the number on the remote device.
     ///
+    /// The `value` will NOT be a zero.
+    ///
     /// The `inputAction` will NOT be ``InputAction/inputAlphanumeric``,
     /// which is handled by ``displayAlphanumeric(_:)`` case.
     case displayNumber(_ value: BigUInt, inputAction: InputAction)
