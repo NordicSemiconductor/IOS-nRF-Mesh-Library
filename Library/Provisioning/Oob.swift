@@ -158,9 +158,9 @@ open class InputActionValueGenerator {
         return String.random(length: size)
     }
     
-    /// This method should generate a random integer of at most given length.
+    /// This method should generate a random, non-zero integer of at most given length.
     ///
-    /// For example, for the `size` equal to 2 the maximum returned value is 99.
+    /// For example, for the `size` equal to 2 the minimum returned value is 1 and maximum is 99.
     ///
     /// - parameter size: The maximum supported length of the integer.
     /// - returns: A random integer of maximum given length.

@@ -115,18 +115,22 @@ public struct BigUInt: Sendable, CustomStringConvertible {
         return String(bytes: asciiDigits, encoding: .ascii) ?? "0"
     }
 
-    /// Generate a random `BigUInt` from an ASCII decimal string of the given length.
+    /// Generate a random non-zero `BigUInt` from an ASCII decimal string of the given length.
     ///
     /// - parameter length: number of decimal digits to generate (must be between 1 and `maxDecimalDigits`).
     /// - returns: a `BigUInt` constructed from a random decimal string of exactly `length` digits (leading zeros are allowed),
-    ///            or nil if length is invalid.
+    ///            or `nil` if length is invalid.
     public static func random(length: Int) -> BigUInt? {
         guard length >= 1 && length <= BigUInt.maxDecimalDigits else { return nil }
         // Generate ASCII digits '0'..'9'. Leading zeros are allowed.
         var bytes = [UInt8]()
         bytes.reserveCapacity(length)
-        for _ in 0..<length {
-            let digit = UInt8(Int.random(in: 0...9))
+        var allZeros = true
+        for i in 0..<length {
+            // Make sure the last digit is not zero if all previous digits are zero, to avoid returning all-zero value.
+            // Returning 0 could lead to asking user to tap a button 0 times.
+            let digit = allZeros && i == length - 1 ? UInt8(Int.random(in: 1...9)) : UInt8(Int.random(in: 0...9))
+            if digit != 0 { allZeros = false }
             bytes.append(48 + digit)
         }
         // Construct the ASCII string and parse it. The initializer will succeed because
