@@ -44,4 +44,14 @@ class RightActionCell: UITableViewCell {
         return rightActionButton.titleLabel
     }
     
+    @objc override var isEnabled: Bool {
+        set {
+            super.isEnabled = newValue
+            rightActionButton.isEnabled = newValue
+        }
+        get {
+            return rightActionButton.isEnabled
+        }
+    }
+    
 }

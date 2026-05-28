@@ -34,7 +34,7 @@ import UIKit
 
 extension UITableViewCell {
     
-    var isEnabled: Bool {
+    @objc var isEnabled: Bool {
         get {
             return isUserInteractionEnabled
         }
