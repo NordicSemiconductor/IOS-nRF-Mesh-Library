@@ -570,8 +570,14 @@ class FirmwareSelectionViewController: UITableViewController {
                         self.present(confirmation, animated: false)
                     }
                 case 1:
-                    Task {
-                        await download(availableUpdates.first!.value)
+                    alert.dismiss(animated: false) {
+                        let status = UIAlertController(title: "Status", message: "Downloading...", preferredStyle: .alert)
+                        status.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+                        self.present(confirmation, animated: false)
+                        Task {
+                            await download(availableUpdates.first!.value)
+                            status.dismiss(animated: true)
+                        }
                     }
                 default:
                     alert.dismiss(animated: true) {
